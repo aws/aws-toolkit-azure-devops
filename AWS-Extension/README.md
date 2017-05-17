@@ -29,7 +29,7 @@ Create and delete AWS CloudFormation stacks
 
 Run a Shell or Batch script with AWS CLI commands against an AWS connection
 
-![CLI](images/awscli.png)
+![CLI](images/AWSCLI.png)
 
 ## Minimum supported environments
 - Visual Studio Team Services
