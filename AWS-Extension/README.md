@@ -11,7 +11,7 @@ To deploy to AWS, an AWS subscription has to be linked to Team Foundation Server
 
 Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/)
 
-![aws endpoint](images/awsendpoint.png)
+![aws endpoint](images/AWSEndpoint.png)
 
 ### Upload Files to AWS S3 Bucket
 
