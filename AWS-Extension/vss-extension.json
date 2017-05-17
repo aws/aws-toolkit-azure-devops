@@ -1,0 +1,179 @@
+{
+  "manifestVersion": 1,
+  "id": "awstools-extension",
+  "version": "0.7.32",
+  "name": "AWS Tools",
+  "scopes": [
+    "vso.build",
+    "vso.build_execute",
+    "vso.release"
+  ],
+  "description": "Delivering support for a service endpoint, task to upload artifacts to AWS S3 bucket, task to run AWS CLI commands, and other interesting CI/CD tasks.",
+  "baseUri": "https://localhost",
+  "publisher": "hkamel-msft",
+  "public": false,
+  "icons": {
+    "default": "images/logo.png"
+  },
+  "content": {
+    "details": {
+      "path": "readme.md"
+    },
+    "license": {
+      "path": "readme.md"
+    }
+  },
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "tags": [
+    "AWS","S3","CloudFormation","AWS CLI"
+  ],
+  "links": {
+    "home": {
+      "uri": "https://bit.ly"
+    },
+    "getstarted": {
+      "uri": "https://bit.ly"
+    },
+    "learn": {
+      "uri": "https://bit.ly"
+    },
+   "support": {
+      "uri": "http://aka.ms/vsarcontact"
+    },
+    "repository": {
+      "type": "git",
+      "uri": "https://github.com/ALM-Rangers/AWS-Tools"
+    },
+    "issues": {
+      "uri": "https://github.com/ALM-Rangers/AWS-Tools/issues"
+    }
+  },
+  "branding": {
+    "color": "rgb(220, 235, 252)",
+    "theme": "light"
+  },
+  "galleryFlags": [
+        "Preview"
+    ],
+    "screenshots": [
+        {
+            "path": "images/screenshoot.png"
+        }
+    ],
+  "files": [
+    {
+      "path": "dist",
+      "addressable": true,
+      "packagePath": "/"
+    },
+    {
+      "path": "images",
+      "addressable": true
+    },
+    {
+      "path": "Tasks/awscli"
+    },
+    {
+      "path": "Tasks/s3filecopy"
+    },
+    {
+      "path": "Tasks/cloudformation"
+    }
+  ],
+  "categories": [
+    "Build and release"
+  ],
+  "contributions": [
+    {
+      "id": "aws-service-endpoint",
+      "description": "Service Endpoint type for AWS connections",
+      "type": "ms.vss-endpoint.service-endpoint-type",
+      "targets": [
+        "ms.vss-endpoint.endpoint-types"
+      ],
+      "properties": {
+        "name": "AWS",
+        "displayName": "AWS",
+        "url": {
+          "displayName": "Server Url",
+          "helpText": "Url for the Fabrikam server to connect to.",
+          "value": "https://aws.amazon.com/",
+          "isVisible": "false"
+        },
+        "dataSources": [
+          {
+            "name": "AWS Connection",
+            "endpointUrl": "{{endpoint.url}}api/projects/index",
+            "resultSelector": "jsonpath:$[*].nm"
+          }
+        ],
+        "authenticationSchemes": [
+          {
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+            "inputDescriptors": [
+              {
+                "id": "username",
+                "name": "Access Key ID",
+                "description": "AWS_ACCESS_KEY_ID",
+                "inputMode": "textbox",
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              },
+              {
+                "id": "password",
+                "name": "Secret Access Key",
+                "description": "AWS_SECRET_ACCESS_KEY",
+                "inputMode": "passwordbox",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              }
+            ]
+          }
+        ],
+        "helpMarkDown": "<a href=\"http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html?icmpid=docs_iam_console\" target=\"_blank\"><b>Learn More</b></a>"
+      }
+    },
+    {
+      "id": "awscli",
+      "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/awscli"
+      }
+    },
+    {
+      "id": "s3filecopy",
+      "description": "Upload files to AWS Simple Storage Service (S3) Bucket",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/s3filecopy"
+      }
+    },
+    {
+      "id": "cloudformation",
+      "description": "Create and delete AWS CloudFormation stacks",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/cloudformation"
+      }
+    }
+  ]
+}

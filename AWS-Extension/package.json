@@ -1,0 +1,38 @@
+{
+  "scripts": {
+    "build": "tsc -p .",
+    "postbuild": "npm run package",
+    "package": "tfx extension create",
+    "clean": "rimraf ./dist && rimraf ./*.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.13",
+    "adm-zip": "0.4.7",
+    "grunt": "^1.0.0",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-jasmine": "*",
+    "grunt-exec": "*",
+    "gulp": "3.9.0",
+    "gulp-util": "3.0.4",
+    "jasmine": "^2.5.1",
+    "minimatch": "3.0.2",
+    "minimist": "1.1.1",
+    "mocha": "2.3.3",
+    "node-uuid": "1.4.6",
+    "q": "1.4.1",
+    "rimraf": "^2.5.4",
+    "semver": "4.3.3",
+    "shelljs": "^0.3.0",
+    "sync-request": "3.0.1",
+    "tfx-cli": "^0.3.45",
+    "typescript": "^2.2.0",
+    "validator": "3.33.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.48.0",
+    "vsts-task-lib": "^0.9.20"
+  },
+  "name": "awsextension",
+  "private": true,
+  "version": "0.0.0"
+}

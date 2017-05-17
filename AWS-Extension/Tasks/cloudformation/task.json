@@ -1,0 +1,152 @@
+{
+    "id": "7ed9a52b-ed1a-442f-bf67-e2d4921a4473",
+    "name": "cloudformation",
+    "friendlyName": "AWS CloudFormation Deployment",
+    "description": "Create and delete AWS CloudFormation stacks",
+    "author": "Hosam Kamel",
+    "helpMarkDown": "",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "0",
+        "Minor": "7",
+        "Patch": "1"
+    },
+    "runsOn": [
+        "Agent"
+    ],
+    "minimumAgentVersion": "1.95.0",
+    "groups": [
+        {
+            "name": "Template",
+            "displayName": "Template",
+            "isExpanded": true,
+            "visibleRule": "action = Create Stack"
+        }
+    ],
+    "instanceNameFormat": "AWS CloudFormation Deployment $(stackname)",
+    "inputs": [
+        {
+            "name": "AWSConnection",
+            "type": "connectedService:AWS",
+            "label": "AWS service endpoint",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS endpoint to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWS'"
+        },
+        {
+            "name": "action",
+            "type": "pickList",
+            "label": "Action",
+            "defaultValue": "Create Stack",
+            "required": true,
+            "helpMarkDown": "Action to be performed on the AWS CloudFormation",
+            "options": {
+                "Create Stack": "Creates a stack as specified in the given template",
+                "Delete Stack": "Deletes a specified stack"
+            }
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "us-east-1",
+            "helpMarkDown": "AWS region name, please check http://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "stackname",
+            "type": "string",
+            "label": "Stack Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name that is associated with the stack. The name must be unique in the region in which you are creating the stack.\n\nA stack name can contain only alphanumeric characters (case sensitive) and hyphens. It must start with an alphabetic character and cannot be longer than 128 characters. "
+        },
+        {
+            "name": "templateLocation",
+            "type": "pickList",
+            "label": "Template location",
+            "required": true,
+            "defaultValue": "Linked artifact",
+            "groupName": "Template",
+            "options": {
+                "Linked artifact": "Linked artifact",
+                "URL of the file": "URL of the file"
+            }
+        },
+        {
+            "name": "cfFileLink",
+            "type": "string",
+            "label": "Template link",
+            "defaultValue": "",
+            "required": true,
+            "groupName": "Template",
+            "helpMarkDown": "Specify the URL of the AWS CloudFormation template file.\n\nThe URL must point to a template (max size: 460,800 bytes) that is located in an Amazon S3 bucket. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide. ",
+            "visibleRule": "templateLocation = URL of the file"
+        },
+        {
+            "name": "cfParametersFileLink",
+            "type": "string",
+            "label": "Template parameters link",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "Template",
+            "helpMarkDown": "Location of file containing the template parameters. The URL must point to a template parameters file that is located in an Amazon S3 bucket. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "visibleRule": " templateLocation = URL of the file"
+        },
+        {
+            "name": "cfFile",
+            "type": "filePath",
+            "label": "Template",
+            "defaultValue": "",
+            "required": true,
+            "groupName": "Template",
+            "visibleRule": " templateLocation = Linked artifact",
+            "helpMarkDown": "Specify the path to the AWS CloudFormation template. \n\nStructure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. For more information, go to [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
+        },
+        {
+            "name": "cfParametersFile",
+            "type": "filePath",
+            "label": "Template parameters",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "Template",
+            "helpMarkDown": "Specify the path for the parameters file for the AWS CloudFormation template.",
+            "visibleRule": " templateLocation = Linked artifact"
+        },
+        {
+            "name": "onfailure",
+            "type": "pickList",
+            "label": "On Failure",
+            "defaultValue": "",
+            "groupName": "Template",
+            "required": true,
+            "helpMarkDown": "Determines what action will be taken if stack creation fails. \n\n Default: ROLLBACK",
+            "options": {
+                "DO_NOTHING": "Do Nothing",
+                "ROLLBACK": "Rollback",
+                "DELETE": "Delete"
+            }
+        },
+        {
+            "name": "disablerollback",
+           "type": "boolean",
+            "label": "Disable Rollback",
+            "defaultValue": "false",
+            "groupName": "Template",
+            "required": false,
+            "helpMarkDown": "Set to true to disable rollback of the stack if stack creation failed. You can specify either DisableRollback or OnFailure, but not both. \n\n Default: false"
+        }
+        
+    ],
+    "execution": {
+        "Node": {
+            "target": "cloudformation.js",
+            "argumentFormat": ""
+        }
+    }
+}

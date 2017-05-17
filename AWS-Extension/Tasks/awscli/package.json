@@ -1,0 +1,14 @@
+{
+  "name": "awscli",
+  "version": "1.0.0",
+  "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
+  "main": "awscli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "vsts-task-lib": "^2.0.5"
+  }
+}
