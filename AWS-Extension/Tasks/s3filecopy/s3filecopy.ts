@@ -1,19 +1,19 @@
 import tl = require("vsts-task-lib/task");
 import path = require("path");
 import fs = require("fs");
-import Q = require('q');
-import AWS = require('aws-sdk/clients/s3');
-import awsS3Parameters = require("./helpers/deploymentParameters");
-import awsS3Client = require("./helpers/s3client");
+import Q = require("q");
+import AWS = require("aws-sdk/clients/s3");
+import TaskParameters = require("./helpers/taskParameters");
+import S3ClientHelpers = require("./helpers/s3client");
 
-tl.setResourcePath(path.join(__dirname, 'task.json'));
+tl.setResourcePath(path.join(__dirname, "task.json"));
 
 function run(): Promise<void> {
-    var taskParameters = new awsS3Parameters.S3Parameters();
-    return awsS3Client.s3Client.uploadArtifacts(taskParameters);
-};
+    const taskParameters = new TaskParameters.AwsS3FileCopyTaskParameters();
+    return S3ClientHelpers.AwsS3ClientHelpers.uploadArtifacts(taskParameters);
+}
 
-//run
+// run
 run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, "")
 ).catch((error) =>

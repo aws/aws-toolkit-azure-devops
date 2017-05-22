@@ -1,10 +1,29 @@
 {
+  "name": "awstools-extension",
+  "version": "0.9.0",
+  "description": "AWS Tools for Visual Studio Team Services",
+  "private": true,
+  "main":"gulpfile.js",
   "scripts": {
-    "build": "tsc -p .",
-    "postbuild": "npm run package",
-    "package": "tfx extension create",
-    "clean": "rimraf ./dist && rimraf ./*.vsix"
+    "build": "node make.js build",
+    "test": "node make.js test",
+    "package": "node make.js package",
+    "clean": "node make.js clean"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"  
+  },
+  "keywords": [
+    "AWS",
+    "S3",
+    "CloudFormation",
+    "CLI"
+  ],
+  "author": "Amazon Web Services LLC",
+  "license": "Apache",
+  "bugs": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues",
+  "homepage": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions",
   "devDependencies": {
     "@types/node": "^7.0.13",
     "adm-zip": "0.4.7",
@@ -25,14 +44,11 @@
     "shelljs": "^0.3.0",
     "sync-request": "3.0.1",
     "tfx-cli": "^0.3.45",
-    "typescript": "^2.2.0",
+    "typescript": "^2.3.4",
     "validator": "3.33.0"
   },
   "dependencies": {
     "aws-sdk": "^2.48.0",
     "vsts-task-lib": "^0.9.20"
-  },
-  "name": "awsextension",
-  "private": true,
-  "version": "0.0.0"
+  }
 }

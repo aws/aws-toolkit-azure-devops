@@ -1,66 +1,66 @@
 import tl = require("vsts-task-lib/task");
 import path = require("path");
 import fs = require("fs");
-import Q = require('q');
-import awsS3 = require('aws-sdk/clients/s3');
-import awsS3Parameters = require("./deploymentParameters");
+import Q = require("q");
+import awsS3Client = require("aws-sdk/clients/s3");
+import TaskParameters = require("./taskParameters");
 
-export class s3Client {
+export class AwsS3ClientHelpers {
 
-    private static async uploadFiles(taskParameters, s3) {
-        var matchedFiles = this.findFiles(taskParameters);
-        for (var i = 0; i < matchedFiles.length; i++) {
-            var matchedFile = matchedFiles[i];
-            var relativePath = matchedFile.substring(taskParameters.sourceFolder.length);
+    private static async uploadFiles(taskParameters: TaskParameters.AwsS3FileCopyTaskParameters, s3: awsS3Client) {
+        const matchedFiles = this.findFiles(taskParameters);
+        for (let i = 0; i < matchedFiles.length; i++) {
+            const matchedFile = matchedFiles[i];
+            let relativePath = matchedFile.substring(taskParameters.sourceFolder.length);
             if (relativePath.startsWith(path.sep)) {
                 relativePath = relativePath.substr(1);
             }
-            var targetPath = relativePath;
-           if (taskParameters.flattenFolders) {
-                var flatFileName = path.basename(matchedFile);
+            let targetPath = relativePath;
+            if (taskParameters.flattenFolders) {
+                const flatFileName = path.basename(matchedFile);
                 targetPath = path.join(taskParameters.targetFolder, flatFileName);
-           }
-            else {
+            } else {
                 targetPath = path.join(taskParameters.targetFolder, relativePath);
             }
-           var targetDir = path.dirname(targetPath);
-            targetPath = targetPath.replace(/\\/g, '/');
-            var stats = fs.lstatSync(matchedFile);
+            const targetDir = path.dirname(targetPath);
+            targetPath = targetPath.replace(/\\/g, "/");
+            const stats = fs.lstatSync(matchedFile);
             if (!stats.isDirectory()) {
-                var fileBuffer = fs.readFileSync(matchedFile);
+                const fileBuffer = fs.readFileSync(matchedFile);
                 tl.debug("Upload file: " + matchedFile);
                 s3.putObject({
                     Bucket: taskParameters.awsBucketName,
                     Key: targetPath,
                     Body: fileBuffer,
                     ACL: taskParameters.filesAcl
-                }, function (error, response) {
-                    console.log('uploaded file[' + matchedFile + '] to [' + targetPath + ']');
+                }, function(error, response) {
+                    console.log("uploaded file[" + matchedFile + "] to [" + targetPath + "]");
                     console.log(arguments);
-                    if (error)
-                        tl.setResult(tl.TaskResult.Failed, tl.loc('Uploadfailed', error));
+                    if (error) {
+                        tl.setResult(tl.TaskResult.Failed, tl.loc("Uploadfailed", error));
+                    }
                 });
             }
         }
     }
 
-    private static findFiles(taskParameters: awsS3Parameters.S3Parameters): string[] {
-        tl.debug('Searching for files to upload');
-        console.log('sourceFolderPath' + taskParameters.sourceFolder);
+    private static findFiles(taskParameters: TaskParameters.AwsS3FileCopyTaskParameters): string[] {
+        tl.debug("Searching for files to upload");
+        console.log("sourceFolderPath" + taskParameters.sourceFolder);
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder);
-        var allPaths = tl.find(taskParameters.sourceFolder); // default find options (follow sym links)
-        tl.debug(tl.loc('AllPaths', allPaths));
-        var matchedPaths = tl.match(allPaths, taskParameters.awsContentPattern, taskParameters.sourceFolder); // default match options
-        tl.debug(tl.loc('MatchedPaths', matchedPaths));
-        var matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory()); // filter-out directories
-        tl.debug(tl.loc('MatchedFiles', matchedFiles));
-        tl.debug(tl.loc('FoundNFiles', matchedFiles.length));
+        const allPaths = tl.find(taskParameters.sourceFolder); // default find options (follow sym links)
+        tl.debug(tl.loc("AllPaths", allPaths));
+        const matchedPaths = tl.match(allPaths, taskParameters.awsContentPattern, taskParameters.sourceFolder); // default match options
+        tl.debug(tl.loc("MatchedPaths", matchedPaths));
+        const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory()); // filter-out directories
+        tl.debug(tl.loc("MatchedFiles", matchedFiles));
+        tl.debug(tl.loc("FoundNFiles", matchedFiles.length));
         return matchedFiles;
     }
 
-    public static async uploadArtifacts(taskParameters: awsS3Parameters.S3Parameters): Promise<void> {
-        var s3Config = {
-            apiVersion: '2006-03-01',
+    public static async uploadArtifacts(taskParameters: TaskParameters.AwsS3FileCopyTaskParameters): Promise<void> {
+        const s3Config = {
+            apiVersion: "2006-03-01",
             region: taskParameters.awsRegion,
             params: {
                 Bucket: taskParameters.awsBucketName
@@ -70,20 +70,19 @@ export class s3Client {
                 secretAccessKey: taskParameters.awsSecretKey
             }
         };
-        var s3 = new awsS3(s3Config);
+
+        const s3 = new awsS3Client(s3Config);
         if (taskParameters.creatBucket) {
-            s3.createBucket(function (err, data) {
+            s3.createBucket(function(err, data) {
                 if (err) {
                     console.log(err);
-                }
-                else {
+                } else {
                     console.log("Uploading file...");
-                    s3Client.uploadFiles(taskParameters, s3);
+                    AwsS3ClientHelpers.uploadFiles(taskParameters, s3);
                 }
             });
-        }
-        else {
-            await s3Client.uploadFiles(taskParameters, s3);
+        } else {
+            await AwsS3ClientHelpers.uploadFiles(taskParameters, s3);
         }
     }
 }

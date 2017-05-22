@@ -1,3 +1,14 @@
-*.vsix
-node_modules/
+.vscode/
 policheck/
+
+node_modules/
+_build/
+_package/
+
+*.log
+*.map
+*.taskkey
+**/*/*.loc.json
+**/*/resources.resjson
+
+

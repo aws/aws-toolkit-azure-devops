@@ -1,26 +1,25 @@
 {
   "manifestVersion": 1,
   "id": "awstools-extension",
-  "version": "0.7.32",
-  "name": "AWS Tools",
+  "version": "0.9.0",
+  "name": "AWS Tools for Visual Studio Team System",
   "scopes": [
     "vso.build",
     "vso.build_execute",
     "vso.release"
   ],
   "description": "Delivering support for a service endpoint, task to upload artifacts to AWS S3 bucket, task to run AWS CLI commands, and other interesting CI/CD tasks.",
-  "baseUri": "https://localhost",
-  "publisher": "hkamel-msft",
+  "publisher": "unknown",
   "public": false,
   "icons": {
     "default": "images/logo.png"
   },
   "content": {
     "details": {
-      "path": "readme.md"
+      "path": "README.md"
     },
     "license": {
-      "path": "readme.md"
+      "path": "LICENSE"
     }
   },
   "targets": [
@@ -42,14 +41,14 @@
       "uri": "https://bit.ly"
     },
    "support": {
-      "uri": "http://aka.ms/vsarcontact"
+      "uri": "https://bit.ly"
     },
     "repository": {
       "type": "git",
-      "uri": "https://github.com/ALM-Rangers/AWS-Tools"
+      "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"
     },
     "issues": {
-      "uri": "https://github.com/ALM-Rangers/AWS-Tools/issues"
+      "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues"
     }
   },
   "branding": {
@@ -65,11 +64,6 @@
         }
     ],
   "files": [
-    {
-      "path": "dist",
-      "addressable": true,
-      "packagePath": "/"
-    },
     {
       "path": "images",
       "addressable": true

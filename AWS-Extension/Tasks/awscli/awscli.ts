@@ -1,13 +1,13 @@
 import tl = require("vsts-task-lib/task");
 import path = require("path");
-import Q = require('q');
-import awsCliClient = require('./helpers/cliclient');
-import awsCliParameters = require('./helpers/taskParameters')
+import Q = require("q");
+import CliClientHelpers = require("./helpers/cliclient");
+import TaskParameters = require("./helpers/taskParameters");
 
+tl.setResourcePath(path.join(__dirname, "task.json"));
 
-tl.setResourcePath(path.join(__dirname, 'task.json'));
+const taskParameters = new TaskParameters.AwsCliTaskParameters();
 
-var taskParameters = new awsCliParameters.awsCliParameters();
-if (awsCliClient.CLIOperations.checkIfAwsCliIsInstalled()) {
-    awsCliClient.CLIOperations.executeCommand(taskParameters);
+if (CliClientHelpers.AwsCliClientHelpers.checkIfAwsCliIsInstalled()) {
+    CliClientHelpers.AwsCliClientHelpers.executeCommand(taskParameters);
 }

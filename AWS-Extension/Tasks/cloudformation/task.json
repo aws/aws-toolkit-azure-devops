@@ -3,7 +3,7 @@
     "name": "cloudformation",
     "friendlyName": "AWS CloudFormation Deployment",
     "description": "Create and delete AWS CloudFormation stacks",
-    "author": "Hosam Kamel",
+    "author": "Amazon Web Services",
     "helpMarkDown": "",
     "category": "Deploy",
     "visibility": [
@@ -13,8 +13,8 @@
     "demands": [],
     "version": {
         "Major": "0",
-        "Minor": "7",
-        "Patch": "1"
+        "Minor": "9",
+        "Patch": "0"
     },
     "runsOn": [
         "Agent"

@@ -1,28 +1,28 @@
 import tl = require("vsts-task-lib/task");
 import path = require("path");
 import fs = require("fs");
-import Q = require('q');
+import Q = require("q");
 
-import awsCloudFormation = require("./helpers/deploymentParameters");
-import awsStackOperation = require("./helpers/stackOperations");
+import TaskParameters = require("./helpers/taskParameters");
+import StackOperationHelpers = require("./helpers/stackOperations");
 
-tl.setResourcePath(path.join(__dirname, 'task.json'))
+tl.setResourcePath(path.join(__dirname, "task.json"));
 
 function run(): Promise<void> {
-    var taskParameters = new awsCloudFormation.CFDeploymentParameters();
+    const taskParameters = new TaskParameters.AwsCloudFormationTaskParameters();
     switch (taskParameters.action) {
         case "Create Stack":
-            return awsStackOperation.CFStackOperations.createNewStack(taskParameters);
+            return StackOperationHelpers.AwsStackOperationHelpers.createNewStack(taskParameters);
         case "Delete Stack":
-            return awsStackOperation.CFStackOperations.deteleStack(taskParameters);
+            return StackOperationHelpers.AwsStackOperationHelpers.deleteStack(taskParameters);
         default:
             throw tl.loc("InvalidAction", taskParameters.action);
     }
-};
+}
 
-//run
+// run
 run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, "")
 ).catch((error) =>
     tl.setResult(tl.TaskResult.Failed, error)
-    );
+);
