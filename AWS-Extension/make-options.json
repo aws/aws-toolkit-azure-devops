@@ -13,6 +13,7 @@
         "icon.png",
         "icon.svg",
         "module.json",
+        "node_modules",
         "package.json",
         "Strings",
         "task.json",
