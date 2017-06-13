@@ -1,4 +1,4 @@
-import tl = require("vsts-task-lib/task");
+import tl = require('vsts-task-lib/task');
 
 export class AwsCloudFormationTaskParameters {
     public awsKeyId: string;
@@ -16,21 +16,21 @@ export class AwsCloudFormationTaskParameters {
 
     constructor() {
         try {
-            const awsEndpoint = tl.getInput("AWSConnection", true);
+            const awsEndpoint = tl.getInput('awsConnection', true);
             const awsEndpointAuth = tl.getEndpointAuthorization(awsEndpoint, false);
             this.awsKeyId = awsEndpointAuth.parameters.username;
             this.awsSecretKey = awsEndpointAuth.parameters.password;
-            this.stackName = tl.getInput("stackname", true);
-            this.awsRegion = tl.getInput("regionName", true);
-            this.onFailure = tl.getInput("onfailure");
-            this.action = tl.getInput("action");
-            this.templateLocation = tl.getInput("templateLocation");
-            if (this.templateLocation === "Linked artifact") {
-                this.cfTemplateFile = tl.getPathInput("cfFile");
-                this.cfParametersFile = tl.getPathInput("cfParametersFile");
+            this.stackName = tl.getInput('stackName', true);
+            this.awsRegion = tl.getInput('regionName', true);
+            this.onFailure = tl.getInput('onFailure');
+            this.action = tl.getInput('action');
+            this.templateLocation = tl.getInput('templateLocation');
+            if (this.templateLocation === 'Linked artifact') {
+                this.cfTemplateFile = tl.getPathInput('cfFile');
+                this.cfParametersFile = tl.getPathInput('cfParametersFile');
             } else {
-                this.cfTemplateUrl = tl.getInput("cfFileLink");
-                this.cfParametersFileUrl = tl.getInput("cfParametersFileLink");
+                this.cfTemplateUrl = tl.getInput('cfFileLink');
+                this.cfParametersFileUrl = tl.getInput('cfParametersFileLink');
             }
         } catch (error) {
             throw new Error(error.message);

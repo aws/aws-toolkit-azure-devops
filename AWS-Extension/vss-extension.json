@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "id": "awstools-extension",
+  "id": "aws-vsts-tools",
   "version": "0.9.0",
   "name": "AWS Tools for Visual Studio Team System",
   "scopes": [
@@ -8,7 +8,7 @@
     "vso.build_execute",
     "vso.release"
   ],
-  "description": "Delivering support for a service endpoint, task to upload artifacts to AWS S3 bucket, task to run AWS CLI commands, and other interesting CI/CD tasks.",
+  "description": "Delivering support for a service endpoint, tasks to transfer artifacts to and from Amazon S3 buckets, task to run AWS CLI commands, and other interesting CI/CD tasks.",
   "publisher": "unknown",
   "public": false,
   "icons": {
@@ -72,7 +72,10 @@
       "path": "Tasks/awscli"
     },
     {
-      "path": "Tasks/s3filecopy"
+      "path": "Tasks/s3fileupload"
+    },
+    {
+      "path": "Tasks/s3filedownload"
     },
     {
       "path": "Tasks/cloudformation"
@@ -148,14 +151,25 @@
       }
     },
     {
-      "id": "s3filecopy",
-      "description": "Upload files to AWS Simple Storage Service (S3) Bucket",
+      "id": "s3fileupload",
+      "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "Tasks/s3filecopy"
+        "name": "Tasks/s3fileupload"
+      }
+    },
+    {
+      "id": "s3filedownload",
+      "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/s3filedownload"
       }
     },
     {

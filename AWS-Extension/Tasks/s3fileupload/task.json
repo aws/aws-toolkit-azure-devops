@@ -1,8 +1,8 @@
 {
     "id": "3098b5ea-8371-4ead-8780-07412c4e6b45",
-    "name": "s3filecopy",
+    "name": "s3fileupload",
     "friendlyName": "AWS S3 File Upload",
-    "description": "Upload files to AWS Simple Storage Service (S3) Bucket",
+    "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html)",
     "category": "Deploy",
@@ -17,7 +17,7 @@
         "Patch": "0"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS File Copy: $(BucketName)",
+    "instanceNameFormat": "AWS File Upload: $(bucketName)",
     "groups": [
         {
             "name": "advanced",
@@ -27,7 +27,7 @@
     ],
     "inputs": [
         {
-            "name": "AWSConnection",
+            "name": "awsConnection",
             "type": "connectedService:AWS",
             "label": "AWS service endpoint",
             "defaultValue": "",
@@ -43,36 +43,44 @@
             "helpMarkDown": "AWS region name, please check http://docs.aws.amazon.com/general/latest/gr/rande.html"
         },
         {
-            "name": "BucketName",
+            "name": "bucketName",
             "type": "string",
             "label": "Bucket Name",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The name of the bucket where the files will be uploaded. If it doesn't exist, it will be created."
+            "helpMarkDown": "The name of the bucket where the files will be uploaded. If the bucket does not exist it will be created."
         },
         {
-            "name": "SourceFolder",
+            "name": "sourceFolder",
             "type": "filePath",
             "label": "Source Folder",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "The source folder that the copy pattern(s) will be run from.  Empty is the root of the repo.  Use [variables](https://go.microsoft.com/fwlink/?LinkID=550988) if files are not in the repo. Example: $(agent.builddirectory)"
+            "helpMarkDown": "The source folder that the content pattern(s) will be run against. If not set the root of the repo is assumed. Use [variables](https://go.microsoft.com/fwlink/?LinkID=550988) if files are not in the repo. Example: $(agent.builddirectory)"
         },
         {
-            "name": "Contents",
+            "name": "globExpressions",
             "type": "multiLine",
             "label": "Contents",
             "defaultValue": "**",
             "required": true,
-            "helpMarkDown": "File paths to include as part of the copy. Supports multiple lines of minimatch patterns."
+            "helpMarkDown": "File path/name glob patterns to select the files to be uploaded. Supports multiple lines of minimatch patterns."
+        },
+        {
+            "name": "targetFolder",
+            "type": "string",
+            "label": "Target Folder",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "The target folder in the S3 bucket to contain the files. If not set the root of the bucket is assumed. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)"
         },
         {
             "name": "filesAcl",
             "type": "pickList",
-            "label": "ACL",
+            "label": "Access Control (ACL)",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "The canned ACL to apply to the object. Refer to [Canned ACL](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl)",
+            "helpMarkDown": "The canned Access Control List (ACL) to apply to the uploaded files. Refer to [Canned ACL](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl)",
             "options": {
                 "private": "private",
                 "public-read": "public read",
@@ -84,20 +92,12 @@
             }
         },
         {
-            "name": "TargetFolder",
-            "type": "string",
-            "label": "Target Folder",
-            "defaultValue": "",
-            "required": false,
-            "helpMarkDown": "Target folder files will copy to in the S3 bucket. If empty, files will be copied to the root folder in the S3 bucket. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)"
-        },
-         {
             "name": "createBucket",
             "type": "boolean",
-            "label": "Create S3 bucket if not exists",
+            "label": "Create S3 bucket if it does not exist",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "Create S3 bucket if not exists."
+            "helpMarkDown": "Automatically create the S3 bucket if it does not exist."
         },
         {
             "name": "overwrite",
@@ -114,13 +114,13 @@
             "label": "Flatten folders",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "Flatten the folder structure and copy all files into the specified target folder on the aws S3 bucket",
+            "helpMarkDown": "Flatten the folder structure and copy all files into the specified target folder in the bucket",
             "groupName": "advanced"
         }
     ],
     "execution": {
         "Node": {
-            "target": "s3filecopy.js",
+            "target": "s3fileupload.js",
             "argumentFormat": ""
         }
     },

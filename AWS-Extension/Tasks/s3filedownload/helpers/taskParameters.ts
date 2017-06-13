@@ -1,13 +1,14 @@
 import tl = require('vsts-task-lib/task');
 
-export class AwsCliTaskParameters {
+export class AwsS3FileDownloadTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;
-    public awsCliCommand: string;
-    public awsCliSubCommand: string;
-    public awsCliParameters: string;
-    public failOnStandardError: boolean;
+    public bucketName: string;
+    public sourceFolder: string;
+    public targetFolder: string;
+    public globExpressions: string[];
+    public overwrite: boolean;
 
     constructor() {
         try {
@@ -16,10 +17,11 @@ export class AwsCliTaskParameters {
             this.awsKeyId = awsEndpointAuth.parameters.username;
             this.awsSecretKey = awsEndpointAuth.parameters.password;
             this.awsRegion = tl.getInput('regionName', true);
-            this.awsCliCommand = tl.getInput('awsCommand', true);
-            this.awsCliSubCommand = tl.getInput('awsSubCommand', true);
-            this.awsCliParameters = tl.getInput('awsArguments', false);
-            this.failOnStandardError = tl.getBoolInput('failOnStandardError');
+            this.bucketName = tl.getInput('bucketName', true);
+            this.sourceFolder = tl.getPathInput('sourceFolder', false);
+            this.targetFolder = tl.getPathInput('targetFolder', true, true);
+            this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
+            this.overwrite = tl.getBoolInput('overwrite', false);
         } catch (error) {
             throw new Error(error.message);
         }

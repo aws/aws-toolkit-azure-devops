@@ -28,10 +28,10 @@
             "visibleRule": "action = Create Stack"
         }
     ],
-    "instanceNameFormat": "AWS CloudFormation Deployment $(stackname)",
+    "instanceNameFormat": "AWS CloudFormation Deployment $(stackName)",
     "inputs": [
         {
-            "name": "AWSConnection",
+            "name": "awsConnection",
             "type": "connectedService:AWS",
             "label": "AWS service endpoint",
             "defaultValue": "",
@@ -59,7 +59,7 @@
             "helpMarkDown": "AWS region name, please check http://docs.aws.amazon.com/general/latest/gr/rande.html"
         },
         {
-            "name": "stackname",
+            "name": "stackName",
             "type": "string",
             "label": "Stack Name",
             "defaultValue": "",
@@ -119,7 +119,7 @@
             "visibleRule": " templateLocation = Linked artifact"
         },
         {
-            "name": "onfailure",
+            "name": "onFailure",
             "type": "pickList",
             "label": "On Failure",
             "defaultValue": "",
@@ -133,7 +133,7 @@
             }
         },
         {
-            "name": "disablerollback",
+            "name": "disableRollback",
            "type": "boolean",
             "label": "Disable Rollback",
             "defaultValue": "false",
@@ -141,7 +141,7 @@
             "required": false,
             "helpMarkDown": "Set to true to disable rollback of the stack if stack creation failed. You can specify either DisableRollback or OnFailure, but not both. \n\n Default: false"
         }
-        
+
     ],
     "execution": {
         "Node": {

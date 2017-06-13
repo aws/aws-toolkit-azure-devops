@@ -1,5 +1,5 @@
 {
-  "name": "awstools-extension",
+  "name": "aws-vsts-tools",
   "version": "0.9.0",
   "description": "AWS Tools for Visual Studio Team Services",
   "private": true,
@@ -34,7 +34,6 @@
     "gulp": "3.9.0",
     "gulp-util": "3.0.4",
     "jasmine": "^2.5.1",
-    "minimatch": "3.0.2",
     "minimist": "1.1.1",
     "mocha": "2.3.3",
     "node-uuid": "1.4.6",

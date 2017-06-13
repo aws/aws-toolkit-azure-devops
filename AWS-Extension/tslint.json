@@ -6,13 +6,15 @@
     "jsRules": {},
     "rules": {
         "align": [false],
+        "curly": true,
+        "eofline": true,
         "indent": [
             true,
-            "spaces"
+            "spaces",
+            4
         ],
         "max-line-length": [
-            true,
-            140
+            false
         ],
         "member-ordering": [false],
         "no-angle-bracket-type-assertion": false,
@@ -24,6 +26,7 @@
             "timeEnd",
             "trace"
         ],
+        "no-empty": true,
         "no-shadowed-variable": false,
         "object-literal-sort-keys": false,
         "object-literal-key-quotes": [
@@ -43,6 +46,10 @@
         "prefer-const": true,
         "prefer-for-of": false,
         "prefer-type-cast": true,
+        "quotemark": [
+            true,
+            "single"
+        ],
         "trailing-comma": [
             true,
             {

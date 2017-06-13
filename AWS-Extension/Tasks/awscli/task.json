@@ -2,7 +2,7 @@
     "id": "ff1eddfe-4e6b-4da0-ba17-14d1744d6f42",
     "name": "awscli",
     "friendlyName": "AWS CLI",
-    "description": "Run AWS CLI Commands",
+    "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
     "author": "Amazon Web Services",
     "helpMarkDown": "The AWS Command Line Interface is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts.",
     "category": "Deploy",
@@ -27,7 +27,7 @@
     ],
     "inputs": [
         {
-            "name": "AWSConnection",
+            "name": "awsConnection",
             "type": "connectedService:AWS",
             "label": "AWS service endpoint",
             "defaultValue": "",
