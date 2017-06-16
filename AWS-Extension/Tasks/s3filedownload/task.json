@@ -52,7 +52,7 @@
         },
         {
             "name": "sourceFolder",
-            "type": "filePath",
+            "type": "string",
             "label": "Source Folder",
             "defaultValue": "",
             "required": false,
@@ -68,7 +68,7 @@
         },
         {
             "name": "targetFolder",
-            "type": "string",
+            "type": "filepath",
             "label": "Target Folder",
             "defaultValue": "",
             "required": true,
@@ -80,7 +80,7 @@
             "label": "Overwrite",
             "defaultValue": "true",
             "required": false,
-            "helpMarkDown": "Replace existing files in and beneath the target folder.",
+            "helpMarkDown": "Replace existing files in and beneath the target folder. If not set and the file already exists in the target location an error is thrown.",
             "groupName": "advanced"
         }
     ],

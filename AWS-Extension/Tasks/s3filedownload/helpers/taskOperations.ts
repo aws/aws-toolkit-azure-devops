@@ -26,18 +26,32 @@ export class TaskOperations {
     }
 
     private static async downloadFiles(taskParameters: TaskParameters.AwsS3FileDownloadTaskParameters, s3: awsS3Client) {
+
+        if (!fs.existsSync(taskParameters.targetFolder)) {
+            tl.mkdirP(taskParameters.targetFolder);
+        }
+
         const allDownloads = [];
         const allKeys = await this.fetchAllObjectKeys(taskParameters, s3);
         for (const glob of taskParameters.globExpressions) {
             const matchedKeys = await this.matchObjectKeys(allKeys, taskParameters.sourceFolder, glob);
             for (const matchedKey of matchedKeys) {
-                console.log(`Starting download of ${matchedKey} to ${taskParameters.targetFolder}`);
+                const dest: string = path.join(taskParameters.targetFolder, matchedKey);
 
+                if (fs.existsSync(dest)) {
+                    if (taskParameters.overwrite) {
+                        tl.debug(`Target file ${dest} exists for matched key ${matchedKey}, overwriting.`);
+                    } else {
+                        throw new Error(`Target file ${dest} exists for matched key ${matchedKey}, overwrite switch not set.`);
+                    }
+                }
+
+                console.log(`Queueing download of ${matchedKey} to ${taskParameters.targetFolder}`);
                 const params = {
                     Bucket: taskParameters.bucketName,
                     Key: matchedKey
                 };
-                allDownloads.push(this.downloadFile(s3, params, path.join(taskParameters.targetFolder, matchedKey)));
+                allDownloads.push(this.downloadFile(s3, params, dest));
             }
         }
 
