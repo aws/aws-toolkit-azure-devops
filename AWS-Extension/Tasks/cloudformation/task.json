@@ -1,6 +1,6 @@
 {
     "id": "7ed9a52b-ed1a-442f-bf67-e2d4921a4473",
-    "name": "cloudformation",
+    "name": "CloudFormation",
     "friendlyName": "AWS CloudFormation Deployment",
     "description": "Create and delete AWS CloudFormation stacks",
     "author": "Amazon Web Services",

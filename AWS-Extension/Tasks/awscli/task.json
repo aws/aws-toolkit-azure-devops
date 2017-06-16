@@ -1,6 +1,6 @@
 {
     "id": "ff1eddfe-4e6b-4da0-ba17-14d1744d6f42",
-    "name": "awscli",
+    "name": "AWSCLI",
     "friendlyName": "AWS CLI",
     "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
     "author": "Amazon Web Services",

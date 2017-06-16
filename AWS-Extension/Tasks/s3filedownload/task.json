@@ -1,6 +1,6 @@
 {
     "id": "369b7be3-fc8a-41ff-94b8-9798e6108dd0",
-    "name": "s3filedownload",
+    "name": "S3FileDownload",
     "friendlyName": "AWS S3 File Download",
     "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
     "author": "Amazon Web Services",

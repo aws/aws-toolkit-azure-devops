@@ -1,6 +1,6 @@
 {
     "id": "3098b5ea-8371-4ead-8780-07412c4e6b45",
-    "name": "s3fileupload",
+    "name": "S3FileUpload",
     "friendlyName": "AWS S3 File Upload",
     "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
     "author": "Amazon Web Services",
