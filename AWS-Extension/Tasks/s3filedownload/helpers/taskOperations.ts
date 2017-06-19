@@ -17,8 +17,7 @@ export class TaskOperations {
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
-            },
-            s3ForcePathStyle: true
+            }
         };
 
         const s3 = new awsS3Client(s3Config);

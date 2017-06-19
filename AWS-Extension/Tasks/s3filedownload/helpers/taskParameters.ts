@@ -18,8 +18,8 @@ export class AwsS3FileDownloadTaskParameters {
             this.awsSecretKey = awsEndpointAuth.parameters.password;
             this.awsRegion = tl.getInput('regionName', true);
             this.bucketName = tl.getInput('bucketName', true);
-            this.sourceFolder = tl.getPathInput('sourceFolder', false);
-            this.targetFolder = tl.getPathInput('targetFolder', true, true);
+            this.sourceFolder = tl.getPathInput('sourceFolder', false, false);
+            this.targetFolder = tl.getPathInput('targetFolder', true, false);
             this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
             this.overwrite = tl.getBoolInput('overwrite', false);
         } catch (error) {
