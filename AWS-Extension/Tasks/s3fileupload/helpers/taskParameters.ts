@@ -11,7 +11,7 @@ export class AwsS3FileUploadTaskParameters {
     public overwrite: boolean;
     public globExpressions: string[];
     public filesAcl: string;
-    public creatBucket: boolean;
+    public createBucket: boolean;
 
     constructor() {
         try {
@@ -27,7 +27,7 @@ export class AwsS3FileUploadTaskParameters {
             this.targetFolder = tl.getPathInput('targetFolder', false);
             this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
             this.filesAcl = tl.getInput('filesAcl', false);
-            this.creatBucket = tl.getBoolInput('createBucket');
+            this.createBucket = tl.getBoolInput('createBucket');
         } catch (error) {
             throw new Error(error.message);
         }

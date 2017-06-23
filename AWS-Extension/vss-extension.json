@@ -72,13 +72,16 @@
       "path": "Tasks/awscli"
     },
     {
-      "path": "Tasks/s3fileupload"
+      "path": "Tasks/cloudformation"
+    },
+    {
+      "path": "Tasks/lambdainvoke"
     },
     {
       "path": "Tasks/s3filedownload"
     },
     {
-      "path": "Tasks/cloudformation"
+      "path": "Tasks/s3fileupload"
     }
   ],
   "categories": [
@@ -151,14 +154,25 @@
       }
     },
     {
-      "id": "s3fileupload",
-      "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
+      "id": "cloudformation",
+      "description": "Create and delete AWS CloudFormation stacks",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "Tasks/s3fileupload"
+        "name": "Tasks/cloudformation"
+      }
+    },
+    {
+      "id": "lambdainvoke",
+      "description": "Invokes an AWS Lambda function with a JSON payload.",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/lambdainvoke"
       }
     },
     {
@@ -173,14 +187,14 @@
       }
     },
     {
-      "id": "cloudformation",
-      "description": "Create and delete AWS CloudFormation stacks",
+      "id": "s3fileupload",
+      "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "Tasks/cloudformation"
+        "name": "Tasks/s3fileupload"
       }
     }
   ]

@@ -19,7 +19,7 @@ export class TaskOperations {
         };
 
         const s3 = new awsS3Client(s3Config);
-        if (taskParameters.creatBucket) {
+        if (taskParameters.createBucket) {
 
             const params: awsS3Client.CreateBucketRequest = {
                 Bucket: taskParameters.bucketName

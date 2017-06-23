@@ -1,0 +1,105 @@
+{
+    "id": "19d98754-eb4c-450b-abcf-9a799de60003",
+    "name": "LambdaInvoke",
+    "friendlyName": "AWS Lambda Invoke Function",
+    "description": "Invokes an AWS Lambda function with a JSON payload.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "0",
+        "Minor": "9",
+        "Patch": "0"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "AWS Lambda Invoke: $(functionName)",
+    "groups": [
+        {
+            "name": "outputOptions",
+            "displayName": "Output Options",
+            "isExpanded": true,
+            "visibleRule": "invocationType = RequestResponse"
+        },
+        {
+            "name": "logOptions",
+            "displayName": "Log Options",
+            "isExpanded": false,
+            "visibleRule": "invocationType = RequestResponse"
+        }
+    ],
+    "inputs" : [
+        {
+            "name": "awsConnection",
+            "type": "connectedService:AWS",
+            "label": "AWS service endpoint",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS endpoint to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWS'"
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "functionName",
+            "type": "string",
+            "label": "Function Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name of the Lambda function to invoke. You can also specify the Amazon Resource Name (ARN) of the function."
+        },
+        {
+            "name": "payload",
+            "type": "multiLine",
+            "label": "Payload",
+            "defaultValue": "",
+            "helpMarkDown": "The JSON formatted payload to pass to the function."
+        },
+        {
+            "name": "invocationType",
+            "type": "pickList",
+            "label": "Invocation Type",
+            "defaultValue": "RequestResponse",
+            "options": {
+                "Event": "Asynchronous execution",
+                "RequestResponse": "Synchronous execution, returning the output from the function"
+            }
+        },
+        {
+            "name": "outputVariable",
+            "type": "string",
+            "label": "Output Variable",
+            "defaultValue" : "",
+            "groupName": "outputOptions",
+            "helpMarkDown": "The name of the variable that will contain the function output on return.",
+            "required": false
+        },
+        {
+            "name": "logType",
+            "type": "picklist",
+            "label": "Log Type",
+            "defaultValue": "None",
+            "helpMarkDown": "For synchronous execution, returns the base64-encoded last 4 KB of log data produced by your Lambda function in the x-amz-log-result header.",
+            "groupName": "logOptions",
+            "options":{
+                "None": "None",
+                "Tail": "Tail"
+            }
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "lambdainvoke.js",
+            "argumentFormat": ""
+        }
+    }
+}

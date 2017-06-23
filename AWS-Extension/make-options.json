@@ -2,8 +2,9 @@
     "tasks": [
         "awscli",
         "cloudformation",
-        "s3fileupload",
-        "s3filedownload"
+        "lambdainvoke",
+        "s3filedownload",
+        "s3fileupload"
     ],
     "taskResources": [
         "*.ps1",

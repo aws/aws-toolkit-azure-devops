@@ -1,0 +1,15 @@
+{
+  "name": "lambdainvoke",
+  "version": "0.9.0",
+  "description": "UInvokes an AWS Lambda function with a JSON payload.",
+  "main": "lambdainvoke.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.48.0",
+    "vsts-task-lib": "^2.0.1-preview"
+  }
+}
