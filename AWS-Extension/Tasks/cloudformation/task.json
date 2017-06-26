@@ -31,12 +31,12 @@
     "instanceNameFormat": "AWS CloudFormation Deployment $(stackName)",
     "inputs": [
         {
-            "name": "awsConnection",
-            "type": "connectedService:AWS",
-            "label": "AWS service endpoint",
+            "name": "awsCredentials",
+            "type": "connectedService:AWSCredentials",
+            "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS endpoint to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
         },
         {
             "name": "action",

@@ -1,6 +1,6 @@
 import tl = require('vsts-task-lib/task');
 
-export class AwsS3FileDownloadTaskParameters {
+export class AwsS3DownloadTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;
@@ -12,7 +12,7 @@ export class AwsS3FileDownloadTaskParameters {
 
     constructor() {
         try {
-            const awsEndpoint = tl.getInput('awsConnection', true);
+            const awsEndpoint = tl.getInput('awsCredentials', true);
             const awsEndpointAuth = tl.getEndpointAuthorization(awsEndpoint, false);
             this.awsKeyId = awsEndpointAuth.parameters.username;
             this.awsSecretKey = awsEndpointAuth.parameters.password;

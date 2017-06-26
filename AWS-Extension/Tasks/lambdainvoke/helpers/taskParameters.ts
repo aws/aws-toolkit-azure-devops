@@ -12,7 +12,7 @@ export class AwsLambdaInvokeTaskParameters {
 
     constructor() {
         try {
-            const awsEndpoint = tl.getInput('awsConnection', true);
+            const awsEndpoint = tl.getInput('awsCredentials', true);
             const awsEndpointAuth = tl.getEndpointAuthorization(awsEndpoint, false);
             this.awsKeyId = awsEndpointAuth.parameters.username;
             this.awsSecretKey = awsEndpointAuth.parameters.password;

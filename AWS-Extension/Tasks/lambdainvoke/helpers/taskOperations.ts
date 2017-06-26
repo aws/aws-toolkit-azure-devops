@@ -27,7 +27,7 @@ export class TaskOperations {
             FunctionName: taskParameters.functionName,
             InvocationType: taskParameters.invocationType,
             LogType: taskParameters.logType,
-            Payload: taskParameters.payload
+            Payload: JSON.stringify(taskParameters.payload)
         };
         try {
             const data: awsLambdaClient.InvocationResponse = await lambda.invoke(params).promise();

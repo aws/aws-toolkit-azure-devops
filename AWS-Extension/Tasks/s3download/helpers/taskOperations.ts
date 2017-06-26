@@ -10,7 +10,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 
 export class TaskOperations {
 
-    public static async downloadArtifacts(taskParameters: TaskParameters.AwsS3FileDownloadTaskParameters): Promise<void> {
+    public static async downloadArtifacts(taskParameters: TaskParameters.AwsS3DownloadTaskParameters): Promise<void> {
         const s3Config = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
@@ -24,7 +24,7 @@ export class TaskOperations {
         await TaskOperations.downloadFiles(taskParameters, s3);
     }
 
-    private static async downloadFiles(taskParameters: TaskParameters.AwsS3FileDownloadTaskParameters, s3: awsS3Client) {
+    private static async downloadFiles(taskParameters: TaskParameters.AwsS3DownloadTaskParameters, s3: awsS3Client) {
 
         if (!fs.existsSync(taskParameters.targetFolder)) {
             tl.mkdirP(taskParameters.targetFolder);
@@ -74,7 +74,7 @@ export class TaskOperations {
         });
     }
 
-    private static async fetchAllObjectKeys(taskParameters: TaskParameters.AwsS3FileDownloadTaskParameters,
+    private static async fetchAllObjectKeys(taskParameters: TaskParameters.AwsS3DownloadTaskParameters,
                                             s3: awsS3Client) : Promise<string[]> {
         const allKeys: string[] = [];
         let nextToken : string = null;

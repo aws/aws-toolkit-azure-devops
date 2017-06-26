@@ -1,8 +1,8 @@
 {
     "id": "369b7be3-fc8a-41ff-94b8-9798e6108dd0",
-    "name": "S3FileDownload",
-    "friendlyName": "AWS S3 File Download",
-    "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
+    "name": "S3Download",
+    "friendlyName": "AWS S3 Download",
+    "description": "Download file and folder content from an Amazon Simple Storage Service (S3) Bucket",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html)",
     "category": "Deploy",
@@ -14,10 +14,10 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "0"
+        "Patch": "1"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS File Download: $(bucketName)",
+    "instanceNameFormat": "AWS S3 Download: $(bucketName)",
     "groups": [
         {
             "name": "advanced",
@@ -27,12 +27,12 @@
     ],
     "inputs": [
         {
-            "name": "awsConnection",
-            "type": "connectedService:AWS",
-            "label": "AWS service endpoint",
+            "name": "awsCredentials",
+            "type": "connectedService:AWSCredentials",
+            "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS endpoint to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
         },
         {
             "name": "regionName",
@@ -48,7 +48,7 @@
             "label": "Bucket Name",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The name of the bucket containing the files to be download."
+            "helpMarkDown": "The name of the bucket containing the content to be download."
         },
         {
             "name": "sourceFolder",
@@ -56,7 +56,7 @@
             "label": "Source Folder",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "The source folder in the bucket that the content pattern(s) will be run against. If not set the root of the bucket is assumed."
+            "helpMarkDown": "The source folder (key prefix) in the bucket that the content pattern(s) will be run against. If not set the root of the bucket is assumed."
         },
         {
             "name": "globExpressions",
@@ -64,7 +64,7 @@
             "label": "Contents",
             "defaultValue": "**",
             "required": true,
-            "helpMarkDown": "File path/name glob patterns to select the files to be downloaded. Supports multiple lines of minimatch patterns."
+            "helpMarkDown": "Glob patterns to select the file and folder content to be downloaded. Supports multiple lines of minimatch patterns."
         },
         {
             "name": "targetFolder",
@@ -72,7 +72,7 @@
             "label": "Target Folder",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The target folder to contain the downloaded files. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)."
+            "helpMarkDown": "The target folder to contain the downloaded content. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)."
         },
         {
             "name": "overwrite",
@@ -86,7 +86,7 @@
     ],
     "execution": {
         "Node": {
-            "target": "s3filedownload.js",
+            "target": "s3download.js",
             "argumentFormat": ""
         }
     },

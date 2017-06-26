@@ -9,8 +9,8 @@ import TaskOperationHelpers = require('./helpers/taskOperations');
 tl.setResourcePath(path.join(__dirname, 'task.json'));
 
 function run(): Promise<void> {
-    const taskParameters = new TaskParameters.AwsS3FileDownloadTaskParameters();
-    return TaskOperationHelpers.TaskOperations.downloadArtifacts(taskParameters);
+    const taskParameters = new TaskParameters.AwsS3UploadTaskParameters();
+    return TaskOperationHelpers.TaskOperations.uploadArtifacts(taskParameters);
 }
 
 // run

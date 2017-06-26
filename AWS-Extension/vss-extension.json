@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "id": "aws-vsts-tools",
-  "version": "0.9.0",
-  "name": "AWS Tools for Visual Studio Team System",
+  "version": "0.9.1",
+  "name": "AWS Tools for Visual Studio Team Services",
   "scopes": [
     "vso.build",
     "vso.build_execute",
@@ -28,7 +28,7 @@
     }
   ],
   "tags": [
-    "AWS","S3","CloudFormation","AWS CLI"
+    "AWS","S3","CloudFormation","AWS CLI", "AWS Lambda"
   ],
   "links": {
     "home": {
@@ -78,10 +78,10 @@
       "path": "Tasks/lambdainvoke"
     },
     {
-      "path": "Tasks/s3filedownload"
+      "path": "Tasks/s3download"
     },
     {
-      "path": "Tasks/s3fileupload"
+      "path": "Tasks/s3upload"
     }
   ],
   "categories": [
@@ -89,24 +89,24 @@
   ],
   "contributions": [
     {
-      "id": "aws-service-endpoint",
-      "description": "Service Endpoint type for AWS connections",
+      "id": "aws-credentials",
+      "description": "Credentials for tasks invoking AWS services",
       "type": "ms.vss-endpoint.service-endpoint-type",
       "targets": [
         "ms.vss-endpoint.endpoint-types"
       ],
       "properties": {
-        "name": "AWS",
-        "displayName": "AWS",
+        "name": "AWSCredentials",
+        "displayName": "AWSCredentials",
         "url": {
           "displayName": "Server Url",
-          "helpText": "Url for the Fabrikam server to connect to.",
+          "helpText": "Dummy url to satisfy the schema for a contribution.",
           "value": "https://aws.amazon.com/",
           "isVisible": "false"
         },
         "dataSources": [
           {
-            "name": "AWS Connection",
+            "name": "AWS Credentials",
             "endpointUrl": "{{endpoint.url}}api/projects/index",
             "resultSelector": "jsonpath:$[*].nm"
           }
@@ -176,25 +176,25 @@
       }
     },
     {
-      "id": "s3filedownload",
+      "id": "s3download",
       "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "Tasks/s3filedownload"
+        "name": "Tasks/s3download"
       }
     },
     {
-      "id": "s3fileupload",
+      "id": "s3upload",
       "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "Tasks/s3fileupload"
+        "name": "Tasks/s3upload"
       }
     }
   ]

@@ -8,7 +8,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 
 export class TaskOperations {
 
-    public static async uploadArtifacts(taskParameters: TaskParameters.AwsS3FileUploadTaskParameters): Promise<void> {
+    public static async uploadArtifacts(taskParameters: TaskParameters.AwsS3UploadTaskParameters): Promise<void> {
         const s3Config = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
@@ -36,7 +36,7 @@ export class TaskOperations {
         }
     }
 
-    private static async uploadFiles(taskParameters: TaskParameters.AwsS3FileUploadTaskParameters, s3: awsS3Client) {
+    private static async uploadFiles(taskParameters: TaskParameters.AwsS3UploadTaskParameters, s3: awsS3Client) {
         const matchedFiles = this.findFiles(taskParameters);
         for (let i = 0; i < matchedFiles.length; i++) {
             const matchedFile = matchedFiles[i];
@@ -73,7 +73,7 @@ export class TaskOperations {
         }
     }
 
-    private static findFiles(taskParameters: TaskParameters.AwsS3FileUploadTaskParameters): string[] {
+    private static findFiles(taskParameters: TaskParameters.AwsS3UploadTaskParameters): string[] {
         tl.debug('Searching for files to upload');
         console.log(`sourceFolderPath ${taskParameters.sourceFolder}`);
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder);

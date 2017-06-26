@@ -1,8 +1,8 @@
 {
     "id": "3098b5ea-8371-4ead-8780-07412c4e6b45",
-    "name": "S3FileUpload",
-    "friendlyName": "AWS S3 File Upload",
-    "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
+    "name": "S3Upload",
+    "friendlyName": "AWS S3 Upload",
+    "description": "Upload file and folder content to an Amazon Simple Storage Service (S3) Bucket",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html)",
     "category": "Deploy",
@@ -14,10 +14,10 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "0"
+        "Patch": "1"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS File Upload: $(bucketName)",
+    "instanceNameFormat": "AWS S3 Upload: $(bucketName)",
     "groups": [
         {
             "name": "advanced",
@@ -27,12 +27,12 @@
     ],
     "inputs": [
         {
-            "name": "awsConnection",
-            "type": "connectedService:AWS",
-            "label": "AWS service endpoint",
+            "name": "awsCredentials",
+            "type": "connectedService:AWSCredentials",
+            "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS endpoint to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
         },
         {
             "name": "regionName",
@@ -48,7 +48,7 @@
             "label": "Bucket Name",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The name of the bucket where the files will be uploaded. If the bucket does not exist it will be created."
+            "helpMarkDown": "The name of the bucket where the content will be uploaded. If the bucket does not exist it will be created."
         },
         {
             "name": "sourceFolder",
@@ -64,7 +64,7 @@
             "label": "Contents",
             "defaultValue": "**",
             "required": true,
-            "helpMarkDown": "File path/name glob patterns to select the files to be uploaded. Supports multiple lines of minimatch patterns."
+            "helpMarkDown": "File path/name glob patterns to select the content to be uploaded. Supports multiple lines of minimatch patterns."
         },
         {
             "name": "targetFolder",
@@ -72,7 +72,7 @@
             "label": "Target Folder",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "The target folder in the S3 bucket to contain the files. If not set the root of the bucket is assumed. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)"
+            "helpMarkDown": "The target folder (key prefix) in the S3 bucket to contain the content. If not set the root of the bucket is assumed. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)"
         },
         {
             "name": "filesAcl",
@@ -80,7 +80,7 @@
             "label": "Access Control (ACL)",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "The canned Access Control List (ACL) to apply to the uploaded files. Refer to [Canned ACL](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl)",
+            "helpMarkDown": "The canned Access Control List (ACL) to apply to the uploaded content. Refer to [Canned ACL](http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl)",
             "options": {
                 "private": "private",
                 "public-read": "public read",
@@ -120,7 +120,7 @@
     ],
     "execution": {
         "Node": {
-            "target": "s3fileupload.js",
+            "target": "s3upload.js",
             "argumentFormat": ""
         }
     },
