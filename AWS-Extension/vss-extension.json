@@ -96,8 +96,8 @@
         "ms.vss-endpoint.endpoint-types"
       ],
       "properties": {
-        "name": "AWSCredentials",
-        "displayName": "AWSCredentials",
+        "name": "AWS",
+        "displayName": "AWS",
         "url": {
           "displayName": "Server Url",
           "helpText": "Dummy url to satisfy the schema for a contribution.",
@@ -106,7 +106,7 @@
         },
         "dataSources": [
           {
-            "name": "AWS Credentials",
+            "name": "AWS",
             "endpointUrl": "{{endpoint.url}}api/projects/index",
             "resultSelector": "jsonpath:$[*].nm"
           }

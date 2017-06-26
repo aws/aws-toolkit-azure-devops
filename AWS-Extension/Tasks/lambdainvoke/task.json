@@ -35,7 +35,7 @@
     "inputs" : [
         {
             "name": "awsCredentials",
-            "type": "connectedService:AWSCredentials",
+            "type": "connectedService:AWS",
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
