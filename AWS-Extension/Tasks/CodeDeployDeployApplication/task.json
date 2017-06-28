@@ -1,0 +1,136 @@
+{
+    "id": "68845d26-9c16-4c26-bef9-69a9cfbbf60e",
+    "name": "CodeDeployDeployApplication",
+    "friendlyName": "AWS CodeDeploy Application Deployment",
+    "description": "Deploys an application to Amazon EC2 instance(s) using AWS CodeDeploy.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [AWS CodeDeploy User Guide](https://docs.aws.amazon.com/codedeploy/latest/userguide/)",
+    "category": "Deploy",
+    "visibility": [
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "0",
+        "Minor": "9",
+        "Patch": "1"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "AWS CodeDeploy Deploy: $(applicationName)",
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": false
+        }
+    ],
+    "inputs" : [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "applicationName",
+            "label": "Application Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the AWS CodeDeploy application"
+        },
+        {
+            "name": "deploymentGroupName",
+            "label": "Deployment Group Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the deployment group the revision will be deployed to"
+        },
+        {
+            "name": "description",
+            "label": "Description",
+            "type": "string",
+            "required":false,
+            "defaultValue": "",
+            "helpMarkDown": "Optional description for the deployment"
+        },
+        {
+            "name": "sourceBundle",
+            "label": "Source Bundle",
+            "type": "filePath",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the archived bundle containing the new revision to be uploaded and deployed"
+        },
+        {
+            "name": "bucketName",
+            "type": "string",
+            "label": "Bucket Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name of the bucket containing the application revision bundle to be deployed"
+        },
+        {
+            "name": "targetBundle",
+            "label": "Target Bundle",
+            "type": "string",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name for the uploaded application bundle in the bucket"
+        },
+        {
+            "name": "fileExistsBehavior",
+            "label": "Existing File Behavior",
+            "type": "picklist",
+            "defaultValue": "DISALLOW",
+            "helpMarkDown": "How AWS CodeDeploy should handle files that already exist in a deployment target location but weren't part of the previous successful deployment.",
+            "options": {
+                "DISALLOW": "Fail the deployment",
+                "OVERWRITE": "Overwrite the version already on the instance with the version in the new application revision",
+                "RETAIN": "Keep the version already on the instance as part of the new deployment"
+            }
+        },
+        {
+            "name": "updateOutdatedInstancesOnly",
+            "label": "Update Outdated Instances Only",
+            "type": "boolean",
+            "defaultValue": false,
+            "helpMarkDown": "If checked deploys to only those instances that are not running the latest application revision",
+            "groupName": "advanced"
+        },
+        {
+            "name": "ignoreApplicationStopFailures",
+            "label": "Ignore Application Stop Failures",
+            "type": "boolean",
+            "defaultValue": false,
+            "helpMarkDown": "If checked then if the deployment causes the ApplicationStop deployment lifecycle event to an instance to fail, the deployment to that instance will not be considered to have failed at that point and will continue on to the BeforeInstall deployment lifecycle event.",
+            "groupName": "advanced"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "CodeDeployDeployApplication.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "UploadingBundle": "Uploading new revision bundle %s to bucket %s",
+        "UploadedBundle": "Uploaded revision bundle to %s",
+        "BundleUploadFailed": "Error during upload of bundle",
+        "DeployingRevision": "Deploying the new revision",
+        "RevisionDeployed": "Successfully requested deployment of new revision to deployment group %s for application %s",
+        "RevisionDeploymentFailed": "Error requesting deployment of new revision to deployment group",
+        "TaskCompleted": "Application deployment completed"
+    }
+}

@@ -1,11 +1,12 @@
 {
     "tasks": [
-        "awscli",
-        "cloudformation",
-        "lambdainvoke",
-        "lambdaNETCoreDeploy",
-        "s3download",
-        "s3upload"
+        "AWSCLI",
+        "CloudFormation",
+        "CodeDeployDeployApplication",
+        "LambdaInvokeFunction",
+        "LambdaNETCoreDeploy",
+        "S3Download",
+        "S3Upload"
     ],
     "taskResources": [
         "*.ps1",

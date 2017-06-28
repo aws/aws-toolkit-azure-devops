@@ -2,6 +2,7 @@
     "compilerOptions": {
         "target": "ES6",
         "module": "commonjs",
-        "sourceMap": true
+        "sourceMap": true,
+        "alwaysStrict": true
     }
 }

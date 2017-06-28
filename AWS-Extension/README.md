@@ -1,7 +1,7 @@
 ## Overview
-Delivering support for a service endpoint, task to upload artifacts to AWS S3 bucket, task to run AWS CLI commands, and other interesting CI/CD tasks.
+Adds support for defining AWS connection credentials as Visual Studio Team Services endpoints, and tasks for working with AWS services such as S3, Lambda, CodeDeploy and CloudFormation.
 
-## Highlighted Features 
+## Highlighted Features
 ### Create an AWS Connection
 To deploy to AWS, an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use in the Build or Release Management definition by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. 
 - Use 'AWS' endpoint type, provide the following parameters 

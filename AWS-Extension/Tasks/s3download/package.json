@@ -2,7 +2,7 @@
   "name": "s3download",
   "version": "0.9.1",
   "description": "Download content from an AWS Simple Storage Service (S3) Bucket",
-  "main": "s3download.js",
+  "main": "S3Download.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

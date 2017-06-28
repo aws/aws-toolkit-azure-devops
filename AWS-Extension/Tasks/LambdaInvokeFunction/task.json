@@ -1,6 +1,6 @@
 {
     "id": "19d98754-eb4c-450b-abcf-9a799de60003",
-    "name": "LambdaInvoke",
+    "name": "LambdaInvokeFunction",
     "friendlyName": "AWS Lambda Invoke Function",
     "description": "Invokes an AWS Lambda function with a JSON payload.",
     "author": "Amazon Web Services",
@@ -14,10 +14,10 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "0"
+        "Patch": "1"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS Lambda Invoke: $(functionName)",
+    "instanceNameFormat": "AWS Lambda Invoke Function: $(functionName)",
     "groups": [
         {
             "name": "outputOptions",
@@ -98,8 +98,15 @@
     ],
     "execution": {
         "Node": {
-            "target": "lambdainvoke.js",
+            "target": "LambdaInvokeFunction.js",
             "argumentFormat": ""
         }
+    },
+    "messages": {
+        "InvokingFunction": "Invoking function %s",
+        "FunctionInvokeFailed": "Error invoking function",
+        "SettingOutputVariable": "Setting output variable %s with the function output",
+        "ReceivedOutput": "Received output %s from function",
+        "TaskCompleted": "Completed invocation of Lambda function"
     }
 }

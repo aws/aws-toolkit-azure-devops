@@ -11,7 +11,7 @@ export class TaskOperations {
         }
     }
 
-    public static async executeCommand(taskParameters: TaskParameters.AwsCliTaskParameters) {
+    public static async executeCommand(taskParameters: TaskParameters.CliTaskParameters) {
         try {
             await this.configureAwsCli(taskParameters);
             const awsCliPath = tl.which('aws');
@@ -33,7 +33,7 @@ export class TaskOperations {
         }
     }
 
-    private static async configureAwsCli(taskParameters: TaskParameters.AwsCliTaskParameters) {
+    private static async configureAwsCli(taskParameters: TaskParameters.CliTaskParameters) {
         const awsCliPath = tl.which('aws');
         const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath);
         awsCliTool.line('configure set aws_access_key_id');

@@ -6,7 +6,7 @@ import TaskParameters = require('./helpers/taskParameters');
 
 tl.setResourcePath(path.join(__dirname, 'task.json'));
 
-const taskParameters = new TaskParameters.AwsCliTaskParameters();
+const taskParameters = new TaskParameters.CliTaskParameters();
 
 if (TaskOperationHelpers.TaskOperations.checkIfAwsCliIsInstalled()) {
     TaskOperationHelpers.TaskOperations.executeCommand(taskParameters);

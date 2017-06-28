@@ -8,7 +8,19 @@ import { AWSError } from 'aws-sdk/lib/error';
 
 export class TaskOperations {
 
-    public static async uploadArtifacts(taskParameters: TaskParameters.AwsS3UploadTaskParameters): Promise<void> {
+    public static async uploadArtifacts(taskParameters: TaskParameters.UploadTaskParameters): Promise<void> {
+        this.createServiceClient(taskParameters);
+
+        if (taskParameters.createBucket) {
+            await this.createBucketIfNotExist(taskParameters);
+        }
+
+        await this.uploadFiles(taskParameters);
+    }
+
+    private static s3Client: awsS3Client;
+
+    private static createServiceClient(taskParameters: TaskParameters.UploadTaskParameters) {
         const s3Config = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
@@ -18,25 +30,30 @@ export class TaskOperations {
             }
         };
 
-        const s3 = new awsS3Client(s3Config);
-        if (taskParameters.createBucket) {
+        this.s3Client = new awsS3Client(s3Config);
+    }
 
-            const params: awsS3Client.CreateBucketRequest = {
-                Bucket: taskParameters.bucketName
-            };
-            s3.createBucket(params, function(err: AWSError, data: awsS3Client.CreateBucketOutput) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    TaskOperations.uploadFiles(taskParameters, s3);
-                }
-            });
-        } else {
-            await TaskOperations.uploadFiles(taskParameters, s3);
+    private static async createBucketIfNotExist(taskParameters: TaskParameters.UploadTaskParameters) : Promise<void> {
+        if (!taskParameters.createBucket) {
+            return Promise.resolve();
+        }
+
+        try {
+            // does bucket exist and do we have permissions to access it?
+            await this.s3Client.headBucket({ Bucket: taskParameters.bucketName});
+        } catch (err) {
+            // no, or we don't have access, so try and create it
+            tl.debug(tl.loc('HeadBucketFailed', taskParameters.bucketName));
+            try {
+                const response: awsS3Client.CreateBucketOutput = await this.s3Client.createBucket({ Bucket: taskParameters.bucketName });
+            } catch (err) {
+                console.log(tl.loc('CreateBucketFailure'), err);
+                throw err;
+            }
         }
     }
 
-    private static async uploadFiles(taskParameters: TaskParameters.AwsS3UploadTaskParameters, s3: awsS3Client) {
+    private static async uploadFiles(taskParameters: TaskParameters.UploadTaskParameters) {
         const matchedFiles = this.findFiles(taskParameters);
         for (let i = 0; i < matchedFiles.length; i++) {
             const matchedFile = matchedFiles[i];
@@ -55,27 +72,26 @@ export class TaskOperations {
             targetPath = targetPath.replace(/\\/g, '/');
             const stats = fs.lstatSync(matchedFile);
             if (!stats.isDirectory()) {
-                const fileBuffer = fs.readFileSync(matchedFile);
-                tl.debug(`Upload file: ${matchedFile}`);
-                s3.upload({
-                    Bucket: taskParameters.bucketName,
-                    Key: targetPath,
-                    Body: fileBuffer,
-                    ACL: taskParameters.filesAcl
-                }, function(error: AWSError, response: awsS3Client.ManagedUpload) {
-                    console.log(`Uploaded file ${matchedFile} to ${targetPath}`);
-                    console.log(arguments);
-                    if (error) {
-                        tl.setResult(tl.TaskResult.Failed, tl.loc('...uploadfailed', error));
-                    }
-                });
+                const fileBuffer = fs.createReadStream(matchedFile);
+                console.log(tl.loc('UploadingFile', matchedFile));
+                try {
+                    const response: awsS3Client.ManagedUpload.SendData = await this.s3Client.upload({
+                        Bucket: taskParameters.bucketName,
+                        Key: targetPath,
+                        Body: fileBuffer,
+                        ACL: taskParameters.filesAcl
+                    }).promise();
+                    console.log(tl.loc('FileUploadCompleted', matchedFile, targetPath));
+                } catch (err) {
+                    console.error(tl.loc('FileUploadFailed'), err);
+                    throw err;
+                }
             }
         }
     }
 
-    private static findFiles(taskParameters: TaskParameters.AwsS3UploadTaskParameters): string[] {
-        tl.debug('Searching for files to upload');
-        console.log(`sourceFolderPath ${taskParameters.sourceFolder}`);
+    private static findFiles(taskParameters: TaskParameters.UploadTaskParameters): string[] {
+        console.log(`Searching ${taskParameters.sourceFolder} for files to upload`);
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder);
         const allPaths = tl.find(taskParameters.sourceFolder); // default find options (follow sym links)
         tl.debug(tl.loc('AllPaths', allPaths));

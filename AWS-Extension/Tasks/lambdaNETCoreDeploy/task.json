@@ -64,7 +64,7 @@
     ],
     "execution": {
         "Node": {
-            "target": "lambdaNETCoreDeploy.js",
+            "target": "LambdaNETCoreDeploy.js",
             "argumentFormat": ""
         }
     }

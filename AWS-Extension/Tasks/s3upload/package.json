@@ -1,8 +1,8 @@
 {
   "name": "s3upload",
   "version": "0.9.1",
-  "description": "Upload content to AWS Simple Storage Service (S3) Bucket",
-  "main": "s3upload.js",
+  "description": "Upload content to an AWS Simple Storage Service (S3) Bucket",
+  "main": "S3Upload.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

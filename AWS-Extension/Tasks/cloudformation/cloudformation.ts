@@ -9,7 +9,7 @@ import TaskOperationHelpers = require('./helpers/taskOperations');
 tl.setResourcePath(path.join(__dirname, 'task.json'));
 
 function run(): Promise<void> {
-    const taskParameters = new TaskParameters.AwsCloudFormationTaskParameters();
+    const taskParameters = new TaskParameters.CloudFormationTaskParameters();
     switch (taskParameters.action) {
         case 'Create Stack':
             return TaskOperationHelpers.TaskOperations.createNewStack(taskParameters);

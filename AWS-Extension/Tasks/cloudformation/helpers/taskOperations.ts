@@ -10,7 +10,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 
 export class TaskOperations {
 
-    public static async deleteStack(taskParameters: TaskParameters.AwsCloudFormationTaskParameters): Promise<void> {
+    public static async deleteStack(taskParameters: TaskParameters.CloudFormationTaskParameters): Promise<void> {
 
         const cfConfig = {
             apiVersion: '2010-05-15',
@@ -37,7 +37,7 @@ export class TaskOperations {
         });
     }
 
-    public static async createNewStack(taskParameters: TaskParameters.AwsCloudFormationTaskParameters): Promise<void> {
+    public static async createNewStack(taskParameters: TaskParameters.CloudFormationTaskParameters): Promise<void> {
 
         const params: awsCloudFormation.CreateStackInput = {
             OnFailure: taskParameters.onFailure,
@@ -61,7 +61,7 @@ export class TaskOperations {
         }
     }
 
-    private static async createStackFromTemplateFile(taskParameters: TaskParameters.AwsCloudFormationTaskParameters,
+    private static async createStackFromTemplateFile(taskParameters: TaskParameters.CloudFormationTaskParameters,
                                                      cfConfig: awsCloudFormation.ClientConfiguration,
                                                      params: awsCloudFormation.CreateStackInput) {
         let template: string;
@@ -124,7 +124,7 @@ export class TaskOperations {
         });
     }
 
-    private static async createStackFromTemplateUrl(taskParameters: TaskParameters.AwsCloudFormationTaskParameters,
+    private static async createStackFromTemplateUrl(taskParameters: TaskParameters.CloudFormationTaskParameters,
                                                     cfConfig: awsCloudFormation.ClientConfiguration,
                                                     params: awsCloudFormation.CreateStackInput) {
         const regExpression = new RegExp('(s3-|s3\.)?(.*)\.amazonaws\.com');

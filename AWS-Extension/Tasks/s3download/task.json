@@ -86,19 +86,19 @@
     ],
     "execution": {
         "Node": {
-            "target": "s3download.js",
+            "target": "S3Download.js",
             "argumentFormat": ""
         }
     },
     "messages": {
-        "FoundNFiles": "found %d files",
-        "CleaningTargetFolder": "Cleaning target folder: %s",
-        "FileAlreadyExistAt": "File %s already exist at %s",
-        "CopyingTo": "Copying %s to %s",
-        "TargetIsDir": "Unable to copy file %s to %s. The target path already exists as a directory.",
-        "AllPaths": "All paths %s",
-        "MatchedPaths": "Matched paths %s",
-        "MatchedFiles": "Matched files list %s",
-        "Uploadfailed": "Download files from S3 failed: %s"
+        "FileOverwriteWarning": "Target file %s exists for matched key %s, overwriting",
+        "FileExistsError": "Target file %s exists for matched key %s, overwrite switch not set, cannot download",
+        "ListingKeysFromPrefix": "Querying object keys with prefix %s for bucket %s",
+        "ListingKeysFromRoot": "Querying object keys for bucket %s",
+        "QueueingDownload": "Queueing download of %s to %s",
+        "GlobbingFromPrefix": "Globbing object keys with prefix '%s' against '%s' to determine file downloads",
+        "GlobbingFromRoot": "Globbing object keys from bucket root against '%s' to determine file downloads",
+        "MatchedKey": "...matched key %s",
+        "TaskCompleted": "Downloads from S3 completed"
     }
 }

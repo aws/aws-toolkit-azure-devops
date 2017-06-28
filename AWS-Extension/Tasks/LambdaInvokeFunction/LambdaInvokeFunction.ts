@@ -1,16 +1,14 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import fs = require('fs');
-import Q = require('q');
-import AWS = require('aws-sdk/clients/s3');
+import AWS = require('aws-sdk/clients/lambda');
 import TaskParameters = require('./helpers/taskParameters');
 import TaskOperationHelpers = require('./helpers/taskOperations');
 
 tl.setResourcePath(path.join(__dirname, 'task.json'));
 
 function run(): Promise<void> {
-    const taskParameters = new TaskParameters.DownloadTaskParameters();
-    return TaskOperationHelpers.TaskOperations.downloadArtifacts(taskParameters);
+    const taskParameters = new TaskParameters.InvokeFunctionTaskParameters();
+    return TaskOperationHelpers.TaskOperations.invokeFunction(taskParameters);
 }
 
 // run

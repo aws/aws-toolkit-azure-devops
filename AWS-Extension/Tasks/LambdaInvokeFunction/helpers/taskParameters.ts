@@ -1,6 +1,6 @@
 import tl = require('vsts-task-lib/task');
 
-export class AwsLambdaInvokeTaskParameters {
+export class InvokeFunctionTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;

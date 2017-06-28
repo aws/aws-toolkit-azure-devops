@@ -2,7 +2,7 @@
   "name": "cloudformation",
   "version": "0.9.0",
   "description": "Create and delete AWS CloudFormation stacks",
-  "main": "cloudformation.js",
+  "main": "CloudFormation.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

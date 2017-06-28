@@ -1,8 +1,8 @@
 {
-  "name": "lambdainvoke",
-  "version": "0.9.0",
-  "description": "UInvokes an AWS Lambda function with a JSON payload.",
-  "main": "lambdainvoke.js",
+  "name": "codedeploy.deploy",
+  "version": "0.9.1",
+  "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
+  "main": "CodeDeployDeployApplication.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

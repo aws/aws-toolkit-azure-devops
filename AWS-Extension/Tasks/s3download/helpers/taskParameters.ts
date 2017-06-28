@@ -1,6 +1,6 @@
 import tl = require('vsts-task-lib/task');
 
-export class AwsS3DownloadTaskParameters {
+export class DownloadTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;

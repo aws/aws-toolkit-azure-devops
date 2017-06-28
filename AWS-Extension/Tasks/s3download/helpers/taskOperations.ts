@@ -10,7 +10,14 @@ import { AWSError } from 'aws-sdk/lib/error';
 
 export class TaskOperations {
 
-    public static async downloadArtifacts(taskParameters: TaskParameters.AwsS3DownloadTaskParameters): Promise<void> {
+    public static async downloadArtifacts(taskParameters: TaskParameters.DownloadTaskParameters): Promise<void> {
+        this.createServiceClient(taskParameters);
+        await this.downloadFiles(taskParameters);
+    }
+
+    private static s3Client: awsS3Client;
+
+    private static createServiceClient(taskParameters: TaskParameters.DownloadTaskParameters) {
         const s3Config = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
@@ -20,18 +27,17 @@ export class TaskOperations {
             }
         };
 
-        const s3 = new awsS3Client(s3Config);
-        await TaskOperations.downloadFiles(taskParameters, s3);
+        this.s3Client = new awsS3Client(s3Config);
     }
 
-    private static async downloadFiles(taskParameters: TaskParameters.AwsS3DownloadTaskParameters, s3: awsS3Client) {
+    private static async downloadFiles(taskParameters: TaskParameters.DownloadTaskParameters) {
 
         if (!fs.existsSync(taskParameters.targetFolder)) {
             tl.mkdirP(taskParameters.targetFolder);
         }
 
         const allDownloads = [];
-        const allKeys = await this.fetchAllObjectKeys(taskParameters, s3);
+        const allKeys = await this.fetchAllObjectKeys(taskParameters);
         for (const glob of taskParameters.globExpressions) {
             const matchedKeys = await this.matchObjectKeys(allKeys, taskParameters.sourceFolder, glob);
             for (const matchedKey of matchedKeys) {
@@ -39,25 +45,25 @@ export class TaskOperations {
 
                 if (fs.existsSync(dest)) {
                     if (taskParameters.overwrite) {
-                        tl.debug(`Target file ${dest} exists for matched key ${matchedKey}, overwriting.`);
+                        console.log(tl.loc('FileOverwriteWarning', dest, matchedKey));
                     } else {
-                        throw new Error(`Target file ${dest} exists for matched key ${matchedKey}, overwrite switch not set.`);
+                        throw new Error(tl.loc('FileExistsError', dest, matchedKey));
                     }
                 }
 
-                console.log(`Queueing download of ${matchedKey} to ${taskParameters.targetFolder}`);
+                console.log(tl.loc('QueueingDownload', matchedKey, taskParameters.targetFolder));
                 const params = {
                     Bucket: taskParameters.bucketName,
                     Key: matchedKey
                 };
-                allDownloads.push(this.downloadFile(s3, params, dest));
+                allDownloads.push(this.downloadFile(params, dest));
             }
         }
 
         return Promise.all(allDownloads);
     }
 
-    private static downloadFile(s3: awsS3Client, s3Params: awsS3Client.GetObjectRequest, dest: string): Promise<void> {
+    private static downloadFile(s3Params: awsS3Client.GetObjectRequest, dest: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             const dir: string = path.dirname(dest);
@@ -66,7 +72,7 @@ export class TaskOperations {
             }
 
             const file = fs.createWriteStream(dest);
-            const s3Stream = s3.getObject(s3Params).createReadStream();
+            const s3Stream = this.s3Client.getObject(s3Params).createReadStream();
             s3Stream.on('error', reject);
             file.on('error', reject);
             file.on('close', resolve);
@@ -74,8 +80,13 @@ export class TaskOperations {
         });
     }
 
-    private static async fetchAllObjectKeys(taskParameters: TaskParameters.AwsS3DownloadTaskParameters,
-                                            s3: awsS3Client) : Promise<string[]> {
+    private static async fetchAllObjectKeys(taskParameters: TaskParameters.DownloadTaskParameters) : Promise<string[]> {
+        if (taskParameters.sourceFolder) {
+            console.log(tl.loc('ListingKeysFromPrefix', taskParameters.sourceFolder, taskParameters.bucketName));
+        } else {
+            console.log(tl.loc('ListingKeysFromRoot', taskParameters.bucketName));
+        }
+
         const allKeys: string[] = [];
         let nextToken : string = null;
         do {
@@ -85,7 +96,7 @@ export class TaskOperations {
                 Marker: nextToken
             };
             try {
-                const s3Data = await s3.listObjects(params).promise();
+                const s3Data = await this.s3Client.listObjects(params).promise();
                 nextToken = s3Data.NextMarker;
                 s3Data.Contents.forEach((s3object) => allKeys.push(s3object.Key));
             } catch (err) {
@@ -100,10 +111,10 @@ export class TaskOperations {
     private static async matchObjectKeys(allKeys: string[], sourcePrefix: string, glob: string): Promise<string[]> {
         let sourcePrefixLen: number = 0;
         if (sourcePrefix) {
-            tl.debug(`Globbing object keys with prefix '${sourcePrefix}' against '${glob}' to determine file downloads`);
+            console.log(tl.loc('GlobbingFromPrefix', sourcePrefix, glob));
             sourcePrefixLen = sourcePrefix.length + 1;
         } else {
-            tl.debug(`Globbing object keys from bucket root against '${glob}' to determine file downloads`);
+            console.log(tl.loc('GlobbingFromRoot', glob));
         }
 
         const matcher = new mm.Minimatch(glob);
@@ -111,7 +122,7 @@ export class TaskOperations {
         allKeys.forEach((key) => {
             const keyToTest: string = key.substring(sourcePrefixLen);
             if (matcher.match(keyToTest)) {
-                tl.debug(`...matched key ${key}`);
+                tl.debug(tl.loc('MatchedKey', key));
                 matchedKeys.push(key);
             }
         });

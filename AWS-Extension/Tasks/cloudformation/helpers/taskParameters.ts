@@ -1,6 +1,6 @@
 import tl = require('vsts-task-lib/task');
 
-export class AwsCloudFormationTaskParameters {
+export class CloudFormationTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public stackName: string;

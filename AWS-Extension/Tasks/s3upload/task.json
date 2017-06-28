@@ -120,19 +120,20 @@
     ],
     "execution": {
         "Node": {
-            "target": "s3upload.js",
+            "target": "S3Upload.js",
             "argumentFormat": ""
         }
     },
     "messages": {
         "FoundNFiles": "found %d files",
-        "CleaningTargetFolder": "Cleaning target folder: %s",
-        "FileAlreadyExistAt": "File %s already exist at %s",
-        "CopyingTo": "Copying %s to %s",
-        "TargetIsDir": "Unable to copy file %s to %s. The target path already exists as a directory.",
         "AllPaths": "All paths %s",
         "MatchedPaths": "Matched paths %s",
         "MatchedFiles": "Matched files list %s",
-        "Uploadfailed": "Upload files to S3 failed: %s"
+        "CreateBucketFailure": "Failed to create bucket",
+        "UploadingFile": "Uploading %s",
+        "FileUploadCompleted": "Completed upload of %s to %s",
+        "FileUploadFailed": "File upload failed",
+        "TaskCompleted": "All uploads to S3 completed",
+        "HeadBucketFailed": "Head operation against bucket %s failed, attempting to create"
     }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "lambdanetcoredeploy",
+  "name": "lambdainvokefunction",
   "version": "0.9.0",
-  "description": "Builds and deploys an AWS Lambda function.",
-  "main": "LambdaNETCoreDeploy.js",
+  "description": "Invokes an AWS Lambda function with a JSON payload.",
+  "main": "LambdaInvokeFunction.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
