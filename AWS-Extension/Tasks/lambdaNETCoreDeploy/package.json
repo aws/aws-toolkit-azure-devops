@@ -1,0 +1,15 @@
+{
+  "name": "lambdainvoke",
+  "version": "0.9.0",
+  "description": "Builds and deploys an AWS Lambda function.",
+  "main": "lambdaNETCoreDeploy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.48.0",
+    "vsts-task-lib": "^2.0.1-preview"
+  }
+}

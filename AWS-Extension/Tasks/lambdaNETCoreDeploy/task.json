@@ -1,0 +1,71 @@
+{
+    "id": "bdc51eaf-b608-42d5-8f1f-2aed6cf392ad",
+    "name": "LambdaNETCoreDeploy",
+    "friendlyName": "AWS Lambda .NET Core Deployment",
+    "description": "Build and deploy a .NET Core AWS Lambda function.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "0",
+        "Minor": "9",
+        "Patch": "1"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "AWS Lambda .NET Core Deploy: $(functionName)",
+    "groups": [
+     ],
+    "inputs" : [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "lambdaProjectPath",
+            "label": "Path to Lambda Project",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The relative path to the location of the Lambda project"
+        },
+        {
+            "name": "functionName",
+            "type": "string",
+            "label": "Function Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name of the Lambda function to invoke. You can also specify the Amazon Resource Name (ARN) of the function."
+        },
+        {
+            "name": "functionRole",
+            "type": "string",
+            "label": "Function Role",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "The name of the AWS Identity and Access Management Role that provides access to AWS services to the deployed Lambda function."
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "lambdaNETCoreDeploy.js",
+            "argumentFormat": ""
+        }
+    }
+}

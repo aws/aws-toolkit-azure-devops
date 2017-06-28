@@ -3,6 +3,7 @@
         "awscli",
         "cloudformation",
         "lambdainvoke",
+        "lambdaNETCoreDeploy",
         "s3download",
         "s3upload"
     ],

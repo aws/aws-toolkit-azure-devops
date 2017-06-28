@@ -78,6 +78,9 @@
       "path": "Tasks/lambdainvoke"
     },
     {
+      "path": "Tasks/lambdaNETCoreDeploy"
+    },
+    {
       "path": "Tasks/s3download"
     },
     {
@@ -165,6 +168,17 @@
       }
     },
     {
+      "id": "lambdaNETCoreDeploy",
+      "description": "Build and deploy a .NET Core AWS Lambda function.",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/lambdaNETCoreDeploy"
+      }
+    },
+    {
       "id": "lambdainvoke",
       "description": "Invokes an AWS Lambda function with a JSON payload.",
       "type": "ms.vss-distributed-task.task",
@@ -174,8 +188,7 @@
       "properties": {
         "name": "Tasks/lambdainvoke"
       }
-    },
-    {
+    },    {
       "id": "s3download",
       "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
       "type": "ms.vss-distributed-task.task",
