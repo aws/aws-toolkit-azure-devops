@@ -6,9 +6,8 @@ export class DeployTaskParameters {
     public awsRegion: string;
     public applicationName: string;
     public description: string;
-    public sourceBundle: string;
     public bucketName: string;
-    public targetBundle: string;
+    public deploymentArchive: string;
     public deploymentGroupName: string;
     public fileExistsBehavior: string;
     public updateOutdatedInstancesOnly: boolean;
@@ -23,9 +22,8 @@ export class DeployTaskParameters {
             this.awsRegion = tl.getInput('regionName', true);
             this.applicationName = tl.getInput('applicationName', true);
             this.description = tl.getInput('description', false);
-            this.sourceBundle = tl.getPathInput('sourceBundle', true, true);
             this.bucketName = tl.getInput('bucketName', true);
-            this.targetBundle = tl.getInput('targetBundle', true);
+            this.deploymentArchive = tl.getInput('deploymentArchive', true);
             this.deploymentGroupName = tl.getInput('deploymentGroupName', true);
             this.fileExistsBehavior = tl.getInput('fileExistsBehavior', false);
             this.updateOutdatedInstancesOnly = tl.getBoolInput('updateOutdatedInstancesOnly', false);

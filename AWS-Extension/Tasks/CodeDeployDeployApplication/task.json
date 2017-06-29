@@ -59,36 +59,28 @@
             "helpMarkDown": "The name of the deployment group the revision will be deployed to"
         },
         {
+            "name": "bucketName",
+            "type": "string",
+            "label": "Bucket Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name of the bucket containing the deployment archive to be deployed"
+        },
+        {
+            "name": "deploymentArchive",
+            "label": "Deployment Archive",
+            "type": "string",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name of the archive in the bucket containing the application revision to deploy"
+        },
+        {
             "name": "description",
             "label": "Description",
             "type": "string",
             "required":false,
             "defaultValue": "",
             "helpMarkDown": "Optional description for the deployment"
-        },
-        {
-            "name": "sourceBundle",
-            "label": "Source Bundle",
-            "type": "filePath",
-            "required": true,
-            "defaultValue": "",
-            "helpMarkDown": "The name of the archived bundle containing the new revision to be uploaded and deployed"
-        },
-        {
-            "name": "bucketName",
-            "type": "string",
-            "label": "Bucket Name",
-            "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "The name of the bucket containing the application revision bundle to be deployed"
-        },
-        {
-            "name": "targetBundle",
-            "label": "Target Bundle",
-            "type": "string",
-            "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "The name for the uploaded application bundle in the bucket"
         },
         {
             "name": "fileExistsBehavior",
@@ -126,9 +118,6 @@
         }
     },
     "messages": {
-        "UploadingBundle": "Uploading new revision bundle %s to bucket %s",
-        "UploadedBundle": "Uploaded revision bundle to %s",
-        "BundleUploadFailed": "Error during upload of bundle",
         "DeployingRevision": "Deploying the new revision",
         "RevisionDeployed": "Successfully requested deployment of new revision to deployment group %s for application %s",
         "RevisionDeploymentFailed": "Error requesting deployment of new revision to deployment group",
