@@ -102,7 +102,6 @@ target.clean = function () {
 target.build = function() {
     target.clean();
 
-    ensureTool('tsc', '--version', 'Version 2.3.4');
     ensureTool('npm', '--version', function (output) {
         if (semver.lt(output, '3.0.0')) {
             fail('expected 3.0.0 or higher');
