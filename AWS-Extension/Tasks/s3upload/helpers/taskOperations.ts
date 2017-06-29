@@ -40,12 +40,12 @@ export class TaskOperations {
 
         try {
             // does bucket exist and do we have permissions to access it?
-            await this.s3Client.headBucket({ Bucket: taskParameters.bucketName});
+            await this.s3Client.headBucket({ Bucket: taskParameters.bucketName}).promise();
         } catch (err) {
             // no, or we don't have access, so try and create it
             tl.debug(tl.loc('HeadBucketFailed', taskParameters.bucketName));
             try {
-                const response: awsS3Client.CreateBucketOutput = await this.s3Client.createBucket({ Bucket: taskParameters.bucketName });
+                const response: awsS3Client.CreateBucketOutput = await this.s3Client.createBucket({ Bucket: taskParameters.bucketName }).promise();
             } catch (err) {
                 console.log(tl.loc('CreateBucketFailure'), err);
                 throw err;

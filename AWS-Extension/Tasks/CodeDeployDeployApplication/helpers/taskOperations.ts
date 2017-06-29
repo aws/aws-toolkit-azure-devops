@@ -80,7 +80,7 @@ export class TaskOperations {
                     }
                 }
             };
-            await this.codeDeployClient.registerApplicationRevision(request);
+            await this.codeDeployClient.registerApplicationRevision(request).promise();
         } catch (err) {
             console.error('Error registering new revision', err);
             throw err;
@@ -115,7 +115,7 @@ export class TaskOperations {
                     }
                 }
             };
-            const response: awsCodeDeployClient.CreateDeploymentOutput = await this.codeDeployClient.createDeployment(request);
+            const response: awsCodeDeployClient.CreateDeploymentOutput = await this.codeDeployClient.createDeployment(request).promise();
             console.log(tl.loc('RevisionDeployed', taskParameters.deploymentGroupName, taskParameters.applicationName));
         } catch (err) {
             console.error(tl.loc('RevisionDeploymentFailed'), err);
