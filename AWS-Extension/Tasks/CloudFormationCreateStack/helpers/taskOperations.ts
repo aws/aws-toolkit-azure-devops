@@ -64,7 +64,7 @@ export class TaskOperations {
                 tl.debug('Successfully loaded template file');
             }
         } catch (err) {
-            console.error(tl.loc('TemplateFilesLoadFailure', err.Message), err);
+            console.error(tl.loc('TemplateFilesLoadFailure', err.message), err);
             throw err;
         }
 
@@ -112,7 +112,7 @@ export class TaskOperations {
 
             templateParameters = JSON.parse(downloadResponse.Body.toString());
         } catch (err) {
-            console.log(tl.loc('ParametersUrlLoadOrParseError', err.Message));
+            console.log(tl.loc('ParametersUrlLoadOrParseError', err.message));
             throw err;
         }
 

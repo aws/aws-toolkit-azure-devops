@@ -119,8 +119,9 @@
     },
     "messages": {
         "DeployingRevision": "Deploying the new revision",
-        "RevisionDeployed": "Successfully requested deployment of new revision to deployment group %s for application %s",
-        "RevisionDeploymentFailed": "Error requesting deployment of new revision to deployment group",
+        "DeploymentStarted": "Started deployment of new revision to deployment group %s for application %s, deployment ID %s",
+        "DeploymentError": "Request to deploy new revision returned error: %s",
+        "WaitingForDeployment": "Waiting for deployment to complete",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }

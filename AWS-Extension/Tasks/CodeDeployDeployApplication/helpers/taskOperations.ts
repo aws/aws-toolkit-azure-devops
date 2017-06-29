@@ -10,7 +10,8 @@ export class TaskOperations {
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
         this.constructServiceClients(taskParameters);
 
-        await this.deployRevision(taskParameters);
+        const deploymentId: string = await this.deployRevision(taskParameters);
+        await this.waitForDeploymentCompletion(taskParameters.applicationName, deploymentId);
 
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
@@ -28,38 +29,8 @@ export class TaskOperations {
         });
     }
 
-    private static async registerRevision(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
-        console.log('Registering new revision with CodeDeploy');
+    private static async deployRevision(taskParameters: TaskParameters.DeployTaskParameters): Promise<string> {
 
-        let archiveType: string = path.extname(taskParameters.deploymentArchive);
-        if (archiveType && archiveType.length > 1) {
-            // let the service error out if the type is not one they currently support
-            archiveType = archiveType.substring(1).toLowerCase();
-        } else {
-             archiveType = 'zip'; // make an assumption
-        }
-
-        try {
-            const request: awsCodeDeployClient.RegisterApplicationRevisionInput = {
-                applicationName: taskParameters.applicationName,
-                description: taskParameters.description,
-                revision: {
-                    revisionType: 'S3',
-                    s3Location: {
-                        bucket: taskParameters.bucketName,
-                        key: taskParameters.deploymentArchive,
-                        bundleType: archiveType
-                    }
-                }
-            };
-            await this.codeDeployClient.registerApplicationRevision(request).promise();
-        } catch (err) {
-            console.error('Error registering new revision', err);
-            throw err;
-        }
-    }
-
-    private static async deployRevision(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
         console.log(tl.loc('DeployingRevision'));
 
         let archiveType: string = path.extname(taskParameters.deploymentArchive);
@@ -67,7 +38,8 @@ export class TaskOperations {
             // let the service error out if the type is not one they currently support
             archiveType = archiveType.substring(1).toLowerCase();
         } else {
-             archiveType = 'zip'; // make an assumption
+            tl.debug('Unable to determine archive type, assuming zip');
+             archiveType = 'zip';
         }
 
         try {
@@ -88,11 +60,26 @@ export class TaskOperations {
                 }
             };
             const response: awsCodeDeployClient.CreateDeploymentOutput = await this.codeDeployClient.createDeployment(request).promise();
-            console.log(tl.loc('RevisionDeployed', taskParameters.deploymentGroupName, taskParameters.applicationName));
+            console.log(tl.loc('DeploymentStarted', taskParameters.deploymentGroupName, taskParameters.applicationName, response.deploymentId));
+            return response.deploymentId;
         } catch (err) {
-            console.error(tl.loc('RevisionDeploymentFailed'), err);
+            console.error(tl.loc('DeploymentError', err.message), err);
             throw err;
         }
     }
 
+    private static async waitForDeploymentCompletion(applicationName: string, deploymentId: string) : Promise<void> {
+
+         return new Promise<void>((resolve, reject) => {
+            console.log(tl.loc('WaitingForDeployment'));
+
+            this.codeDeployClient.waitFor('deploymentSuccessful',
+                                          { deploymentId },
+                                          function(err: AWSError, waitForData: awsCodeDeployClient.GetDeploymentOutput) {
+                if (err) {
+                    throw new Error(tl.loc('DeploymentFailed', applicationName, err.message));
+                }
+            });
+         });
+    }
 }
