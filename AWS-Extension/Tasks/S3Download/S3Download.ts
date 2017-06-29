@@ -18,4 +18,4 @@ run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, '')
 ).catch((error) =>
     tl.setResult(tl.TaskResult.Failed, error)
-    );
+);
