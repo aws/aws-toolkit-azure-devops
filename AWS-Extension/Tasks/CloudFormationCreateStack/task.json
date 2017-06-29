@@ -1,8 +1,8 @@
 {
-    "id": "7ed9a52b-ed1a-442f-bf67-e2d4921a4473",
-    "name": "CloudFormation",
-    "friendlyName": "AWS CloudFormation Deployment",
-    "description": "Create and delete AWS CloudFormation stacks",
+    "id": "1423920e-3741-48b9-8544-68c9d397a60a",
+    "name": "CloudFormationCreateStack",
+    "friendlyName": "AWS CloudFormation Create Stack",
+    "description": "Create an AWS CloudFormation stack",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
     "category": "Deploy",
@@ -24,11 +24,10 @@
         {
             "name": "Template",
             "displayName": "Template",
-            "isExpanded": true,
-            "visibleRule": "action = Create Stack"
+            "isExpanded": true
         }
     ],
-    "instanceNameFormat": "AWS CloudFormation Deployment $(stackName)",
+    "instanceNameFormat": "AWS CloudFormation Create Stack $(stackName)",
     "inputs": [
         {
             "name": "awsCredentials",
@@ -39,23 +38,11 @@
             "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
         },
         {
-            "name": "action",
-            "type": "pickList",
-            "label": "Action",
-            "defaultValue": "Create Stack",
-            "required": true,
-            "helpMarkDown": "Action to be performed on the AWS CloudFormation",
-            "options": {
-                "Create Stack": "Creates a stack as specified in the given template",
-                "Delete Stack": "Deletes a specified stack"
-            }
-        },
-        {
             "name": "regionName",
             "label": "AWS Region",
             "type": "string",
             "required": true,
-            "defaultValue": "us-east-1",
+            "defaultValue": "",
             "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
         },
         {
@@ -145,8 +132,22 @@
     ],
     "execution": {
         "Node": {
-            "target": "CloudFormation.js",
+            "target": "CloudFormationCreateStack.js",
             "argumentFormat": ""
         }
+    },
+    "messages": {
+        "CreatingStackFromFiles": "Creating stack using template file '%s', parameters file '%s'",
+        "CreatingStackFromUrls": "Creating stack using template url '%s', parameters url '%s'",
+        "LoadingTemplateFile": "Loading template file from '%s'",
+        "LoadingTemplateParameterFile": "Loading template parameters file from '%s'",
+        "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
+        "StackCreated": "Stack %s created successfully",
+        "StackCreationFailed": "Stack %s failed to reach completion status, error: %s",
+        "CreatedStackId": "Stack creation completed, new stack id %s",
+        "UrlFormatError": "Template parameters url error, expected url satisfying regex '%s'",
+        "ParametersUrlLoadOrParseError": "Failed to download or parse template parameters file, error: %s",
+        "WaitingForStack": "Waiting for stack %s to reach create completed status",
+        "TaskCompleted": "Stack %s created successfully, stack ID %s"
     }
 }

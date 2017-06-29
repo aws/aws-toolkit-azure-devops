@@ -1,11 +1,10 @@
 import tl = require('vsts-task-lib/task');
 
-export class CloudFormationTaskParameters {
+export class CreateStackTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public stackName: string;
     public awsRegion: string;
-    public action: string;
     public location: string;
     public cfTemplateFile: string;
     public cfParametersFile: string;
@@ -23,7 +22,6 @@ export class CloudFormationTaskParameters {
             this.stackName = tl.getInput('stackName', true);
             this.awsRegion = tl.getInput('regionName', true);
             this.onFailure = tl.getInput('onFailure');
-            this.action = tl.getInput('action');
             this.templateLocation = tl.getInput('templateLocation');
             if (this.templateLocation === 'Linked artifact') {
                 this.cfTemplateFile = tl.getPathInput('cfFile');

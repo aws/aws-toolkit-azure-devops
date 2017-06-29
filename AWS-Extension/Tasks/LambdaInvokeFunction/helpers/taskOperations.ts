@@ -7,14 +7,16 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async invokeFunction(taskParameters: TaskParameters.InvokeFunctionTaskParameters): Promise<void> {
-        this.constructServiceClient(taskParameters);
+        this.constructServiceClients(taskParameters);
 
         await TaskOperations.invoke(taskParameters);
+
+        console.log(tl.loc('TaskCompleted', taskParameters.functionName));
     }
 
     private static lambdaClient: awsLambdaClient;
 
-    private static constructServiceClient(taskParameters: TaskParameters.InvokeFunctionTaskParameters) {
+    private static constructServiceClients(taskParameters: TaskParameters.InvokeFunctionTaskParameters) {
         const lambdaConfig = {
             apiVersion: '2015-03-31',
             region: taskParameters.awsRegion,

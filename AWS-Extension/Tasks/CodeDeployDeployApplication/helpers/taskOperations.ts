@@ -8,15 +8,19 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
-        this.constructServiceClient(taskParameters);
+        this.constructServiceClients(taskParameters);
 
-        // await this.registerRevision(taskParameters);
+        // todo: check wether registration is actually needed, since we pass the same S3
+        // parameters on CreateDeployment
+        await this.registerRevision(taskParameters);
         await this.deployRevision(taskParameters);
+
+        console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
 
     private static codeDeployClient: awsCodeDeployClient;
 
-    private static constructServiceClient(taskParameters: TaskParameters.DeployTaskParameters) {
+    private static constructServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
         this.codeDeployClient = new awsCodeDeployClient({
             apiVersion: '2014-10-06',
             region: taskParameters.awsRegion,

@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "aws-vsts-tools",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "name": "AWS Tools for Visual Studio Team Services",
   "scopes": [
     "vso.build",
@@ -72,7 +72,10 @@
       "path": "Tasks/AWSCLI"
     },
     {
-      "path": "Tasks/CloudFormation"
+      "path": "Tasks/CloudFormationCreateStack"
+    },
+    {
+      "path": "Tasks/CloudFormationDeleteStack"
     },
     {
       "path": "Tasks/CodeDeployDeployApplication"
@@ -160,14 +163,25 @@
       }
     },
     {
-      "id": "CloudFormation",
-      "description": "Create and delete AWS CloudFormation stacks",
+      "id": "CloudFormationCreateStack",
+      "description": "Create an AWS CloudFormation stack",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "Tasks/CloudFormation"
+        "name": "Tasks/CloudFormationCreateStack"
+      }
+    },
+    {
+      "id": "CloudFormationDeleteStack",
+      "description": "Deletes an AWS CloudFormation stack",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/CloudFormationDeleteStack"
       }
     },
     {

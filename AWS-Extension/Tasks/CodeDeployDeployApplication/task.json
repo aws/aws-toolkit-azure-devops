@@ -121,6 +121,6 @@
         "DeployingRevision": "Deploying the new revision",
         "RevisionDeployed": "Successfully requested deployment of new revision to deployment group %s for application %s",
         "RevisionDeploymentFailed": "Error requesting deployment of new revision to deployment group",
-        "TaskCompleted": "Application deployment completed"
+        "TaskCompleted": "Deployment to application %s completed"
     }
 }

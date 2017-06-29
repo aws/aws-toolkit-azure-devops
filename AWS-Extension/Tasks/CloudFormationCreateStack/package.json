@@ -1,0 +1,15 @@
+{
+  "name": "cloudformationcreatestack",
+  "version": "0.9.0",
+  "description": "Create an AWS CloudFormation stacks",
+  "main": "CloudFormationCreateStack.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.48.0",
+    "vsts-task-lib": "^0.9.20"
+  }
+}

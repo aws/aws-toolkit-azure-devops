@@ -107,6 +107,6 @@
         "FunctionInvokeFailed": "Error invoking function",
         "SettingOutputVariable": "Setting output variable %s with the function output",
         "ReceivedOutput": "Received output %s from function",
-        "TaskCompleted": "Completed invocation of Lambda function"
+        "TaskCompleted": "Completed invocation of Lambda function %s"
     }
 }

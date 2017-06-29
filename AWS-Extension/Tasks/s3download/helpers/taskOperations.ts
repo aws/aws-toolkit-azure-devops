@@ -11,13 +11,15 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async downloadArtifacts(taskParameters: TaskParameters.DownloadTaskParameters): Promise<void> {
-        this.createServiceClient(taskParameters);
+        this.createServiceClients(taskParameters);
         await this.downloadFiles(taskParameters);
+
+        console.log(tl.loc('TaskCompleted'));
     }
 
     private static s3Client: awsS3Client;
 
-    private static createServiceClient(taskParameters: TaskParameters.DownloadTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.DownloadTaskParameters) {
         const s3Config = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,

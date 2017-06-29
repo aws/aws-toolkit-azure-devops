@@ -15,7 +15,7 @@ function run(): Promise<void> {
 
 // run
 run().then((result) =>
-    tl.setResult(tl.TaskResult.Succeeded, tl.loc('TaskCompleted'))
+    tl.setResult(tl.TaskResult.Succeeded, '')
 ).catch((error) =>
     tl.setResult(tl.TaskResult.Failed, error)
     );
