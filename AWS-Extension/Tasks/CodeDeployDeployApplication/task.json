@@ -123,6 +123,7 @@
         "DeploymentError": "Request to deploy new revision returned error: %s",
         "WaitingForDeployment": "Waiting for deployment to complete",
         "WaitConditionSatisifed": "Deployment transitioned to successful status",
+        "DeploymentFailed": "Deployment failed",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }
