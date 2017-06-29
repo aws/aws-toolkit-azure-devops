@@ -153,5 +153,16 @@
             "target": "LambdaNETCoreDeploy.js",
             "argumentFormat": ""
         }
+    },
+    "messages": {
+        "DeployingProjectAt": "Deploying Lambda project at %s",
+        "ReadingDefaultSettingsFile": "Reading existing aws-lambda-tools-defaults.json",
+        "ClearingProfileCredentials": "Clearing out profile '%s' so task credentials will be used.",
+        "StartingDotNetRestore": "Beginning dotnet restore",
+        "StartingFunctionDeployment": "Beginning Lambda Deployment",
+        "StartingServerlessDeployment": "Beginning Serverless Deployment",
+        "UnknownCommandError": "Unknown command: %s",
+        "DotNetCommandFailure": "'dotnet %s' exited with code %d",
+        "TaskCompleted": "Completed deployment of the project"
     }
 }
