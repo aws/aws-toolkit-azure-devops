@@ -52,8 +52,28 @@ export class TaskOperations {
         console.log("Begin dotnet restore");
         await wrapper.restoreAsync();
 
-        console.log("Begin Lambda Deployment");
-        await wrapper.lambdaDeployAsync(taskParameters.awsRegion, taskParameters.functionName, taskParameters.functionRole);
+        switch(taskParameters.command){
+            case "deployFunction":
+                console.log("Begin Lambda Deployment");
+                await wrapper.lambdaDeployAsync(
+                    taskParameters.awsRegion, 
+                    taskParameters.functionName, 
+                    taskParameters.functionRole, 
+                    taskParameters.functionMemory, 
+                    taskParameters.functionTimeout);
+                break;
+            case "deployServerless":
+                console.log("Begin Serverless Deployment");
+                await wrapper.serverlessDeployAsync(
+                    taskParameters.awsRegion, 
+                    taskParameters.stackName, 
+                    taskParameters.s3Bucket, 
+                    taskParameters.s3Prefix);
+                break;
+                
+            default:
+                tl.setResult(tl.TaskResult.Failed, "Unknown command: " + taskParameters.command);    
+        }
     }
 
     private static determineProjectDirectory(specifedLambdaProject : string) : string {
@@ -80,7 +100,34 @@ class DotNetCliWrapper {
         return this.executeAsync(["restore"]);
     }
 
-    public lambdaDeployAsync(awsRegion: string, functionName: string, functionRole : string) : Q.Promise<void>  {
+    public serverlessDeployAsync(awsRegion: string, stackName: string, s3Bucket : string, s3Prefix: string) : Q.Promise<void>  {
+
+        var args = Array<string>();
+
+        args.push("lambda");
+        args.push("deploy-serverless");
+
+        if(awsRegion) {
+            args.push("--region");
+            args.push(awsRegion);
+        }  
+        if(stackName) {
+            args.push("--stack-name");
+            args.push(stackName);
+        }             
+        if(s3Bucket) {
+            args.push("--s3-bucket");
+            args.push(s3Bucket);
+        }         
+        if(s3Prefix) {
+            args.push("--s3-prefix");
+            args.push(s3Prefix);
+        }      
+
+        return this.executeAsync(args);              
+    }
+
+    public lambdaDeployAsync(awsRegion: string, functionName: string, functionRole : string, functionMemory : number, functionTimeout : number) : Q.Promise<void>  {
         var args = Array<string>();
 
         args.push("lambda");
@@ -95,9 +142,17 @@ class DotNetCliWrapper {
             args.push(functionName);
         }
         if(functionRole) {
-            args.push("-frole");
+            args.push("--function-role");
             args.push(functionRole);
         }
+        if(functionMemory) {
+            args.push("--function-memory-size");
+            args.push(functionMemory.toString());
+        }
+        if(functionTimeout) {
+            args.push("--function-timeout");
+            args.push(functionTimeout.toString());
+        }                
 
         return this.executeAsync(args);
     }

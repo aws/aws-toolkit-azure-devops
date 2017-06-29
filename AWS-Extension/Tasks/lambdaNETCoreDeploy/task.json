@@ -17,8 +17,20 @@
         "Patch": "1"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS Lambda .NET Core Deploy: $(functionName)",
+    "instanceNameFormat": "AWS Lambda .NET Core Deploy: $(functionName) $(stackName)",
     "groups": [
+        {
+            "name": "deployFunction",
+            "displayName": "Lambda Function Properties",
+            "isExpanded": true,
+            "visibleRule": "command = deployFunction"
+        },
+        {
+            "name": "deployServerless",
+            "displayName": "Serverless Application Properties",
+            "isExpanded": true,
+            "visibleRule": "command = deployServerless"
+        }        
      ],
     "inputs" : [
         {
@@ -46,11 +58,28 @@
             "helpMarkDown": "The relative path to the location of the Lambda project"
         },
         {
+            "name": "command",
+            "type": "pickList",
+            "label": "Command",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The type of deployment. \"Lambda Deploy\" performs a single Lambda function deployment. \"Serverless Deploy\" performs a deployment with AWS CloudFormation allowing multiple function deployment.",
+            "options": {
+                "deployFunction": "Lambda Deploy",
+                "deployServerless": "Serverless Deploy"
+            },
+            "properties": {
+                "EditableOptions": "False"
+            }
+        },        
+
+        {
             "name": "functionName",
             "type": "string",
             "label": "Function Name",
             "defaultValue": "",
-            "required": true,
+            "required": false,
+            "groupName": "deployFunction",
             "helpMarkDown": "The name of the Lambda function to invoke. You can also specify the Amazon Resource Name (ARN) of the function."
         },
         {
@@ -59,8 +88,65 @@
             "label": "Function Role",
             "defaultValue": "",
             "required": false,
+            "groupName": "deployFunction",
             "helpMarkDown": "The name of the AWS Identity and Access Management Role that provides access to AWS services to the deployed Lambda function."
-        }
+        },
+        {
+            "name": "functionHandler",
+            "type": "string",
+            "label": "Function Handler",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "deployFunction",
+            "helpMarkDown": "The function within your code that Lambda calls to begin execution. Format is &lt;assembly-name&gt;::&lt;type-name&gt;::&lt;function-name&gt;."
+        },
+        {
+            "name": "functionMemory",
+            "type": "int",
+            "label": "Function Memory (MB)",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "deployFunction",
+            "helpMarkDown": "Memory allocated to Lambda function. The value must be in multiples of 64."
+        },
+        {
+            "name": "functionTimeout",
+            "type": "int",
+            "label": "Function Timout (Seconds)",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "deployFunction",
+            "helpMarkDown": "The function execution time at which Lambda should terminate the function."
+        },
+
+
+        {
+            "name": "stackName",
+            "type": "string",
+            "label": "Stack Name",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "deployServerless",
+            "helpMarkDown": "AWS CloudFormation Stack Name."
+        },       
+        {
+            "name": "s3Bucket",
+            "type": "string",
+            "label": "S3 Bucket",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "deployServerless",
+            "helpMarkDown": "S3 bucket used to store the built project."
+        },
+        {
+            "name": "s3Prefix",
+            "type": "string",
+            "label": "S3 Prefix",
+            "defaultValue": "",
+            "required": false,
+            "groupName": "deployServerless",
+            "helpMarkDown": "S3 object key prefix used for the objects uploaded to S3."
+        }        
     ],
     "execution": {
         "Node": {

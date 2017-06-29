@@ -5,8 +5,19 @@ export class AwsLambdaNETCoreDeployTaskParameters {
     public awsSecretKey: string;
     public awsRegion: string;
     public lambdaProjectPath: string;
+
+    public command: string;
+
+    public functionHandler: string;
     public functionName: string;
     public functionRole: string;
+    public functionMemory: number;
+    public functionTimeout: number;
+
+    public stackName: string;
+    public s3Bucket: string;
+    public s3Prefix: string;
+
 
     constructor() {
         try {
@@ -16,8 +27,23 @@ export class AwsLambdaNETCoreDeployTaskParameters {
             this.awsSecretKey = awsEndpointAuth.parameters.password;
             this.awsRegion = tl.getInput('regionName', true);
             this.lambdaProjectPath = tl.getInput('lambdaProjectPath', true);
-            this.functionName = tl.getInput('functionName', true);
-            this.functionRole = tl.getInput('functionRole', true);
+
+            this.command = tl.getInput('command', true);
+
+            this.functionName = tl.getInput('functionName', false);
+            this.functionRole = tl.getInput('functionRole', false);
+
+            if(tl.getInput('functionMemory', false)) {                
+                this.functionMemory = parseInt(tl.getInput('functionMemory', false));
+            }
+            if(tl.getInput('functionTimeout', false)) {                
+                this.functionTimeout = parseInt(tl.getInput('functionTimeout', false));
+            }
+
+            this.stackName = tl.getInput('stackName', false);
+            this.s3Bucket = tl.getInput('s3Bucket', false);
+            this.s3Prefix = tl.getInput('s3Prefix', false);                                    
+
         } catch (error) {
             throw new Error(error.message);
         }
