@@ -75,9 +75,11 @@ export class TaskOperations {
 
             this.codeDeployClient.waitFor('deploymentSuccessful',
                                           { deploymentId },
-                                          function(err: AWSError, waitForData: awsCodeDeployClient.GetDeploymentOutput) {
+                                          function(err: AWSError, data: awsCodeDeployClient.GetDeploymentOutput) {
                 if (err) {
                     throw new Error(tl.loc('DeploymentFailed', applicationName, err.message));
+                } else {
+                    console.log(tl.loc('WaitConditionSatisifed'));
                 }
             });
          });

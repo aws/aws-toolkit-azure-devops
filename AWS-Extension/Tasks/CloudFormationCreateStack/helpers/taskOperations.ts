@@ -117,7 +117,7 @@ export class TaskOperations {
         }
 
         try {
-            const createStackResponse: awsCloudFormation.CreateStackOutput = this.cloudFormationClient.createStack({
+            const createStackResponse: awsCloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack({
                 StackName: taskParameters.stackName,
                 TemplateURL: taskParameters.cfTemplateUrl,
                 Parameters: templateParameters
@@ -138,12 +138,11 @@ export class TaskOperations {
 
             this.cloudFormationClient.waitFor('stackCreateComplete',
                                               { StackName: stackName },
-                                              function(err: AWSError, waitForData: awsCloudFormation.DescribeStacksOutput) {
+                                              function(err: AWSError, data: awsCloudFormation.DescribeStacksOutput) {
                 if (err) {
                     throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
                 } else {
-                    console.log(tl.loc('StackCreated', stackName));
-                    return waitForData.Stacks[0].StackId;
+                    console.log(tl.loc('WaitConditionSatisifed'));
                 }
             });
         });

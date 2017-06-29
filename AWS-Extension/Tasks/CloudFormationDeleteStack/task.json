@@ -58,6 +58,7 @@
     "messages": {
         "RequestingStackDeletetion": "Requesting deletion for stack %s",
         "StackDeletionFailed": "Stack %s failed to reach delete completion status, error: %s",
+        "WaitConditionSatisifed": "Stack transitioned successfully to deleted status",
         "TaskCompleted": "Stack successfully deleted"
     }
 }

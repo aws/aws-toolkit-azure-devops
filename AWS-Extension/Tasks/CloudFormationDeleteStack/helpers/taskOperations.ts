@@ -43,6 +43,8 @@ export class TaskOperations {
                                               function(err: AWSError, data: awsCloudFormation.DescribeStacksOutput) {
                 if (err) {
                     throw new Error(tl.loc('StackDeletionFailed', stackName, err.message));
+                } else {
+                    console.log(tl.loc('WaitConditionSatisifed'));
                 }
             });
         });

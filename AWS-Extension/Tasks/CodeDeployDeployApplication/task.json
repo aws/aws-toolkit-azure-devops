@@ -122,6 +122,7 @@
         "DeploymentStarted": "Started deployment of new revision to deployment group %s for application %s, deployment ID %s",
         "DeploymentError": "Request to deploy new revision returned error: %s",
         "WaitingForDeployment": "Waiting for deployment to complete",
+        "WaitConditionSatisifed": "Deployment transitioned to successful status",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }

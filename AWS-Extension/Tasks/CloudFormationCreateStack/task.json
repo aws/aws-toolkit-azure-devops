@@ -148,6 +148,7 @@
         "UrlFormatError": "Template parameters url error, expected url satisfying regex '%s'",
         "ParametersUrlLoadOrParseError": "Failed to download or parse template parameters file, error: %s",
         "WaitingForStack": "Waiting for stack %s to reach create completed status",
+        "WaitConditionSatisifed": "New stack transitioned successfully to completed status",
         "TaskCompleted": "Stack %s created successfully, stack ID %s"
     }
 }
