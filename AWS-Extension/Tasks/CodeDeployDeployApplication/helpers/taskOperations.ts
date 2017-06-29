@@ -10,9 +10,6 @@ export class TaskOperations {
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
         this.constructServiceClients(taskParameters);
 
-        // todo: check wether registration is actually needed, since we pass the same S3
-        // parameters on CreateDeployment
-        await this.registerRevision(taskParameters);
         await this.deployRevision(taskParameters);
 
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
