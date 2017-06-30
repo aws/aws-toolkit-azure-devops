@@ -23,6 +23,9 @@ export class DotNetCliWrapper {
         args.push('lambda');
         args.push('deploy-serverless');
 
+        args.push('--enable-interactive');
+        args.push('false');
+
         if (awsRegion) {
             args.push('--region');
             args.push(awsRegion);
@@ -48,6 +51,9 @@ export class DotNetCliWrapper {
 
         args.push('lambda');
         args.push('deploy-function');
+
+        args.push('--enable-interactive');
+        args.push('false');
 
         if (awsRegion) {
             args.push('--region');
