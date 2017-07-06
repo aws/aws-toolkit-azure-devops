@@ -46,7 +46,8 @@ export class TaskOperations {
                     taskParameters.functionName,
                     taskParameters.functionRole,
                     taskParameters.functionMemory,
-                    taskParameters.functionTimeout);
+                    taskParameters.functionTimeout,
+                    taskParameters.additionalArgs);
                 break;
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'));
@@ -54,7 +55,8 @@ export class TaskOperations {
                     taskParameters.awsRegion,
                     taskParameters.stackName,
                     taskParameters.s3Bucket,
-                    taskParameters.s3Prefix);
+                    taskParameters.s3Prefix,
+                    taskParameters.additionalArgs);
                 break;
 
             default:

@@ -30,6 +30,11 @@
             "displayName": "Serverless Application Properties",
             "isExpanded": true,
             "visibleRule": "command = deployServerless"
+        },
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": true
         }        
      ],
     "inputs" : [
@@ -146,6 +151,15 @@
             "required": false,
             "groupName": "deployServerless",
             "helpMarkDown": "S3 object key prefix used for the objects uploaded to S3."
+        },
+        {
+            "name": "additionalArgs",
+            "label": "Additional Lambda Tools Command Line Arguments",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "groupName" : "advanced",
+            "helpMarkDown": "Additional arguments when executing the 'dotnet lambda' command"
         }        
     ],
     "execution": {

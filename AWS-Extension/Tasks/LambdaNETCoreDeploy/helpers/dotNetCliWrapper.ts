@@ -1,6 +1,6 @@
-import Q = require('q');
 import proc = require('child_process');
 import tl = require('vsts-task-lib/task');
+import tr = require('vsts-task-lib/toolrunner');
 
 export class DotNetCliWrapper {
 
@@ -12,11 +12,11 @@ export class DotNetCliWrapper {
         this.env = env;
     }
 
-    public restoreAsync() : Q.Promise<void> {
-        return this.executeAsync(['restore']);
+    public restoreAsync() : Promise<void> {
+        return this.executeAsync(['restore'], null);
     }
 
-    public serverlessDeployAsync(awsRegion: string, stackName: string, s3Bucket : string, s3Prefix: string) : Q.Promise<void>  {
+    public serverlessDeployAsync(awsRegion: string, stackName: string, s3Bucket : string, s3Prefix: string, additionalArgs : string) : Promise<void>  {
 
         const args = Array<string>();
 
@@ -43,10 +43,10 @@ export class DotNetCliWrapper {
             args.push(s3Prefix);
         }
 
-        return this.executeAsync(args);
+        return this.executeAsync(args, additionalArgs);
     }
 
-    public lambdaDeployAsync(awsRegion: string, functionName: string, functionRole : string, functionMemory : number, functionTimeout : number) : Q.Promise<void>  {
+    public lambdaDeployAsync(awsRegion: string, functionName: string, functionRole : string, functionMemory : number, functionTimeout : number, additionalArgs : string) : Promise<void>  {
         const args = Array<string>();
 
         args.push('lambda');
@@ -76,34 +76,27 @@ export class DotNetCliWrapper {
             args.push(functionTimeout.toString());
         }
 
-        return this.executeAsync(args);
+        return this.executeAsync(args, additionalArgs);
     }
 
-    public executeAsync(args : string[]) : Q.Promise<void> {
+    public async executeAsync(args : string[], additionalArgs : string) : Promise<void> {
 
-        const deferred = Q.defer();
-        const dotnetProcess = proc.spawn('dotnet', args,
-        {
+        var dotnetPath = tl.which('dotnet', true);
+        console.log('Path to tool: ' + dotnetPath);
+
+        var dotnet = tl.tool(dotnetPath);
+
+        for(let arg of args) {
+            dotnet.arg(arg);
+        }
+
+        dotnet.line(additionalArgs);
+
+        var execOptions = <tr.IExecOptions>{
             cwd : this.cwd,
             env : this.env
-        });
-
-        dotnetProcess.stdout.on('data', (data) => {
-            console.log(data.toString());
-        });
-
-        dotnetProcess.stderr.on('data', (data) => {
-            console.error(data.toString());
-        });
-
-        dotnetProcess.on('exit', (code) => {
-            if (code !== 0) {
-                deferred.reject(new Error(tl.loc('', args.join(' '), code)));
-            } else {
-                deferred.resolve();
-            }
-        });
-
-        return deferred.promise;
+        }
+        
+        return await dotnet.exec(execOptions);
     }
 }

@@ -18,6 +18,8 @@ export class AwsLambdaNETCoreDeployTaskParameters {
     public s3Bucket: string;
     public s3Prefix: string;
 
+    public additionalArgs: string;
+
 
     constructor() {
         try {
@@ -44,6 +46,7 @@ export class AwsLambdaNETCoreDeployTaskParameters {
             this.s3Bucket = tl.getInput('s3Bucket', false);
             this.s3Prefix = tl.getInput('s3Prefix', false);                                    
 
+            this.additionalArgs = tl.getInput('additionalArgs', false);                                    
         } catch (error) {
             throw new Error(error.message);
         }
