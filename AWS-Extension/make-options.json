@@ -1,8 +1,11 @@
 {
     "tasks": [
         "AWSCLI",
+        "CloudFormationCreateChangeSet",
         "CloudFormationCreateStack",
+        "CloudFormationDeleteChangeSet",
         "CloudFormationDeleteStack",
+        "CloudFormationExecuteChangeSet",
         "CodeDeployDeployApplication",
         "LambdaInvokeFunction",
         "LambdaNETCoreDeploy",

@@ -2,7 +2,7 @@
     "id": "369b7be3-fc8a-41ff-94b8-9798e6108dd0",
     "name": "S3Download",
     "friendlyName": "AWS S3 Download",
-    "description": "Download file and folder content from an Amazon Simple Storage Service (S3) Bucket",
+    "description": "Download file and folder content from an Amazon Simple Storage Service (S3) Bucket.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html)",
     "category": "Deploy",

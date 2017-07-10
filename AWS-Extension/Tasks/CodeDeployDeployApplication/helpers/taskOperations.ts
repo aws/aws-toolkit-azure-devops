@@ -8,7 +8,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
-        this.constructServiceClients(taskParameters);
+        this.createServiceClients(taskParameters);
 
         const deploymentId: string = await this.deployRevision(taskParameters);
         await this.waitForDeploymentCompletion(taskParameters.applicationName, deploymentId);
@@ -18,7 +18,7 @@ export class TaskOperations {
 
     private static codeDeployClient: awsCodeDeployClient;
 
-    private static constructServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
         this.codeDeployClient = new awsCodeDeployClient({
             apiVersion: '2014-10-06',
             region: taskParameters.awsRegion,

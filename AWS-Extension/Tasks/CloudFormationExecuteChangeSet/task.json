@@ -1,8 +1,8 @@
 {
-    "id": "562cc516-4bea-4b60-b441-f924edf7dcf6",
-    "name": "CloudFormationDeleteStack",
-    "friendlyName": "AWS CloudFormation Delete Stack",
-    "description": "Deletes an AWS CloudFormation stack.",
+    "id": "b548b377-71c4-44c1-a80c-b49ea9e9a8f1",
+    "name": "CloudFormationExecuteChangeSet",
+    "friendlyName": "AWS CloudFormation Execute Change Set",
+    "description": "Executes an AWS CloudFormation change set to create or update a stack.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
     "category": "Deploy",
@@ -22,7 +22,7 @@
     "minimumAgentVersion": "1.95.0",
     "groups": [
     ],
-    "instanceNameFormat": "AWS CloudFormation Delete Stack $(stackName)",
+    "instanceNameFormat": "AWS CloudFormation Execute Change Set $(changeSetName)",
     "inputs": [
         {
             "name": "awsCredentials",
@@ -37,28 +37,37 @@
             "label": "AWS Region",
             "type": "string",
             "required": true,
-            "defaultValue": "us-east-1",
+            "defaultValue": "",
             "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "changeSetName",
+            "type": "string",
+            "label": "Change Set Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name or ARN of the change set that you want use to update the specified stack."
         },
         {
             "name": "stackName",
             "type": "string",
             "label": "Stack Name",
             "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "The name that is associated with the stack. The name must be unique in the region in which you are creating the stack.\n\nA stack name can contain only alphanumeric characters (case sensitive) and hyphens. It must start with an alphabetic character and cannot be longer than 128 characters. "
+            "required": false,
+            "helpMarkDown": "The stack name or ID (ARN) that is associated with the change set"
         }
     ],
     "execution": {
         "Node": {
-            "target": "CloudFormationDeleteStack.js",
+            "target": "CloudFormationExecuteChangeSet.js",
             "argumentFormat": ""
         }
     },
     "messages": {
-        "RequestingStackDeletetion": "Requesting deletion for stack %s",
-        "StackDeletionFailed": "Stack %s failed to reach delete completion status, error: %s",
-        "WaitConditionSatisifed": "Stack transitioned successfully to deleted status",
-        "TaskCompleted": "Stack successfully deleted"
+        "ExecutingChangeSet": "Executing change set '%s', associated with stack '%s'",
+        "ExecuteChangeSetFailed": "Request to execute change set failed with message %s",
+        "WaitingForStack": "Waiting for stack %s to reach create completed status",
+        "WaitConditionSatisifed": "New stack transitioned successfully to completed status",
+        "TaskCompleted": "Executed change set %s"
     }
 }

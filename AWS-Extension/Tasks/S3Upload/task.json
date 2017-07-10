@@ -2,7 +2,7 @@
     "id": "3098b5ea-8371-4ead-8780-07412c4e6b45",
     "name": "S3Upload",
     "friendlyName": "AWS S3 Upload",
-    "description": "Upload file and folder content to an Amazon Simple Storage Service (S3) Bucket",
+    "description": "Upload file and folder content to an Amazon Simple Storage Service (S3) Bucket.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html)",
     "category": "Deploy",

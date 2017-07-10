@@ -10,9 +10,10 @@ import TaskParameters = require('./taskParameters');
 export class TaskOperations {
 
     public static async createStack(taskParameters: TaskParameters.CreateStackTaskParameters): Promise<void> {
+        this.createServiceClients(taskParameters);
 
         let stackId: string;
-        if (taskParameters.templateLocation === 'Linked artifact') {
+        if (taskParameters.templateLocation === 'LinkedArtifact') {
             stackId = await this.createStackFromTemplateFile(taskParameters);
         } else {
             stackId = await this.createStackFromTemplateUrl(taskParameters);

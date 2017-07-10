@@ -72,10 +72,19 @@
       "path": "Tasks/AWSCLI"
     },
     {
+      "path": "Tasks/CloudFormationCreateChangeSet"
+    },
+    {
       "path": "Tasks/CloudFormationCreateStack"
     },
     {
+      "path": "Tasks/CloudFormationDeleteChangeSet"
+    },
+    {
       "path": "Tasks/CloudFormationDeleteStack"
+    },
+    {
+      "path": "Tasks/CloudFormationExecuteChangeSet"
     },
     {
       "path": "Tasks/CodeDeployDeployApplication"
@@ -163,6 +172,17 @@
       }
     },
     {
+      "id": "CloudFormationCreateChangeSet",
+      "description": "Create an AWS CloudFormation changeset",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/CloudFormationCreateChangeSet"
+      }
+    },
+    {
       "id": "CloudFormationCreateStack",
       "description": "Create an AWS CloudFormation stack",
       "type": "ms.vss-distributed-task.task",
@@ -174,6 +194,17 @@
       }
     },
     {
+      "id": "CloudFormationDeleteChangeSet",
+      "description": "Deletes an AWS CloudFormation change set",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/CloudFormationDeleteChangeSet"
+      }
+    },
+    {
       "id": "CloudFormationDeleteStack",
       "description": "Deletes an AWS CloudFormation stack",
       "type": "ms.vss-distributed-task.task",
@@ -182,6 +213,17 @@
       ],
       "properties": {
         "name": "Tasks/CloudFormationDeleteStack"
+      }
+    },
+    {
+      "id": "CloudFormationExecuteChangeSet",
+      "description": "Executes an AWS CloudFormation change set",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/CloudFormationExecuteChangeSet"
       }
     },
     {
