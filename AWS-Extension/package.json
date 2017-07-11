@@ -3,7 +3,7 @@
   "version": "0.9.5",
   "description": "AWS Tools for Visual Studio Team Services",
   "private": true,
-  "main":"gulpfile.js",
+  "main": "gulpfile.js",
   "scripts": {
     "build": "node make.js build",
     "test": "node make.js test",
@@ -12,13 +12,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"  
+    "url": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"
   },
   "keywords": [
     "AWS",
     "S3",
     "CloudFormation",
-    "CLI"
+    "CLI",
+    "Lambda",
+    "CodeDeploy",
+    "EC2"
   ],
   "author": "Amazon Web Services LLC",
   "license": "Apache",
@@ -45,7 +48,8 @@
     "tfx-cli": "^0.3.45",
     "tslint": "^5.4.3",
     "typescript": "^2.3.4",
-    "validator": "3.33.0"
+    "validator": "3.33.0",
+    "webpack": "^3.1.0"
   },
   "dependencies": {
     "aws-sdk": "^2.48.0",
