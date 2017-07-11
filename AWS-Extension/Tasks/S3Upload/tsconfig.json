@@ -4,5 +4,8 @@
         "module": "commonjs",
         "sourceMap": true,
         "alwaysStrict": true
-    }
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }
