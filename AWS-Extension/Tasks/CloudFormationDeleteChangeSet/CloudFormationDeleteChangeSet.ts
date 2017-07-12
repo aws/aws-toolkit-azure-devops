@@ -1,7 +1,5 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import fs = require('fs');
-
 import TaskParameters = require('./helpers/taskParameters');
 import TaskOperationHelpers = require('./helpers/taskOperations');
 

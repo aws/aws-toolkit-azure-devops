@@ -1,6 +1,5 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import AWS = require('aws-sdk/clients/lambda');
 import TaskParameters = require('./helpers/taskParameters');
 import TaskOperationHelpers = require('./helpers/taskOperations');
 

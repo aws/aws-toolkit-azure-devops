@@ -30,6 +30,8 @@
   "devDependencies": {
     "@types/node": "^7.0.13",
     "adm-zip": "0.4.7",
+    "clean-webpack-plugin": "^0.1.16",
+    "file-loader": "^0.11.2",
     "grunt": "^1.0.0",
     "grunt-contrib-copy": "*",
     "grunt-contrib-jasmine": "*",
@@ -46,10 +48,12 @@
     "shelljs": "^0.3.0",
     "sync-request": "3.0.1",
     "tfx-cli": "^0.3.45",
+    "ts-loader": "^2.2.2",
     "tslint": "^5.4.3",
     "typescript": "^2.3.4",
     "validator": "3.33.0",
-    "webpack": "^3.1.0"
+    "webpack": "^3.1.0",
+    "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
     "aws-sdk": "^2.48.0",

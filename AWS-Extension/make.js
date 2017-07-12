@@ -48,12 +48,14 @@ var createResjson = util.createResjson;
 var createTaskLocJson = util.createTaskLocJson;
 var validateTask = util.validateTask;
 
-// global paths
-var buildPath = path.join(__dirname, '_build')
-var buildTasksPath = path.join(__dirname, '_build', 'Tasks');
-var commonPath = path.join(__dirname, '_build', 'Tasks', 'Common');
-var buildTestsPath = path.join(__dirname, '_build', 'Tests');
-var packagePath = path.join(__dirname, '_package');
+// global path roots
+var sourceTasksRoot = path.join(__dirname, 'Tasks');
+var buildRoot = path.join(__dirname, '_build')
+var buildTasksRoot = path.join(buildRoot, 'Tasks');
+var commonBuildTasksRoot = path.join(buildTasksRoot, 'Common');
+var buildTestsRoot = path.join(buildRoot, 'Tests');
+var packageRoot = path.join(__dirname, '_package');
+var packageTasksRoot = path.join(packageRoot, 'Tasks');
 
 // node min version
 var minNodeVer = '4.0.0';
@@ -92,8 +94,8 @@ else {
 process.env['TASK_TEST_RUNNER'] = options.runner || '';
 
 target.clean = function () {
-    rm('-Rf', buildPath);
-    rm('-Rf', packagePath);
+    rm('-Rf', buildRoot);
+    rm('-Rf', packageRoot);
 };
 
 //
@@ -111,7 +113,7 @@ target.build = function() {
 
     taskList.forEach(function(taskName) {
         banner('Building: ' + taskName);
-        var taskPath = path.join(__dirname, 'Tasks', taskName);
+        var taskPath = path.join(sourceTasksRoot, taskName);
         ensureExists(taskPath);
 
         // load the task.json
@@ -123,7 +125,7 @@ target.build = function() {
             validateTask(taskDef);
 
             // fixup the outDir
-            outDir = path.join(buildTasksPath, taskDef.name);
+            outDir = path.join(buildTasksRoot, taskDef.name);
 
             // create loc files
             createTaskLocJson(taskPath);
@@ -133,7 +135,7 @@ target.build = function() {
             shouldBuildNode = shouldBuildNode || taskDef.execution.hasOwnProperty('Node');
         }
         else {
-            outDir = path.join(buildTasksPath, path.basename(taskPath));
+            outDir = path.join(buildTasksRoot, path.basename(taskPath));
         }
 
         mkdir('-p', outDir);
@@ -147,7 +149,7 @@ target.build = function() {
         }
 
         //--------------------------------
-        // Common: build, copy, install 
+        // Common: build, copy, install
         //--------------------------------
         if (taskMake.hasOwnProperty('common')) {
             var common = taskMake['common'];
@@ -155,7 +157,7 @@ target.build = function() {
             common.forEach(function(mod) {
                 var modPath = path.join(taskPath, mod['module']);
                 var modName = path.basename(modPath);
-                var modOutDir = path.join(commonPath, modName);
+                var modOutDir = path.join(commonBuildTasksRoot, modName);
 
                 if (!test('-d', modOutDir)) {
                     banner('Building module ' + modPath, true);
@@ -245,24 +247,24 @@ target.test = function() {
     ensureTool('mocha', '--version', '2.3.3');
 
     // build the general tests and ps test infra
-    rm('-Rf', buildTestsPath);
-    mkdir('-p', path.join(buildTestsPath));
+    rm('-Rf', buildTestsRoot);
+    mkdir('-p', path.join(buildTestsRoot));
     cd(testsPath);
-    run(`tsc --rootDir ${path.join(__dirname, 'Tests')} --outDir ${buildTestsPath}`);
+    run(`tsc --rootDir ${path.join(__dirname, 'Tests')} --outDir ${buildTestsRoot}`);
     console.log();
     console.log('> copying ps test lib resources');
-    mkdir('-p', path.join(buildTestsPath, 'lib'));
-    matchCopy(path.join('**', '@(*.ps1|*.psm1)'), path.join(__dirname, 'Tests', 'lib'), path.join(buildTestsPath, 'lib'));
+    mkdir('-p', path.join(buildTestsRoot, 'lib'));
+    matchCopy(path.join('**', '@(*.ps1|*.psm1)'), path.join(__dirname, 'Tests', 'lib'), path.join(buildTestsRoot, 'lib'));
 
     // find the tests
     var suiteType = options.suite || 'L0';
     var taskType = options.task || '*';
-    var pattern1 = buildTasksPath + '/' + taskType + '/Tests/' + suiteType + '.js';
-    var pattern2 = buildTasksPath + '/Common/' + taskType + '/Tests/' + suiteType + '.js';
-    var pattern3 = buildTestsPath + '/' + suiteType + '.js';
-    var testsSpec = matchFind(pattern1, buildPath)
-        .concat(matchFind(pattern2, buildPath))
-        .concat(matchFind(pattern3, buildTestsPath, { noRecurse: true }));
+    var pattern1 = buildTasksRoot + '/' + taskType + '/Tests/' + suiteType + '.js';
+    var pattern2 = buildTasksRoot + '/Common/' + taskType + '/Tests/' + suiteType + '.js';
+    var pattern3 = buildTestsRoot + '/' + suiteType + '.js';
+    var testsSpec = matchFind(pattern1, buildRoot)
+        .concat(matchFind(pattern2, buildRoot))
+        .concat(matchFind(pattern3, buildTestsRoot, { noRecurse: true }));
     if (!testsSpec.length && !process.env.TF_BUILD) {
         fail(`Unable to find tests using the following patterns: ${JSON.stringify([pattern1, pattern2, pattern3])}`);
     }
@@ -270,33 +272,66 @@ target.test = function() {
     run('mocha ' + testsSpec.join(' '), /*inheritStreams:*/true);
 }
 
-// Re-packages the build output into a _package folder, then runs the tfx
-// CLI to create the deployment vsix file
+// Re-packages the build into a _package folder, then runs the tfx
+// CLI to create the deployment vsix file. The tasks are passed through
+// webpack to shrink and simplify the distribution.
 target.package = function() {
     // clean first so we don't add unknown cruft
-    rm('-Rf', packagePath);
-    mkdir('-p', packagePath);
+    rm('-Rf', packageRoot);
+    mkdir('-p', packageRoot);
 
     var manifestFile = 'vss-extension.json';
     var licenseFile = 'LICENSE';
     var readmeFile = 'README.md';
 
-    var tasksPackageFolder = path.join(packagePath, 'Tasks');
-    var imagesPackageFolder = path.join(packagePath, 'images');
+    var tasksPackageFolder = path.join(packageRoot, 'Tasks');
+    var imagesPackageFolder = path.join(packageRoot, 'images');
 
-    // stage tasks, less map files, into the packaging Tasks folder
-    matchCopy(path.join('**', '@(*.js|*.json|*.png)'), buildTasksPath, tasksPackageFolder, { noRecurse: false, matchBase: true });
+    // stage license, readme and the extension manifest file
+    cp(path.join(__dirname, licenseFile), packageRoot);
+    cp(path.join(__dirname, readmeFile), packageRoot);
+    cp(path.join(__dirname, manifestFile), packageRoot);
 
-    // stage manifest images into the packaging images subfolder
-    matchCopy(path.join('**', '@(*.png|*.jpg|*.jpeg)'), path.join(__dirname, 'images'), imagesPackageFolder, { noRecurse: false, matchBase: true });
+    // stage manifest images
+    cp('-R', path.join(__dirname, 'images'), packageRoot);
 
-    // stage license, readme and the extension manifest file into packaging folder
-    matchCopy(licenseFile, __dirname, packagePath, { noRecurse: true, matchBase: true });
-    matchCopy(readmeFile, __dirname, packagePath, { noRecurse: true, matchBase: true });
-    matchCopy(manifestFile, __dirname, packagePath, { noRecurse: true, matchBase: true });
+    mkdir(packageTasksRoot);
+
+    // compress and simplify each task with webpack
+    taskList.forEach(function(taskName) {
+        var taskBuildFolder = path.join(buildTasksRoot, taskName);
+        var taskPackageFolder = path.join(packageTasksRoot, taskName);
+
+        mkdir(taskPackageFolder);
+
+        cp(path.join(taskBuildFolder, '*.json'), taskPackageFolder);
+        cp(path.join(taskBuildFolder, '*.png'), taskPackageFolder);
+        cp('-R', path.join(taskBuildFolder, 'Strings'), taskPackageFolder);
+
+        cd(taskPackageFolder);
+        run('npm install --production');
+
+        // strip out typings and .md files to further reduce size
+        matchFind('@(*.md|*.d.ts|*.js.map)', path.join(taskPackageFolder, 'node_modules'), { noRecurse: false, matchBase: true})
+            .forEach(function (item) {
+                rm(item);
+            });
+
+        cd(__dirname);
+
+        var webpackConfig = path.join(__dirname, 'webpack.config.js');
+        var webpackCmd = 'webpack --config ' + webpackConfig + ' ' + taskName + '.js ' + path.join(taskPackageFolder, taskName + '.js');
+        cd(taskBuildFolder);
+        run(webpackCmd);
+
+        // sdk dependency has been packed so we can remove
+        rm('-Rf', path.join(taskPackageFolder, 'node_modules', 'aws-sdk'));
+
+        cd(__dirname);
+    });
 
     // build the vsix package from the staged materials
-    var tfxcmd = 'tfx extension create --root ' + packagePath + ' --output-path ' + packagePath + ' --manifests ' + path.join(packagePath, manifestFile);
+    var tfxcmd = 'tfx extension create --root ' + packageRoot + ' --output-path ' + packageRoot + ' --manifests ' + path.join(packageRoot, manifestFile);
     if (options.publisher)
         tfxcmd += ' --publisher ' + options.publisher;
 
@@ -332,13 +367,13 @@ target.publish = function() {
     }
     else {
         // store the non-aggregated tasks zip
-        var nonAggregatedZipPath = path.join(packagePath, 'non-aggregated-tasks.zip');
+        var nonAggregatedZipPath = path.join(packageRoot, 'non-aggregated-tasks.zip');
         util.storeNonAggregatedZip(nonAggregatedZipPath, release, commit);
     }
 
     // resolve the nupkg path
     var nupkgFile;
-    var nupkgDir = path.join(packagePath, 'pack-target');
+    var nupkgDir = path.join(packageRoot, 'pack-target');
     if (!test('-d', nupkgDir)) {
         fail('nupkg directory does not exist');
     }
