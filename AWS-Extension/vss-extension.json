@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "aws-vsts-tools",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "name": "AWS Tools for Visual Studio Team Services",
   "scopes": [
     "vso.build",
