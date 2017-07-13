@@ -1,3 +1,4 @@
+var webpack = require('webpack');
 var nodeExternals = require('webpack-node-externals');
 
 module.exports = {
@@ -8,7 +9,11 @@ module.exports = {
   },
   externals: [
     nodeExternals({
-      whitelist: [/^aws-sdk/]
+      whitelist: function(moduleName) {
+        return !moduleName.startsWith('vsts-task-lib');
+      }
     })
+  ],
+  plugins: [
   ]
  };

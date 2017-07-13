@@ -7,7 +7,11 @@ var mopts = {
         'suite',
         'task',
         'version',
-        'publisher'
+        'publisher',
+        'configuration'
+    ],
+    boolean: [
+        'release'
     ]
 };
 var options = minimist(process.argv, mopts);
@@ -50,7 +54,7 @@ var validateTask = util.validateTask;
 
 // global path roots
 var sourceTasksRoot = path.join(__dirname, 'Tasks');
-var buildRoot = path.join(__dirname, '_build')
+var buildRoot = path.join(__dirname, '_build');
 var buildTasksRoot = path.join(buildRoot, 'Tasks');
 var commonBuildTasksRoot = path.join(buildTasksRoot, 'Common');
 var buildTestsRoot = path.join(buildRoot, 'Tests');
@@ -94,8 +98,12 @@ else {
 process.env['TASK_TEST_RUNNER'] = options.runner || '';
 
 target.clean = function () {
-    rm('-Rf', buildRoot);
-    rm('-Rf', packageRoot);
+    if (pathExists(buildRoot)) {
+       rm('-Rf', buildRoot);
+    }
+    if (pathExists(packageRoot)) {
+        rm('-Rf', packageRoot);
+    }
 };
 
 //
@@ -103,6 +111,8 @@ target.clean = function () {
 // ex: node make.js build --task ShellScript
 //
 target.build = function() {
+    banner('Building extension for ' + (options.release ? 'release' : 'development'));
+
     target.clean();
 
     ensureTool('npm', '--version', function (output) {
@@ -112,7 +122,7 @@ target.build = function() {
     });
 
     taskList.forEach(function(taskName) {
-        banner('Building: ' + taskName);
+        banner('> Building: ' + taskName);
         var taskPath = path.join(sourceTasksRoot, taskName);
         ensureExists(taskPath);
 
@@ -217,13 +227,14 @@ target.build = function() {
 
         // build Node task
         if (shouldBuildNode) {
-            buildNodeTask(taskPath, outDir);
+            buildNodeTask(taskPath, outDir, options.release);
         }
 
         // copy default resources and any additional resources defined in the task's make.json
         console.log();
         console.log('> copying task resources');
         copyTaskResources(taskMake, taskPath, outDir);
+
     });
 
     banner('Build successful', true);
@@ -276,29 +287,29 @@ target.test = function() {
 // CLI to create the deployment vsix file. The tasks are passed through
 // webpack to shrink and simplify the distribution.
 target.package = function() {
-    // clean first so we don't add unknown cruft
-    rm('-Rf', packageRoot);
-    mkdir('-p', packageRoot);
+    banner('Packaging extension');
 
+    mkdir(packageRoot);
+
+    // stage license, readme and the extension manifest file
     var manifestFile = 'vss-extension.json';
-    var licenseFile = 'LICENSE';
-    var readmeFile = 'README.md';
+    var packageRootFiles =  [ manifestFile, 'LICENSE', 'README.md' ];
+    packageRootFiles.forEach(function(item) {
+        cp(path.join(__dirname, item), packageRoot);
+    });
 
     var tasksPackageFolder = path.join(packageRoot, 'Tasks');
     var imagesPackageFolder = path.join(packageRoot, 'images');
-
-    // stage license, readme and the extension manifest file
-    cp(path.join(__dirname, licenseFile), packageRoot);
-    cp(path.join(__dirname, readmeFile), packageRoot);
-    cp(path.join(__dirname, manifestFile), packageRoot);
 
     // stage manifest images
     cp('-R', path.join(__dirname, 'images'), packageRoot);
 
     mkdir(packageTasksRoot);
 
-    // compress and simplify each task with webpack
+    // clean, dedupe and pack each task
     taskList.forEach(function(taskName) {
+        console.log('> processing task ' + taskName);
+
         var taskBuildFolder = path.join(buildTasksRoot, taskName);
         var taskPackageFolder = path.join(packageTasksRoot, taskName);
 
@@ -308,29 +319,23 @@ target.package = function() {
         cp(path.join(taskBuildFolder, '*.png'), taskPackageFolder);
         cp('-R', path.join(taskBuildFolder, 'Strings'), taskPackageFolder);
 
-        cd(taskPackageFolder);
-        run('npm install --production');
+        cd(taskBuildFolder);
 
-        // strip out typings and .md files to further reduce size
-        matchFind('@(*.md|*.d.ts|*.js.map)', path.join(taskPackageFolder, 'node_modules'), { noRecurse: false, matchBase: true})
-            .forEach(function (item) {
-                rm(item);
-            });
-
-        cd(__dirname);
-
+        console.log('> packing task');
         var webpackConfig = path.join(__dirname, 'webpack.config.js');
         var webpackCmd = 'webpack --config ' + webpackConfig + ' ' + taskName + '.js ' + path.join(taskPackageFolder, taskName + '.js');
-        cd(taskBuildFolder);
         run(webpackCmd);
 
-        // sdk dependency has been packed so we can remove
-        rm('-Rf', path.join(taskPackageFolder, 'node_modules', 'aws-sdk'));
+        // safely re-populate the unpacked vsts-task-lib
+        cd(taskPackageFolder);
+        var cmd = 'npm install vsts-task-lib' + (options.release ? ' --only=production' : '');
+        run(cmd);
 
         cd(__dirname);
     });
 
     // build the vsix package from the staged materials
+    console.log('> creating deployment vsix');
     var tfxcmd = 'tfx extension create --root ' + packageRoot + ' --output-path ' + packageRoot + ' --manifests ' + path.join(packageRoot, manifestFile);
     if (options.publisher)
         tfxcmd += ' --publisher ' + options.publisher;
@@ -338,56 +343,6 @@ target.package = function() {
     run(tfxcmd);
 
     banner('Packaging successful', true);
-}
-
-// used by CI that does official publish
-target.publish = function() {
-    var server = options.server;
-    assert(server, 'server');
-
-    // if task specified, skip
-    if (options.task) {
-        banner('Task parameter specified. Skipping publish.');
-        return;
-    }
-
-    // get the branch/commit info
-    var refs = util.getRefs();
-
-    // test whether to publish the non-aggregated tasks zip
-    // skip if not the tip of a release branch
-    var release = refs.head.release;
-    var commit = refs.head.commit;
-    if (!release ||
-        !refs.releases[release] ||
-        commit != refs.releases[release].commit) {
-
-        // warn not publishing the non-aggregated
-        console.log(`##vso[task.logissue type=warning]Skipping publish for non-aggregated tasks zip. HEAD is not the tip of a release branch.`);
-    }
-    else {
-        // store the non-aggregated tasks zip
-        var nonAggregatedZipPath = path.join(packageRoot, 'non-aggregated-tasks.zip');
-        util.storeNonAggregatedZip(nonAggregatedZipPath, release, commit);
-    }
-
-    // resolve the nupkg path
-    var nupkgFile;
-    var nupkgDir = path.join(packageRoot, 'pack-target');
-    if (!test('-d', nupkgDir)) {
-        fail('nupkg directory does not exist');
-    }
-
-    var fileNames = fs.readdirSync(nupkgDir);
-    if (fileNames.length != 1) {
-        fail('Expected exactly one file under ' + nupkgDir);
-    }
-
-    nupkgFile = path.join(nupkgDir, fileNames[0]);
-
-    // publish the package
-    ensureTool('nuget3.exe');
-    run(`nuget3.exe push ${nupkgFile} -Source ${server} -apikey Skyrise`);
 }
 
 // used to bump the patch version in task.json files

@@ -1,6 +1,6 @@
 import tl = require('vsts-task-lib/task');
 
-export class AwsLambdaNETCoreDeployTaskParameters {
+export class NETCoreDeployTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;
@@ -35,18 +35,18 @@ export class AwsLambdaNETCoreDeployTaskParameters {
             this.functionName = tl.getInput('functionName', false);
             this.functionRole = tl.getInput('functionRole', false);
 
-            if(tl.getInput('functionMemory', false)) {                
+            if(tl.getInput('functionMemory', false)) {
                 this.functionMemory = parseInt(tl.getInput('functionMemory', false));
             }
-            if(tl.getInput('functionTimeout', false)) {                
+            if(tl.getInput('functionTimeout', false)) {
                 this.functionTimeout = parseInt(tl.getInput('functionTimeout', false));
             }
 
             this.stackName = tl.getInput('stackName', false);
             this.s3Bucket = tl.getInput('s3Bucket', false);
-            this.s3Prefix = tl.getInput('s3Prefix', false);                                    
+            this.s3Prefix = tl.getInput('s3Prefix', false);
 
-            this.additionalArgs = tl.getInput('additionalArgs', false);                                    
+            this.additionalArgs = tl.getInput('additionalArgs', false);
         } catch (error) {
             throw new Error(error.message);
         }

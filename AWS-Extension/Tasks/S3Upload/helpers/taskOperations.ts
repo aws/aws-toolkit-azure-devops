@@ -1,7 +1,6 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
-import Q = require('q');
 import awsS3Client = require('aws-sdk/clients/s3');
 import TaskParameters = require('./taskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
@@ -96,7 +95,7 @@ export class TaskOperations {
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder);
         const allPaths = tl.find(taskParameters.sourceFolder); // default find options (follow sym links)
         tl.debug(tl.loc('AllPaths', allPaths));
-        const matchedPaths = tl.match(allPaths, taskParameters.globExpressions, taskParameters.sourceFolder); // default match options
+        const matchedPaths = tl.match(allPaths, taskParameters.globExpressions); // default match options
         tl.debug(tl.loc('MatchedPaths', matchedPaths));
         const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory()); // filter-out directories
         tl.debug(tl.loc('MatchedFiles', matchedFiles));

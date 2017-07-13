@@ -1,4 +1,3 @@
-
 var admZip = require('adm-zip');
 var check = require('validator');
 var fs = require('fs');
@@ -10,6 +9,7 @@ var ncp = require('child_process');
 var semver = require('semver');
 var shell = require('shelljs');
 var syncRequest = require('sync-request');
+var modclean = require('modclean');
 
 // global paths
 var downloadPath = path.join(__dirname, '_download');
@@ -125,8 +125,12 @@ var pathExists = function (checkPath) {
 }
 exports.pathExists = pathExists;
 
-var buildNodeTask = function (taskPath, outDir) {
+var buildNodeTask = function (taskPath, outDir, isRelease) {
     var originalDir = pwd();
+    var npmcmd = 'npm install';
+    if (isRelease)
+        npmcmd += ' --only=production';
+
     cd(taskPath);
     var packageJsonPath = rp('package.json');
     if (test('-f', packageJsonPath)) {
@@ -135,16 +139,34 @@ var buildNodeTask = function (taskPath, outDir) {
             fail('The package.json should not contain dev dependencies. Move the dev dependencies into a package.json file under the Tests sub-folder. Offending package.json: ' + packageJsonPath);
         }
 
-        run('npm install');
+        run(npmcmd);
     }
 
     if (test('-f', rp(path.join('Tests', 'package.json')))) {
         cd(rp('Tests'));
-        run('npm install');
+        run(npmcmd);
         cd(taskPath);
     }
 
-    run('tsc --outDir ' + outDir + ' --rootDir ' + taskPath);
+    if (isRelease) {
+        console.log('> modclean');
+        var modcleanOptions = {
+            patterns: ["default:safe"],
+            cwd: taskPath
+        };
+        modclean(modcleanOptions, function(err, results) {
+            if (err) {
+                fail('modclean failed with error ' + err.message);
+            }
+        });
+    }
+
+    var tscCmd = 'tsc --outDir ' + outDir + ' --rootDir ' + taskPath;
+    if (isRelease) {
+        tscCmd += ' --sourceMap false';
+    }
+
+    run(tscCmd);
     cd(originalDir);
 }
 exports.buildNodeTask = buildNodeTask;

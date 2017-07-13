@@ -2,7 +2,6 @@ import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
 import mm = require('minimatch');
-import Q = require('q');
 
 import awsS3Client = require('aws-sdk/clients/s3');
 import TaskParameters = require('./taskParameters');

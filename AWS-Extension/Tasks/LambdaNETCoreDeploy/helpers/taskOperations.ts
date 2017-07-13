@@ -1,4 +1,3 @@
-import Q = require('q');
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
@@ -10,7 +9,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 
 export class TaskOperations {
 
-    public static async deployFunction(taskParameters: TaskParameters.AwsLambdaNETCoreDeployTaskParameters): Promise<void> {
+    public static async deployFunction(taskParameters: TaskParameters.NETCoreDeployTaskParameters): Promise<void> {
 
         const cwd = this.determineProjectDirectory(taskParameters.lambdaProjectPath);
         console.log(tl.loc('DeployingProjectAt', cwd));

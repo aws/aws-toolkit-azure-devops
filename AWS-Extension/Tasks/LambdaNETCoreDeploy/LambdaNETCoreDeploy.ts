@@ -6,7 +6,7 @@ import TaskOperationHelpers = require('./helpers/taskOperations');
 tl.setResourcePath(path.join(__dirname, 'task.json'));
 
 function run(): Promise<void> {
-    const taskParameters = new TaskParameters.AwsLambdaNETCoreDeployTaskParameters();
+    const taskParameters = new TaskParameters.NETCoreDeployTaskParameters();
     return TaskOperationHelpers.TaskOperations.deployFunction(taskParameters);
 }
 
