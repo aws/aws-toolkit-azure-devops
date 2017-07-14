@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "11"
+        "Patch": "14"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS S3 Upload: $(bucketName)",

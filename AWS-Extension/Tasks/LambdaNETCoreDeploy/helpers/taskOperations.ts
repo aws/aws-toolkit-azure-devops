@@ -2,10 +2,8 @@ import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
 import proc = require('child_process');
-import awsLambdaClient = require('aws-sdk/clients/lambda');
 import { DotNetCliWrapper } from './dotNetCliWrapper';
 import TaskParameters = require('./taskParameters');
-import { AWSError } from 'aws-sdk/lib/error';
 
 export class TaskOperations {
 

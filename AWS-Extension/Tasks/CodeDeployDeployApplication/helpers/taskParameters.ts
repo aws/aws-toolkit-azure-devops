@@ -5,13 +5,15 @@ export class DeployTaskParameters {
     public awsSecretKey: string;
     public awsRegion: string;
     public applicationName: string;
-    public description: string;
-    public bucketName: string;
-    public deploymentArchive: string;
     public deploymentGroupName: string;
+    public revisionBundle: string;
+    public bucketName: string;
+    public bundlePrefix: string;
+    public description: string;
     public fileExistsBehavior: string;
     public updateOutdatedInstancesOnly: boolean;
     public ignoreApplicationStopFailures: boolean;
+    public outputVariable: string;
 
     constructor() {
         try {
@@ -21,13 +23,15 @@ export class DeployTaskParameters {
             this.awsSecretKey = awsEndpointAuth.parameters.password;
             this.awsRegion = tl.getInput('regionName', true);
             this.applicationName = tl.getInput('applicationName', true);
-            this.description = tl.getInput('description', false);
-            this.bucketName = tl.getInput('bucketName', true);
-            this.deploymentArchive = tl.getInput('deploymentArchive', true);
             this.deploymentGroupName = tl.getInput('deploymentGroupName', true);
+            this.revisionBundle = tl.getPathInput('revisionBundle', true, true);
+            this.bucketName = tl.getInput('bucketName', true);
+            this.bundlePrefix = tl.getInput('bundlePrefix', false);
+            this.description = tl.getInput('description', false);
             this.fileExistsBehavior = tl.getInput('fileExistsBehavior', false);
             this.updateOutdatedInstancesOnly = tl.getBoolInput('updateOutdatedInstancesOnly', false);
             this.ignoreApplicationStopFailures = tl.getBoolInput('ignoreApplicationStopFailures', false);
+            this.outputVariable = tl.getInput('outputVariable', false);
         } catch (error) {
             throw new Error(error.message);
         }

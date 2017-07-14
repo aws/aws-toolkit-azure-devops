@@ -19,16 +19,14 @@ export class TaskOperations {
     private static s3Client: awsS3Client;
 
     private static createServiceClients(taskParameters: TaskParameters.DownloadTaskParameters) {
-        const s3Config = {
+        this.s3Client = new awsS3Client({
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-        };
-
-        this.s3Client = new awsS3Client(s3Config);
+        });
     }
 
     private static async downloadFiles(taskParameters: TaskParameters.DownloadTaskParameters) {
