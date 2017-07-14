@@ -9,26 +9,16 @@ import TaskParameters = require('./taskParameters');
 
 export class TaskOperations {
 
-    public static async createStack(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters): Promise<void> {
+    public static async createOrUpdateStack(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters): Promise<void> {
         this.createServiceClients(taskParameters);
 
-        let stackId: string;
-        if (this.testStackExists(taskParameters.stackName)) {
+        let stackId: string = await this.testStackExists(taskParameters.stackName);
+        if (stackId) {
             console.log(tl.loc('StackExists', taskParameters.stackName));
-
-            if (taskParameters.templateLocation === 'LinkedArtifact') {
-                stackId = await this.updateStackFromTemplateFile(taskParameters);
-            } else {
-                stackId = await this.updateStackFromTemplateUrl(taskParameters);
-            }
+            await this.updateStackFromTemplate(taskParameters);
         } else {
             console.log(tl.loc('StackNotExist', taskParameters.stackName));
-
-            if (taskParameters.templateLocation === 'LinkedArtifact') {
-                stackId = await this.createStackFromTemplateFile(taskParameters);
-            } else {
-                stackId = await this.createStackFromTemplateUrl(taskParameters);
-            }
+            stackId = await this.createStackFromTemplate(taskParameters);
         }
 
         if (taskParameters.outputVariable) {
@@ -63,122 +53,87 @@ export class TaskOperations {
         });
     }
 
-    private static async testStackExists(stackName: string) : Promise<boolean> {
+    private static async testStackExists(stackName: string) : Promise<string> {
         console.log(tl.loc('CheckingForStackExistence', stackName));
 
         try {
-            await this.cloudFormationClient.describeStacks({ StackName: stackName }).promise();
-            tl.debug(`describeStacks on stack ${stackName} succeeded, declaring stack exists`);
-            return true;
+            const response: awsCloudFormation.DescribeStacksOutput = await this.cloudFormationClient.describeStacks({
+                StackName: stackName
+            }).promise();
+            if (response.Stacks.length > 0) {
+                return response.Stacks[0].StackId;
+            }
         } catch (err) {
-            tl.debug(`describeStacks on stack ${stackName} failed, declaring stack does not exist`);
-            return false;
+            tl.debug(`Test for stack ${stackName} threw exception: ${err.message}, assuming stack does not exist`);
         }
+
+        return null;
     }
 
-    private static async updateStackFromTemplateFile(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<string> {
-        console.log(tl.loc('UpdatingStackFromFiles', taskParameters.cfTemplateFile, taskParameters.cfParametersFile));
+    private static async updateStackFromTemplate(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<void> {
+        console.log(tl.loc('UpdateStackFromTemplate', taskParameters.templateFile, taskParameters.templateParametersFile));
 
         let template: string;
         let templateParameters: awsCloudFormation.Parameters;
 
         try {
-            template = await this.loadTemplateFile(taskParameters.cfTemplateFile);
-            if (taskParameters.cfParametersFile) {
-                templateParameters = await this.loadParametersFile(taskParameters.cfParametersFile);
+            template = await this.loadTemplateFile(taskParameters.templateFile);
+            if (taskParameters.templateParametersFile) {
+                templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
             }
         } catch (err) {
             console.error(tl.loc('TemplateFilesLoadFailure', err.message), err);
             throw err;
         }
 
+        const request: awsCloudFormation.UpdateStackInput = {
+            StackName: taskParameters.stackName,
+            Parameters: templateParameters,
+            TemplateBody: template
+        };
         try {
-            const request: awsCloudFormation.UpdateStackInput = {
-                StackName: taskParameters.stackName,
-                Parameters: templateParameters,
-                TemplateBody: template
-            };
             const response: awsCloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise();
-            tl.debug(`Stack id ${response.StackId}`);
-            await this.waitForStackUpdate(taskParameters.stackName);
-            return response.StackId;
+            await this.waitForStackUpdate(request.StackName);
         } catch (err) {
+            // if there were no changes, a validation error is thrown which we want to suppress
+            // rather than erroring out and failing the build
+            if (err.code.search(/ValidationError/) !== -1 && err.message.search(/^No updates are to be performed./) !== -1) {
+                tl.warning(tl.loc('NoWorkToDo'));
+                return;
+            }
+
             console.error(tl.loc('StackUpdateRequestFailed', err.message), err);
             throw err;
         }
     }
 
-    private static async updateStackFromTemplateUrl(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<string> {
-        console.log(tl.loc('UpdateStackFromUrls', taskParameters.cfTemplateUrl, taskParameters.cfParametersFileUrl));
+    private static async createStackFromTemplate(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<string> {
 
-        const templateParameters = await this.loadParametersFromUrl(taskParameters.cfParametersFileUrl);
-
-        try {
-            const response: awsCloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack({
-                StackName: taskParameters.stackName,
-                TemplateURL: taskParameters.cfTemplateUrl,
-                Parameters: templateParameters
-            }).promise();
-
-            tl.debug(`Stack id ${response.StackId}`);
-            await this.waitForStackUpdate(taskParameters.stackName);
-            return response.StackId;
-        } catch (err) {
-            console.error(tl.loc('StackCreateRequestFailed', err.message), err);
-            throw err;
-        }
-    }
-
-    // creates and waits for completion, returning the stack id
-    private static async createStackFromTemplateFile(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<string> {
-
-        console.log(tl.loc('CreatingStackFromFiles', taskParameters.cfTemplateFile, taskParameters.cfParametersFile));
+        console.log(tl.loc('CreateStackFromTemplate', taskParameters.templateFile, taskParameters.templateParametersFile));
 
         let template: string;
         let templateParameters: awsCloudFormation.Parameters;
 
         try {
-            template = await this.loadTemplateFile(taskParameters.cfTemplateFile);
-            if (taskParameters.cfParametersFile) {
-                templateParameters = await this.loadParametersFile(taskParameters.cfParametersFile);
+            template = await this.loadTemplateFile(taskParameters.templateFile);
+            if (taskParameters.templateParametersFile) {
+                templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
             }
         } catch (err) {
             console.error(tl.loc('TemplateFilesLoadFailure', err.message), err);
             throw err;
         }
 
+        const request: awsCloudFormation.CreateStackInput = {
+            StackName: taskParameters.stackName,
+            OnFailure: taskParameters.onFailure,
+            Parameters: templateParameters,
+            TemplateBody: template
+        };
         try {
-            const request: awsCloudFormation.CreateStackInput = {
-                StackName: taskParameters.stackName,
-                OnFailure: taskParameters.onFailure,
-                Parameters: templateParameters,
-                TemplateBody: template
-            };
             const response: awsCloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise();
             tl.debug(`Stack id ${response.StackId}`);
-            await this.waitForStackCreation(taskParameters.stackName);
-            return response.StackId;
-        } catch (err) {
-            console.error(tl.loc('StackCreateRequestFailed', err.message), err);
-            throw err;
-        }
-    }
-
-    private static async createStackFromTemplateUrl(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<string> {
-
-        console.log(tl.loc('CreatingStackFromUrls', taskParameters.cfTemplateUrl, taskParameters.cfParametersFileUrl));
-
-        const templateParameters = await this.loadParametersFromUrl(taskParameters.cfParametersFileUrl);
-
-        try {
-            const response: awsCloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack({
-                StackName: taskParameters.stackName,
-                TemplateURL: taskParameters.cfTemplateUrl,
-                Parameters: templateParameters
-            }).promise();
-
-            tl.debug(`Stack id ${response.StackId}`);
-            await this.waitForStackCreation(taskParameters.stackName);
+            await this.waitForStackCreation(request.StackName);
             return response.StackId;
         } catch (err) {
             console.error(tl.loc('StackCreateRequestFailed', err.message), err);
@@ -193,42 +148,11 @@ export class TaskOperations {
         return template;
     }
 
-    private static async loadParametersFile(parametersFile: string): Promise<awsCloudFormation.Parameters> {
+    private static async loadParametersFromFile(parametersFile: string): Promise<awsCloudFormation.Parameters> {
         console.log(tl.loc('LoadingTemplateParameterFile', parametersFile));
         const templateParameters = JSON.parse(fs.readFileSync(parametersFile, 'utf8'));
         tl.debug('Successfully loaded template file');
         return templateParameters;
-    }
-
-    private static async loadParametersFromUrl(parametersFileUrl: string) : Promise<awsCloudFormation.Parameters> {
-        const regex: string = '(s3-|s3\.)?(.*)\.amazonaws\.com';
-        const regExpression = new RegExp(regex);
-        const matches = parametersFileUrl.match(regExpression);
-        if (!matches) {
-            throw new Error(tl.loc('UrlFormatError', regex));
-        }
-
-        const bucketUrlPos = parametersFileUrl.indexOf(matches[0]) + matches[0].length + 1;
-        const bucketUrl = parametersFileUrl.slice(bucketUrlPos);
-        tl.debug(`Bucket URl: ${bucketUrl}`);
-        const bucketName = bucketUrl.split('/')[0];
-        tl.debug(`Bucket name: ${bucketName}`);
-        const fileKey = bucketUrl.slice(bucketUrl.indexOf(bucketName) + bucketName.length + 1);
-        tl.debug(`Template Parameters File Key: ${fileKey}`);
-
-        let templateParameters: any;
-        try {
-            const downloadResponse: awsS3.GetObjectOutput = await this.s3Client.getObject({
-                Bucket: bucketName,
-                Key: fileKey
-            }).promise();
-
-            templateParameters = JSON.parse(downloadResponse.Body.toString());
-            return templateParameters;
-        } catch (err) {
-            console.log(tl.loc('ParametersUrlLoadOrParseError', err.message));
-            throw err;
-        }
     }
 
     private static async waitForStackCreation(stackName: string) : Promise<void> {
@@ -242,7 +166,7 @@ export class TaskOperations {
                 if (err) {
                     throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
                 } else {
-                    console.log(tl.loc('StackCreated'));
+                    console.log(tl.loc('StackCreated', stackName));
                 }
             });
         });
@@ -259,7 +183,7 @@ export class TaskOperations {
                 if (err) {
                     throw new Error(tl.loc('StackUpdateFailed', stackName, err.message));
                 } else {
-                    console.log(tl.loc('StackUpdated'));
+                    console.log(tl.loc('StackUpdated', stackName));
                 }
             });
         });

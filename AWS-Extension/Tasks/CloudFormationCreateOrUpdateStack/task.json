@@ -14,18 +14,13 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "14"
+        "Patch": "23"
     },
     "runsOn": [
         "Agent"
     ],
     "minimumAgentVersion": "1.95.0",
     "groups": [
-        {
-            "name": "Template",
-            "displayName": "Template",
-            "isExpanded": true
-        },
         {
             "name": "OutputOptions",
             "displayName": "Output",
@@ -59,56 +54,20 @@
             "helpMarkDown": "The name that is associated with the stack. The name must be unique in the region in which you are creating the stack.\n\nA stack name can contain only alphanumeric characters (case sensitive) and hyphens. It must start with an alphabetic character and cannot be longer than 128 characters. "
         },
         {
-            "name": "templateLocation",
-            "type": "pickList",
-            "label": "Template location",
-            "required": true,
-            "defaultValue": "LinkedArtifact",
-            "groupName": "Template",
-            "options": {
-                "LinkedArtifact": "Linked artifact",
-                "FileURL": "URL of the file"
-            }
-        },
-        {
-            "name": "cfFileLink",
-            "type": "string",
-            "label": "Template link",
+            "name": "templateFile",
+            "type": "filepath",
+            "label": "Template File",
             "defaultValue": "",
             "required": true,
-            "groupName": "Template",
-            "helpMarkDown": "Specify the URL of the AWS CloudFormation template file.\n\nThe URL must point to a template (max size: 460,800 bytes) that is located in an Amazon S3 bucket. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide. ",
-            "visibleRule": "templateLocation = FileURL"
+            "helpMarkDown": "Path to the template file for the stack. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide. "
         },
         {
-            "name": "cfParametersFileLink",
-            "type": "string",
-            "label": "Template parameters link",
+            "name": "templateParametersFile",
+            "type": "filepath",
+            "label": "Template Parameters File",
             "defaultValue": "",
             "required": false,
-            "groupName": "Template",
-            "helpMarkDown": "Location of file containing the template parameters. The URL must point to a template parameters file that is located in an Amazon S3 bucket. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
-            "visibleRule": " templateLocation = FileURL"
-        },
-        {
-            "name": "cfFile",
-            "type": "filePath",
-            "label": "Template",
-            "defaultValue": "",
-            "required": true,
-            "groupName": "Template",
-            "visibleRule": " templateLocation = LinkedArtifact",
-            "helpMarkDown": "Specify the path to the AWS CloudFormation template. \n\nStructure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. For more information, go to [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
-        },
-        {
-            "name": "cfParametersFile",
-            "type": "filePath",
-            "label": "Template parameters",
-            "defaultValue": "",
-            "required": false,
-            "groupName": "Template",
-            "helpMarkDown": "Specify the path for the parameters file for the AWS CloudFormation template.",
-            "visibleRule": " templateLocation = LinkedArtifact"
+            "helpMarkDown": "Path to the file containing the template parameters. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
             "name": "onFailure",
@@ -153,24 +112,21 @@
         "CheckingForStackExistence": "Checking existence for stack '%s'",
         "StackExists": "Stack exists, switching to stack update mode",
         "StackNotExist": "Stack does not exist, switching to stack create mode",
-        "CreatingStackFromFiles": "Creating stack using template file '%s', parameters file '%s'",
-        "CreatingStackFromUrls": "Creating stack using template url '%s', parameters url '%s'",
-        "UpdatingStackFromFiles": "Updating stack using template file '%s', parameters file '%s'",
-        "UpdatingStackFromUrls": "Updating stack using template url '%s', parameters url '%s'",
+        "CreateStackFromTemplate": "Creating stack using template file '%s', parameters file '%s'",
+        "UpdateStackFromTemplate": "Updating stack using template file '%s', parameters file '%s'",
         "LoadingTemplateFile": "Loading template file from '%s'",
         "LoadingTemplateParameterFile": "Loading template parameters file from '%s'",
         "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
-        "StackCreated": "Stack %s created successfully",
+        "StackCreated": "Stack %s transitioned to create complete status",
         "StackCreationFailed": "Stack %s failed to reach completion status, error: %s",
         "StackCreateRequestFailed": "Error requesting stack creation, error message: %s",
-        "StackUpdated": "Stack %s updated successfully",
+        "StackUpdated": "Stack %s transitioned to update complete status",
         "StackUpdateFailed": "Stack %s failed to reach update completion status, error: %s",
         "StackUpdateRequestFailed": "Error requesting stack update, error message: %s",
         "CreatedStackId": "Stack creation completed, new stack id %s",
-        "UrlFormatError": "Template parameters url error, expected url satisfying regex '%s'",
-        "ParametersUrlLoadOrParseError": "Failed to download or parse template parameters file, error: %s",
         "WaitingForStack": "Waiting for stack %s to reach create create or update completed status",
         "TaskCompleted": "Stack %s created successfully, stack ID %s",
+        "NoWorkToDo": "The service detected no changes in the template and/or parameters and declined to update the stack.",
         "SettingOutputVariable": "Setting stack ID into output variable %s"
     }
 }

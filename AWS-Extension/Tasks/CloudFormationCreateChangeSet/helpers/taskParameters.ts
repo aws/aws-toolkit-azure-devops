@@ -10,11 +10,9 @@ export class CreateChangeSetTaskParameters {
     public autoExecute: boolean;
     public roleARN: string;
     public description: string;
-    public cfTemplateFile: string;
-    public cfParametersFile: string;
-    public templateLocation: string;
-    public cfTemplateUrl: string;
-    public cfParametersFileUrl: string;
+    public templateSource: string;
+    public templateFile: string;
+    public templateParametersFile: string;
     public notificationARNs: string[];
     public resourceTypes: string[];
     public outputVariable: string;
@@ -33,13 +31,10 @@ export class CreateChangeSetTaskParameters {
             this.description = tl.getInput('description', false);
             this.autoExecute = tl.getBoolInput('autoExecute', true);
 
-            this.templateLocation = tl.getInput('templateLocation');
-            if (this.templateLocation === 'LinkedArtifact') {
-                this.cfTemplateFile = tl.getPathInput('cfFile');
-                this.cfParametersFile = tl.getPathInput('cfParametersFile');
-            } else if (this.templateLocation === 'FileURL') {
-                this.cfTemplateUrl = tl.getInput('cfFileLink');
-                this.cfParametersFileUrl = tl.getInput('cfParametersFileLink');
+            this.templateSource = tl.getInput('templateSource', true);
+            if (this.templateSource === 'NewTemplate') {
+                this.templateFile = tl.getPathInput('templateFile', true, true);
+                this.templateParametersFile = tl.getPathInput('templateParametersFile', true, true);
             }
 
             this.roleARN = tl.getInput('roleARN', false);
