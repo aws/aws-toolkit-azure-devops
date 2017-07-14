@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "aws-vsts-tools",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "name": "AWS Tools for Visual Studio Team Services",
   "scopes": [
     "vso.build",
@@ -28,7 +28,7 @@
     }
   ],
   "tags": [
-    "AWS","S3","CloudFormation","AWS CLI", "AWS Lambda", "AWS CodeDeploy"
+    "AWS","S3","CloudFormation","AWS CLI", "Lambda", "CodeDeploy"
   ],
   "links": {
     "home": {
@@ -75,7 +75,7 @@
       "path": "Tasks/CloudFormationCreateChangeSet"
     },
     {
-      "path": "Tasks/CloudFormationCreateStack"
+      "path": "Tasks/CloudFormationCreateOrUpdateStack"
     },
     {
       "path": "Tasks/CloudFormationDeleteChangeSet"
@@ -173,7 +173,7 @@
     },
     {
       "id": "CloudFormationCreateChangeSet",
-      "description": "Create an AWS CloudFormation changeset",
+      "description": "Create and optionally execute an AWS CloudFormation changeset",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
@@ -183,14 +183,14 @@
       }
     },
     {
-      "id": "CloudFormationCreateStack",
-      "description": "Create an AWS CloudFormation stack",
+      "id": "CloudFormationCreateOrUpdateStack",
+      "description": "Create an new AWS CloudFormation stack or update an existing stack",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
       ],
       "properties": {
-        "name": "Tasks/CloudFormationCreateStack"
+        "name": "Tasks/CloudFormationCreateOrUpdateStack"
       }
     },
     {

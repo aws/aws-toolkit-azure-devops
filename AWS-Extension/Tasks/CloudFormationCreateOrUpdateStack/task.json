@@ -1,8 +1,8 @@
 {
-    "id": "1423920e-3741-48b9-8544-68c9d397a60a",
-    "name": "CloudFormationCreateStack",
-    "friendlyName": "AWS CloudFormation Create Stack",
-    "description": "Create an AWS CloudFormation stack.",
+    "id": "bffe416a-6b57-4324-bce1-ce02a750c941",
+    "name": "CloudFormationCreateOrUpdateStack",
+    "friendlyName": "AWS CloudFormation Create/Update Stack",
+    "description": "Creates a new AWS CloudFormation stack or updates the stack if it exists.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
     "category": "Deploy",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "10"
+        "Patch": "11"
     },
     "runsOn": [
         "Agent"
@@ -25,9 +25,14 @@
             "name": "Template",
             "displayName": "Template",
             "isExpanded": true
+        },
+        {
+            "name": "OutputOptions",
+            "displayName": "Output",
+            "isExpanded": false
         }
     ],
-    "instanceNameFormat": "AWS CloudFormation Create Stack $(stackName)",
+    "instanceNameFormat": "AWS CloudFormation Create/Update Stack $(stackName)",
     "inputs": [
         {
             "name": "awsCredentials",
@@ -127,28 +132,45 @@
             "groupName": "Template",
             "required": false,
             "helpMarkDown": "Set to true to disable rollback of the stack if stack creation failed. You can specify either DisableRollback or OnFailure, but not both. \n\n Default: false"
+        },
+        {
+            "name": "outputVariable",
+            "type": "string",
+            "label": "Output Variable",
+            "defaultValue" : "",
+            "groupName": "OutputOptions",
+            "helpMarkDown": "The name of the variable that will contain the ID of the stack on task completion. The variable can be used as $(variableName) to refer to the stack ID in subsequent tasks.",
+            "required": false
         }
-
     ],
     "execution": {
         "Node": {
-            "target": "CloudFormationCreateStack.js",
+            "target": "CloudFormationCreateOrUpdateStack.js",
             "argumentFormat": ""
         }
     },
     "messages": {
+        "CheckingForStackExistence": "Checking existence for stack '%s'",
+        "StackExists": "Stack exists, switching to stack update mode",
+        "StackNotExist": "Stack does not exist, switching to stack create mode",
         "CreatingStackFromFiles": "Creating stack using template file '%s', parameters file '%s'",
         "CreatingStackFromUrls": "Creating stack using template url '%s', parameters url '%s'",
+        "UpdatingStackFromFiles": "Updating stack using template file '%s', parameters file '%s'",
+        "UpdatingStackFromUrls": "Updating stack using template url '%s', parameters url '%s'",
         "LoadingTemplateFile": "Loading template file from '%s'",
         "LoadingTemplateParameterFile": "Loading template parameters file from '%s'",
         "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
         "StackCreated": "Stack %s created successfully",
         "StackCreationFailed": "Stack %s failed to reach completion status, error: %s",
+        "StackCreateRequestFailed": "Error requesting stack creation, error message: %s",
+        "StackUpdated": "Stack %s updated successfully",
+        "StackUpdateFailed": "Stack %s failed to reach update completion status, error: %s",
+        "StackUpdateRequestFailed": "Error requesting stack update, error message: %s",
         "CreatedStackId": "Stack creation completed, new stack id %s",
         "UrlFormatError": "Template parameters url error, expected url satisfying regex '%s'",
         "ParametersUrlLoadOrParseError": "Failed to download or parse template parameters file, error: %s",
-        "WaitingForStack": "Waiting for stack %s to reach create completed status",
-        "WaitConditionSatisifed": "New stack transitioned successfully to completed status",
-        "TaskCompleted": "Stack %s created successfully, stack ID %s"
+        "WaitingForStack": "Waiting for stack %s to reach create create or update completed status",
+        "TaskCompleted": "Stack %s created successfully, stack ID %s",
+        "SettingOutputVariable": "Setting stack ID into output variable %s"
     }
 }

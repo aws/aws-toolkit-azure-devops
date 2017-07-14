@@ -33,7 +33,16 @@ export class TaskOperations {
                 throw new Error(`Unknown templateLocation mode {taskParameters.templateLocation}`);
         }
 
-        console.log(tl.loc('TaskCompleted', taskParameters.changeSetName));
+        if (taskParameters.autoExecute) {
+            this.executeChangeSet(taskParameters.changeSetName, taskParameters.stackName);
+        }
+
+        if (taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
+            tl.setVariable(taskParameters.outputVariable, stackId);
+        }
+
+        console.log(tl.loc('TaskCompleted', taskParameters.changeSetName, stackId));
     }
 
     private static cloudFormationClient: awsCloudFormation;
@@ -61,7 +70,7 @@ export class TaskOperations {
     }
 
     private static async createChangeSetFromOriginalTemplate(taskParameters: TaskParameters.CreateChangeSetTaskParameters) : Promise<string> {
-        console.log(tl.loc('CreatingChangeSetFromPreviousTemplate'));
+        console.log(tl.loc('CreatingChangesetFromPreviousTemplate'));
 
         let templateParameters: awsCloudFormation.Parameters;
 
@@ -76,28 +85,23 @@ export class TaskOperations {
             throw err;
         }
 
-        try {
-            const request: awsCloudFormation.CreateChangeSetInput = {
-                ChangeSetName: taskParameters.changeSetName,
-                ChangeSetType: taskParameters.changeSetType,
-                StackName: taskParameters.stackName,
-                UsePreviousTemplate: true,
-                Parameters: templateParameters,
-                Description: taskParameters.description,
-                NotificationARNs: taskParameters.notificationARNs,
-                ResourceTypes: taskParameters.resourceTypes,
-                RoleARN: taskParameters.roleARN
-            };
+        const request: awsCloudFormation.CreateChangeSetInput = {
+            ChangeSetName: taskParameters.changeSetName,
+            ChangeSetType: taskParameters.changeSetType,
+            StackName: taskParameters.stackName,
+            UsePreviousTemplate: true,
+            Parameters: templateParameters,
+            Description: taskParameters.description,
+            NotificationARNs: taskParameters.notificationARNs,
+            ResourceTypes: taskParameters.resourceTypes,
+            RoleARN: taskParameters.roleARN
+        };
 
-            return await this.createChangeSetFromRequest(request);
-        } catch (err) {
-            console.error(tl.loc('ChangeSetCreateRequestFailed', err.message), err);
-            throw err;
-        }
+        return await this.createChangeSetFromRequest(request);
     }
 
     private static async createChangeSetFromTemplateFile(taskParameters: TaskParameters.CreateChangeSetTaskParameters) : Promise<string> {
-        console.log(tl.loc('CreatingChangeSetFromFiles', taskParameters.cfTemplateFile, taskParameters.cfParametersFile));
+        console.log(tl.loc('CreatingChangesetFromFiles', taskParameters.cfTemplateFile, taskParameters.cfParametersFile));
 
         let template: string;
         let templateParameters: awsCloudFormation.Parameters;
@@ -117,28 +121,23 @@ export class TaskOperations {
             throw err;
         }
 
-        try {
-            const request: awsCloudFormation.CreateChangeSetInput = {
-                ChangeSetName: taskParameters.changeSetName,
-                ChangeSetType: taskParameters.changeSetType,
-                StackName: taskParameters.stackName,
-                Parameters: templateParameters,
-                TemplateBody: template,
-                Description: taskParameters.description,
-                NotificationARNs: taskParameters.notificationARNs,
-                ResourceTypes: taskParameters.resourceTypes,
-                RoleARN: taskParameters.roleARN
-            };
+        const request: awsCloudFormation.CreateChangeSetInput = {
+            ChangeSetName: taskParameters.changeSetName,
+            ChangeSetType: taskParameters.changeSetType,
+            StackName: taskParameters.stackName,
+            Parameters: templateParameters,
+            TemplateBody: template,
+            Description: taskParameters.description,
+            NotificationARNs: taskParameters.notificationARNs,
+            ResourceTypes: taskParameters.resourceTypes,
+            RoleARN: taskParameters.roleARN
+        };
 
-            return await this.createChangeSetFromRequest(request);
-        } catch (err) {
-            console.error(tl.loc('ChangeSetCreateRequestFailed', err.message), err);
-            throw err;
-        }
+        return await this.createChangeSetFromRequest(request);
     }
 
     private static async createChangeSetFromTemplateUrl(taskParameters: TaskParameters.CreateChangeSetTaskParameters) : Promise<string> {
-        console.log(tl.loc('CreatingChangeSetFromUrls', taskParameters.cfTemplateUrl, taskParameters.cfParametersFileUrl));
+        console.log(tl.loc('CreatingChangesetFromUrls', taskParameters.cfTemplateUrl, taskParameters.cfParametersFileUrl));
 
         const regex: string = '(s3-|s3\.)?(.*)\.amazonaws\.com';
         const regExpression = new RegExp(regex);
@@ -183,33 +182,67 @@ export class TaskOperations {
         return await this.createChangeSetFromRequest(request);
     }
 
+    private static async executeChangeSet(changeSetName: string, stackName: string) : Promise<void> {
+        console.log(tl.loc('ExecutingChangeset', changeSetName, stackName));
+
+        try {
+            await this.cloudFormationClient.executeChangeSet({
+                ChangeSetName: changeSetName,
+                StackName: stackName
+            }).promise();
+
+            await this.waitForStackCreation(stackName);
+        } catch (err) {
+            console.error(tl.loc('ExecuteChangesetFailed', err.message), err);
+            throw err;
+        }
+    }
+
     private static async createChangeSetFromRequest(request: awsCloudFormation.CreateChangeSetInput) : Promise<string> {
         try {
             const response: awsCloudFormation.CreateChangeSetOutput = await this.cloudFormationClient.createChangeSet(request).promise();
 
             tl.debug(`Change set id ${response.Id}, stack id ${response.StackId}`);
-            return await this.waitForChangeSetCreation(request.ChangeSetName, response.StackId);
+            await this.waitForChangeSetCreation(request.ChangeSetName, response.StackId);
+            return response.StackId;
         }  catch (err) {
-            console.error(tl.loc('ChangeSetCreateRequestFailed', err.message), err);
+            console.error(tl.loc('ChangesetCreationFailed', err.message), err);
             throw err;
         }
     }
 
-    private static async waitForChangeSetCreation(changeSetName: string, stackId: string) : Promise<string> {
+    private static async waitForChangeSetCreation(changeSetName: string, stackId: string) : Promise<void> {
 
-        return new Promise<string>((resolve, reject) => {
-            console.log(tl.loc('WaitingForChangeSet', changeSetName));
+        return new Promise<void>((resolve, reject) => {
+            console.log(tl.loc('WaitingForChangesetValidation', changeSetName));
 
             this.cloudFormationClient.waitFor('changeSetCreateComplete',
                                               { ChangeSetName: changeSetName, StackName: stackId },
                                               function(err: AWSError, data: awsCloudFormation.DescribeChangeSetOutput) {
                 if (err) {
-                    throw new Error(tl.loc('ChangeSetCreationFailed', changeSetName, err.message));
+                    throw new Error(tl.loc('ChangesetValidationFailed', changeSetName, err.message));
                 } else {
-                    console.log(tl.loc('WaitConditionSatisifed'));
-                    return changeSetName;
+                    console.log(tl.loc('ChangesetValidated'));
                 }
             });
         });
     }
+
+    private static async waitForStackCreation(stackName: string) : Promise<void> {
+
+        return new Promise<void>((resolve, reject) => {
+            console.log(tl.loc('WaitingForChangesetExecution', stackName));
+
+            this.cloudFormationClient.waitFor('stackCreateComplete',
+                                              { StackName: stackName },
+                                              function(err: AWSError, data: awsCloudFormation.DescribeStacksOutput) {
+                if (err) {
+                    throw new Error(tl.loc('ExecuteChangesetFailed', err.message));
+                } else {
+                    console.log(tl.loc('ChangesetExecuted'));
+                }
+            });
+        });
+    }
+
 }

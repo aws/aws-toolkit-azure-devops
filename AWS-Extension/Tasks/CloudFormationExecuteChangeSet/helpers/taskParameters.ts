@@ -6,6 +6,7 @@ export class ExecuteChangeSetTaskParameters {
     public awsRegion: string;
     public changeSetName: string;
     public stackName: string;
+    public outputVariable: string;
 
     constructor() {
         try {
@@ -17,6 +18,7 @@ export class ExecuteChangeSetTaskParameters {
 
             this.changeSetName = tl.getInput('changeSetName', true);
             this.stackName = tl.getInput('stackName', true);
+            this.outputVariable = tl.getInput('outputVariable', false);
         } catch (error) {
             throw new Error(error.message);
         }

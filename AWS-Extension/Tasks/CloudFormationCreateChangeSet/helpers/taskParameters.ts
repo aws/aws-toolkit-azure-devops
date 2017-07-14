@@ -7,6 +7,7 @@ export class CreateChangeSetTaskParameters {
     public changeSetName: string;
     public changeSetType: string;
     public stackName: string;
+    public autoExecute: boolean;
     public roleARN: string;
     public description: string;
     public cfTemplateFile: string;
@@ -16,6 +17,7 @@ export class CreateChangeSetTaskParameters {
     public cfParametersFileUrl: string;
     public notificationARNs: string[];
     public resourceTypes: string[];
+    public outputVariable: string;
 
     constructor() {
         try {
@@ -28,8 +30,8 @@ export class CreateChangeSetTaskParameters {
             this.changeSetName = tl.getInput('changeSetName', true);
             this.changeSetType = tl.getInput('changeSetType', true);
             this.stackName = tl.getInput('stackName', true);
-            this.roleARN = tl.getInput('roleARN', false);
             this.description = tl.getInput('description', false);
+            this.autoExecute = tl.getBoolInput('autoExecute', true);
 
             this.templateLocation = tl.getInput('templateLocation');
             if (this.templateLocation === 'LinkedArtifact') {
@@ -40,8 +42,11 @@ export class CreateChangeSetTaskParameters {
                 this.cfParametersFileUrl = tl.getInput('cfParametersFileLink');
             }
 
+            this.roleARN = tl.getInput('roleARN', false);
             this.notificationARNs = tl.getDelimitedInput('notificationARNs', '\n', false);
             this.resourceTypes = tl.getDelimitedInput('resourceTypes', '\n', false);
+
+            this.outputVariable = tl.getInput('outputVariable', false);
         } catch (error) {
             throw new Error(error.message);
         }

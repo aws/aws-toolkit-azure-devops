@@ -2,7 +2,7 @@
     "tasks": [
         "AWSCLI",
         "CloudFormationCreateChangeSet",
-        "CloudFormationCreateStack",
+        "CloudFormationCreateOrUpdateStack",
         "CloudFormationDeleteChangeSet",
         "CloudFormationDeleteStack",
         "CloudFormationExecuteChangeSet",

@@ -19,7 +19,12 @@ export class TaskOperations {
                 StackName: taskParameters.stackName
             }).promise();
 
-            await this.waitForStackCreation(taskParameters.stackName);
+            const stackId = await this.waitForStackCreation(taskParameters.stackName);
+
+            if (taskParameters.outputVariable) {
+                console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
+                tl.setVariable(taskParameters.outputVariable, stackId);
+            }
 
             console.log(tl.loc('TaskCompleted', taskParameters.changeSetName));
         } catch (err) {
@@ -53,6 +58,7 @@ export class TaskOperations {
                     throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
                 } else {
                     console.log(tl.loc('WaitConditionSatisifed'));
+                    return data.Stacks[0].StackId;
                 }
             });
         });

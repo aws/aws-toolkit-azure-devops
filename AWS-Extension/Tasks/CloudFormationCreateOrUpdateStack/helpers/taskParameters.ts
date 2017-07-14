@@ -1,6 +1,6 @@
 import tl = require('vsts-task-lib/task');
 
-export class CreateStackTaskParameters {
+export class CreateOrUpdateStackTaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public stackName: string;
@@ -11,6 +11,7 @@ export class CreateStackTaskParameters {
     public cfTemplateUrl: string;
     public cfParametersFileUrl: string;
     public onFailure: string;
+    public outputVariable: string;
 
     constructor() {
         try {
@@ -31,6 +32,8 @@ export class CreateStackTaskParameters {
                 this.cfTemplateUrl = tl.getInput('cfFileLink');
                 this.cfParametersFileUrl = tl.getInput('cfParametersFileLink');
             }
+
+            this.outputVariable = tl.getInput('outputVariable', false);
         } catch (error) {
             throw new Error(error.message);
         }

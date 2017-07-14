@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "10"
+        "Patch": "11"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS Lambda .NET Core Deploy: $(functionName) $(stackName)",
