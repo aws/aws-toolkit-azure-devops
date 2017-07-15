@@ -72,6 +72,9 @@
       "path": "Tasks/AWSCLI"
     },
     {
+      "path": "Tasks/BeanstalkDeployApplication"
+    },
+    {
       "path": "Tasks/CloudFormationCreateChangeSet"
     },
     {
@@ -171,6 +174,17 @@
         "name": "Tasks/AWSCLI"
       }
     },
+   {
+      "id": "BeanstalkDeployApplication",
+      "description": "Deploy an application to AWS Elastic Beanstalk",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "Tasks/BeanstalkDeployApplication"
+      }
+    },        
     {
       "id": "CloudFormationCreateChangeSet",
       "description": "Create and optionally execute an AWS CloudFormation changeset",

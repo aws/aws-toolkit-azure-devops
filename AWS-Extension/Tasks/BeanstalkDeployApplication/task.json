@@ -1,0 +1,89 @@
+{
+    "id": "ACA12442-1E42-433A-91F4-82F8AA714DB1",
+    "name": "BeanstalkDeployApplication",
+    "friendlyName": "AWS Elastic Beanstalk Deployment",
+    "description": "Deploys an application to Amazon EC2 instance(s) using AWS Beanstalk.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [AWS Beanstalk User Guide](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html)",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "0",
+        "Minor": "9",
+        "Patch": "3"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "AWS Beanstalk Deploy: $(applicationName)",
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": false
+        }
+    ],
+    "inputs" : [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "webDeploymentAchive",
+            "label": "Web Deploy Archive",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The path to web deploy archive that contains the application to deploy to Elastic Beanstalk."
+        },        
+        {
+            "name": "applicationName",
+            "label": "Beanstalk Application Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the AWS Beanstalk application"
+        },
+        {
+            "name": "environmentName",
+            "label": "Elastic Beanstalk Environment Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the Elastic Beanstalk environment that will run the application"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "BeanstalkDeployApplication.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "CreatedApplicationVersion" : "Created application version: %s",
+        "StartingApplicationDeployment" : "Started updating environment to version: %s",
+        "DeterminedBucket" : "Determine S3 bucket %s to store application bundle",
+        "UploadingBundle": "Uploading application bundle '%s' to object '%s' in bucket '%s'",
+        "BundleUploadCompleted": "Application upload completed successfully",
+        "BundleUploadFailed": "Upload of application bundle failed with error: %s",
+        "WaitingForDeployment" : "Waiting for deployment to complete",
+        "EventsComing" : "Events from Elastic Beanstalk:",
+        "FailedToFindEnvironment" : "Failed to find environment when waiting for deployment completion",
+
+        "TaskCompleted": "Deployment to application %s completed"        
+    }
+}
