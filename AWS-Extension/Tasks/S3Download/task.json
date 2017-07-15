@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "14"
+        "Patch": "23"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS S3 Download: $(bucketName)",
@@ -61,7 +61,7 @@
         {
             "name": "globExpressions",
             "type": "multiLine",
-            "label": "Contents",
+            "label": "Filename Patterns",
             "defaultValue": "**",
             "required": true,
             "helpMarkDown": "Glob patterns to select the file and folder content to be downloaded. Supports multiple lines of minimatch patterns."

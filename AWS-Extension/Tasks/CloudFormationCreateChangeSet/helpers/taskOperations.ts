@@ -13,28 +13,14 @@ export class TaskOperations {
         this.createServiceClients(taskParameters);
 
         let stackId: string;
-        switch (taskParameters.templateLocation) {
-            case 'LinkedArtifact': {
-                stackId = await this.createChangeSetFromTemplateFile(taskParameters);
-            }
-            break;
-
-            case 'FileURL': {
-                stackId = await this.createChangeSetFromTemplateUrl(taskParameters);
-            }
-            break;
-
-            case 'UsePrevious': {
-                stackId = await this.createChangeSetFromOriginalTemplate(taskParameters);
-            }
-            break;
-
-            default:
-                throw new Error(`Unknown templateLocation mode {taskParameters.templateLocation}`);
+        if (taskParameters.templateSource === 'NewTemplate') {
+            stackId = await this.createChangeSetFromTemplateFile(taskParameters);
+        } else {
+            stackId = await this.createChangeSetFromOriginalTemplate(taskParameters);
         }
 
         if (taskParameters.autoExecute) {
-            this.executeChangeSet(taskParameters.changeSetName, taskParameters.stackName);
+            await this.executeChangeSet(taskParameters.changeSetName, taskParameters.stackName);
         }
 
         if (taskParameters.outputVariable) {
@@ -75,9 +61,9 @@ export class TaskOperations {
         let templateParameters: awsCloudFormation.Parameters;
 
         try {
-            if (taskParameters.cfParametersFile) {
-                console.log(tl.loc('LoadingTemplateParameterFile', taskParameters.cfParametersFile));
-                templateParameters = JSON.parse(fs.readFileSync(taskParameters.cfParametersFile, 'utf8'));
+            if (taskParameters.templateParametersFile) {
+                console.log(tl.loc('LoadingTemplateParameterFile', taskParameters.templateParametersFile));
+                templateParameters = JSON.parse(fs.readFileSync(taskParameters.templateParametersFile, 'utf8'));
                 tl.debug('Successfully loaded template file');
             }
         } catch (err) {
@@ -101,19 +87,19 @@ export class TaskOperations {
     }
 
     private static async createChangeSetFromTemplateFile(taskParameters: TaskParameters.CreateChangeSetTaskParameters) : Promise<string> {
-        console.log(tl.loc('CreatingChangesetFromFiles', taskParameters.cfTemplateFile, taskParameters.cfParametersFile));
+        console.log(tl.loc('CreatingChangesetFromFiles', taskParameters.templateFile, taskParameters.templateParametersFile));
 
         let template: string;
         let templateParameters: awsCloudFormation.Parameters;
 
         try {
-            console.log(tl.loc('LoadingTemplateFile', taskParameters.cfTemplateFile));
-            template = fs.readFileSync(taskParameters.cfTemplateFile, 'utf8');
+            console.log(tl.loc('LoadingTemplateFile', taskParameters.templateFile));
+            template = fs.readFileSync(taskParameters.templateFile, 'utf8');
             tl.debug('Successfully loaded template file');
 
-            if (taskParameters.cfParametersFile) {
-                console.log(tl.loc('LoadingTemplateParameterFile', taskParameters.cfParametersFile));
-                templateParameters = JSON.parse(fs.readFileSync(taskParameters.cfParametersFile, 'utf8'));
+            if (taskParameters.templateParametersFile) {
+                console.log(tl.loc('LoadingTemplateParameterFile', taskParameters.templateParametersFile));
+                templateParameters = JSON.parse(fs.readFileSync(taskParameters.templateParametersFile, 'utf8'));
                 tl.debug('Successfully loaded template file');
             }
         } catch (err) {
@@ -127,52 +113,6 @@ export class TaskOperations {
             StackName: taskParameters.stackName,
             Parameters: templateParameters,
             TemplateBody: template,
-            Description: taskParameters.description,
-            NotificationARNs: taskParameters.notificationARNs,
-            ResourceTypes: taskParameters.resourceTypes,
-            RoleARN: taskParameters.roleARN
-        };
-
-        return await this.createChangeSetFromRequest(request);
-    }
-
-    private static async createChangeSetFromTemplateUrl(taskParameters: TaskParameters.CreateChangeSetTaskParameters) : Promise<string> {
-        console.log(tl.loc('CreatingChangesetFromUrls', taskParameters.cfTemplateUrl, taskParameters.cfParametersFileUrl));
-
-        const regex: string = '(s3-|s3\.)?(.*)\.amazonaws\.com';
-        const regExpression = new RegExp(regex);
-        const matches = taskParameters.cfParametersFileUrl.match(regExpression);
-        if (!matches) {
-            throw new Error(tl.loc('UrlFormatError', regex));
-        }
-
-        const bucketUrlPos = taskParameters.cfParametersFileUrl.indexOf(matches[0]) + matches[0].length + 1;
-        const bucketUrl = taskParameters.cfParametersFileUrl.slice(bucketUrlPos);
-        tl.debug(`Bucket URl: ${bucketUrl}`);
-        const bucketName = bucketUrl.split('/')[0];
-        tl.debug(`Bucket name: ${bucketName}`);
-        const fileKey = bucketUrl.slice(bucketUrl.indexOf(bucketName) + bucketName.length + 1);
-        tl.debug(`Template Parameters File Key: ${fileKey}`);
-
-        let templateParameters: any;
-        try {
-            const downloadResponse: awsS3.GetObjectOutput = await this.s3Client.getObject({
-                Bucket: bucketName,
-                Key: fileKey
-            }).promise();
-
-            templateParameters = JSON.parse(downloadResponse.Body.toString());
-        } catch (err) {
-            console.log(tl.loc('ParametersUrlLoadOrParseError', err.message));
-            throw err;
-        }
-
-        const request: awsCloudFormation.CreateChangeSetInput = {
-            ChangeSetName: taskParameters.changeSetName,
-            ChangeSetType: taskParameters.changeSetType,
-            StackName: taskParameters.stackName,
-            Parameters: templateParameters,
-            TemplateURL: taskParameters.cfTemplateUrl,
             Description: taskParameters.description,
             NotificationARNs: taskParameters.notificationARNs,
             ResourceTypes: taskParameters.resourceTypes,

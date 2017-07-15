@@ -14,18 +14,13 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "14"
+        "Patch": "23"
     },
     "runsOn": [
         "Agent"
     ],
     "minimumAgentVersion": "1.95.0",
     "groups": [
-        {
-            "name": "Template",
-            "displayName": "Template",
-            "isExpanded": true
-        },
         {
             "name": "Advanced",
             "displayName": "Advanced",
@@ -100,57 +95,33 @@
             "helpMarkDown": "Automatically executes the change set if it validates successfully."
         },
         {
-            "name": "templateLocation",
+            "name": "templateSource",
             "type": "pickList",
-            "label": "Template location",
+            "label": "Template Source",
+            "defaultValue": "NewTemplate",
             "required": true,
-            "defaultValue": "Linked artifact",
-            "groupName": "Template",
             "options": {
-                "LinkedArtifact": "Linked artifact",
-                "FileURL": "URL of the file",
-                "UsePrevious": "Use the previous template for the stack"
-            }
+                "NewTemplate": "Use a new template",
+                "UsePrevious": "Use the template already associated with the stack"
+            },
+            "helpMarkDown": "Select whether to use a new template for the stack or to reuse the previous template"
         },
         {
-            "name": "cfFileLink",
-            "type": "string",
-            "label": "Template link",
-            "defaultValue": "",
-            "required": true,
-            "groupName": "Template",
-            "helpMarkDown": "Specify the URL of the AWS CloudFormation template file.\n\nThe URL must point to a template (max size: 460,800 bytes) that is located in an Amazon S3 bucket. For more information, go to the [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide. ",
-            "visibleRule": "templateLocation = FileURL"
-        },
-        {
-            "name": "cfParametersFileLink",
-            "type": "string",
-            "label": "Template parameters link",
+            "name": "templateFile",
+            "type": "filepath",
+            "label": "Template File",
             "defaultValue": "",
             "required": false,
-            "groupName": "Template",
-            "helpMarkDown": "Location of file containing the template parameters. The URL must point to a template parameters file that is located in an Amazon S3 bucket. For more information, go to the [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
-            "visibleRule": " templateLocation = FileURL"
+            "visibleRule": "templateSource = NewTemplate",
+            "helpMarkDown": "Path to the template file for the stack. Required if Template Source is set to 'Use a new template'. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide. "
         },
         {
-            "name": "cfFile",
-            "type": "filePath",
-            "label": "Template",
-            "defaultValue": "",
-            "required": true,
-            "groupName": "Template",
-            "visibleRule": " templateLocation = LinkedArtifact",
-            "helpMarkDown": "Specify the path to the AWS CloudFormation template. \n\nStructure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
-        },
-        {
-            "name": "cfParametersFile",
-            "type": "filePath",
-            "label": "Template parameters",
+            "name": "templateParametersFile",
+            "type": "filepath",
+            "label": "Template Parameters File",
             "defaultValue": "",
             "required": false,
-            "groupName": "Template",
-            "helpMarkDown": "Specify the path for the parameters file for the AWS CloudFormation template.",
-            "visibleRule": " templateLocation = LinkedArtifact"
+            "helpMarkDown": "Path to the file containing the template parameters. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
             "name": "roleARN",
@@ -197,14 +168,11 @@
     },
     "messages": {
         "CreatingChangesetFromFiles": "Creating change set using template file '%s', parameters file '%s'",
-        "CreatingChangesetFromUrls": "Creating change set using template url '%s', parameters url '%s'",
         "CreatingChangesetFromPreviousTemplate": "Creating change set using previous template",
         "LoadingTemplateFile": "Loading template file from '%s'",
         "LoadingTemplateParameterFile": "Loading template parameters file from '%s'",
         "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file. Error: %s",
         "CreatedStackId": "Stack creation completed, new stack id %s",
-        "UrlFormatError": "Template parameters url error, expected url satisfying regex '%s'",
-        "ParametersUrlLoadOrParseError": "Failed to download or parse template parameters file. Error: %s",
         "ChangesetCreationFailed": "Request to create change set failed with error %s",
         "WaitingForChangesetValidation": "Waiting for change set %s to be validated",
         "ChangesetValidated": "Change set successfully validated",

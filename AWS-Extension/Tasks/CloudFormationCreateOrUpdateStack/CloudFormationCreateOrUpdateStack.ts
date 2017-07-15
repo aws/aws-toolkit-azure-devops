@@ -7,7 +7,7 @@ tl.setResourcePath(path.join(__dirname, 'task.json'));
 
 function run(): Promise<void> {
     const taskParameters = new TaskParameters.CreateOrUpdateStackTaskParameters();
-    return TaskOperationHelpers.TaskOperations.createStack(taskParameters);
+    return TaskOperationHelpers.TaskOperations.createOrUpdateStack(taskParameters);
 }
 
 // run
