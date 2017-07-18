@@ -14,17 +14,27 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "27"
+        "Patch": "30"
     },
     "runsOn": [
         "Agent"
     ],
-    "minimumAgentVersion": "1.95.0",
+    "minimumAgentVersion": "1.91.0",
     "groups": [
         {
-            "name": "OutputOptions",
-            "displayName": "Output",
+            "name": "Changeset",
+            "displayName": "Change Set Options",
+            "isExpanded": true
+        },
+        {
+            "name": "Advanced",
+            "displayName": "Advanced",
             "isExpanded": false
+        },
+        {
+            "name": "Options",
+            "displayName": "Options",
+            "isExpanded": true
         }
     ],
     "instanceNameFormat": "AWS CloudFormation Create/Update Stack $(stackName)",
@@ -58,8 +68,8 @@
             "type": "filepath",
             "label": "Template File",
             "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "Path to the template file for the stack. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide. "
+            "required": false,
+            "helpMarkDown": "Path to the template file for the stack. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
             "name": "templateParametersFile",
@@ -70,12 +80,74 @@
             "helpMarkDown": "Path to the file containing the template parameters. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
+            "name": "useChangeset",
+            "type": "boolean",
+            "label": "Create or update the stack using a change set",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected a change set will be created that contains a list of changes that will be applied to a stack and then validated. If the changes validate successfully the change set can then be executed to effect the changes. You can elect to use a change set to both create a new stack or update an existing stack."
+        },
+        {
+            "name": "changesetName",
+            "type": "string",
+            "label": "Change Set Name",
+            "defaultValue": "",
+            "required": false,
+            "visibleRule": "useChangeset = true",
+            "helpMarkDown": "The name of the change set. The name must be unique among all change sets that are associated with the specified stack.\n\nA change set name can contain only alphanumeric, case sensitive characters and hyphens. It must start with an alphabetic character and cannot exceed 128 characters. This parameter is required if the option to use a change set is selected."
+        },
+        {
+            "name": "description",
+            "type": "string",
+            "label": "Description",
+            "defaultValue": "",
+            "required":false,
+            "visibleRule": "useChangeset = true",
+            "helpMarkDown": "A description to help you identify this change set. Max length 1024 characters."
+        },
+        {
+            "name": "autoExecute",
+            "type": "boolean",
+            "label": "Automatically execute",
+            "defaultValue": "true",
+            "required": false,
+            "visibleRule": "useChangeset = true",
+            "helpMarkDown": "Automatically executes the change set if it validates successfully."
+        },
+        {
+            "name": "roleARN",
+            "type": "string",
+            "label": "Role ARN",
+            "defaultValue": "",
+            "required":false,
+            "groupName": "Advanced",
+            "helpMarkDown": "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that AWS CloudFormation assumes when executing the change set. AWS CloudFormation uses the role's credentials to make calls on your behalf. AWS CloudFormation uses this role for all future operations on the stack. As long as users have permission to operate on the stack, AWS CloudFormation uses this role even if the users don't have permission to pass it. Ensure that the role grants least privilege.\n\nIf you don't specify a value, AWS CloudFormation uses the role that was previously associated with the stack. If no role is available, AWS CloudFormation uses a temporary session that is generated from your user credentials."
+        },
+        {
+            "name": "resourceTypes",
+            "type": "multiline",
+            "label": "Resource Types",
+            "defaultValue": "",
+            "groupName": "Advanced",
+            "required": false,
+            "helpMarkDown": "The template resource types that you have permissions to work with if you execute this change set, such as AWS::EC2::Instance, AWS::EC2::*, or Custom::MyCustomInstance.\n\nIf the list of resource types doesn't include a resource type that you're updating, the stack update fails. By default, AWS CloudFormation grants permissions to all resource types. AWS Identity and Access Management (IAM) uses this parameter for condition keys in IAM policies for AWS CloudFormation.\n\nFor more information, see [Controlling Access with AWS Identity and Access Management](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-iam-template.html) in the AWS CloudFormation User Guide"
+        },
+        {
+            "name": "notificationARNs",
+            "type": "multiline",
+            "label": "Notification ARNs",
+            "defaultValue": "",
+            "required":false,
+            "groupName": "Advanced",
+            "helpMarkDown": "The Amazon Resource Names (ARNs) of Amazon Simple Notification Service (Amazon SNS) topics that AWS CloudFormation associates with the stack. To remove all associated notification topics, specify an empty list."
+        },
+        {
             "name": "onFailure",
             "type": "pickList",
             "label": "On Failure",
             "defaultValue": "",
-            "groupName": "Template",
-            "required": true,
+            "groupName": "Options",
+            "required": false,
             "helpMarkDown": "Determines what action will be taken if stack creation fails. \n\n Default: ROLLBACK",
             "options": {
                 "DO_NOTHING": "Do Nothing",
@@ -88,7 +160,7 @@
            "type": "boolean",
             "label": "Disable Rollback",
             "defaultValue": "false",
-            "groupName": "Template",
+            "groupName": "Options",
             "required": false,
             "helpMarkDown": "Set to true to disable rollback of the stack if stack creation failed. You can specify either DisableRollback or OnFailure, but not both. \n\n Default: false"
         },
@@ -97,7 +169,7 @@
             "type": "string",
             "label": "Output Variable",
             "defaultValue" : "",
-            "groupName": "OutputOptions",
+            "groupName": "Options",
             "helpMarkDown": "The name of the variable that will contain the ID of the stack on task completion. The variable can be used as $(variableName) to refer to the stack ID in subsequent tasks.",
             "required": false
         }
@@ -112,8 +184,10 @@
         "CheckingForStackExistence": "Checking existence for stack '%s'",
         "StackExists": "Stack exists, switching to stack update mode",
         "StackNotExist": "Stack does not exist, switching to stack create mode",
-        "CreateStackFromTemplate": "Creating stack using template file '%s', parameters file '%s'",
-        "UpdateStackFromTemplate": "Updating stack using template file '%s', parameters file '%s'",
+        "CreateStack": "Creating stack using template file '%s', parameters file '%s'",
+        "UpdateStack": "Updating stack using template file '%s', parameters file '%s'",
+        "CreateStackWithChangeset": "Creating stack using template file '%s', parameters file '%s', with change set '%s'",
+        "UpdateStackWithChangeset": "Updating stack using template file '%s', parameters file '%s', with change set '%s'",
         "LoadingTemplateFile": "Loading template file from '%s'",
         "LoadingTemplateParameterFile": "Loading template parameters file from '%s'",
         "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
@@ -127,6 +201,14 @@
         "WaitingForStack": "Waiting for stack %s to reach create create or update completed status",
         "TaskCompleted": "Stack %s created successfully, stack ID %s",
         "NoWorkToDo": "The service detected no changes in the template and/or parameters and declined to update the stack.",
+        "ChangesetCreationFailed": "Request to create change set failed with error %s",
+        "WaitingForChangesetValidation": "Waiting for change set %s to be validated",
+        "ChangesetValidated": "Change set successfully validated",
+        "ChangesetValidationFailed": "Stack %s failed to create successfully from the change set. Error: %s",
+        "ExecutingChangeset": "Executing change set '%s'",
+        "WaitingForChangesetExecution": "Waiting for change set to complete execution on stack %s",
+        "ExecuteChangesetFailed": "Request to execute change set failed with message %s",
+        "ChangesetExecuted": "Change set executed successfully, stack transitioned to completed status",
         "SettingOutputVariable": "Setting stack ID into output variable %s"
     }
 }

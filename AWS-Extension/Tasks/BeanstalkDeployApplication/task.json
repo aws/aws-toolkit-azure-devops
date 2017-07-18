@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "27"
+        "Patch": "30"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS Beanstalk Deploy: $(applicationName)",

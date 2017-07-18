@@ -2,7 +2,6 @@
     "tasks": [
         "AWSCLI",
         "BeanstalkDeployApplication",
-        "CloudFormationCreateChangeSet",
         "CloudFormationCreateOrUpdateStack",
         "CloudFormationDeleteChangeSet",
         "CloudFormationDeleteStack",

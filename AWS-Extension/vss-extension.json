@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "id": "aws-vsts-tools",
-  "version": "0.9.27",
-  "name": "AWS Tools for Visual Studio Team Services",
+  "version": "0.9.30",
+  "name": "AWS Tools for Microsoft Visual Studio Team Services",
   "scopes": [
     "vso.build",
     "vso.build_execute",
@@ -73,9 +73,6 @@
     },
     {
       "path": "Tasks/BeanstalkDeployApplication"
-    },
-    {
-      "path": "Tasks/CloudFormationCreateChangeSet"
     },
     {
       "path": "Tasks/CloudFormationCreateOrUpdateStack"
@@ -184,21 +181,10 @@
       "properties": {
         "name": "Tasks/BeanstalkDeployApplication"
       }
-    },        
-    {
-      "id": "CloudFormationCreateChangeSet",
-      "description": "Create and optionally execute an AWS CloudFormation changeset",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/CloudFormationCreateChangeSet"
-      }
     },
     {
       "id": "CloudFormationCreateOrUpdateStack",
-      "description": "Create an new AWS CloudFormation stack or update an existing stack",
+      "description": "Create or update an AWS CloudFormation stack",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
@@ -253,7 +239,7 @@
     },
     {
       "id": "LambdaInvokeFunction",
-      "description": "Invokes an AWS Lambda function with a JSON payload.",
+      "description": "Invokes an AWS Lambda function with a JSON payload",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
@@ -264,7 +250,7 @@
     },
     {
       "id": "LambdaNETCoreDeploy",
-      "description": "Build and deploy a .NET Core AWS Lambda function.",
+      "description": "Build and deploy a .NET Core AWS Lambda function",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
