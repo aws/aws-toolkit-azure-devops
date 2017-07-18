@@ -9,7 +9,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        this.createServiceClients(taskParameters, 'CodeDeployDeployApplication');
 
         const bundleKey = await this.uploadBundle(taskParameters.revisionBundle, taskParameters.bucketName, taskParameters.bundlePrefix);
         const deploymentId: string = await this.deployRevision(taskParameters, bundleKey);
@@ -18,10 +18,17 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static codeDeployClient: awsCodeDeployClient;
     private static s3Client: awsS3Client;
 
-    private static createServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.DeployTaskParameters, taskName: string) {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
         this.codeDeployClient = new awsCodeDeployClient({
             apiVersion: '2014-10-06',
             region: taskParameters.awsRegion,

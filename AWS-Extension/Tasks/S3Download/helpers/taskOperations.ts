@@ -10,15 +10,22 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async downloadArtifacts(taskParameters: TaskParameters.DownloadTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        this.createServiceClients(taskParameters, 'S3Download');
         await this.downloadFiles(taskParameters);
 
         console.log(tl.loc('TaskCompleted'));
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static s3Client: awsS3Client;
 
-    private static createServiceClients(taskParameters: TaskParameters.DownloadTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.DownloadTaskParameters, taskName: string) {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
         this.s3Client = new awsS3Client({
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,

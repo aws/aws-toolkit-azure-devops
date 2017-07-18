@@ -9,7 +9,7 @@ import TaskParameters = require('./taskParameters');
 export class TaskOperations {
 
     public static async deleteChangeSet(taskParameters: TaskParameters.DeleteChangeSetTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        this.createServiceClients(taskParameters, 'CloudFormationDeleteChangeSet');
 
         console.log(tl.loc('DeletingChangeSet', taskParameters.changeSetName, taskParameters.stackName));
 
@@ -25,9 +25,16 @@ export class TaskOperations {
         }
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static cloudFormationClient: awsCloudFormation;
 
-    private static createServiceClients(taskParameters: TaskParameters.DeleteChangeSetTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.DeleteChangeSetTaskParameters, taskName: string) {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
         this.cloudFormationClient = new awsCloudFormation({
             apiVersion: '2010-05-15',
             credentials: {

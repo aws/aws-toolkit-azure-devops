@@ -9,7 +9,7 @@ import TaskParameters = require('./taskParameters');
 export class TaskOperations {
 
     public static async executeChangeSet(taskParameters: TaskParameters.ExecuteChangeSetTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        this.createServiceClients(taskParameters, 'CloudFormationExecuteChangeSet');
 
         console.log(tl.loc('ExecutingChangeSet', taskParameters.changeSetName, taskParameters.stackName));
 
@@ -33,9 +33,16 @@ export class TaskOperations {
         }
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static cloudFormationClient: awsCloudFormation;
 
-    private static createServiceClients(taskParameters: TaskParameters.ExecuteChangeSetTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.ExecuteChangeSetTaskParameters, taskName: string) {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
         this.cloudFormationClient = new awsCloudFormation({
             apiVersion: '2010-05-15',
             credentials: {

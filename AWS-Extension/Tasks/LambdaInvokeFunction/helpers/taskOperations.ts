@@ -7,7 +7,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async invokeFunction(taskParameters: TaskParameters.InvokeFunctionTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        this.createServiceClients(taskParameters, 'LambdaInvokeFunction');
 
         console.log(tl.loc('InvokingFunction', taskParameters.functionName));
 
@@ -38,9 +38,16 @@ export class TaskOperations {
         }
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static lambdaClient: awsLambdaClient;
 
-    private static createServiceClients(taskParameters: TaskParameters.InvokeFunctionTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.InvokeFunctionTaskParameters, taskName: string) {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
         const lambdaConfig = {
             apiVersion: '2015-03-31',
             region: taskParameters.awsRegion,

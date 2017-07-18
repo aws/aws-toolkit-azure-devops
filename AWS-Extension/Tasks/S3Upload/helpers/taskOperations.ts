@@ -1,6 +1,7 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
+import awsGlobal = require('aws-sdk/global');
 import awsS3Client = require('aws-sdk/clients/s3');
 import TaskParameters = require('./taskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
@@ -8,7 +9,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async uploadArtifacts(taskParameters: TaskParameters.UploadTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        this.s3Client = this.createServiceClients(taskParameters, 'S3Upload');
 
         if (taskParameters.createBucket) {
             await this.createBucketIfNotExist(taskParameters);
@@ -18,10 +19,17 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static s3Client: awsS3Client;
 
-    private static createServiceClients(taskParameters: TaskParameters.UploadTaskParameters) {
-        this.s3Client = new awsS3Client({
+    private static createServiceClients(taskParameters: TaskParameters.UploadTaskParameters, taskName: string): awsS3Client {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
+        return new awsS3Client({
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
             credentials: {

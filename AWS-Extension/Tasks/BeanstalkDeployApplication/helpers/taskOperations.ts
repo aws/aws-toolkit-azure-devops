@@ -9,7 +9,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
-        this.constructServiceClients(taskParameters);
+        this.constructServiceClients(taskParameters, 'BeanstalkDeployApplication');
 
         const versionLabel = 'v' + new Date().getTime();
 
@@ -26,10 +26,17 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static beanstalkClient: awsBeanstalkClient;
     private static s3Client: awsS3Client;
 
-    private static constructServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
+    private static constructServiceClients(taskParameters: TaskParameters.DeployTaskParameters, taskName: string) {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
         this.beanstalkClient = new awsBeanstalkClient({
             apiVersion: '2010-12-01',
             region: taskParameters.awsRegion,

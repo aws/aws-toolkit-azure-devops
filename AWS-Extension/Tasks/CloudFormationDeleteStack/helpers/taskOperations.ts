@@ -11,7 +11,7 @@ export class TaskOperations {
     public static async deleteStack(taskParameters: TaskParameters.DeleteStackTaskParameters): Promise<void> {
 
         console.log(tl.loc('RequestingStackDeletetion', taskParameters.stackName));
-        this.createServiceClients(taskParameters);
+        this.createServiceClients(taskParameters, 'CloudFormationDeleteStack');
 
         await this.cloudFormationClient.deleteStack({
             StackName: taskParameters.stackName
@@ -21,9 +21,16 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
+    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static cloudFormationClient: awsCloudFormation;
 
-    private static createServiceClients(taskParameters: TaskParameters.DeleteStackTaskParameters) {
+    private static createServiceClients(taskParameters: TaskParameters.DeleteStackTaskParameters, taskName: string) {
+
+        const AWS = require('aws-sdk/global');
+        AWS.util.userAgent = () => {
+            return this.userAgentPrefix + taskName;
+        };
+
         this.cloudFormationClient = new awsCloudFormation({
             apiVersion: '2010-05-15',
             credentials: {

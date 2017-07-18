@@ -36,4 +36,4 @@ Run a Shell or Batch script with AWS CLI commands against an AWS connection
 - Team Foundation Server 2015 Update 3 (or higher)
 
 ## Contributors
-We thank the following contributor(s) for this extension: Hosam Kamel, Igor Macedo, Shmulik Ahituv, Giulio Vian
+We thank the following contributor(s) for this extension: Visual Studio ALM Rangers.
