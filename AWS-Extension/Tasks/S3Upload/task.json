@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "23"
+        "Patch": "27"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS S3 Upload: $(bucketName)",
@@ -69,10 +69,10 @@
         {
             "name": "targetFolder",
             "type": "string",
-            "label": "Target Folder",
+            "label": "Target Folder (S3 Key Prefix)",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "The target folder (key prefix) in the S3 bucket to contain the content. If not set the root of the bucket is assumed. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)"
+            "helpMarkDown": "The target folder (also known as key prefix) in the S3 bucket to contain the content. If not set the root of the bucket is assumed. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)"
         },
         {
             "name": "filesAcl",
@@ -126,14 +126,16 @@
     },
     "messages": {
         "FoundNFiles": "found %d files",
-        "AllPaths": "All paths %s",
-        "MatchedPaths": "Matched paths %s",
-        "MatchedFiles": "Matched files list %s",
+        "AllPaths": "All paths '%s'",
+        "MatchedPaths": "Matched paths '%s'",
+        "MatchedFiles": "Matched files list '%s'",
         "CreateBucketFailure": "Failed to create bucket",
-        "UploadingFile": "Uploading %s",
-        "FileUploadCompleted": "Completed upload of %s to %s",
+        "UploadingFile": "Uploading matched file '%s'",
+        "FileUploadCompleted": "Completed upload of '%s' to '%s'",
         "FileUploadFailed": "File upload failed",
         "TaskCompleted": "All uploads to S3 completed",
+        "CreatingBucket": "Attempting to create bucket '%s' in region '%s'",
+        "UploadingFiles": "Uploading files from '%s' to '%s' in bucket '%s'",
         "HeadBucketFailed": "Head operation against bucket %s failed, attempting to create"
     }
 }

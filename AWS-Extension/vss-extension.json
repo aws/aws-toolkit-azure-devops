@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "aws-vsts-tools",
-  "version": "0.9.23",
+  "version": "0.9.27",
   "name": "AWS Tools for Visual Studio Team Services",
   "scopes": [
     "vso.build",
@@ -28,7 +28,7 @@
     }
   ],
   "tags": [
-    "AWS","S3","CloudFormation","AWS CLI", "Lambda", "CodeDeploy"
+    "AWS","S3","CloudFormation","AWS CLI", "Lambda", "CodeDeploy", "Elastic Beanstalk"
   ],
   "links": {
     "home": {

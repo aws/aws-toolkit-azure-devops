@@ -31,6 +31,14 @@ export class TaskOperations {
 
     private static async downloadFiles(taskParameters: TaskParameters.DownloadTaskParameters) {
 
+        let msgSource: string;
+        if (taskParameters.sourceFolder) {
+            msgSource = taskParameters.sourceFolder;
+        } else {
+            msgSource = '/';
+        }
+        console.log(tl.loc('DownloadingFiles', msgSource, taskParameters.bucketName, taskParameters.targetFolder ));
+
         if (!fs.existsSync(taskParameters.targetFolder)) {
             tl.mkdirP(taskParameters.targetFolder);
         }
@@ -50,7 +58,7 @@ export class TaskOperations {
                     }
                 }
 
-                console.log(tl.loc('QueueingDownload', matchedKey, taskParameters.targetFolder));
+                console.log(tl.loc('QueueingDownload', matchedKey));
                 const params = {
                     Bucket: taskParameters.bucketName,
                     Key: matchedKey

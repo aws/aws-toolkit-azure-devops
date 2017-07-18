@@ -8,7 +8,6 @@ export class DeployTaskParameters {
     public environmentName: string;
     public webDeploymentAchive: string;
 
-
     constructor() {
         try {
             const awsEndpoint = tl.getInput('awsCredentials', true);

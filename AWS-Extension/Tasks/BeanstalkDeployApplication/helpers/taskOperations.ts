@@ -11,14 +11,13 @@ export class TaskOperations {
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
         this.constructServiceClients(taskParameters);
 
-        let versionLabel = 'v' + new Date().getTime();
+        const versionLabel = 'v' + new Date().getTime();
 
-        let s3Bucket = await this.determineS3Bucket(); 
+        const s3Bucket = await this.determineS3Bucket();
 
-        let s3Key = await this.uploadApplication(taskParameters.webDeploymentAchive, s3Bucket, taskParameters.applicationName, taskParameters.environmentName, versionLabel);
+        const s3Key = await this.uploadApplication(taskParameters.webDeploymentAchive, s3Bucket, taskParameters.applicationName, taskParameters.environmentName, versionLabel);
 
-
-        let startingEventDate = await this.getLatestEventDate(taskParameters.applicationName, taskParameters.environmentName);
+        const startingEventDate = await this.getLatestEventDate(taskParameters.applicationName, taskParameters.environmentName);
 
         await this.updateEnvironment(s3Bucket, s3Key, taskParameters.applicationName, taskParameters.environmentName, versionLabel);
 
@@ -47,11 +46,10 @@ export class TaskOperations {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-        });        
+        });
     }
 
     private static async updateEnvironment(bucketName: string, key: string,application: string, environment: string, versionLabel: string ): Promise<void> {
-
 
         const sourceBundle: awsBeanstalkClient.S3Location = {
             'S3Bucket' : bucketName,
@@ -77,9 +75,7 @@ export class TaskOperations {
     }
 
     private static async determineS3Bucket() : Promise<string> {
-
-        let bucket: string;
-        let response = await this.beanstalkClient.createStorageLocation().promise();
+        const response = await this.beanstalkClient.createStorageLocation().promise();
         console.log(tl.loc('DeterminedBucket', response.S3Bucket));
         return response.S3Bucket;
     }
@@ -103,16 +99,16 @@ export class TaskOperations {
             console.error(tl.loc('BundleUploadFailed', err.message), err);
             throw err;
         }
-    }    
+    }
 
     private static async waitForDeploymentCompletion(applicationName: string, environmentName: string, startingEventDate : Date) : Promise<void> {
 
-        let requestEnvironment : awsBeanstalkClient.DescribeEnvironmentsMessage = {
+        const requestEnvironment : awsBeanstalkClient.DescribeEnvironmentsMessage = {
             'ApplicationName': applicationName,
             'EnvironmentNames' : [environmentName]
         };
 
-        let requestEvents : awsBeanstalkClient.DescribeEventsMessage = {
+        const requestEvents : awsBeanstalkClient.DescribeEventsMessage = {
             'ApplicationName': applicationName,
             'EnvironmentName' : environmentName,
             'StartTime' : startingEventDate
@@ -125,46 +121,47 @@ export class TaskOperations {
 
         let environment : awsBeanstalkClient.EnvironmentDescription;
         do {
-            var waitTill = new Date(new Date().getTime() + 5000);
-            while(waitTill > new Date()){}
+            const waitTill = new Date(new Date().getTime() + 5000);
+            // tslint:disable-next-line:no-empty
+            while (waitTill > new Date()) {}
 
-            let responseEnvironments = await this.beanstalkClient.describeEnvironments(requestEnvironment).promise();
-            if(responseEnvironments.Environments.length == 0)
-            {
+            const responseEnvironments = await this.beanstalkClient.describeEnvironments(requestEnvironment).promise();
+            if (responseEnvironments.Environments.length === 0) {
                 throw new Error(tl.loc('FailedToFindEnvironment'));
             }
             environment = responseEnvironments.Environments[0];
 
             requestEvents.StartTime = lastPrintedEventDate;
-            let responseEvent = await this.beanstalkClient.describeEvents(requestEvents).promise();
+            const responseEvent = await this.beanstalkClient.describeEvents(requestEvents).promise();
 
-            if(responseEvent.Events.length > 0)
-            {     
-                for(let i = responseEvent.Events.length - 1; i >= 0; i--){
-                    let event = responseEvent.Events[i];
-                    if(event.EventDate <= lastPrintedEventDate)
+            if (responseEvent.Events.length > 0) {
+                for (let i = responseEvent.Events.length - 1; i >= 0; i--) {
+                    const event = responseEvent.Events[i];
+                    if (event.EventDate <= lastPrintedEventDate) {
                         continue;
-                    
+                    }
+
                     console.log(event.EventDate + '   ' + event.Severity + '   ' + event.Message);
                 }
 
                 lastPrintedEventDate = responseEvent.Events[0].EventDate;
             }
 
-        }while(environment.Status == 'Launching' || environment.Status == 'Updating');
+        } while (environment.Status === 'Launching' || environment.Status === 'Updating');
 
-    }    
+    }
 
     private static async getLatestEventDate(applicationName: string, environmentName: string) : Promise<Date> {
 
-        let requestEvents : awsBeanstalkClient.DescribeEventsMessage = {
+        const requestEvents : awsBeanstalkClient.DescribeEventsMessage = {
             'ApplicationName': applicationName,
             'EnvironmentName' : environmentName
         };
 
-        let response = await this.beanstalkClient.describeEvents(requestEvents).promise();
-        if(response.Events.length == 0)
+        const response = await this.beanstalkClient.describeEvents(requestEvents).promise();
+        if (response.Events.length === 0) {
             return new Date();
+        }
 
         return response.Events[0].EventDate;
     }

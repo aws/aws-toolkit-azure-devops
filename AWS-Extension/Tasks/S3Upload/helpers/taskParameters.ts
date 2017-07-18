@@ -24,7 +24,7 @@ export class UploadTaskParameters {
             this.overwrite = tl.getBoolInput('overwrite', false);
             this.flattenFolders = tl.getBoolInput('flattenFolders', false);
             this.sourceFolder = tl.getPathInput('sourceFolder', true, true);
-            this.targetFolder = tl.getPathInput('targetFolder', false);
+            this.targetFolder = tl.getInput('targetFolder', false);
             this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
             this.filesAcl = tl.getInput('filesAcl', false);
             this.createBucket = tl.getBoolInput('createBucket');

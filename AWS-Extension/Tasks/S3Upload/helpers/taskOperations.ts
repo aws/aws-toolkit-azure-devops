@@ -43,6 +43,7 @@ export class TaskOperations {
             // no, or we don't have access, so try and create it
             tl.debug(tl.loc('HeadBucketFailed', taskParameters.bucketName));
             try {
+                console.log(tl.loc('CreatingBucket', taskParameters.bucketName, taskParameters.awsRegion));
                 const response: awsS3Client.CreateBucketOutput = await this.s3Client.createBucket({ Bucket: taskParameters.bucketName }).promise();
             } catch (err) {
                 console.log(tl.loc('CreateBucketFailure'), err);
@@ -52,6 +53,15 @@ export class TaskOperations {
     }
 
     private static async uploadFiles(taskParameters: TaskParameters.UploadTaskParameters) {
+
+        let msgTarget: string;
+        if (taskParameters.targetFolder) {
+            msgTarget = taskParameters.targetFolder;
+        } else {
+            msgTarget = '/';
+        }
+        console.log(tl.loc('UploadingFiles', taskParameters.sourceFolder, msgTarget, taskParameters.bucketName));
+
         const matchedFiles = this.findFiles(taskParameters);
         for (let i = 0; i < matchedFiles.length; i++) {
             const matchedFile = matchedFiles[i];
@@ -60,12 +70,22 @@ export class TaskOperations {
                 relativePath = relativePath.substr(1);
             }
             let targetPath = relativePath;
+
             if (taskParameters.flattenFolders) {
                 const flatFileName = path.basename(matchedFile);
-                targetPath = path.join(taskParameters.targetFolder, flatFileName);
+                if (taskParameters.targetFolder) {
+                    targetPath = path.join(taskParameters.targetFolder, flatFileName);
+                } else {
+                    targetPath = flatFileName;
+                }
             } else {
-                targetPath = path.join(taskParameters.targetFolder, relativePath);
+                if (taskParameters.targetFolder) {
+                    targetPath = path.join(taskParameters.targetFolder, relativePath);
+                } else {
+                    targetPath = relativePath;
+                }
             }
+
             const targetDir = path.dirname(targetPath);
             targetPath = targetPath.replace(/\\/g, '/');
             const stats = fs.lstatSync(matchedFile);
