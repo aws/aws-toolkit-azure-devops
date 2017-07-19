@@ -9,7 +9,10 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters, 'CodeDeployDeployApplication');
+
+        this.createServiceClients(taskParameters);
+
+        await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.deploymentGroupName);
 
         const bundleKey = await this.uploadBundle(taskParameters.revisionBundle, taskParameters.bucketName, taskParameters.bundlePrefix);
         const deploymentId: string = await this.deployRevision(taskParameters, bundleKey);
@@ -18,16 +21,10 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
 
-    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static codeDeployClient: awsCodeDeployClient;
     private static s3Client: awsS3Client;
 
-    private static createServiceClients(taskParameters: TaskParameters.DeployTaskParameters, taskName: string) {
-
-        const AWS = require('aws-sdk/global');
-        AWS.util.userAgent = () => {
-            return this.userAgentPrefix + taskName;
-        };
+    private static createServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
 
         this.codeDeployClient = new awsCodeDeployClient({
             apiVersion: '2014-10-06',
@@ -46,6 +43,21 @@ export class TaskOperations {
                 secretAccessKey: taskParameters.awsSecretKey
             }
         });
+    }
+
+    private static async verifyResourcesExist(appName: string, groupName: string): Promise<void> {
+
+        try {
+            await this.codeDeployClient.getApplication({ applicationName: appName }).promise();
+        } catch (err) {
+            throw new Error(tl.loc('ApplicationDoesNotExist', appName));
+        }
+
+        try {
+            await this.codeDeployClient.getDeploymentGroup({applicationName: appName, deploymentGroupName: groupName}).promise();
+        } catch (err) {
+            throw new Error(tl.loc('DeploymentGroupDoesNotExist', groupName, appName));
+        }
     }
 
     private static async uploadBundle(revisionBundle: string, bucketName: string, bundlePrefix: string): Promise<string> {

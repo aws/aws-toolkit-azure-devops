@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS Lambda .NET Core Deploy: $(functionName) $(stackName)",
@@ -171,7 +171,7 @@
     "messages": {
         "DeployingProjectAt": "Deploying Lambda project at %s",
         "ReadingDefaultSettingsFile": "Reading existing aws-lambda-tools-defaults.json",
-        "ClearingProfileCredentials": "Clearing out profile '%s' so task credentials will be used.",
+        "ClearingProfileCredentials": "Clearing out profile %s so task credentials will be used.",
         "StartingDotNetRestore": "Beginning dotnet restore",
         "StartingFunctionDeployment": "Beginning Lambda Deployment",
         "StartingServerlessDeployment": "Beginning Serverless Deployment",

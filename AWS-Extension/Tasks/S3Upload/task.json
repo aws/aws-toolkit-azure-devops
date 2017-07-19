@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS S3 Upload: $(bucketName)",
@@ -126,16 +126,17 @@
     },
     "messages": {
         "FoundNFiles": "found %d files",
-        "AllPaths": "All paths '%s'",
-        "MatchedPaths": "Matched paths '%s'",
-        "MatchedFiles": "Matched files list '%s'",
+        "AllPaths": "All paths %s",
+        "MatchedPaths": "Matched paths %s",
+        "MatchedFiles": "Matched files list %s",
         "CreateBucketFailure": "Failed to create bucket",
-        "UploadingFile": "Uploading matched file '%s'",
-        "FileUploadCompleted": "Completed upload of '%s' to '%s'",
+        "BucketCreated": "Bucket created",
+        "UploadingFile": "Uploading matched file %s",
+        "FileUploadCompleted": "Completed upload of %s to %s",
         "FileUploadFailed": "File upload failed",
         "TaskCompleted": "All uploads to S3 completed",
-        "CreatingBucket": "Attempting to create bucket '%s' in region '%s'",
-        "UploadingFiles": "Uploading files from '%s' to '%s' in bucket '%s'",
-        "HeadBucketFailed": "Head operation against bucket %s failed, attempting to create"
+        "UploadingFiles": "Uploading files from %s to %s in bucket %s",
+        "BucketNotExistNoAutocreate": "Bucket %s does not exist or you do not have access. Auto-create option not set, cannot continue.",
+        "BucketNotExistCreating": "Bucket %s does not appear to exist (or you do not have access). Attempting to create in region %s."
     }
 }

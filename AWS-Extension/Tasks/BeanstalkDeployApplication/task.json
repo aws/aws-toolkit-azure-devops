@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS Beanstalk Deploy: $(applicationName)",
@@ -43,12 +43,12 @@
             "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
         },
         {
-            "name": "webDeploymentAchive",
+            "name": "webDeploymentArchive",
             "label": "Web Deploy Archive",
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The path to web deploy archive that contains the application to deploy to Elastic Beanstalk."
+            "helpMarkDown": "The path to the web deploy archive that contains the application to deploy to Elastic Beanstalk."
         },        
         {
             "name": "applicationName",
@@ -77,7 +77,7 @@
         "CreatedApplicationVersion" : "Created application version: %s",
         "StartingApplicationDeployment" : "Started updating environment to version: %s",
         "DeterminedBucket" : "Determine S3 bucket %s to store application bundle",
-        "UploadingBundle": "Uploading application bundle '%s' to object '%s' in bucket '%s'",
+        "UploadingBundle": "Uploading application bundle %s to object %s in bucket %s",
         "BundleUploadCompleted": "Application upload completed successfully",
         "BundleUploadFailed": "Upload of application bundle failed with error: %s",
         "WaitingForDeployment" : "Waiting for deployment to complete",

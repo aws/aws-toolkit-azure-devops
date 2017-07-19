@@ -10,9 +10,11 @@ export class TaskOperations {
 
     public static async deleteStack(taskParameters: TaskParameters.DeleteStackTaskParameters): Promise<void> {
 
-        console.log(tl.loc('RequestingStackDeletetion', taskParameters.stackName));
-        this.createServiceClients(taskParameters, 'CloudFormationDeleteStack');
+        this.createServiceClients(taskParameters);
 
+        await this.verifyResourcesExist(taskParameters.stackName);
+
+        console.log(tl.loc('RequestingStackDeletion', taskParameters.stackName));
         await this.cloudFormationClient.deleteStack({
             StackName: taskParameters.stackName
         }).promise();
@@ -21,15 +23,9 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static cloudFormationClient: awsCloudFormation;
 
-    private static createServiceClients(taskParameters: TaskParameters.DeleteStackTaskParameters, taskName: string) {
-
-        const AWS = require('aws-sdk/global');
-        AWS.util.userAgent = () => {
-            return this.userAgentPrefix + taskName;
-        };
+    private static createServiceClients(taskParameters: TaskParameters.DeleteStackTaskParameters) {
 
         this.cloudFormationClient = new awsCloudFormation({
             apiVersion: '2010-05-15',
@@ -39,6 +35,15 @@ export class TaskOperations {
             },
             region: taskParameters.awsRegion
         });
+    }
+
+    private static async verifyResourcesExist(stackName: string): Promise<void> {
+
+        try {
+            await this.cloudFormationClient.describeStacks({ StackName: stackName}).promise();
+        } catch (err) {
+            throw new Error(tl.loc('StackDoesNotExist', stackName));
+        }
     }
 
     // wait for stack deletetion

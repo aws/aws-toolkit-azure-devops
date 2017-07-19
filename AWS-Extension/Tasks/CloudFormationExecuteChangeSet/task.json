@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "runsOn": [
         "Agent"
@@ -78,11 +78,12 @@
         }
     },
     "messages": {
-        "ExecutingChangeSet": "Executing change set '%s', associated with stack '%s'",
-        "ExecuteChangeSetFailed": "Request to execute change set failed with message %s",
+        "ExecutingChangeSet": "Executing change set %s, associated with stack %s",
+        "ExecuteChangeSetFailed": "Request to execute change set failed with message: %s",
         "WaitingForStack": "Waiting for stack %s to reach create completed status",
         "WaitConditionSatisifed": "New stack transitioned successfully to completed status",
         "SettingOutputVariable": "Setting stack ID into output variable %s",
+        "ChangeSetDoesNotExist": "Change set %s does not exist",
         "TaskCompleted": "Executed change set %s"
     }
 }

@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS CodeDeploy Deploy: $(applicationName)",
@@ -140,16 +140,18 @@
         }
     },
     "messages": {
-        "UploadingBundle": "Uploading revision bundle '%s' to object '%s' in bucket '%s'",
+        "UploadingBundle": "Uploading revision bundle %s to object %s in bucket %s",
         "BundleUploadCompleted": "Bundle upload completed successfully",
         "BundleUploadFailed": "Upload of revision bundle failed with error: %s",
         "DeployingRevision": "Deploying the new revision",
-        "DeploymentStarted": "Started deployment of new revision to deployment group '%s' for application '%s', deployment ID '%s'",
+        "DeploymentStarted": "Started deployment of new revision to deployment group %s for application %s, deployment ID %s",
         "DeploymentError": "Request to deploy new revision returned error: %s",
         "WaitingForDeployment": "Waiting for deployment to complete",
         "WaitConditionSatisifed": "Deployment transitioned to successful status",
         "DeploymentFailed": "Deployment failed",
         "SettingOutputVariable": "Setting output variable %s with the ID of the deployment",
-        "TaskCompleted": "Deployment to application '%s' completed"
+        "ApplicationDoesNotExist": "Application %s does not exist",
+        "DeploymentGroupDoesNotExist": "Deployment group %s does not exist for application %s",
+        "TaskCompleted": "Deployment to application %s completed"
     }
 }

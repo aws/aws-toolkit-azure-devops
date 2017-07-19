@@ -7,7 +7,10 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async invokeFunction(taskParameters: TaskParameters.InvokeFunctionTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters, 'LambdaInvokeFunction');
+
+        this.createServiceClients(taskParameters);
+
+        await this.verifyResourcesExist(taskParameters.functionName);
 
         console.log(tl.loc('InvokingFunction', taskParameters.functionName));
 
@@ -38,15 +41,9 @@ export class TaskOperations {
         }
     }
 
-    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static lambdaClient: awsLambdaClient;
 
-    private static createServiceClients(taskParameters: TaskParameters.InvokeFunctionTaskParameters, taskName: string) {
-
-        const AWS = require('aws-sdk/global');
-        AWS.util.userAgent = () => {
-            return this.userAgentPrefix + taskName;
-        };
+    private static createServiceClients(taskParameters: TaskParameters.InvokeFunctionTaskParameters) {
 
         const lambdaConfig = {
             apiVersion: '2015-03-31',
@@ -58,5 +55,14 @@ export class TaskOperations {
         };
 
        this.lambdaClient = new awsLambdaClient(lambdaConfig);
+    }
+
+    private static async verifyResourcesExist(functionName: string): Promise<void> {
+
+        try {
+            await this.lambdaClient.getFunctionConfiguration({ FunctionName: functionName}).promise();
+        } catch (err) {
+            throw new Error(tl.loc('FunctionDoesNotExist', functionName));
+        }
     }
 }

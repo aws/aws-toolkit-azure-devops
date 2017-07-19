@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS CLI: $(awsCommand)",
@@ -82,7 +82,7 @@
         }
     },
     "messages": {
-        "AWSCLNotInstalled": "AWS CLI is not installed on this machine.",
+        "AWSCLINotInstalled": "AWS CLI is not installed on this machine.",
         "AwsReturnCode": "%s exited with return code: %d"
     }
 }

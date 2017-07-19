@@ -6,7 +6,7 @@ export class DeployTaskParameters {
     public awsRegion: string;
     public applicationName: string;
     public environmentName: string;
-    public webDeploymentAchive: string;
+    public webDeploymentArchive: string;
 
     constructor() {
         try {
@@ -15,7 +15,7 @@ export class DeployTaskParameters {
             this.awsKeyId = awsEndpointAuth.parameters.username;
             this.awsSecretKey = awsEndpointAuth.parameters.password;
             this.awsRegion = tl.getInput('regionName', true);
-            this.webDeploymentAchive = tl.getInput('webDeploymentAchive', true);
+            this.webDeploymentArchive = tl.getInput('webDeploymentArchive', true);
             this.applicationName = tl.getInput('applicationName', true);
             this.environmentName = tl.getInput('environmentName', false);
         } catch (error) {

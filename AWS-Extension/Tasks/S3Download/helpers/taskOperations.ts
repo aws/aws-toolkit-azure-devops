@@ -10,21 +10,21 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async downloadArtifacts(taskParameters: TaskParameters.DownloadTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters, 'S3Download');
+        this.createServiceClients(taskParameters);
+
+        const exists = await this.testBucketExists(taskParameters.bucketName);
+        if (!exists) {
+            throw new Error(tl.loc('BucketNotExist', taskParameters.bucketName));
+        }
+
         await this.downloadFiles(taskParameters);
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static s3Client: awsS3Client;
 
-    private static createServiceClients(taskParameters: TaskParameters.DownloadTaskParameters, taskName: string) {
-
-        const AWS = require('aws-sdk/global');
-        AWS.util.userAgent = () => {
-            return this.userAgentPrefix + taskName;
-        };
+    private static createServiceClients(taskParameters: TaskParameters.DownloadTaskParameters) {
 
         this.s3Client = new awsS3Client({
             apiVersion: '2006-03-01',
@@ -34,6 +34,15 @@ export class TaskOperations {
                 secretAccessKey: taskParameters.awsSecretKey
             }
         });
+    }
+
+    private static async testBucketExists(bucketName: string): Promise<boolean> {
+        try {
+            await this.s3Client.headBucket({ Bucket: bucketName}).promise();
+            return true;
+        } catch (err) {
+            return false;
+        }
     }
 
     private static async downloadFiles(taskParameters: TaskParameters.DownloadTaskParameters) {

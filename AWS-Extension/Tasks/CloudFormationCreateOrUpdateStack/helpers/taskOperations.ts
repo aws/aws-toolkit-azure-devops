@@ -10,7 +10,7 @@ import TaskParameters = require('./taskParameters');
 export class TaskOperations {
 
     public static async createOrUpdateStack(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters, 'CloudFormationCreateOrUpdateStack');
+        this.createServiceClients(taskParameters);
 
         let stackId: string = await this.testStackExists(taskParameters.stackName);
         if (stackId) {
@@ -29,16 +29,10 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.stackName, stackId));
     }
 
-    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static cloudFormationClient: awsCloudFormation;
     private static s3Client: awsS3;
 
-    private static createServiceClients(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters, taskName: string) {
-
-        const AWS = require('aws-sdk/global');
-        AWS.util.userAgent = () => {
-            return this.userAgentPrefix + taskName;
-        };
+    private static createServiceClients(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) {
 
         this.cloudFormationClient = new awsCloudFormation({
             apiVersion: '2010-05-15',
@@ -92,7 +86,7 @@ export class TaskOperations {
         }
 
         if (taskParameters.useChangeset) {
-            console.log(tl.loc('CreateStackWithChangeset', taskParameters.templateFile, taskParameters.templateParametersFile));
+            console.log(tl.loc('CreateStackWithChangeset', taskParameters.templateFile, taskParameters.templateParametersFile, taskParameters.changesetName));
             return await this.createOrUpdateWithChangeset(taskParameters, 'CREATE', template, templateParameters);
         } else {
             console.log(tl.loc('CreateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
@@ -141,7 +135,7 @@ export class TaskOperations {
         }
 
         if (taskParameters.useChangeset) {
-            console.log(tl.loc('UpdateStackWithChangeset', taskParameters.templateFile, taskParameters.templateParametersFile));
+            console.log(tl.loc('UpdateStackWithChangeset', taskParameters.templateFile, taskParameters.templateParametersFile, taskParameters.changesetName));
             await this.createOrUpdateWithChangeset(taskParameters, 'UPDATE', template, templateParameters);
         } else {
             const request: awsCloudFormation.UpdateStackInput = {

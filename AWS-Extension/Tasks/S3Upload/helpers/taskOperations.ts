@@ -9,25 +9,24 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async uploadArtifacts(taskParameters: TaskParameters.UploadTaskParameters): Promise<void> {
-        this.s3Client = this.createServiceClients(taskParameters, 'S3Upload');
+        this.s3Client = this.createServiceClients(taskParameters);
 
         if (taskParameters.createBucket) {
-            await this.createBucketIfNotExist(taskParameters);
+            await this.createBucketIfNotExist(taskParameters.bucketName, taskParameters.awsRegion);
+        } else {
+            const exists = await this.testBucketExists(taskParameters.bucketName);
+            if (!exists) {
+                throw new Error(tl.loc('BucketNotExistNoAutocreate', taskParameters.bucketName));
+            }
         }
 
         await this.uploadFiles(taskParameters);
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static s3Client: awsS3Client;
 
-    private static createServiceClients(taskParameters: TaskParameters.UploadTaskParameters, taskName: string): awsS3Client {
-
-        const AWS = require('aws-sdk/global');
-        AWS.util.userAgent = () => {
-            return this.userAgentPrefix + taskName;
-        };
+    private static createServiceClients(taskParameters: TaskParameters.UploadTaskParameters): awsS3Client {
 
         return new awsS3Client({
             apiVersion: '2006-03-01',
@@ -39,24 +38,28 @@ export class TaskOperations {
         });
     }
 
-    private static async createBucketIfNotExist(taskParameters: TaskParameters.UploadTaskParameters) : Promise<void> {
-        if (!taskParameters.createBucket) {
-            return Promise.resolve();
+    private static async createBucketIfNotExist(bucketName: string, region: string) : Promise<void> {
+        const exists = await this.testBucketExists(bucketName);
+        if (exists) {
+            return;
         }
 
         try {
-            // does bucket exist and do we have permissions to access it?
-            await this.s3Client.headBucket({ Bucket: taskParameters.bucketName}).promise();
+            console.log(tl.loc('BucketNotExistCreating', bucketName, region));
+            await this.s3Client.createBucket({ Bucket: bucketName }).promise();
+            console.log(tl.loc('BucketCreated'));
         } catch (err) {
-            // no, or we don't have access, so try and create it
-            tl.debug(tl.loc('HeadBucketFailed', taskParameters.bucketName));
-            try {
-                console.log(tl.loc('CreatingBucket', taskParameters.bucketName, taskParameters.awsRegion));
-                const response: awsS3Client.CreateBucketOutput = await this.s3Client.createBucket({ Bucket: taskParameters.bucketName }).promise();
-            } catch (err) {
-                console.log(tl.loc('CreateBucketFailure'), err);
-                throw err;
-            }
+            console.log(tl.loc('CreateBucketFailure'), err);
+            throw err;
+        }
+    }
+
+    private static async testBucketExists(bucketName: string): Promise<boolean> {
+        try {
+            await this.s3Client.headBucket({ Bucket: bucketName}).promise();
+            return true;
+        } catch (err) {
+            return false;
         }
     }
 

@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "runsOn": [
         "Agent"
@@ -181,15 +181,15 @@
         }
     },
     "messages": {
-        "CheckingForStackExistence": "Checking existence for stack '%s'",
+        "CheckingForStackExistence": "Checking existence for stack %s",
         "StackExists": "Stack exists, switching to stack update mode",
         "StackNotExist": "Stack does not exist, switching to stack create mode",
-        "CreateStack": "Creating stack using template file '%s', parameters file '%s'",
-        "UpdateStack": "Updating stack using template file '%s', parameters file '%s'",
-        "CreateStackWithChangeset": "Creating stack using template file '%s', parameters file '%s', with change set '%s'",
-        "UpdateStackWithChangeset": "Updating stack using template file '%s', parameters file '%s', with change set '%s'",
-        "LoadingTemplateFile": "Loading template file from '%s'",
-        "LoadingTemplateParameterFile": "Loading template parameters file from '%s'",
+        "CreateStack": "Creating stack using template file %s, parameters file %s",
+        "UpdateStack": "Updating stack using template file %s, parameters file %s",
+        "CreateStackWithChangeset": "Creating stack using template file %s, parameters file %s, with change set %s",
+        "UpdateStackWithChangeset": "Updating stack using template file %s, parameters file %s, with change set %s",
+        "LoadingTemplateFile": "Loading template file from %s",
+        "LoadingTemplateParameterFile": "Loading template parameters file from %s",
         "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
         "StackCreated": "Stack %s transitioned to create complete status",
         "StackCreationFailed": "Stack %s failed to reach completion status, error: %s",
@@ -198,14 +198,14 @@
         "StackUpdateFailed": "Stack %s failed to reach update completion status, error: %s",
         "StackUpdateRequestFailed": "Error requesting stack update, error message: %s",
         "CreatedStackId": "Stack creation completed, new stack id %s",
-        "WaitingForStack": "Waiting for stack %s to reach create create or update completed status",
+        "WaitingForStack": "Waiting for stack %s to reach create or update completed status",
         "TaskCompleted": "Stack %s created successfully, stack ID %s",
         "NoWorkToDo": "The service detected no changes in the template and/or parameters and declined to update the stack.",
         "ChangesetCreationFailed": "Request to create change set failed with error %s",
         "WaitingForChangesetValidation": "Waiting for change set %s to be validated",
         "ChangesetValidated": "Change set successfully validated",
         "ChangesetValidationFailed": "Stack %s failed to create successfully from the change set. Error: %s",
-        "ExecutingChangeset": "Executing change set '%s'",
+        "ExecutingChangeset": "Executing change set %s",
         "WaitingForChangesetExecution": "Waiting for change set to complete execution on stack %s",
         "ExecuteChangesetFailed": "Request to execute change set failed with message %s",
         "ChangesetExecuted": "Change set executed successfully, stack transitioned to completed status",

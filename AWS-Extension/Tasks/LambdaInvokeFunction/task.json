@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "30"
+        "Patch": "32"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS Lambda Invoke Function: $(functionName)",
@@ -101,6 +101,7 @@
         "FunctionInvokeFailed": "Error invoking function",
         "SettingOutputVariable": "Setting output variable %s with the function output",
         "ReceivedOutput": "Received output %s from function",
+        "FunctionDoesNotExist": "Function %s does not exist",
         "TaskCompleted": "Completed invocation of Lambda function %s"
     }
 }

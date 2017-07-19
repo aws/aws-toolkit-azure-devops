@@ -2,10 +2,14 @@ import tl = require('vsts-task-lib/task');
 import path = require('path');
 import TaskParameters = require('./helpers/taskParameters');
 import TaskOperationHelpers = require('./helpers/taskOperations');
-
-tl.setResourcePath(path.join(__dirname, 'task.json'));
+import sdkUserAgent = require('sdkuseragent/sdkuseragent');
 
 function run(): Promise<void> {
+
+    const taskManifestFile = path.join(__dirname, 'task.json');
+    tl.setResourcePath(taskManifestFile);
+    sdkUserAgent.setUserAgentFromManifest(taskManifestFile);
+
     const taskParameters = new TaskParameters.InvokeFunctionTaskParameters();
     return TaskOperationHelpers.TaskOperations.invokeFunction(taskParameters);
 }

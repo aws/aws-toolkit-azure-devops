@@ -9,13 +9,13 @@ import { AWSError } from 'aws-sdk/lib/error';
 export class TaskOperations {
 
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
-        this.constructServiceClients(taskParameters, 'BeanstalkDeployApplication');
+        this.constructServiceClients(taskParameters);
 
         const versionLabel = 'v' + new Date().getTime();
 
         const s3Bucket = await this.determineS3Bucket();
 
-        const s3Key = await this.uploadApplication(taskParameters.webDeploymentAchive, s3Bucket, taskParameters.applicationName, taskParameters.environmentName, versionLabel);
+        const s3Key = await this.uploadApplication(taskParameters.webDeploymentArchive, s3Bucket, taskParameters.applicationName, taskParameters.environmentName, versionLabel);
 
         const startingEventDate = await this.getLatestEventDate(taskParameters.applicationName, taskParameters.environmentName);
 
@@ -26,16 +26,10 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
 
-    private static userAgentPrefix: string = 'AWS-VSTS/0.9.30 Task/';
     private static beanstalkClient: awsBeanstalkClient;
     private static s3Client: awsS3Client;
 
-    private static constructServiceClients(taskParameters: TaskParameters.DeployTaskParameters, taskName: string) {
-
-        const AWS = require('aws-sdk/global');
-        AWS.util.userAgent = () => {
-            return this.userAgentPrefix + taskName;
-        };
+    private static constructServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
 
         this.beanstalkClient = new awsBeanstalkClient({
             apiVersion: '2010-12-01',
@@ -56,7 +50,7 @@ export class TaskOperations {
         });
     }
 
-    private static async updateEnvironment(bucketName: string, key: string,application: string, environment: string, versionLabel: string ): Promise<void> {
+    private static async updateEnvironment(bucketName: string, key: string, application: string, environment: string, versionLabel: string ): Promise<void> {
 
         const sourceBundle: awsBeanstalkClient.S3Location = {
             'S3Bucket' : bucketName,
@@ -73,7 +67,7 @@ export class TaskOperations {
         console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel));
 
         const request: awsBeanstalkClient.UpdateEnvironmentMessage = {
-            'ApplicationName' : application, 
+            'ApplicationName' : application,
             'EnvironmentName' : environment,
             'VersionLabel' : versionLabel
         };
@@ -172,4 +166,5 @@ export class TaskOperations {
 
         return response.Events[0].EventDate;
     }
+
 }

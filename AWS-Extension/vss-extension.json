@@ -1,14 +1,14 @@
 {
   "manifestVersion": 1,
   "id": "aws-vsts-tools",
-  "version": "0.9.30",
+  "version": "0.9.32",
   "name": "AWS Tools for Microsoft Visual Studio Team Services",
   "scopes": [
     "vso.build",
     "vso.build_execute",
     "vso.release"
   ],
-  "description": "Adds support for defining AWS connection credentials as endpoints and tasks to transfer artifacts to and from Amazon S3 buckets, task to run AWS CLI commands, and other CI/CD tasks.",
+  "description": "Adds tasks to support working with AWS including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and the AWS CLI.",
   "publisher": "unknown",
   "public": false,
   "icons": {
@@ -32,16 +32,16 @@
   ],
   "links": {
     "home": {
-      "uri": "https://bit.ly"
+      "uri": "https://aws.amazon.com/vsts"
     },
     "getstarted": {
-      "uri": "https://bit.ly"
+      "uri": "https://aws.amazon.com/vsts"
     },
     "learn": {
-      "uri": "https://bit.ly"
+      "uri": "https://aws.amazon.com/vsts"
     },
    "support": {
-      "uri": "https://bit.ly"
+      "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues"
     },
     "repository": {
       "type": "git",
@@ -60,7 +60,7 @@
     ],
     "screenshots": [
         {
-            "path": "images/screenshoot.png"
+            "path": "images/screenshot.png"
         }
     ],
   "files": [
