@@ -254,9 +254,9 @@ export class TaskOperations {
         return response.Events[0].EventDate;
     }
 
-    private static sleep(timeout: number) : Promise<void> {
-        return new Promise((resolve, reject) => {
-            setTimeout(resolve, timeout);
+    private static sleep(timeout: number) : Promise<void> {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, timeout);
         });
     } 
 }
