@@ -6,9 +6,9 @@ var mopts = {
         'server',
         'suite',
         'task',
-        'version',
         'publisher',
-        'configuration'
+        'configuration',
+        'updateversioninfo'
     ],
     boolean: [
         'release'
@@ -106,10 +106,80 @@ target.clean = function () {
     }
 };
 
+// used in packaging builds to increment specific version components for the extension
+// and all tasks if the --updateversions switch was specified. Options to the switch
+// are:
+//     --updateversioninfo major - increments the major version, sets minor and patch to 0
+//     --updateversioninfo minor - increments the minor version, sets patch to 0
+//     --updateversioninfo patch - increments the patch version only
 //
-// ex: node make.js build
-// ex: node make.js build --task ShellScript
-//
+target.updateversioninfo = function() {
+
+    if (!options.updateversioninfo) {
+        banner('> SKIPPING extension and task version update, --updateversioninfo not set');
+        return;
+    }
+
+    var updateMajor = false;
+    var updateMinor = false;
+    switch (options.updateversioninfo) {
+        case 'patch': {
+            banner('> Updating extension and task patch versions');
+        }
+        break;
+
+        case 'minor': {
+            banner('> Updating extension and task minor versions');
+            updateMinor = true;
+        }
+        break;
+
+        case 'major': {
+            banner('> Updating extension and task major versions');
+            updateMajor = true;
+        }
+        break;
+
+        default:
+            throw new Error('Unknown version update option - ' + options.updateversioninfo + ', expected "major", "minor" or "patch"');
+    }
+
+    var versionInfoFile = path.join(__dirname, '_versioninfo.json');
+    var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
+    console.log(`> Previous version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
+    if (updateMajor) {
+        versionInfo.Major = (parseInt(versionInfo.Major) + 1).toString();
+        versionInfo.Minor = '0';
+        versionInfo.Patch = '0';
+    } else if (updateMinor) {
+        versionInfo.Minor = (parseInt(versionInfo.Minor) + 1).toString();
+        versionInfo.Patch = '0';
+    } else {
+        versionInfo.Patch = (parseInt(versionInfo.Patch) + 1).toString();
+    }
+    console.log(`> New version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
+    fs.writeFileSync(versionInfoFile, JSON.stringify(versionInfo, null, 4) + '\n');
+
+    var extensionManifestPath = path.join(__dirname, 'vss-extension.json');
+    var extensionJson = JSON.parse(fs.readFileSync(extensionManifestPath));
+    extensionJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
+    console.log(`> extension version updated to ${extensionJson.version}`);
+    fs.writeFileSync(extensionManifestPath, JSON.stringify(extensionJson, null, 4) + '\n');
+
+    taskList.forEach(function (taskName) {
+        var taskJsonPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
+        var taskJson = JSON.parse(fs.readFileSync(taskJsonPath));
+        taskJson.version.Major = versionInfo.Major;
+        taskJson.version.Minor = versionInfo.Minor;
+        taskJson.version.Patch = versionInfo.Patch;
+        console.log(`> task ${taskName} version updated to ${taskJson.version.Major}.${taskJson.version.Minor}.${taskJson.version.Patch}`);
+        fs.writeFileSync(taskJsonPath, JSON.stringify(taskJson, null, 4) + '\n');
+    });
+}
+
+// builds the extension into a _build folder. If the --release switch is specified
+// the build is generated for production release (no map files, npm modules set to
+// production only)
 target.build = function() {
     banner('Building extension for ' + (options.release ? 'release' : 'development'));
 
@@ -343,18 +413,4 @@ target.package = function() {
     run(tfxcmd);
 
     banner('Packaging successful', true);
-}
-
-// used to bump the patch version in task.json files
-target.bump = function() {
-    taskList.forEach(function (taskName) {
-        var taskJsonPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
-        var taskJson = JSON.parse(fs.readFileSync(taskJsonPath));
-        if (typeof taskJson.version.Patch != 'number') {
-            fail(`Error processing '${taskName}'. version.Patch should be a number.`);
-        }
-
-        taskJson.version.Patch = taskJson.version.Patch + 1;
-        fs.writeFileSync(taskJsonPath, JSON.stringify(taskJson, null, 4));
-    });
 }
