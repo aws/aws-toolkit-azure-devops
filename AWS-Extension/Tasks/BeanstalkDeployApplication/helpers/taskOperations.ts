@@ -1,6 +1,8 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
+import Q = require('q');
+import archiver = require('archiver');
 import awsBeanstalkClient = require('aws-sdk/clients/elasticbeanstalk');
 import awsS3Client = require('aws-sdk/clients/s3');
 import TaskParameters = require('./taskParameters');
@@ -15,7 +17,15 @@ export class TaskOperations {
 
         const s3Bucket = await this.determineS3Bucket();
 
-        const s3Key = await this.uploadApplication(taskParameters.webDeploymentArchive, s3Bucket, taskParameters.applicationName, taskParameters.environmentName, versionLabel);
+        let deploymentBundle : string;
+        if(taskParameters.applicationType == taskParameters.applicationTypeAspNetCoreForWindows) {
+            deploymentBundle = await this.prepareAspNetCoreBundle(taskParameters.dotnetPublishPath);
+        }
+        else {
+            deploymentBundle = taskParameters.webDeploymentArchive;
+        }
+
+        const s3Key = await this.uploadApplication(deploymentBundle, s3Bucket, taskParameters.applicationName, taskParameters.environmentName, versionLabel);
 
         const startingEventDate = await this.getLatestEventDate(taskParameters.applicationName, taskParameters.environmentName);
 
@@ -50,7 +60,78 @@ export class TaskOperations {
         });
     }
 
-    private static async updateEnvironment(bucketName: string, key: string, application: string, environment: string, versionLabel: string ): Promise<void> {
+    private static async prepareAspNetCoreBundle(dotnetPublishPath : string) : Promise<string> {
+
+        var defer = Q.defer();
+        var deploymentBundle = tl.getVariable('build.artifactStagingDirectory') + '/ebDeploymentBundle.zip';
+        let output = fs.createWriteStream(deploymentBundle);
+        console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle));
+
+        let archive = archiver('zip');
+
+        output.on('close', function() {
+            console.log(tl.loc('ArchiveSize', archive.pointer()));
+            defer.resolve(deploymentBundle);
+        });
+                
+        archive.on('error', function(err) {
+            console.log(tl.loc('ZipError', err))
+            defer.reject(err);
+        });
+
+        archive.pipe(output);
+
+        console.log(tl.loc('PublishingPath', dotnetPublishPath));
+        var stat = fs.statSync(dotnetPublishPath);
+        if(stat.isFile()) {
+            archive.file(dotnetPublishPath, {name: path.basename(dotnetPublishPath)});
+            console.log(tl.loc('AddingAspNetCoreBundle',  dotnetPublishPath));
+
+            var manifest = this.generateManifest('./' + path.basename(dotnetPublishPath), '/');
+            archive.append(manifest, {name : 'aws-windows-deployment-manifest.json'});
+            console.log(tl.loc('AddingManifest'));
+        }
+        else {
+            archive.directory(dotnetPublishPath, '/app/');
+            console.log(tl.loc('AddingFilesFromDotnetPublish'));
+
+            var manifest = this.generateManifest('/app/', '/');
+            archive.append(manifest, {name : 'aws-windows-deployment-manifest.json'});
+            console.log(tl.loc('AddingManifest'));
+        }
+
+        archive.finalize();
+        await defer.promise;
+
+        console.log(tl.loc('BundleComplete'));
+        return deploymentBundle;
+    }
+
+    private static generateManifest(appBundle: string, iisPath: string) : string {
+
+        var manifest = 
+`{
+  "manifestVersion": 1,
+  "deployments": {
+ 
+    "aspNetCoreWeb": [
+      {
+        "name": "app",
+        "parameters": {
+          "appBundle": "` + appBundle + `",
+          
+          "iisPath": "` + iisPath + `",
+          "iisWebSite": "Default Web Site"
+        }
+      }
+    ]
+  }
+}`;
+                
+        return manifest;
+    }
+
+    private static async updateEnvironment(bucketName: string, key: string,application: string, environment: string, versionLabel: string ): Promise<void> {
 
         const sourceBundle: awsBeanstalkClient.S3Location = {
             'S3Bucket' : bucketName,
@@ -120,11 +201,10 @@ export class TaskOperations {
         console.log(tl.loc('WaitingForDeployment'));
         console.log(tl.loc('EventsComing'));
 
+        let success = true;
         let environment : awsBeanstalkClient.EnvironmentDescription;
         do {
-            const waitTill = new Date(new Date().getTime() + 5000);
-            // tslint:disable-next-line:no-empty
-            while (waitTill > new Date()) {}
+            await this.sleep(5000);
 
             const responseEnvironments = await this.beanstalkClient.describeEnvironments(requestEnvironment).promise();
             if (responseEnvironments.Environments.length === 0) {
@@ -143,6 +223,10 @@ export class TaskOperations {
                     }
 
                     console.log(event.EventDate + '   ' + event.Severity + '   ' + event.Message);
+
+                    if(event.Message == 'Failed to deploy application.') {
+                        success = false;
+                    }
                 }
 
                 lastPrintedEventDate = responseEvent.Events[0].EventDate;
@@ -150,6 +234,9 @@ export class TaskOperations {
 
         } while (environment.Status === 'Launching' || environment.Status === 'Updating');
 
+        if(!success) {
+            throw new Error(tl.loc('FailedToDeploy'));
+        }
     }
 
     private static async getLatestEventDate(applicationName: string, environmentName: string) : Promise<Date> {
@@ -167,4 +254,9 @@ export class TaskOperations {
         return response.Events[0].EventDate;
     }
 
+    private static sleep(timeout: number) : Promise<void> {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, timeout);
+        });
+    } 
 }

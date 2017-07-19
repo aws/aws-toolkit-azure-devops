@@ -28,7 +28,7 @@ export class NETCoreDeployTaskParameters {
             this.awsKeyId = awsEndpointAuth.parameters.username;
             this.awsSecretKey = awsEndpointAuth.parameters.password;
             this.awsRegion = tl.getInput('regionName', true);
-            this.lambdaProjectPath = tl.getInput('lambdaProjectPath', true);
+            this.lambdaProjectPath = tl.getPathInput('lambdaProjectPath', true, true);
 
             this.command = tl.getInput('command', true);
 

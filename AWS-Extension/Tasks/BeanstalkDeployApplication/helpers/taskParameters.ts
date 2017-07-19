@@ -7,6 +7,11 @@ export class DeployTaskParameters {
     public applicationName: string;
     public environmentName: string;
     public webDeploymentArchive: string;
+    public applicationType: string;
+    public dotnetPublishPath: string;
+
+    public readonly applicationTypeAspNet = "aspnet";
+    public readonly applicationTypeAspNetCoreForWindows = "aspnetCoreWindows";
 
     constructor() {
         try {
@@ -15,7 +20,17 @@ export class DeployTaskParameters {
             this.awsKeyId = awsEndpointAuth.parameters.username;
             this.awsSecretKey = awsEndpointAuth.parameters.password;
             this.awsRegion = tl.getInput('regionName', true);
-            this.webDeploymentArchive = tl.getInput('webDeploymentArchive', true);
+
+            this.applicationType = tl.getInput('applicationType', true);
+            if(this.applicationType == this.applicationTypeAspNetCoreForWindows) {
+                this.dotnetPublishPath = tl.getPathInput('dotnetPublishPath', true);
+            }
+            else {
+                this.webDeploymentArchive = tl.getPathInput('webDeploymentArchive', true);
+            }
+
+
+
             this.applicationName = tl.getInput('applicationName', true);
             this.environmentName = tl.getInput('environmentName', false);
         } catch (error) {

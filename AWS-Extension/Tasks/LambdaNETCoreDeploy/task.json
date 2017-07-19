@@ -57,7 +57,7 @@
         {
             "name": "lambdaProjectPath",
             "label": "Path to Lambda Project",
-            "type": "string",
+            "type": "filepath",
             "required": true,
             "defaultValue": "",
             "helpMarkDown": "The relative path to the location of the Lambda project"

@@ -43,13 +43,38 @@
             "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
         },
         {
-            "name": "webDeploymentArchive",
+            "name": "applicationType",
+            "type": "pickList",
+            "label": "Application Type",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The type of .NET web application.",
+            "options": {
+                "aspnet": "ASP.NET (Source: Web Deploy Archive)",
+                "aspnetCoreWindows": "ASP.NET Core (Source: dotnet publish)"
+            },
+            "properties": {
+                "EditableOptions": "False"
+            }
+        },           
+        {
+            "name": "webDeploymentAchive",
             "label": "Web Deploy Archive",
-            "type": "string",
+            "type": "filepath",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The path to the web deploy archive that contains the application to deploy to Elastic Beanstalk."
+            "helpMarkDown": "The path to web deploy archive that contains the application to deploy to Elastic Beanstalk.",
+            "visibleRule": "applicationType = aspnet"
         },        
+        {
+            "name": "dotnetPublishPath",
+            "label": "Published Application Path",
+            "type": "filepath",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The path to the directory where the command 'dotnet publish' outputted the published application.",
+            "visibleRule": "applicationType = aspnetCoreWindows"
+        },  
         {
             "name": "applicationName",
             "label": "Beanstalk Application Name",
@@ -83,6 +108,16 @@
         "WaitingForDeployment" : "Waiting for deployment to complete",
         "EventsComing" : "Events from Elastic Beanstalk:",
         "FailedToFindEnvironment" : "Failed to find environment when waiting for deployment completion",
+        "FailedToDeploy" : "Error deploy application version to Elastic Beanstalk",
+
+        "CreatingBeanstalkBundle" : "Creating beanstalk deploymnent bundle at %s",
+        "ArchiveSize" : "Archive size: %s total bytes",
+        "ZipError" : "Zip Error: %s",
+        "PublishingPath" : "Publish Path: %s",
+        "AddingAspNetCoreBundle" : "Adding ASP.NET Core web app to beanstalk bundle, %s",
+        "AddingFilesFromDotnetPublish" : "Adding files from dotnet publish output folder.",
+        "AddingManifest" : "Adding beanstalk manifest to beanstalk bundle",
+        "BundleComplete" : "ASP.NET Core Beanstalk bundle complete",
 
         "TaskCompleted": "Deployment to application %s completed"        
     }
