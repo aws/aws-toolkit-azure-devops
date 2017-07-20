@@ -1,29 +1,42 @@
 ## Overview
-Adds support for defining AWS connection credentials as Visual Studio Team Services endpoints, and tasks for working with AWS services such as S3, Lambda, CodeDeploy and CloudFormation.
+Adds tasks for build and release pipelines to support working with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and the AWS CLI. The extension includes a new service endpoint type, 'AWS', to provide the means to supply AWS credentials to the tasks at runtime.
 
 ## Highlighted Features
-### Create an AWS Connection
-To deploy to AWS, an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use in the Build or Release Management definition by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. 
-- Use 'AWS' endpoint type, provide the following parameters 
-- Access Key ID	
-- Secret Access Key
-- AWS region name
+### Create an AWS Credentials Connection
+To work with AWS services an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use in the Build or Release Management definition by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab.
 
-Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/)
+Select the 'AWS' endpoint type, provide the following parameters
+- A name to refer to the credentials when configuring tasks that accept AWS credentials.
+- Access Key ID
+- Secret Access Key
+
+Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/). Note that we strongly suggest the use of access and secret keys generated for an Identity and Access Management (IAM) user account.
 
 ![aws endpoint](images/AWSEndpoint.png)
 
 ### Upload Files to AWS S3 Bucket
 
-Upload files to AWS Simple Storage Service (S3) Bucket
+Upload files to an Amazon Simple Storage Service (S3) Bucket
 
 ![s3 upload](images/AWSFileUpload.png)
 
-### Create and delete AWS CloudFormation stacks
+### Deploy a .NET Core serverless application to AWS Lambda
 
-Create and delete AWS CloudFormation stacks
+![lambda appdeploy](images/AWSLambdaDeploy.png)
+
+### Create/update AWS CloudFormation stacks
+
+Create a new AWS CloudFormation stacks or update an existing stack.
 
 ![CloudFormation](images/AWSCloudFormation.png)
+
+### Deploy to AWS Elastic Beanstalk
+
+![Beanstalk](images/AWSElasticBeanstalk.png)
+
+### Deploy to Amazon EC2 with AWS CodeDeploy
+
+![CodeDeploy](images/AWSCodeDeploy.png)
 
 ### Run AWS CLI commands
 

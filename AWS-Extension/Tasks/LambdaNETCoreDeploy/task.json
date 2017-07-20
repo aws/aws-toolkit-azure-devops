@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "32"
+        "Patch": "33"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS Lambda .NET Core Deploy: $(functionName) $(stackName)",
@@ -35,9 +35,9 @@
             "name": "advanced",
             "displayName": "Advanced",
             "isExpanded": true
-        }        
-     ],
-    "inputs" : [
+        }
+    ],
+    "inputs": [
         {
             "name": "awsCredentials",
             "type": "connectedService:AWS",
@@ -76,8 +76,7 @@
             "properties": {
                 "EditableOptions": "False"
             }
-        },        
-
+        },
         {
             "name": "functionName",
             "type": "string",
@@ -123,8 +122,6 @@
             "groupName": "deployFunction",
             "helpMarkDown": "The function execution time at which Lambda should terminate the function."
         },
-
-
         {
             "name": "stackName",
             "type": "string",
@@ -133,7 +130,7 @@
             "required": false,
             "groupName": "deployServerless",
             "helpMarkDown": "AWS CloudFormation Stack Name."
-        },       
+        },
         {
             "name": "s3Bucket",
             "type": "string",
@@ -158,9 +155,9 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "groupName" : "advanced",
+            "groupName": "advanced",
             "helpMarkDown": "Additional arguments when executing the 'dotnet lambda' command"
-        }        
+        }
     ],
     "execution": {
         "Node": {

@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "32"
+        "Patch": "33"
     },
     "runsOn": [
         "Agent"
@@ -101,7 +101,7 @@
             "type": "string",
             "label": "Description",
             "defaultValue": "",
-            "required":false,
+            "required": false,
             "visibleRule": "useChangeset = true",
             "helpMarkDown": "A description to help you identify this change set. Max length 1024 characters."
         },
@@ -119,7 +119,7 @@
             "type": "string",
             "label": "Role ARN",
             "defaultValue": "",
-            "required":false,
+            "required": false,
             "groupName": "Advanced",
             "helpMarkDown": "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that AWS CloudFormation assumes when executing the change set. AWS CloudFormation uses the role's credentials to make calls on your behalf. AWS CloudFormation uses this role for all future operations on the stack. As long as users have permission to operate on the stack, AWS CloudFormation uses this role even if the users don't have permission to pass it. Ensure that the role grants least privilege.\n\nIf you don't specify a value, AWS CloudFormation uses the role that was previously associated with the stack. If no role is available, AWS CloudFormation uses a temporary session that is generated from your user credentials."
         },
@@ -137,7 +137,7 @@
             "type": "multiline",
             "label": "Notification ARNs",
             "defaultValue": "",
-            "required":false,
+            "required": false,
             "groupName": "Advanced",
             "helpMarkDown": "The Amazon Resource Names (ARNs) of Amazon Simple Notification Service (Amazon SNS) topics that AWS CloudFormation associates with the stack. To remove all associated notification topics, specify an empty list."
         },
@@ -157,7 +157,7 @@
         },
         {
             "name": "disableRollback",
-           "type": "boolean",
+            "type": "boolean",
             "label": "Disable Rollback",
             "defaultValue": "false",
             "groupName": "Options",
@@ -168,7 +168,7 @@
             "name": "outputVariable",
             "type": "string",
             "label": "Output Variable",
-            "defaultValue" : "",
+            "defaultValue": "",
             "groupName": "Options",
             "helpMarkDown": "The name of the variable that will contain the ID of the stack on task completion. The variable can be used as $(variableName) to refer to the stack ID in subsequent tasks.",
             "required": false

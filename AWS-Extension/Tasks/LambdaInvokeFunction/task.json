@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "32"
+        "Patch": "33"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS Lambda Invoke Function: $(functionName)",
@@ -26,7 +26,7 @@
             "visibleRule": "invocationType = RequestResponse"
         }
     ],
-    "inputs" : [
+    "inputs": [
         {
             "name": "awsCredentials",
             "type": "connectedService:AWS",
@@ -72,7 +72,7 @@
             "name": "outputVariable",
             "type": "string",
             "label": "Output Variable",
-            "defaultValue" : "",
+            "defaultValue": "",
             "groupName": "OutputOptions",
             "helpMarkDown": "The name of the variable that will contain the function output on task completion. The variable can be used as $(variableName) to refer to the function result in subsequent tasks.",
             "required": false
@@ -84,7 +84,7 @@
             "defaultValue": "None",
             "helpMarkDown": "For synchronous execution, returns the base64-encoded last 4 KB of log data produced by your Lambda function in the x-amz-log-result header.",
             "groupName": "OutputOptions",
-            "options":{
+            "options": {
                 "None": "None",
                 "Tail": "Tail"
             }

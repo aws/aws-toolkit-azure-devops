@@ -14,14 +14,13 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "32"
+        "Patch": "33"
     },
     "runsOn": [
         "Agent"
     ],
     "minimumAgentVersion": "1.91.0",
-    "groups": [
-    ],
+    "groups": [],
     "instanceNameFormat": "AWS CloudFormation Delete Change Set $(changeSetName)",
     "inputs": [
         {

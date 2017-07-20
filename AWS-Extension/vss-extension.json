@@ -1,61 +1,67 @@
 {
-  "manifestVersion": 1,
-  "id": "aws-vsts-tools",
-  "version": "0.9.32",
-  "name": "AWS Tools for Microsoft Visual Studio Team Services",
-  "scopes": [
-    "vso.build",
-    "vso.build_execute",
-    "vso.release"
-  ],
-  "description": "Adds tasks to support working with AWS including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and the AWS CLI.",
-  "publisher": "unknown",
-  "public": false,
-  "icons": {
-    "default": "images/logo.png"
-  },
-  "content": {
-    "details": {
-      "path": "README.md"
+    "manifestVersion": 1,
+    "id": "aws-vsts-tools",
+    "version": "0.9.33",
+    "name": "AWS Tools for Microsoft Visual Studio Team Services",
+    "scopes": [
+        "vso.build",
+        "vso.build_execute",
+        "vso.release"
+    ],
+    "description": "Adds tasks to support working with AWS including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and the AWS CLI.",
+    "publisher": "unknown",
+    "public": false,
+    "icons": {
+        "default": "images/logo.png"
     },
-    "license": {
-      "path": "LICENSE"
-    }
-  },
-  "targets": [
-    {
-      "id": "Microsoft.VisualStudio.Services"
-    }
-  ],
-  "tags": [
-    "AWS","S3","CloudFormation","AWS CLI", "Lambda", "CodeDeploy", "Elastic Beanstalk"
-  ],
-  "links": {
-    "home": {
-      "uri": "https://aws.amazon.com/vsts"
+    "content": {
+        "details": {
+            "path": "README.md"
+        },
+        "license": {
+            "path": "LICENSE"
+        }
     },
-    "getstarted": {
-      "uri": "https://aws.amazon.com/vsts"
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "tags": [
+        "AWS",
+        "S3",
+        "CloudFormation",
+        "AWS CLI",
+        "Lambda",
+        "CodeDeploy",
+        "Elastic Beanstalk"
+    ],
+    "links": {
+        "home": {
+            "uri": "https://aws.amazon.com/vsts"
+        },
+        "getstarted": {
+            "uri": "https://aws.amazon.com/vsts"
+        },
+        "learn": {
+            "uri": "https://aws.amazon.com/vsts"
+        },
+        "support": {
+            "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues"
+        },
+        "repository": {
+            "type": "git",
+            "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"
+        },
+        "issues": {
+            "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues"
+        }
     },
-    "learn": {
-      "uri": "https://aws.amazon.com/vsts"
+    "branding": {
+        "color": "rgb(220, 235, 252)",
+        "theme": "light"
     },
-   "support": {
-      "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues"
-    },
-    "repository": {
-      "type": "git",
-      "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"
-    },
-    "issues": {
-      "uri": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues"
-    }
-  },
-  "branding": {
-    "color": "rgb(220, 235, 252)",
-    "theme": "light"
-  },
-  "galleryFlags": [
+    "galleryFlags": [
         "Preview"
     ],
     "screenshots": [
@@ -63,223 +69,223 @@
             "path": "images/screenshot.png"
         }
     ],
-  "files": [
-    {
-      "path": "images",
-      "addressable": true
-    },
-    {
-      "path": "Tasks/AWSCLI"
-    },
-    {
-      "path": "Tasks/BeanstalkDeployApplication"
-    },
-    {
-      "path": "Tasks/CloudFormationCreateOrUpdateStack"
-    },
-    {
-      "path": "Tasks/CloudFormationDeleteChangeSet"
-    },
-    {
-      "path": "Tasks/CloudFormationDeleteStack"
-    },
-    {
-      "path": "Tasks/CloudFormationExecuteChangeSet"
-    },
-    {
-      "path": "Tasks/CodeDeployDeployApplication"
-    },
-    {
-      "path": "Tasks/LambdaInvokeFunction"
-    },
-    {
-      "path": "Tasks/LambdaNETCoreDeploy"
-    },
-    {
-      "path": "Tasks/S3Download"
-    },
-    {
-      "path": "Tasks/S3Upload"
-    }
-  ],
-  "categories": [
-    "Build and release"
-  ],
-  "contributions": [
-    {
-      "id": "aws-credentials",
-      "description": "Credentials for tasks invoking AWS services",
-      "type": "ms.vss-endpoint.service-endpoint-type",
-      "targets": [
-        "ms.vss-endpoint.endpoint-types"
-      ],
-      "properties": {
-        "name": "AWS",
-        "displayName": "AWS",
-        "url": {
-          "displayName": "Server Url",
-          "helpText": "Dummy url to satisfy the schema for a contribution.",
-          "value": "https://aws.amazon.com/",
-          "isVisible": "false"
+    "files": [
+        {
+            "path": "images",
+            "addressable": true
         },
-        "dataSources": [
-          {
-            "name": "AWS",
-            "endpointUrl": "{{endpoint.url}}api/projects/index",
-            "resultSelector": "jsonpath:$[*].nm"
-          }
-        ],
-        "authenticationSchemes": [
-          {
-            "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
-            "inputDescriptors": [
-              {
-                "id": "username",
-                "name": "Access Key ID",
-                "description": "AWS_ACCESS_KEY_ID",
-                "inputMode": "textbox",
-                "validation": {
-                  "isRequired": true,
-                  "dataType": "string"
-                }
-              },
-              {
-                "id": "password",
-                "name": "Secret Access Key",
-                "description": "AWS_SECRET_ACCESS_KEY",
-                "inputMode": "passwordbox",
-                "isConfidential": true,
-                "validation": {
-                  "isRequired": true,
-                  "dataType": "string"
-                }
-              }
-            ]
-          }
-        ],
-        "helpMarkDown": "<a href=\"http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html?icmpid=docs_iam_console\" target=\"_blank\"><b>Learn More</b></a>"
-      }
-    },
-    {
-      "id": "AWSCLI",
-      "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/AWSCLI"
-      }
-    },
-   {
-      "id": "BeanstalkDeployApplication",
-      "description": "Deploy an application to AWS Elastic Beanstalk",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/BeanstalkDeployApplication"
-      }
-    },
-    {
-      "id": "CloudFormationCreateOrUpdateStack",
-      "description": "Create or update an AWS CloudFormation stack",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/CloudFormationCreateOrUpdateStack"
-      }
-    },
-    {
-      "id": "CloudFormationDeleteChangeSet",
-      "description": "Deletes an AWS CloudFormation change set",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/CloudFormationDeleteChangeSet"
-      }
-    },
-    {
-      "id": "CloudFormationDeleteStack",
-      "description": "Deletes an AWS CloudFormation stack",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/CloudFormationDeleteStack"
-      }
-    },
-    {
-      "id": "CloudFormationExecuteChangeSet",
-      "description": "Executes an AWS CloudFormation change set",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/CloudFormationExecuteChangeSet"
-      }
-    },
-    {
-      "id": "CodeDeployDeployApplication",
-      "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/CodeDeployDeployApplication"
-      }
-    },
-    {
-      "id": "LambdaInvokeFunction",
-      "description": "Invokes an AWS Lambda function with a JSON payload",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/LambdaInvokeFunction"
-      }
-    },
-    {
-      "id": "LambdaNETCoreDeploy",
-      "description": "Build and deploy a .NET Core AWS Lambda function",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/LambdaNETCoreDeploy"
-      }
-    },
-    {
-      "id": "S3Download",
-      "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/S3Download"
-      }
-    },
-    {
-      "id": "S3Upload",
-      "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
-      "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
-      "properties": {
-        "name": "Tasks/S3Upload"
-      }
-    }
-  ]
+        {
+            "path": "Tasks/AWSCLI"
+        },
+        {
+            "path": "Tasks/BeanstalkDeployApplication"
+        },
+        {
+            "path": "Tasks/CloudFormationCreateOrUpdateStack"
+        },
+        {
+            "path": "Tasks/CloudFormationDeleteChangeSet"
+        },
+        {
+            "path": "Tasks/CloudFormationDeleteStack"
+        },
+        {
+            "path": "Tasks/CloudFormationExecuteChangeSet"
+        },
+        {
+            "path": "Tasks/CodeDeployDeployApplication"
+        },
+        {
+            "path": "Tasks/LambdaInvokeFunction"
+        },
+        {
+            "path": "Tasks/LambdaNETCoreDeploy"
+        },
+        {
+            "path": "Tasks/S3Download"
+        },
+        {
+            "path": "Tasks/S3Upload"
+        }
+    ],
+    "categories": [
+        "Build and release"
+    ],
+    "contributions": [
+        {
+            "id": "aws-credentials",
+            "description": "Credentials for tasks invoking AWS services",
+            "type": "ms.vss-endpoint.service-endpoint-type",
+            "targets": [
+                "ms.vss-endpoint.endpoint-types"
+            ],
+            "properties": {
+                "name": "AWS",
+                "displayName": "AWS",
+                "url": {
+                    "displayName": "Server Url",
+                    "helpText": "Dummy url to satisfy the schema for a contribution.",
+                    "value": "https://aws.amazon.com/",
+                    "isVisible": "false"
+                },
+                "dataSources": [
+                    {
+                        "name": "AWS",
+                        "endpointUrl": "{{endpoint.url}}api/projects/index",
+                        "resultSelector": "jsonpath:$[*].nm"
+                    }
+                ],
+                "authenticationSchemes": [
+                    {
+                        "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+                        "inputDescriptors": [
+                            {
+                                "id": "username",
+                                "name": "Access Key ID",
+                                "description": "AWS_ACCESS_KEY_ID",
+                                "inputMode": "textbox",
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "password",
+                                "name": "Secret Access Key",
+                                "description": "AWS_SECRET_ACCESS_KEY",
+                                "inputMode": "passwordbox",
+                                "isConfidential": true,
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "helpMarkDown": "<a href=\"http://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html?icmpid=docs_iam_console\" target=\"_blank\"><b>Learn More</b></a>"
+            }
+        },
+        {
+            "id": "AWSCLI",
+            "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/AWSCLI"
+            }
+        },
+        {
+            "id": "BeanstalkDeployApplication",
+            "description": "Deploy an application to AWS Elastic Beanstalk",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/BeanstalkDeployApplication"
+            }
+        },
+        {
+            "id": "CloudFormationCreateOrUpdateStack",
+            "description": "Create or update an AWS CloudFormation stack",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/CloudFormationCreateOrUpdateStack"
+            }
+        },
+        {
+            "id": "CloudFormationDeleteChangeSet",
+            "description": "Deletes an AWS CloudFormation change set",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/CloudFormationDeleteChangeSet"
+            }
+        },
+        {
+            "id": "CloudFormationDeleteStack",
+            "description": "Deletes an AWS CloudFormation stack",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/CloudFormationDeleteStack"
+            }
+        },
+        {
+            "id": "CloudFormationExecuteChangeSet",
+            "description": "Executes an AWS CloudFormation change set",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/CloudFormationExecuteChangeSet"
+            }
+        },
+        {
+            "id": "CodeDeployDeployApplication",
+            "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/CodeDeployDeployApplication"
+            }
+        },
+        {
+            "id": "LambdaInvokeFunction",
+            "description": "Invokes an AWS Lambda function with a JSON payload",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/LambdaInvokeFunction"
+            }
+        },
+        {
+            "id": "LambdaNETCoreDeploy",
+            "description": "Build and deploy a .NET Core AWS Lambda function",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/LambdaNETCoreDeploy"
+            }
+        },
+        {
+            "id": "S3Download",
+            "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/S3Download"
+            }
+        },
+        {
+            "id": "S3Upload",
+            "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/S3Upload"
+            }
+        }
+    ]
 }
