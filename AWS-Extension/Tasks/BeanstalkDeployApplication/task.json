@@ -122,6 +122,8 @@
         "AddingManifest" : "Adding beanstalk manifest to beanstalk bundle",
         "BundleComplete" : "ASP.NET Core Beanstalk bundle complete",
 
+        "ApplicationDoesNotExist": "Application %s does not exist",
+        "EnvironmentDoesNotExist": "Environment %s does not exist for the application %s",
         "TaskCompleted": "Deployment to application %s completed"        
     }
 }

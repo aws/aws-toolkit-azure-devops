@@ -10,8 +10,8 @@ export class DeployTaskParameters {
     public applicationType: string;
     public dotnetPublishPath: string;
 
-    public readonly applicationTypeAspNet = "aspnet";
-    public readonly applicationTypeAspNetCoreForWindows = "aspnetCoreWindows";
+    public readonly applicationTypeAspNet: string = 'aspnet';
+    public readonly applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows';
 
     constructor() {
         try {
@@ -24,14 +24,11 @@ export class DeployTaskParameters {
             this.applicationType = tl.getInput('applicationType', true);
             console.log(tl.loc('DisplayApplicationType', this.applicationType));
 
-            if(this.applicationType == this.applicationTypeAspNetCoreForWindows) {
+            if (this.applicationType === this.applicationTypeAspNetCoreForWindows) {
                 this.dotnetPublishPath = tl.getPathInput('dotnetPublishPath', true);
-            }
-            else {
+            } else {
                 this.webDeploymentArchive = tl.getPathInput('webDeploymentArchive', true);
             }
-
-
 
             this.applicationName = tl.getInput('applicationName', true);
             this.environmentName = tl.getInput('environmentName', false);

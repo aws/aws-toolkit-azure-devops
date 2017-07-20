@@ -13,15 +13,16 @@ export class TaskOperations {
     public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
         this.constructServiceClients(taskParameters);
 
+        await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.environmentName);
+
         const versionLabel = 'v' + new Date().getTime();
 
         const s3Bucket = await this.determineS3Bucket();
 
         let deploymentBundle : string;
-        if(taskParameters.applicationType == taskParameters.applicationTypeAspNetCoreForWindows) {
+        if (taskParameters.applicationType === taskParameters.applicationTypeAspNetCoreForWindows) {
             deploymentBundle = await this.prepareAspNetCoreBundle(taskParameters.dotnetPublishPath);
-        }
-        else {
+        } else {
             deploymentBundle = taskParameters.webDeploymentArchive;
         }
 
@@ -62,40 +63,39 @@ export class TaskOperations {
 
     private static async prepareAspNetCoreBundle(dotnetPublishPath : string) : Promise<string> {
 
-        var defer = Q.defer();
-        var deploymentBundle = tl.getVariable('build.artifactStagingDirectory') + '/ebDeploymentBundle.zip';
-        let output = fs.createWriteStream(deploymentBundle);
+        const defer = Q.defer();
+        const deploymentBundle = tl.getVariable('build.artifactStagingDirectory') + '/ebDeploymentBundle.zip';
+        const output = fs.createWriteStream(deploymentBundle);
         console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle));
 
-        let archive = archiver('zip');
+        const archive = archiver('zip');
 
         output.on('close', function() {
             console.log(tl.loc('ArchiveSize', archive.pointer()));
             defer.resolve(deploymentBundle);
         });
-                
-        archive.on('error', function(err) {
-            console.log(tl.loc('ZipError', err))
+
+        archive.on('error', function(err: any) {
+            console.log(tl.loc('ZipError', err));
             defer.reject(err);
         });
 
         archive.pipe(output);
 
         console.log(tl.loc('PublishingPath', dotnetPublishPath));
-        var stat = fs.statSync(dotnetPublishPath);
-        if(stat.isFile()) {
+        const stat = fs.statSync(dotnetPublishPath);
+        if (stat.isFile()) {
             archive.file(dotnetPublishPath, {name: path.basename(dotnetPublishPath)});
             console.log(tl.loc('AddingAspNetCoreBundle',  dotnetPublishPath));
 
-            var manifest = this.generateManifest('./' + path.basename(dotnetPublishPath), '/');
+            const manifest = this.generateManifest('./' + path.basename(dotnetPublishPath), '/');
             archive.append(manifest, {name : 'aws-windows-deployment-manifest.json'});
             console.log(tl.loc('AddingManifest'));
-        }
-        else {
+        } else {
             archive.directory(dotnetPublishPath, '/app/');
             console.log(tl.loc('AddingFilesFromDotnetPublish'));
 
-            var manifest = this.generateManifest('/app/', '/');
+            const manifest = this.generateManifest('/app/', '/');
             archive.append(manifest, {name : 'aws-windows-deployment-manifest.json'});
             console.log(tl.loc('AddingManifest'));
         }
@@ -109,17 +109,17 @@ export class TaskOperations {
 
     private static generateManifest(appBundle: string, iisPath: string) : string {
 
-        var manifest = 
+        const manifest =
 `{
   "manifestVersion": 1,
   "deployments": {
- 
+
     "aspNetCoreWeb": [
       {
         "name": "app",
         "parameters": {
           "appBundle": "` + appBundle + `",
-          
+
           "iisPath": "` + iisPath + `",
           "iisWebSite": "Default Web Site"
         }
@@ -127,11 +127,11 @@ export class TaskOperations {
     ]
   }
 }`;
-                
+
         return manifest;
     }
 
-    private static async updateEnvironment(bucketName: string, key: string,application: string, environment: string, versionLabel: string ): Promise<void> {
+    private static async updateEnvironment(bucketName: string, key: string, application: string, environment: string, versionLabel: string ): Promise<void> {
 
         const sourceBundle: awsBeanstalkClient.S3Location = {
             'S3Bucket' : bucketName,
@@ -224,7 +224,7 @@ export class TaskOperations {
 
                     console.log(event.EventDate + '   ' + event.Severity + '   ' + event.Message);
 
-                    if(event.Message == 'Failed to deploy application.') {
+                    if (event.Message === 'Failed to deploy application.') {
                         success = false;
                     }
                 }
@@ -234,7 +234,7 @@ export class TaskOperations {
 
         } while (environment.Status === 'Launching' || environment.Status === 'Updating');
 
-        if(!success) {
+        if (!success) {
             throw new Error(tl.loc('FailedToDeploy'));
         }
     }
@@ -258,5 +258,41 @@ export class TaskOperations {
         return new Promise((resolve, reject) => {
             setTimeout(resolve, timeout);
         });
-    } 
+    }
+
+    private static async verifyResourcesExist(applicationName: string, environmentName: string): Promise<void> {
+
+        let appExists: boolean = false;
+        let envExists: boolean = false;
+
+        try {
+            const response = await this.beanstalkClient.describeApplications({
+                ApplicationNames: [ applicationName ]
+            }).promise();
+
+            appExists = response.Applications.length === 1;
+        // tslint:disable-next-line:no-empty
+        } catch (err) {
+        }
+
+        if (!appExists) {
+           throw new Error(tl.loc('ApplicationDoesNotExist', applicationName));
+         }
+
+        try {
+            const response = await this.beanstalkClient.describeEnvironments({
+                ApplicationName: applicationName,
+                EnvironmentNames: [ environmentName ]
+            }).promise();
+
+            envExists = response.Environments.length === 1;
+        // tslint:disable-next-line:no-empty
+        } catch (err) {
+        }
+
+        if (!envExists) {
+            throw new Error(tl.loc('EnvironmentDoesNotExist', environmentName, applicationName));
+        }
+    }
+
 }
