@@ -17,7 +17,7 @@
         "Patch": "37"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS Lambda .NET Core Deploy: $(functionName) $(stackName)",
+    "instanceNameFormat": "Deploy to Lambda: $(functionName) $(stackName)",
     "groups": [
         {
             "name": "deployFunction",

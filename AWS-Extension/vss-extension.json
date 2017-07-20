@@ -84,9 +84,6 @@
             "path": "Tasks/CloudFormationCreateOrUpdateStack"
         },
         {
-            "path": "Tasks/CloudFormationDeleteChangeSet"
-        },
-        {
             "path": "Tasks/CloudFormationDeleteStack"
         },
         {
@@ -197,17 +194,6 @@
             ],
             "properties": {
                 "name": "Tasks/CloudFormationCreateOrUpdateStack"
-            }
-        },
-        {
-            "id": "CloudFormationDeleteChangeSet",
-            "description": "Deletes an AWS CloudFormation change set",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "Tasks/CloudFormationDeleteChangeSet"
             }
         },
         {

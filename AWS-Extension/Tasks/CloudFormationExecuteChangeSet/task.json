@@ -27,7 +27,7 @@
             "isExpanded": false
         }
     ],
-    "instanceNameFormat": "AWS CloudFormation Execute Change Set $(changeSetName)",
+    "instanceNameFormat": "Execute Change Set: $(changeSetName)",
     "inputs": [
         {
             "name": "awsCredentials",
@@ -80,10 +80,16 @@
     "messages": {
         "ExecutingChangeSet": "Executing change set %s, associated with stack %s",
         "ExecuteChangeSetFailed": "Request to execute change set failed with message: %s",
-        "WaitingForStack": "Waiting for stack %s to reach create completed status",
-        "WaitConditionSatisifed": "New stack transitioned successfully to completed status",
+        "WaitingForStackUpdate": "Waiting for stack %s to reach update complete status",
+        "WaitingForStackCreation": "Waiting for stack %s to reach create complete status",
+        "StackUpdated": "Execution of change set to update stack %s completed successfully",
+        "StackCreated": "Execution of change set to create stack %s completed successfully",
+        "StackUpdateFailed": "Failed to update stack %s, error message: %s",
+        "StackCreationFailed": "Failed to create stack %s, error message: %s",
         "SettingOutputVariable": "Setting stack ID into output variable %s",
         "ChangeSetDoesNotExist": "Change set %s does not exist",
-        "TaskCompleted": "Executed change set %s"
+        "TaskCompleted": "Executed change set %s",
+        "FailedToObtainStackStatus": "Error querying status of stack: %s",
+        "SelectingUpdateWaiter": "Stack has existing resources, wait will be on UPDATE states"
     }
 }

@@ -17,7 +17,7 @@
         "Patch": "37"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS CodeDeploy Deploy: $(applicationName)",
+    "instanceNameFormat": "Deploy with CodeDeploy: $(applicationName)",
     "groups": [
         {
             "name": "advanced",

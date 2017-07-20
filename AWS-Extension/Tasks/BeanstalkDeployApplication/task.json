@@ -17,7 +17,7 @@
         "Patch": "37"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS Beanstalk Deploy: $(applicationName)",
+    "instanceNameFormat": "Deploy to Elastic Beanstalk: $(applicationName)",
     "groups": [
         {
             "name": "advanced",

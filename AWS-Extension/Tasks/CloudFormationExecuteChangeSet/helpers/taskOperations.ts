@@ -12,7 +12,21 @@ export class TaskOperations {
 
         this.createServiceClients(taskParameters);
 
-        await this.verifyResourcesExist(taskParameters.changeSetName, taskParameters.stackName);
+        const stackId = await this.verifyResourcesExist(taskParameters.changeSetName, taskParameters.stackName);
+        let needCreateWaiter: boolean = true;
+        if (stackId) {
+            // we need to know whether to queue a create or an update waiter when we exec the change set
+            try {
+                const response = await this.cloudFormationClient.describeStackResources({ StackName: stackId }).promise();
+                if (response.StackResources && response.StackResources.length > 0) {
+                    console.log(tl.loc('SelectingUpdateWaiter'));
+                    needCreateWaiter = false;
+                }
+
+            } catch (err) {
+                throw new Error(tl.loc('FailedToObtainStackStatus', err.message));
+            }
+        }
 
         console.log(tl.loc('ExecutingChangeSet', taskParameters.changeSetName, taskParameters.stackName));
 
@@ -22,7 +36,11 @@ export class TaskOperations {
                 StackName: taskParameters.stackName
             }).promise();
 
-            const stackId = await this.waitForStackCreation(taskParameters.stackName);
+            if (needCreateWaiter) {
+                await this.waitForStackCreation(taskParameters.stackName);
+            } else {
+                await this.waitForStackUpdate(taskParameters.stackName);
+            }
 
             if (taskParameters.outputVariable) {
                 console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
@@ -50,7 +68,7 @@ export class TaskOperations {
         });
     }
 
-    private static async verifyResourcesExist(changeSetName: string, stackName: string): Promise<void> {
+    private static async verifyResourcesExist(changeSetName: string, stackName: string): Promise<string> {
 
         try {
             const request: awsCloudFormation.DescribeChangeSetInput = {
@@ -60,28 +78,31 @@ export class TaskOperations {
                 request.StackName = stackName;
             }
 
-            await this.cloudFormationClient.describeChangeSet(request).promise();
+            const response = await this.cloudFormationClient.describeChangeSet(request).promise();
+            return response.StackId;
         } catch (err) {
             throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName));
         }
     }
 
-    private static async waitForStackCreation(stackName: string) : Promise<string> {
+    private static async waitForStackCreation(stackName: string) : Promise<void> {
+        console.log(tl.loc('WaitingForStackCreation', stackName));
+        try {
+            await this.cloudFormationClient.waitFor('stackCreateComplete', { StackName: stackName }).promise();
+            console.log(tl.loc('StackCreated', stackName));
+        } catch (err) {
+            throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
+        }
+    }
 
-        return new Promise<string>((resolve, reject) => {
-            console.log(tl.loc('WaitingForStack', stackName));
-
-            this.cloudFormationClient.waitFor('stackCreateComplete',
-                                              { StackName: stackName },
-                                              function(err: AWSError, data: awsCloudFormation.DescribeStacksOutput) {
-                if (err) {
-                    throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
-                } else {
-                    console.log(tl.loc('WaitConditionSatisifed'));
-                    return data.Stacks[0].StackId;
-                }
-            });
-        });
+    private static async waitForStackUpdate(stackName: string) : Promise<void> {
+        console.log(tl.loc('WaitingForStackUpdate', stackName));
+        try {
+            await this.cloudFormationClient.waitFor('stackUpdateComplete', { StackName: stackName }).promise();
+            console.log(tl.loc('StackUpdated', stackName));
+        } catch (err) {
+            throw new Error(tl.loc('StackUpdateFailed', stackName, err.message));
+        }
     }
 
 }

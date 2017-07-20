@@ -3,7 +3,6 @@
         "AWSCLI",
         "BeanstalkDeployApplication",
         "CloudFormationCreateOrUpdateStack",
-        "CloudFormationDeleteChangeSet",
         "CloudFormationDeleteStack",
         "CloudFormationExecuteChangeSet",
         "CodeDeployDeployApplication",

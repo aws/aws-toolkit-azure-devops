@@ -1,9 +1,0 @@
-{
-    "common": [
-        {
-            "module": "../Common/sdkuseragent",
-            "type": "node",
-            "compile": true
-        }
-    ]
-}

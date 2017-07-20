@@ -47,19 +47,14 @@ export class TaskOperations {
     }
 
     // wait for stack deletetion
-    private static waitForStackDeletion(stackName: string) : Promise<void> {
-
-        return new Promise<void>((resolve, reject) => {
-            this.cloudFormationClient.waitFor('stackDeleteComplete',
-                                              { StackName: stackName },
-                                              function(err: AWSError, data: awsCloudFormation.DescribeStacksOutput) {
-                if (err) {
-                    throw new Error(tl.loc('StackDeletionFailed', stackName, err.message));
-                } else {
-                    console.log(tl.loc('WaitConditionSatisifed'));
-                }
-            });
-        });
+    private static async waitForStackDeletion(stackName: string): Promise<void> {
+        console.log(tl.loc('WaitingForStackDeletion', stackName));
+        try {
+            await this.cloudFormationClient.waitFor('stackDeleteComplete', { StackName: stackName }).promise();
+            console.log(tl.loc('StackDeleted'));
+        } catch (err) {
+            throw new Error(tl.loc('StackDeletionFailed', stackName, err.message));
+        }
     }
 
 }

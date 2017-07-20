@@ -22,8 +22,8 @@
     "minimumAgentVersion": "1.91.0",
     "groups": [
         {
-            "name": "Changeset",
-            "displayName": "Change Set Options",
+            "name": "Capabilities",
+            "displayName": "Capabilities",
             "isExpanded": true
         },
         {
@@ -37,7 +37,7 @@
             "isExpanded": true
         }
     ],
-    "instanceNameFormat": "AWS CloudFormation Create/Update Stack $(stackName)",
+    "instanceNameFormat": "Create or Update Stack: $(stackName)",
     "inputs": [
         {
             "name": "awsCredentials",
@@ -80,7 +80,7 @@
             "helpMarkDown": "Path to the file containing the template parameters. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
-            "name": "useChangeset",
+            "name": "useChangeSet",
             "type": "boolean",
             "label": "Create or update the stack using a change set",
             "defaultValue": "false",
@@ -88,12 +88,12 @@
             "helpMarkDown": "If selected a change set will be created that contains a list of changes that will be applied to a stack and then validated. If the changes validate successfully the change set can then be executed to effect the changes. You can elect to use a change set to both create a new stack or update an existing stack."
         },
         {
-            "name": "changesetName",
+            "name": "changeSetName",
             "type": "string",
             "label": "Change Set Name",
             "defaultValue": "",
             "required": false,
-            "visibleRule": "useChangeset = true",
+            "visibleRule": "useChangeSet = true",
             "helpMarkDown": "The name of the change set. The name must be unique among all change sets that are associated with the specified stack.\n\nA change set name can contain only alphanumeric, case sensitive characters and hyphens. It must start with an alphabetic character and cannot exceed 128 characters. This parameter is required if the option to use a change set is selected."
         },
         {
@@ -102,17 +102,35 @@
             "label": "Description",
             "defaultValue": "",
             "required": false,
-            "visibleRule": "useChangeset = true",
+            "visibleRule": "useChangeSet = true",
             "helpMarkDown": "A description to help you identify this change set. Max length 1024 characters."
         },
         {
-            "name": "autoExecute",
+            "name": "autoExecuteChangeSet",
             "type": "boolean",
-            "label": "Automatically execute",
+            "label": "Automatically execute the change set",
             "defaultValue": "true",
             "required": false,
-            "visibleRule": "useChangeset = true",
+            "visibleRule": "useChangeSet = true",
             "helpMarkDown": "Automatically executes the change set if it validates successfully."
+        },
+        {
+            "name": "capabilityIAM",
+            "type": "boolean",
+            "label": "Create/update IAM Resources ('CAPABILITY_IAM')",
+            "defaultValue": "true",
+            "required": false,
+            "groupName": "Capabilities",
+            "helpMarkDown": "Capabilities that must be specified before AWS CloudFormation can update certain stacks. Some stack templates might include resources that can affect permissions in your AWS account, for example, by creating new AWS Identity and Access Management (IAM) users. For those stacks, you must explicitly acknowledge their capabilities by specifying this parameter.\n\nIf your stack manipulates IAM resources, you can specify either capability otherwise an InsufficientCapabilities error will be returned."
+        },
+        {
+            "name": "capabilityNamedIAM",
+            "type": "boolean",
+            "label": "Create/update Named IAM Resources ('CAPABILITY_NAMED_IAM')",
+            "defaultValue": "true",
+            "required": false,
+            "groupName": "Capabilities",
+            "helpMarkDown": "Capabilities that must be specified before AWS CloudFormation can update certain stacks. Some stack templates might include resources that can affect permissions in your AWS account, for example, by creating new AWS Identity and Access Management (IAM) users. For those stacks, you must explicitly acknowledge their capabilities by specifying this parameter.\n\nIf your stack manipulates IAM resources with custom names, you must add this capability otherwise an InsufficientCapabilities error will be returned."
         },
         {
             "name": "roleARN",
@@ -182,12 +200,12 @@
     },
     "messages": {
         "CheckingForStackExistence": "Checking existence for stack %s",
-        "StackExists": "Stack exists, switching to stack update mode",
-        "StackNotExist": "Stack does not exist, switching to stack create mode",
-        "CreateStack": "Creating stack using template file %s, parameters file %s",
-        "UpdateStack": "Updating stack using template file %s, parameters file %s",
-        "CreateStackWithChangeset": "Creating stack using template file %s, parameters file %s, with change set %s",
-        "UpdateStackWithChangeset": "Updating stack using template file %s, parameters file %s, with change set %s",
+        "StackExists": "Stack exists, switching to update stack mode",
+        "StackDoesNotExist": "Stack does not exist, switching to create stack mode",
+        "CreateStack": "Creating stack with template file %s, parameters file %s",
+        "UpdateStack": "Updating stack with template file %s, parameters file %s",
+        "CreateStackWithChangeSet": "Creating stack with template file %s, parameters file %s, change set %s",
+        "UpdateStackWithChangeSet": "Updating stack with template file %s, parameters file %s, change set %s",
         "LoadingTemplateFile": "Loading template file from %s",
         "LoadingTemplateParameterFile": "Loading template parameters file from %s",
         "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
@@ -198,17 +216,24 @@
         "StackUpdateFailed": "Stack %s failed to reach update completion status, error: %s",
         "StackUpdateRequestFailed": "Error requesting stack update, error message: %s",
         "CreatedStackId": "Stack creation completed, new stack id %s",
-        "WaitingForStack": "Waiting for stack %s to reach create or update completed status",
-        "TaskCompleted": "Stack %s created successfully, stack ID %s",
+        "WaitingForStackCreation": "Waiting for stack %s to reach create complete status",
+        "WaitingForStackUpdate": "Waiting for stack %s to reach update complete status",
+        "TaskCompleted": "Stack %s created or updated successfully, stack ID %s",
         "NoWorkToDo": "The service detected no changes in the template and/or parameters and declined to update the stack.",
-        "ChangesetCreationFailed": "Request to create change set failed with error %s",
-        "WaitingForChangesetValidation": "Waiting for change set %s to be validated",
-        "ChangesetValidated": "Change set successfully validated",
-        "ChangesetValidationFailed": "Stack %s failed to create successfully from the change set. Error: %s",
-        "ExecutingChangeset": "Executing change set %s",
-        "WaitingForChangesetExecution": "Waiting for change set to complete execution on stack %s",
-        "ExecuteChangesetFailed": "Request to execute change set failed with message %s",
-        "ChangesetExecuted": "Change set executed successfully, stack transitioned to completed status",
-        "SettingOutputVariable": "Setting stack ID into output variable %s"
+        "ChangeSetCreationFailed": "Request to create change set failed with error %s",
+        "WaitingForChangeSetValidation": "Waiting for change set %s to be validated for stack ID %s",
+        "ChangeSetValidated": "Change set successfully validated",
+        "ChangeSetValidationFailed": "Stack %s failed to create successfully from the change set. Error: %s",
+        "ExecutingChangeSet": "Executing change set %s",
+        "WaitingForChangeSetExecution": "Waiting for change set to complete execution on stack %s",
+        "ExecuteChangeSetFailed": "Request to execute change set failed with message %s",
+        "ChangeSetExecuted": "Change set executed successfully, stack transitioned to completed status",
+        "SettingOutputVariable": "Setting stack ID into output variable %s",
+        "CheckingForExistingChangeSet": "Testing to see if change set %s associated with stack %s exists",
+        "DeletingExistingChangeSet": "Deleting existing change set %s associated with stack %s",
+        "FailedToDeleteChangeSet": "Request to delete change set failed with error: %s",
+        "AddingCapability": "Setting capability %s for stack",
+        "AutoExecuteChangeSetOption": "Auto execute change set option: %s",
+        "CreatingChangeSet": "Creating %s type change set %s"
     }
 }

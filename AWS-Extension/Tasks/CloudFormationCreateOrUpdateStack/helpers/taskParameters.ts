@@ -7,10 +7,12 @@ export class CreateOrUpdateStackTaskParameters {
     public stackName: string;
     public templateFile: string;
     public templateParametersFile: string;
-    public useChangeset: boolean;
-    public changesetName: string;
+    public useChangeSet: boolean;
+    public changeSetName: string;
     public description: string;
-    public autoExecute: boolean;
+    public autoExecuteChangeSet: boolean;
+    public capabilityIAM: boolean;
+    public capabilityNamedIAM: boolean;
     public roleARN: string;
     public notificationARNs: string[];
     public resourceTypes: string[];
@@ -30,10 +32,13 @@ export class CreateOrUpdateStackTaskParameters {
             this.templateFile = tl.getPathInput('templateFile', true, true);
             this.templateParametersFile = tl.getPathInput('templateParametersFile', false, true);
 
-            this.useChangeset = tl.getBoolInput('useChangeset', false);
-            this.changesetName = tl.getInput('changesetName', this.useChangeset);
+            this.useChangeSet = tl.getBoolInput('useChangeSet', false);
+            this.changeSetName = tl.getInput('changeSetName', this.useChangeSet);
             this.description = tl.getInput('description', false);
-            this.autoExecute = tl.getBoolInput('autoExecute', false);
+            this.autoExecuteChangeSet = tl.getBoolInput('autoExecuteChangeSet', false);
+
+            this.capabilityIAM = tl.getBoolInput('capabilityIAM', false);
+            this.capabilityNamedIAM = tl.getBoolInput('capabilityNamedIAM', false);
 
             this.roleARN = tl.getInput('roleARN', false);
             this.notificationARNs = tl.getDelimitedInput('notificationARNs', '\n', false);

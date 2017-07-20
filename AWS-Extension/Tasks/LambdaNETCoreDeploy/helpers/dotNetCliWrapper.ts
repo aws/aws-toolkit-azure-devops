@@ -23,8 +23,8 @@ export class DotNetCliWrapper {
         args.push('lambda');
         args.push('deploy-serverless');
 
-        args.push('--enable-interactive');
-        args.push('false');
+        args.push('--disable-interactive');
+        args.push('true');
 
         if (awsRegion) {
             args.push('--region');
@@ -52,8 +52,8 @@ export class DotNetCliWrapper {
         args.push('lambda');
         args.push('deploy-function');
 
-        args.push('--enable-interactive');
-        args.push('false');
+        args.push('--disable-interactive');
+        args.push('true');
 
         if (awsRegion) {
             args.push('--region');
@@ -81,22 +81,22 @@ export class DotNetCliWrapper {
 
     public async executeAsync(args : string[], additionalArgs : string) : Promise<void> {
 
-        var dotnetPath = tl.which('dotnet', true);
+        const dotnetPath = tl.which('dotnet', true);
         console.log('Path to tool: ' + dotnetPath);
 
-        var dotnet = tl.tool(dotnetPath);
+        const dotnet = tl.tool(dotnetPath);
 
-        for(let arg of args) {
+        for (const arg of args) {
             dotnet.arg(arg);
         }
 
         dotnet.line(additionalArgs);
 
-        var execOptions = <tr.IExecOptions>{
+        const execOptions = <tr.IExecOptions> {
             cwd : this.cwd,
             env : this.env
-        }
-        
+        };
+
         return await dotnet.exec(execOptions);
     }
 }

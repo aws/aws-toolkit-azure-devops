@@ -17,7 +17,7 @@
         "Patch": "37"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWS S3 Download: $(bucketName)",
+    "instanceNameFormat": "S3 Download: $(bucketName)",
     "groups": [
         {
             "name": "advanced",
