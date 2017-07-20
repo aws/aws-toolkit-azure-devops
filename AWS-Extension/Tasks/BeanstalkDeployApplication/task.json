@@ -58,7 +58,7 @@
             }
         },           
         {
-            "name": "webDeploymentAchive",
+            "name": "webDeploymentArchive",
             "label": "Web Deploy Archive",
             "type": "filepath",
             "required": true,
@@ -99,6 +99,9 @@
         }
     },
     "messages": {
+
+        "DisplayApplicationType" : "Application Type set to %s",
+
         "CreatedApplicationVersion" : "Created application version: %s",
         "StartingApplicationDeployment" : "Started updating environment to version: %s",
         "DeterminedBucket" : "Determine S3 bucket %s to store application bundle",

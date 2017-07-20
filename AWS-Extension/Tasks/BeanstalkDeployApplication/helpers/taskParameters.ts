@@ -22,6 +22,8 @@ export class DeployTaskParameters {
             this.awsRegion = tl.getInput('regionName', true);
 
             this.applicationType = tl.getInput('applicationType', true);
+            console.log(tl.loc('DisplayApplicationType', this.applicationType));
+
             if(this.applicationType == this.applicationTypeAspNetCoreForWindows) {
                 this.dotnetPublishPath = tl.getPathInput('dotnetPublishPath', true);
             }
