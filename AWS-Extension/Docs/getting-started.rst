@@ -19,7 +19,7 @@ This section provides information about how to install, set up, and use the AWS 
    :titlesonly:
 
    signup-create-iam-user
-   Set up AWS Credentials and Region <setup-credentials>
+   Set up AWS Credentials <setup-credentials>
    setup-vsts-account
    install-aws-tools-vsts
    create-aws-connection

@@ -17,40 +17,27 @@ Task Reference
 .. meta::
    :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
    :keywords: extensions, tasks
-.. _welcome.about_tkv:
 
-AWS Extensions to Visual Studio Team Services (VSTS) Tasks
+AWS Tools for Visual Studio Team Services (VSTS) Tasks
 ==========================================================
 
 The AWS Extensions to VSTS provides the following tasks.
 
-AWS Cloud Formation Deployment
-------------------------------
-    The Cloud Formation Deployment task, available from the AWS Extensions to VSTS enables you to 
-    create and delete AWS CloudFormation stacks.
-    
-       .. image:: images/AWSCloudFormation.png
-      :alt: Create a CloudFormation stack
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
 
-Upload Files to an AWS Simple Storage Services (S3) Bucket
-----------------------------------------------------------
-
-   .. image:: images/AWSFileUpload.png
-      :alt: Project types for AWS Lambda projects
-    
-Download Files from an AWS Simple Storage Services (S3) Bucket  
---------------------------------------------------------------
-
-..   .. image:: images/AWSFileUpload.png
-..      :alt: Project types for AWS Lambda projects
-
-
-Run AWS CLI Commands
---------------------
-
-   .. image:: images/AWSCLI.png
-      :alt: Run AWS CLI commands
-
+   aws-cli   
+   cloudformation-create-update
+   cloudformation-delete-changeset
+   cloudformation-delete-stack
+   cloudformation-execute-changeset
+   codedeploy-deployment
+   elastic-beanstalk-deploy
+   lambda-deploy
+   lambda-invoke
+   s3-download
+   s3-upload
 
 
 

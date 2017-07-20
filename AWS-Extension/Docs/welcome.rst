@@ -10,25 +10,20 @@
 
 .. meta::
     :description:
-         Welcome to the AWS Extensions to Visual Studio Team Services Guide
+         Welcome to the AWS Tools for Visual Studio Team Services Guidw
 
 
-####################################################
-AWS Extensions to Visual Studio Team Services (VSTS)
-####################################################
+###################################################
+AWS Tools for Microsoft Visual Studio Team Services
+###################################################
 
-The AWS Extension to VSTS, available through Visual Studio Team Services, makes it easier for you to develop,
-debug, and deploy .NET applications that use Amazon Web Services. The extension provides support for 
-a service endpoint, a task to upload artifacts to AWS S3 bucket, a task to run AWS CLI commands, a task to 
-deploy a Lambda function, and a task to invoke a Lambda function..
 
-Additional Resources
-====================
+The AWS Tools for Microsoft Visual Studio Team Services, available through Visual Studio Team Services (VSTS) 
+is an extension module proffering a number of custom build tasks into a user's VSTS (or on-premise Team Foundation Services) 
+environment. The tasks can be added, in whatever combinations needed, to build and release CI/CD 
+pipelines in their environment, allowing those pipelines to interact with AWS services. For example a 
+release pipeline can use the Deploy Application task for CodeDeploy to deploy the output from a build 
+to a deployment group of EC2 instances managed by CodeDeploy. Other tasks allow content to be transferred 
+between S3 buckets and the build area in the pipeline (upload and download), or to launch CloudFormation 
+stack or deploy to Elastic Beanstalk environments.
 
-In addition to this guide, the following are valuable online resources for 
-AWS Extensions to Visual Studio Team Services users.
-
-* `Amazon Simple Storage Service (S3) <https://aws.amazon.com/s3/>`_
-* `AWS CloudFormation  <https://aws.amazon.com/cloudformation/>`_
-* `AWS Elastic Beanstalk <https://aws.amazon.com/elasticbeanstalk/>`_
-* `AWS Command Line Interface <https://aws.amazon.com/cli/>`_

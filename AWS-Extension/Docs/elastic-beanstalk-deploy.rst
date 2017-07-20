@@ -8,22 +8,14 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
-###################################################
-AWS Tools for Microsoft Visual Studio Team Services
-###################################################
+.. _elastic-beanstalk-deploy:
+
+################################
+AWS Elastic Beanstalk Deployment
+################################
 
 .. meta::
-    :description: User Guide for the AWS Tools for Visual Studio Team Services
-    :keywords: visual studio, extensions, aws
+   :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
+   :keywords: extensions, tasks
 
-.. toctree::
-   :maxdepth: 1
-   :titlesonly:
-
-   welcome
-   Getting Started <getting-started>
-   Using the SDK <tutorials>
-   task-reference <task-reference>
-   document-history
-
-.. include:: about-aws.txt
+Deploys an application to Amazon EC2 instance(s) using Elastic Beanstalk.

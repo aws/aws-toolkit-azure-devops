@@ -8,60 +8,63 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
-#################################################
-Set up AWS Credentials and Region for Development
-#################################################
+########################################################################
+Set up AWS Credentials for the AWS Tools for Visual Studio Team Services
+########################################################################
 
 .. meta::
-   :description: Set up default AWS credentials and region for development with the AWS SDK for
-                 Java.
-   :keywords: AWS region, AWS credentials, shared credentials file, shared config file
+   :description: Set up default AWS credentials for using the AWS extension for Visual Studio Team Services.
+   :keywords: AWS credentials, shared credentials file, shared config file
 
-To connect to any of the supported services with the |sdk-java|, you must provide AWS credentials.
-The AWS SDKs and CLIs use :emphasis:`provider chains` to look for AWS credentials in several
-different places, including system/user environment variables and local AWS configuration files.
+To use the AWS Tools for Visual Studio Team Services to access AWS, you need an AWS account and AWS credentials. To increase the
+security of your AWS account, we recommend that you use an *IAM user* to provide access credentials
+instead of using your root account credentials.
 
-This topic provides basic information about setting up your AWS credentials for local application
-development using the |sdk-java|. If you need to set up credentials for use within an |EC2| instance
-or if you're using the Eclipse IDE for development, see the following topics instead:
+.. tip:: For an overview of IAM users and why they are important for the security of your account,
+         see :iam-ug:`Overview of Identity Management: Users <introduction_identity-management>`
+         in the |IAM-ug|.
 
-* When using an EC2 instance, create an IAM role and then give your EC2 instance access to that role
-  as shown in :doc:`java-dg-roles`.
+Signing Up for an AWS Account
+=============================
 
-* Set up AWS credentials within Eclipse using the |tke|_. See :tke-ug:`Set up AWS Credentials
-  <setup-credentials>` in the |tke-ug|_.
+.. topic:: To sign up for an AWS account
 
-.. _setup-credentials-setting:
+    #. Open http://aws.amazon.com/ and click :guilabel:`Sign Up`.
 
-Setting AWS Credentials
-=======================
+    #. Follow the on-screen instructions. Part of the sign-up procedure involves receiving a phone
+       call and entering a PIN using your phone keypad.
 
-You can set your credentials for use by the |sdk-java| in several ways. However, these are
-the recommended approaches:
+Next, create an IAM user and download (or copy) its secret access key. To use the 
+AWS Tools for Visual Studio Team Services, you must have a set of valid AWS credentials, which consist of an access key
+and a secret key. These keys are used to sign programmatic web service requests and enable AWS to
+verify that the request comes from an authorized source. You can obtain a set of account credentials when
+you create your account. However, we recommend that you do not use these credentials with 
+AWS Tools for Visual Studio Team Services. Instead, :iam-ug:`create one or more IAM users <Using_SettingUpUser>`, 
+and use those credentials. For applications that run on |EC2| instances, you can use 
+:iam-ug:`IAM roles <WorkingWithRoles>` to provide temporary credentials.
 
-.. The following file is in the shared content at https://github.com/awsdocs/aws-doc-shared-content
+Creating an IAM User
+====================
 
-.. include:: common/sdk-shared-credentials.txt
+.. topic:: To create an IAM user
 
-Once you set your AWS credentials using one of these methods, the |sdk-java| loads them automatically
-by using the default credential provider chain. For more information about
-working with AWS credentials in your Java applications, see :doc:`credentials`.
+    #.  Go to the :console:`IAM console <iam>` (you may need to sign in to AWS first).
 
-.. _setup-credentials-setting-region:
+    #.  Click :guilabel:`Users` in the sidebar to view your IAM users.
 
-Setting the AWS Region
-======================
+    #.  If you don't have any IAM users set up, click :guilabel:`Create New Users` to create one.
 
-You should set a default AWS Region to use for accessing AWS services with the |sdk-java|. For the best
-network performance, choose a region that's geographically close
-to you (or to your customers).
+    #.  Select the IAM user in the list that you'll use to access AWS.
 
-.. note:: If you *don't* select a region, service calls that require a region will fail.
+    #.  Open the :guilabel:`Security Credentials` tab, and click :guilabel:`Create Access Key`.
 
-You can use techniques similar to those for setting credentials to set your default AWS Region:
+        .. note:: You can have a maximum of two active access keys for any given IAM user. If your
+           IAM user has two access keys already, then you'll need to delete one of them before
+           creating a new key.
 
-.. The following file is in the shared content at https://github.com/awsdocs/aws-doc-shared-content
+    #.  In the resulting dialog box, choose :guilabel:`Download Credentials` to download the
+        credential file to your computer, or click :guilabel:`Show User Security Credentials` to
+        view the IAM user's access key ID and secret access key (which you can copy and paste).
 
-.. include:: common/sdk-shared-region.txt
-
-For information about selecting a region, see :doc:`java-dg-region-selection`.
+        .. important:: There is no way to obtain the secret access key once you close the dialog.
+           You can, however, delete its associated access key ID and create a new one.
