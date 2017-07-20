@@ -164,7 +164,7 @@ target.updateversioninfo = function() {
     var extensionJson = JSON.parse(fs.readFileSync(extensionManifestPath));
     extensionJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
     console.log(`> extension version updated to ${extensionJson.version}`);
-    fs.writeFileSync(extensionManifestPath, JSON.stringify(extensionJson, null, 4) + '\n');
+    fs.writeFileSync(extensionManifestPath, JSON.stringify(extensionJson, null, 4));
 
     taskList.forEach(function (taskName) {
         var taskJsonPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
@@ -173,7 +173,7 @@ target.updateversioninfo = function() {
         taskJson.version.Minor = versionInfo.Minor;
         taskJson.version.Patch = versionInfo.Patch;
         console.log(`> task ${taskName} version updated to ${taskJson.version.Major}.${taskJson.version.Minor}.${taskJson.version.Patch}`);
-        fs.writeFileSync(taskJsonPath, JSON.stringify(taskJson, null, 4) + '\n');
+        fs.writeFileSync(taskJsonPath, JSON.stringify(taskJson, null, 4));
     });
 }
 

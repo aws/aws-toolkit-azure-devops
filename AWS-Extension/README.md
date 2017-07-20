@@ -1,11 +1,11 @@
 ## Overview
-Adds tasks for build and release pipelines to support working with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and the AWS CLI. The extension includes a new service endpoint type, 'AWS', to provide the means to supply AWS credentials to the tasks at runtime.
+The AWS Tools for Microsoft Visual Studio Team Services adds tasks for use to easily enable Team Services pipelines to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation, and run commands using the AWS CLI. The tools include a new service endpoint type, *AWS*, to supply AWS credentials to the tasks at runtime.
 
 ## Highlighted Features
 ### Create an AWS Credentials Connection
 To work with AWS services an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use in the Build or Release Management definition by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab.
 
-Select the 'AWS' endpoint type, provide the following parameters
+Select the *AWS* endpoint type, provide the following parameters
 - A name to refer to the credentials when configuring tasks that accept AWS credentials.
 - Access Key ID
 - Secret Access Key
