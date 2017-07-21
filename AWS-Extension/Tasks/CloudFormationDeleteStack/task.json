@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "38"
+        "Patch": "39"
     },
     "runsOn": [
         "Agent"

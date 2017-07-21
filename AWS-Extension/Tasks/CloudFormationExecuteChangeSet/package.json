@@ -9,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.48.0",
-    "vsts-task-lib": "^0.9.20"
+    "aws-sdk": "^2.88.0",
+    "vsts-task-lib": "^2.0.6"
   }
 }

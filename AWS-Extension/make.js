@@ -166,6 +166,12 @@ target.updateversioninfo = function() {
     console.log(`> extension version updated to ${extensionJson.version}`);
     fs.writeFileSync(extensionManifestPath, JSON.stringify(extensionJson, null, 4));
 
+    var packageJsonPath = path.join(__dirname, 'package.json');
+    var packageJson = JSON.parse(fs.readFileSync(packageJsonPath));
+    packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
+    console.log(`> package.json version updated to ${packageJson.version}`);
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4));
+
     taskList.forEach(function (taskName) {
         var taskJsonPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
         var taskJson = JSON.parse(fs.readFileSync(taskJsonPath));
