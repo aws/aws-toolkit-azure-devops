@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "39"
+        "Patch": "40"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy with CodeDeploy: $(applicationName)",
@@ -69,7 +69,7 @@
             "type": "filepath",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The location of the archive bundle containing the application revision artifacts to be deployed (including the appspec.yml file). The task will upload this archive to S3 before requesting the deployment be performed."
+            "helpMarkDown": "The artifacts to be deployed.\n\nYou can supply a folder or a filename to this parameter. If a folder is supplied the task will zip the contents of the folder recursively into an archive file before uploading the archive to Amazon S3. If a filename is supplied the task uploads it, unmodified, to Amazon S3. Note that CodeDeploy requires the appspec.yml file describing the application to exist at the root of the specified folder or archive file."
         },
         {
             "name": "bucketName",
@@ -152,6 +152,11 @@
         "SettingOutputVariable": "Setting output variable %s with the ID of the deployment",
         "ApplicationDoesNotExist": "Application %s does not exist",
         "DeploymentGroupDoesNotExist": "Deployment group %s does not exist for application %s",
+        "CreatingDeploymentBundleArchiveFromFolder": "Creating deployment bundle archive from build output at %s",
+        "CreatedBundleArchive": "Created deployment bundle %s",
+        "ArchiveSize": "Archive size: %s total bytes",
+        "ZipError": "Zip Error: %s",
+        "DeletingUploadedBundle": "Deleting uploaded bundle %s created by task",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }

@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "39"
+        "Patch": "40"
     },
     "runsOn": [
         "Agent"
@@ -45,7 +45,7 @@
             "label": "Stack Name",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The name that is associated with the stack. The name must be unique in the region in which you are creating the stack.\n\nA stack name can contain only alphanumeric characters (case sensitive) and hyphens. It must start with an alphabetic character and cannot be longer than 128 characters. "
+            "helpMarkDown": "The name of the stack to delete."
         }
     ],
     "execution": {

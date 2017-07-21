@@ -1,6 +1,8 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
+import Q = require('q');
+import archiver = require('archiver');
 import awsCodeDeployClient = require('aws-sdk/clients/codedeploy');
 import awsS3Client = require('aws-sdk/clients/s3');
 import TaskParameters = require('./taskParameters');
@@ -14,7 +16,7 @@ export class TaskOperations {
 
         await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.deploymentGroupName);
 
-        const bundleKey = await this.uploadBundle(taskParameters.revisionBundle, taskParameters.bucketName, taskParameters.bundlePrefix);
+        const bundleKey = await this.uploadBundle(taskParameters);
         const deploymentId: string = await this.deployRevision(taskParameters, bundleKey);
         await this.waitForDeploymentCompletion(taskParameters.applicationName, deploymentId);
 
@@ -60,25 +62,41 @@ export class TaskOperations {
         }
     }
 
-    private static async uploadBundle(revisionBundle: string, bucketName: string, bundlePrefix: string): Promise<string> {
+    private static async uploadBundle(taskParameters: TaskParameters.DeployTaskParameters): Promise<string> {
+
+        let archiveName: string;
+        let autoCreatedArchive: boolean = false;
+        if (tl.stats(taskParameters.revisionBundle).isDirectory()) {
+            autoCreatedArchive = true;
+            archiveName = await this.createDeploymentArchive(taskParameters.revisionBundle, taskParameters.applicationName);
+        } else {
+            archiveName = taskParameters.revisionBundle;
+        }
 
         let key: string;
-        const bundleFilename = path.basename(revisionBundle);
-        if (bundlePrefix) {
-            key = bundlePrefix + '/' + bundleFilename;
+        const bundleFilename = path.basename(archiveName);
+        if (taskParameters.bundlePrefix) {
+            key = taskParameters.bundlePrefix + '/' + bundleFilename;
         } else {
             key = bundleFilename;
         }
 
-        console.log(tl.loc('UploadingBundle', revisionBundle, key, bucketName));
-        const fileBuffer = fs.createReadStream(revisionBundle);
+        console.log(tl.loc('UploadingBundle', archiveName, key, taskParameters.bucketName));
+        const fileBuffer = fs.createReadStream(archiveName);
         try {
             const response: awsS3Client.ManagedUpload.SendData = await this.s3Client.upload({
-                Bucket: bucketName,
+                Bucket: taskParameters.bucketName,
                 Key: key,
                 Body: fileBuffer
             }).promise();
             console.log(tl.loc('BundleUploadCompleted'));
+
+            // clean up the archive if we created one
+            if (autoCreatedArchive) {
+                console.log(tl.loc('DeletingUploadedBundle', archiveName));
+                fs.unlinkSync(archiveName);
+            }
+
             return key;
         } catch (err) {
             console.error(tl.loc('BundleUploadFailed', err.message), err);
@@ -86,13 +104,50 @@ export class TaskOperations {
         }
     }
 
+    private static async createDeploymentArchive(bundleFolder: string, applicationName: string): Promise<string> {
+
+        console.log(tl.loc('CreatingDeploymentBundleArchiveFromFolder', bundleFolder));
+
+        // echo what we do with Elastic Beanstalk deployments and use time as a version suffix,
+        // creating the zip file inside the supplied folder
+        const versionSuffix = '.v' + new Date().getTime();
+        // Agent.TempDirectory is a private temp location we can use
+        const tempDir = tl.getVariable('Agent.TempDirectory');
+        const archiveName = path.join(tempDir, applicationName + versionSuffix +  '.zip');
+
+        const output = fs.createWriteStream(archiveName);
+        const archive = archiver('zip');
+        const defer = Q.defer();
+
+        output.on('close', function() {
+            console.log(tl.loc('ArchiveSize', archive.pointer()));
+            defer.resolve(archiveName);
+        });
+
+        archive.on('error', function(err: any) {
+            console.log(tl.loc('ZipError', err));
+            defer.reject(err);
+        });
+
+        archive.pipe(output);
+
+        archive.directory(bundleFolder, false);
+        archive.finalize();
+        await defer.promise;
+
+        console.log(tl.loc('CreatedBundleArchive', archiveName));
+        return archiveName;
+    }
+
     private static async deployRevision(taskParameters: TaskParameters.DeployTaskParameters, bundleKey: string): Promise<string> {
         console.log(tl.loc('DeployingRevision'));
 
-        let archiveType: string = path.extname(taskParameters.revisionBundle);
+        // use bundle key as taskParameters.revisionBundle might be pointing at a folder
+        let archiveType: string = path.extname(bundleKey);
         if (archiveType && archiveType.length > 1) {
             // let the service error out if the type is not one they currently support
             archiveType = archiveType.substring(1).toLowerCase();
+            tl.debug(`Setting archive type to ${archiveType} based on bundle file extension`);
         } else {
             tl.debug('Unable to determine archive type, assuming zip');
              archiveType = 'zip';
