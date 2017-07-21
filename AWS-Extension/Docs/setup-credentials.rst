@@ -7,16 +7,18 @@
    This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
+   
+.. _setup-credentials:
 
-########################################################################
-Set up AWS Credentials for the AWS Tools for Visual Studio Team Services
-########################################################################
+##########################################################
+Set up AWS Credentials for the AWS Tools for Team Services
+##########################################################
 
 .. meta::
    :description: Set up default AWS credentials for using the AWS extension for Visual Studio Team Services.
    :keywords: AWS credentials, shared credentials file, shared config file
 
-To use the AWS Tools for Visual Studio Team Services to access AWS, you need an AWS account and AWS credentials. To increase the
+To use the AWS Tools for Team Services to access AWS, you need an AWS account and AWS credentials. To increase the
 security of your AWS account, we recommend that you use an *IAM user* to provide access credentials
 instead of using your root account credentials.
 
@@ -35,11 +37,11 @@ Signing Up for an AWS Account
        call and entering a PIN using your phone keypad.
 
 Next, create an IAM user and download (or copy) its secret access key. To use the 
-AWS Tools for Visual Studio Team Services, you must have a set of valid AWS credentials, which consist of an access key
+AWS Tools for Team Services, you must have a set of valid AWS credentials, which consist of an access key
 and a secret key. These keys are used to sign programmatic web service requests and enable AWS to
 verify that the request comes from an authorized source. You can obtain a set of account credentials when
 you create your account. However, we recommend that you do not use these credentials with 
-AWS Tools for Visual Studio Team Services. Instead, :iam-ug:`create one or more IAM users <Using_SettingUpUser>`, 
+AWS Tools for Team Services. Instead, :iam-ug:`create one or more IAM users <Using_SettingUpUser>`, 
 and use those credentials. For applications that run on |EC2| instances, you can use 
 :iam-ug:`IAM roles <WorkingWithRoles>` to provide temporary credentials.
 

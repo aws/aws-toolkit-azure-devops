@@ -10,12 +10,39 @@
 
 .. _cloudformation-execute-changeset:
 
-####################################
-AWS CloudFormation Execute Changeset
-####################################
+#####################################
+AWS CloudFormation Execute Change Set
+#####################################
 
 .. meta::
    :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
    :keywords: extensions, tasks
    
-Executes an AWS CloudFormation changeset to create or update a stack.
+Execute an AWS CloudFormation change set to create or update a stack.
+
+
+#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Execute Change Set` 
+    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+
+       .. image:: images/AwsCloudFormationExecuteChangeSetList.png
+          :alt: Select Aws CloudFormation Execute Change Set
+          
+#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+
+       .. image:: images/AwsCloudFormationExecuteChangeSetTask.png
+          :alt: Aws CloudFormation Execute Change Set Task      
+          
+#.  Select the task and the task parameters window will be displayed in the right pane.
+          
+       .. image:: images/AwsCloudFormationExecuteChangeSetScreen.png
+          :alt: Aws CloudFormation Execute Change Set parameters      
+          
+#.  Enter the required parameters.
+
+        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
+          credentials, see :ref:`task_reference`.   
+        * The AWS region.
+        * The name or Amazon Resource Name (ARN) of the change set you want to execute.
+        
+#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
+

@@ -19,3 +19,34 @@ CloudFormation Delete Stack
    :keywords: extensions, tasks
 
 Deletes an AWS CloudFormation stack.
+
+
+#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Delete Stack` 
+    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+
+       .. image:: images/AwsCloudFormationDeleteStackList.png
+          :alt: Select Aws CloudFormation Delete Stack
+          
+#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+
+       .. image:: images/AwsCloudFormationDeleteStackTask.png
+          :alt: Aws CloudFormation Delete Stack Task      
+          
+#.  Select the task and the task parameters window will be displayed in the right pane.
+          
+       .. image:: images/AwsCloudFormationDeleteStackScreen.png
+          :alt: Aws CloudFormation Delete Stack parameters      
+
+#.  Enter the required parameters.
+
+        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
+          credentials, see :ref:`task_reference`.   
+        * The AWS region.
+        * The name of the stack to be deleted. 
+        
+#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.          
+
+
+    
+    
+

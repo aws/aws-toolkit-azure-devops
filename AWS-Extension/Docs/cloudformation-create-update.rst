@@ -15,8 +15,36 @@ AWS CloudFormation Create-Update Task
 #####################################
 
 .. meta::
-   :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
+   :description: Using the tasks in the AWS tools fot Team System
    :keywords: extensions, tasks
 
 Creates a new AWS CloudFormation stack or updates the Stack if it exists.
+
+
+#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Create-Update` 
+    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+
+       .. image:: images/AwsCloudFormationCreateUpdateList.png
+          :alt: Select Aws CloudFormation Create-Update
+          
+#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+
+       .. image:: images/AwsCloudFormationCreateUpdateTask.png
+          :alt: Select Aws CloudFormation Create-Update      
+          
+#.  Select the task and the task parameters window will be displayed in the right pane.
+          
+       .. image:: images/AwsCloudFormationCreateUpdateScreen.png
+          :alt: Aws CloudFormation Create-Update paramters      
+
+#.  Enter the required parameters.
+
+        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
+          credentials, see :ref:`task_reference`.   
+        * The AWS region.
+        * The name associated with the stack. The name must be unique in the region it is created in.
+        
+#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.               
+
+    
 

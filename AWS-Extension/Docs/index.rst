@@ -13,7 +13,7 @@ AWS Tools for Microsoft Visual Studio Team Services
 ###################################################
 
 .. meta::
-    :description: User Guide for the AWS Tools for Visual Studio Team Services
+    :description: User Guide for the AWS Tools for Team Services
     :keywords: visual studio, extensions, aws
 
 .. toctree::
@@ -22,8 +22,8 @@ AWS Tools for Microsoft Visual Studio Team Services
 
    welcome
    Getting Started <getting-started>
-   Using the SDK <tutorials>
-   task-reference <task-reference>
+   Using the AWS Tools for Team Services  <tutorials>
+   Task Reference <task-reference>
    document-history
 
 .. include:: about-aws.txt

@@ -17,6 +17,33 @@ AWS S3 Upload
 .. meta::
    :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
    :keywords: extensions, tasks
-.. _welcome.about_tkv:
+
 
 Upload file and folder content to an Amazon Simple Storage Service (S3) bucket.
+
+#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS S3 Upload` 
+    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+
+       .. image:: images/AwsS3UploadList.png
+          :alt: Select Aws S3 Upload
+          
+#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+
+       .. image:: images/AwsS3UploadTask.png
+          :alt: Aws S3 Upload  Task    
+          
+#.  Select the task and the task parameters window will be displayed in the right pane.
+          
+       .. image:: images/AwsS3UploadScreen.png
+          :alt: Aws S3 Upload parameters      
+          
+#.  Enter the required parameters.
+
+        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
+          credentials, see :ref:`task_reference`.   
+        * The AWS region.
+        * The name of the bucket where the content will be uploaded. If the bucket does not exist it will 
+          be created.
+          
+#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
+

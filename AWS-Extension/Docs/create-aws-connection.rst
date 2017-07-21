@@ -13,7 +13,7 @@ Create an AWS Connection
 ########################
 
 .. meta::
-   :description: Create an AWS connection for AWS Tools for Visual Studio Team Services Extension
+   :description: Create an AWS connection for AWS Tools for Team Services Extension
    :keywords: AWS, VSTS, Visual Studio Team Sevices Extension
 
 To deploy to AWS, an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services 
