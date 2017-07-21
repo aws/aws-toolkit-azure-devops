@@ -4,7 +4,7 @@
     "friendlyName": "AWS CloudFormation Create/Update Stack",
     "description": "Creates a new AWS CloudFormation stack or updates the stack if it exists.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
+    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "37"
+        "Patch": "38"
     },
     "runsOn": [
         "Agent"
@@ -45,7 +45,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
         },
         {
             "name": "regionName",
@@ -69,7 +69,7 @@
             "label": "Template File",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Path to the template file for the stack. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
+            "helpMarkDown": "Path to the template file for the stack. For more information, go to the [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
             "name": "templateParametersFile",
@@ -77,7 +77,7 @@
             "label": "Template Parameters File",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Path to the file containing the template parameters. For more information, go to the [Template Anatomy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
+            "helpMarkDown": "Path to the file containing the template parameters. For more information, go to the [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
             "name": "useChangeSet",
@@ -219,9 +219,9 @@
         "WaitingForStackCreation": "Waiting for stack %s to reach create complete status",
         "WaitingForStackUpdate": "Waiting for stack %s to reach update complete status",
         "TaskCompleted": "Stack %s created or updated successfully, stack ID %s",
-        "NoWorkToDo": "The service detected no changes in the template and/or parameters and declined to update the stack.",
+        "NoWorkToDo": "The service detected no changes in the template. The stack was not updated.",
         "ChangeSetCreationFailed": "Request to create change set failed with error %s",
-        "WaitingForChangeSetValidation": "Waiting for change set %s to be validated for stack ID %s",
+        "WaitingForChangeSetValidation": "Waiting for change set %s to be validated for stack %s",
         "ChangeSetValidated": "Change set successfully validated",
         "ChangeSetValidationFailed": "Stack %s failed to create successfully from the change set. Error: %s",
         "ExecutingChangeSet": "Executing change set %s",

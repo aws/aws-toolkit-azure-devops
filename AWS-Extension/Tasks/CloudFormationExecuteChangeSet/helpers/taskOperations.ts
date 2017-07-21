@@ -13,19 +13,9 @@ export class TaskOperations {
         this.createServiceClients(taskParameters);
 
         const stackId = await this.verifyResourcesExist(taskParameters.changeSetName, taskParameters.stackName);
-        let needCreateWaiter: boolean = true;
+        let waitForStackUpdate: boolean = false;
         if (stackId) {
-            // we need to know whether to queue a create or an update waiter when we exec the change set
-            try {
-                const response = await this.cloudFormationClient.describeStackResources({ StackName: stackId }).promise();
-                if (response.StackResources && response.StackResources.length > 0) {
-                    console.log(tl.loc('SelectingUpdateWaiter'));
-                    needCreateWaiter = false;
-                }
-
-            } catch (err) {
-                throw new Error(tl.loc('FailedToObtainStackStatus', err.message));
-            }
+            waitForStackUpdate = await this.testStackHasResources(taskParameters.stackName);
         }
 
         console.log(tl.loc('ExecutingChangeSet', taskParameters.changeSetName, taskParameters.stackName));
@@ -36,10 +26,10 @@ export class TaskOperations {
                 StackName: taskParameters.stackName
             }).promise();
 
-            if (needCreateWaiter) {
-                await this.waitForStackCreation(taskParameters.stackName);
-            } else {
+            if (waitForStackUpdate) {
                 await this.waitForStackUpdate(taskParameters.stackName);
+            } else {
+                await this.waitForStackCreation(taskParameters.stackName);
             }
 
             if (taskParameters.outputVariable) {
@@ -82,6 +72,19 @@ export class TaskOperations {
             return response.StackId;
         } catch (err) {
             throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName));
+        }
+    }
+
+    // Stacks 'created' with a change set are not fully realised until the change set
+    // executes, so we inspect whether resources exist in order to know which kind
+    // of 'waiter' to use (create complete, update complete) when running a stack update.
+    // It's not enough to know that the stack exists.
+    private static async testStackHasResources(stackName: string): Promise<boolean> {
+        try {
+            const response = await this.cloudFormationClient.describeStackResources({ StackName: stackName }).promise();
+            return (response.StackResources && response.StackResources.length > 0);
+        } catch (err) {
+            return false;
         }
     }
 

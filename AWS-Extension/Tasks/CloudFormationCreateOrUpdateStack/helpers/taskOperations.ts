@@ -53,7 +53,7 @@ export class TaskOperations {
         });
     }
 
-    private static async testStackExists(stackName: string) : Promise<string> {
+    private static async testStackExists(stackName: string): Promise<string> {
         console.log(tl.loc('CheckingForStackExistence', stackName));
 
         try {
@@ -68,6 +68,19 @@ export class TaskOperations {
         }
 
         return null;
+    }
+
+    // Stacks 'created' with a change set are not fully realised until the change set
+    // executes, so we inspect whether resources exist in order to know which kind
+    // of 'waiter' to use (create complete, update complete) when running a stack update.
+    // It's not enough to know that the stack exists.
+    private static async testStackHasResources(stackName: string): Promise<boolean> {
+        try {
+            const response = await this.cloudFormationClient.describeStackResources({ StackName: stackName }).promise();
+            return (response.StackResources && response.StackResources.length > 0);
+        } catch (err) {
+            return false;
+        }
     }
 
     private static async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
@@ -162,8 +175,10 @@ export class TaskOperations {
                 const response: awsCloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise();
                 await this.waitForStackUpdate(request.StackName);
             } catch (err) {
-                console.error(tl.loc('StackUpdateRequestFailed', err.message), err);
-                throw err;
+                if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
+                    console.error(tl.loc('StackUpdateRequestFailed', err.message), err);
+                    throw err;
+                }
             }
         }
     }
@@ -197,21 +212,20 @@ export class TaskOperations {
             const response: awsCloudFormation.CreateChangeSetOutput = await this.cloudFormationClient.createChangeSet(request).promise();
 
             tl.debug(`Change set id ${response.Id}, stack id ${response.StackId}`);
-            await this.waitForChangeSetCreation(request.ChangeSetName, response.StackId);
+            await this.waitForChangeSetCreation(request.ChangeSetName, request.StackName);
             if (taskParameters.autoExecuteChangeSet) {
-                await this.executeChangeSet(taskParameters.changeSetName, taskParameters.stackName, changesetType === 'CREATE');
+                await this.executeChangeSet(taskParameters.changeSetName, taskParameters.stackName);
             }
             return response.StackId;
         }  catch (err) {
-            if (this.isNoWorkToDoValidationError(err.code, err.message)) {
-                return;
+            if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
+                console.error(tl.loc('ChangeSetCreationFailed', err.message), err);
+                throw err;
             }
-            console.error(tl.loc('ChangeSetCreationFailed', err.message), err);
-            throw err;
         }
     }
 
-    private static async executeChangeSet(changeSetName: string, stackName: string, creatingStack: boolean) : Promise<void> {
+    private static async executeChangeSet(changeSetName: string, stackName: string) : Promise<void> {
         console.log(tl.loc('ExecutingChangeSet', changeSetName, stackName));
 
         try {
@@ -220,10 +234,10 @@ export class TaskOperations {
                 StackName: stackName
             }).promise();
 
-            if (creatingStack) {
-                await this.waitForStackCreation(stackName);
-            } else {
+            if (await this.testStackHasResources(stackName)) {
                 await this.waitForStackUpdate(stackName);
+            } else {
+                await this.waitForStackCreation(stackName);
             }
         } catch (err) {
             console.error(tl.loc('ExecuteChangeSetFailed', err.message), err);
@@ -290,9 +304,9 @@ export class TaskOperations {
         return templateParameters;
     }
 
+    // If there were no changes, a validation error is thrown which we want to suppress
+    // rather than erroring out and failing the build.
     private static isNoWorkToDoValidationError(errCode: string, errMessage: string): boolean {
-        // if there were no changes, a validation error is thrown which we want to suppress
-        // rather than erroring out and failing the build
         try {
             if (errCode.search(/ValidationError/) !== -1 && errMessage.search(/^No updates are to be performed./) !== -1) {
                 tl.warning(tl.loc('NoWorkToDo'));
@@ -304,6 +318,7 @@ export class TaskOperations {
 
         return false;
     }
+
     private static async waitForStackCreation(stackName: string) : Promise<void> {
         console.log(tl.loc('WaitingForStackCreation', stackName));
         try {
@@ -324,11 +339,11 @@ export class TaskOperations {
         }
     }
 
-    private static async waitForChangeSetCreation(changeSetName: string, stackId: string) : Promise<void> {
-        console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackId));
+    private static async waitForChangeSetCreation(changeSetName: string, stackName: string) : Promise<void> {
+        console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName));
         try {
             await this.cloudFormationClient.waitFor('changeSetCreateComplete',
-                                                    { ChangeSetName: changeSetName, StackName: stackId }).promise();
+                                                    { ChangeSetName: changeSetName, StackName: stackName }).promise();
             console.log(tl.loc('ChangeSetValidated'));
         } catch (err) {
             throw new Error(tl.loc('ChangeSetValidationFailed', changeSetName, err.message));

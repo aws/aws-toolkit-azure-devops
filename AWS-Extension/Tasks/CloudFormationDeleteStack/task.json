@@ -4,7 +4,7 @@
     "friendlyName": "AWS CloudFormation Delete Stack",
     "description": "Deletes an AWS CloudFormation stack.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
+    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "37"
+        "Patch": "38"
     },
     "runsOn": [
         "Agent"
@@ -29,7 +29,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
         },
         {
             "name": "regionName",

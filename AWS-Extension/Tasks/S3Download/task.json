@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "37"
+        "Patch": "38"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "S3 Download: $(bucketName)",
@@ -32,7 +32,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
         },
         {
             "name": "regionName",
@@ -72,7 +72,7 @@
             "label": "Target Folder",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The target folder to contain the downloaded content. You can use [variables](http://go.microsoft.com/fwlink/?LinkID=550988)."
+            "helpMarkDown": "The target folder to contain the downloaded content. You can use [variables](https://go.microsoft.com/fwlink/?LinkID=550988)."
         },
         {
             "name": "overwrite",

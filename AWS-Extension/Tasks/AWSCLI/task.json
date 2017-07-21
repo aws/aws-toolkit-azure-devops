@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "37"
+        "Patch": "38"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS CLI: $(awsCommand)",
@@ -32,7 +32,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'manage', and add a new Service Endpoint of type 'AWSCredentials'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
         },
         {
             "name": "regionName",
@@ -48,7 +48,7 @@
             "label": "Command",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The AWS CLI command to run. Run `aws help` to get complete list of commands or refer to: http://docs.aws.amazon.com/cli/latest/userguide/command-structure.html"
+            "helpMarkDown": "The AWS CLI command to run. Run `aws help` to get complete list of commands or refer to: https://docs.aws.amazon.com/cli/latest/userguide/command-structure.html"
         },
         {
             "name": "awsSubCommand",
@@ -56,7 +56,7 @@
             "label": "Subcommand",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "The AWS CLI command to run. Run `aws help` to get complete list of commands or refer to: http://docs.aws.amazon.com/cli/latest/userguide/command-structure.html"
+            "helpMarkDown": "The AWS CLI command to run. Run `aws help` to get complete list of commands or refer to: https://docs.aws.amazon.com/cli/latest/userguide/command-structure.html"
         },
         {
             "name": "awsArguments",
