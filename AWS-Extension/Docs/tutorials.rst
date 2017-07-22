@@ -8,9 +8,9 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
-##########################################################
-Using the AWS Tools for Team Services (VSTS)
-##########################################################
+#####################################
+Using the AWS Tools for Team Services
+#####################################
 
 .. meta::
    :description: Programming information for the AWS Tools for Team Servicesa
@@ -32,9 +32,9 @@ To Install the AWS Extension for Visual Studio Team Services
 ============================================================
 
 Starting in the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_
-search on :samp:`AWS Tools`. The search results finds an extension published by Amazon Web Services that contains 
-a set of build tasks for AWS. If using VSTS online, click the :guilabel:`Install` button to 
-have the extension installed into your account. If using an on-premise Team Foundation Services setup, 
+search on :samp:`AWS Tools`. The search results finds an extension published by Amazon Web Services 
+that contains a set of build tasks for AWS. If using Visual Studio Team Services online, click the :guilabel:`Install` 
+button to have the extension installed into your account. If using an on-premise Team Foundation Services setup, 
 click :guilabel:`Download` to install the extension locally.
 
        .. image:: images/AWSVSTSdownload.png
@@ -44,7 +44,7 @@ To Create and Run a Project Using the AWS CodeDeploy Application Deployment Task
 ================================================================================
 
 #.  Navigate to your Projects home page and set up a simple ASP.Net Core project to test the tasks before 
-    starting to use in the your real-world pipelines. Choose to have the code hosted in VSTS and complete 
+    starting to use in the your real-world pipelines. Choose to have the code hosted in Team Services and complete 
     setup of the initial project, including submitting a sample app generated within Visual Studio on 
     your workstation. The test environment is now ready to have a build pipeline defined.
 
@@ -67,10 +67,10 @@ To Create and Run a Project Using the AWS CodeDeploy Application Deployment Task
     added to the pipeline, drag it to follow the *Archive file* step and open the task parameters window.
 
     1. The first parameter is labelled *AWS Credentials*. Click the + button to the right of the field and a 
-       VSTS dialog appears asking you to enter your AWS access key and secret key credentials, and to give 
+       Team Services dialog appears asking you to enter your AWS access key and secret key credentials, and to give 
        the credentials a name. We suggest not using your root credentials but using the credentials associated 
        with an IAM user account. The secret key text is automatically masked. Click :guilabel:`OK` to save the credentials 
-       into your VSTS account and return to the configuration of the new task. The name for the new credentials 
+       into your Team Services account and return to the configuration of the new task. The name for the new credentials 
        has been entered into the AWS Credentials field.
 
     2. Enter the rest of the parameters for the task. The task needs the region in which to call 
@@ -81,6 +81,5 @@ To Create and Run a Project Using the AWS CodeDeploy Application Deployment Task
 
     The build is queued, followed by console output from the pipeline as each task runs. You can see the 
     tasks you selected get downloaded to the build host and then run by the agent. Inspecting the console, 
-    notice the S3 task echo what it is uploading and where, followed by the CodeDeploy task output. Verify 
-    that the bucket contains the uploaded file.
+    notice in the S3 task echo what it is uploading and where. Verify that the bucket contains the uploaded file.
 

@@ -46,7 +46,6 @@ that parameter whenever you set up a task.
 
    aws-cli   
    cloudformation-create-update
-   cloudformation-delete-changeset
    cloudformation-delete-stack
    cloudformation-execute-changeset
    codedeploy-deployment

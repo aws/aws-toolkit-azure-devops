@@ -18,7 +18,7 @@ Install the AWS Tools for Team Services Extension
 
 The AWS Tools for Team Services extension is installed from the 
 `Extensions for the Visual Studio family of products <https://marketplace.visualstudio.com/vsts>`_. 
-Sign in to your Visual Studio Team Services (VSTS) account, the search for :code:`AWS Tools for Team Services`. 
+Sign in to your Visual Studio Team Services account, then search for :code:`AWS Tools for Team Services`. 
 Click :guilabel:`Install` to download the extension for Visual Studio team Services or click :guilabel:`Download` 
 to download for Team Foundation Server.
 

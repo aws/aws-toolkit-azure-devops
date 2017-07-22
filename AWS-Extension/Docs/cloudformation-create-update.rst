@@ -10,9 +10,9 @@
 
 .. _cloudformation-create-update:
 
-#####################################
-AWS CloudFormation Create-Update Task
-#####################################
+###########################################
+AWS CloudFormation Create-Update Stack Task
+###########################################
 
 .. meta::
    :description: Using the tasks in the AWS tools fot Team System
@@ -21,7 +21,7 @@ AWS CloudFormation Create-Update Task
 Creates a new AWS CloudFormation stack or updates the Stack if it exists.
 
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Create-Update` 
+#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Create-Update Stack` 
     task from the AWS Tools extension you installed. Click :guilabel:`Add`.
 
        .. image:: images/AwsCloudFormationCreateUpdateList.png
