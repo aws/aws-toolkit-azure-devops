@@ -304,6 +304,8 @@ target.build = function() {
         // build Node task
         if (shouldBuildNode) {
             buildNodeTask(taskPath, outDir, options.release);
+        } else {
+            matchCopy('**', taskPath, outDir);
         }
 
         // copy default resources and any additional resources defined in the task's make.json
@@ -327,7 +329,7 @@ target.test = function() {
     if (!pathExists(testsPath))
     {
         console.log('> !! no tests found at project root, skipping "test" target');
-        return;    
+        return;
     }
 
     ensureTool('tsc', '--version', 'Version 2.3.4');
@@ -382,32 +384,38 @@ target.package = function() {
 
     mkdir(packageTasksRoot);
 
-    // clean, dedupe and pack each task
+    // clean, dedupe and pack each task as needed
     taskList.forEach(function(taskName) {
         console.log('> processing task ' + taskName);
 
         var taskBuildFolder = path.join(buildTasksRoot, taskName);
         var taskPackageFolder = path.join(packageTasksRoot, taskName);
-
         mkdir(taskPackageFolder);
 
-        cp(path.join(taskBuildFolder, '*.json'), taskPackageFolder);
-        cp(path.join(taskBuildFolder, '*.png'), taskPackageFolder);
-        cp('-R', path.join(taskBuildFolder, 'Strings'), taskPackageFolder);
+        var taskDef = require(path.join(taskBuildFolder, 'task.json'));
+        if (taskDef.execution.hasOwnProperty('Node')) {
+            cd(taskBuildFolder);
 
-        cd(taskBuildFolder);
+            cp(path.join(taskBuildFolder, '*.json'), taskPackageFolder);
+            cp(path.join(taskBuildFolder, '*.png'), taskPackageFolder);
+            cp('-R', path.join(taskBuildFolder, 'Strings'), taskPackageFolder);
 
-        console.log('> packing task');
-        var webpackConfig = path.join(__dirname, 'webpack.config.js');
-        var webpackCmd = 'webpack --config ' + webpackConfig + ' ' + taskName + '.js ' + path.join(taskPackageFolder, taskName + '.js');
-        run(webpackCmd);
+            console.log('> packing node-based task');
+            var webpackConfig = path.join(__dirname, 'webpack.config.js');
+            var webpackCmd = 'webpack --config ' + webpackConfig + ' ' + taskName + '.js ' + path.join(taskPackageFolder, taskName + '.js');
+            run(webpackCmd);
 
-        // safely re-populate the unpacked vsts-task-lib
-        cd(taskPackageFolder);
-        var cmd = 'npm install vsts-task-lib' + (options.release ? ' --only=production' : '');
-        run(cmd);
+            // safely re-populate the unpacked vsts-task-lib
+            cd(taskPackageFolder);
+            var cmd = 'npm install vsts-task-lib' + (options.release ? ' --only=production' : '');
+            run(cmd);
 
-        cd(__dirname);
+            cd(__dirname);
+        } else {
+            console.log('> copying non-node task');
+
+            matchCopy('**', taskBuildFolder, taskPackageFolder);
+        }
     });
 
     // build the vsix package from the staged materials

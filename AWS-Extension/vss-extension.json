@@ -78,6 +78,9 @@
             "path": "Tasks/AWSCLI"
         },
         {
+            "path": "Tasks/AWSPowerShellScript"
+        },
+        {
             "path": "Tasks/BeanstalkDeployApplication"
         },
         {
@@ -172,6 +175,17 @@
             ],
             "properties": {
                 "name": "Tasks/AWSCLI"
+            }
+        },
+        {
+            "id": "AWSPowerShellScript",
+            "description": "Run a script that uses cmdlets in the AWSPowerShell module.",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/AWSPowerShellScript"
             }
         },
         {

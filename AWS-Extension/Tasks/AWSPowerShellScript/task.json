@@ -1,0 +1,106 @@
+{
+    "id": "5abe1a20-85ba-44f4-a875-a24761c462e4",
+    "name": "AWSPowerShellScript",
+    "friendlyName": "AWSPowerShell Module Script",
+    "description": "Run a PowerShell script that uses cmdlets from the AWSPowerShell module",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWSPowerShell](https://www.powershellgallery.com/packages/AWSPowerShell) module.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [
+        "DotNetFramework"
+    ],
+    "version": {
+        "Major": "0",
+        "Minor": "9",
+        "Patch": "40"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "AWSPowerShell Script: $(scriptFile)",
+    "groups": [
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "scriptType",
+            "type": "pickList",
+            "label": "Type",
+            "defaultValue": "filePath",
+            "required": true,
+            "helpMarkDown": "Type of the script: File Path or Inline Script",
+            "options": {
+                "inlineScript": "Inline Script",
+                "filePath": "File Path"
+            }
+        },
+        {
+            "name": "scriptName",
+            "type": "filePath",
+            "label": "Script Path",
+            "defaultValue": "",
+            "required": true,
+            "visibleRule": "scriptType = filePath",
+            "helpMarkDown": "Path of the script to execute. Should be fully qualified path or relative to the default working directory."
+        },
+        {
+            "name": "arguments",
+            "type": "string",
+            "label": "Arguments",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Arguments passed to the script.  Either ordinal parameters or named parameters"
+        },
+        {
+            "name": "inlineScript",
+            "type": "multiLine",
+            "label": "Inline Script",
+            "defaultValue": "# You can write your powershell scripts inline here. \n# You can also pass predefined and custom variables to this scripts using arguments\n\n# The AWSPowerShell module will be imported for you.\n\n Write-Host \"Hello World\"",
+            "required": true,
+            "helpMarkDown": "",
+            "visibleRule": "scriptType = inlineScript",
+            "properties": {
+                "resizable": "true",
+                "rows": "10",
+                "maxLength": "500"
+            }
+        },
+        {
+            "name": "installModuleIfRequired",
+            "label": "Automatically install the AWSPowerShell module if not present on the agent",
+            "type": "boolean",
+            "defaultValue": "true",
+            "required": false,
+            "helpMarkDown": "Automatically installs the AWSPowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) before running the specified script. If unchecked and the module is not installed an error is thrown."
+        }
+    ],
+    "execution": {
+        "PowerShell3": {
+            "target": "Invoke-AWSPowerShellScript.ps1"
+        }
+    },
+    "messages": {
+        "VerifyingAWSPowerShellModuleInstalled": "Verifying that the AWSPowerShell module is installed",
+        "InstallingModule": "Module not found, installing",
+        "ImportingModule": "Importing module",
+        "InitializingContext": "Initializing credential and region context",
+        "AWSPowerShellModuleNotFound": "The AWSPowerShell module is not installed on this machine and auto-install option not selected"
+    }
+}
