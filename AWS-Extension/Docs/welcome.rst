@@ -10,7 +10,7 @@
 
 .. meta::
     :description:
-         Welcome to the AWS Tools for Team Services Guide
+         Welcome to the AWS Tools for Visual Studio Team Services Guide
 
 
 ###################################################
@@ -18,13 +18,14 @@ AWS Tools for Microsoft Visual Studio Team Services
 ###################################################
 
 
-The AWS Tools for Microsoft Team Services, available through the 
-`Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_ is a Visual Studio Team Services 
-(VSTS) extension containing AWS build tasks. These tasks can be used in a Team Services project or on-premise 
-Team Foundation Services environment. The tasks can be used to build 
-and release CI/CD pipelines, allowing those pipelines to interact with AWS services. For example a 
-release pipeline can use the AWS CodeDeploy Application Deployment task to deploy the output from a build 
-to a deployment group of EC2 instances managed by CodeDeploy. Other tasks allow content to be transferred 
-between S3 buckets and the build area in the pipeline (upload and download), or to launch a CloudFormation 
-stack or deploy to Elastic Beanstalk environments.
+The AWS Tools for Team Services is a Visual Studio Team Services extension that contains AWS build tasks. 
+The AWS Tools for Team Services is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
+
+You can use these tasks in a Team Services project
+or in an on-premises Team Foundation Services environment. Use the tasks to build
+and release CI/CD pipelines to enable those pipelines to interact with AWS services. For example, a
+release pipeline can use the |CDlong| Application Deployment task to deploy the output from a build
+to a deployment group of |EC2| instances managed by |CDlong|. Other tasks enable you to transfer content
+between |S3| buckets and the build area in the pipeline (upload and download), or to launch a |CFNlong|
+stack or deploy to |AEBlong| environments.
 
