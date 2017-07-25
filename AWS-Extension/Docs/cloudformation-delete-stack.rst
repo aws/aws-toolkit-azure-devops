@@ -10,9 +10,9 @@
 
 .. _cloudformation-delete-stack:
 
-###########################
-CloudFormation Delete Stack
-###########################
+###############################
+AWS CloudFormation Delete Stack
+###############################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
