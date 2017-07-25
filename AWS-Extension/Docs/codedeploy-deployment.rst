@@ -15,7 +15,7 @@ AWS CodeDeploy Deployment
 #########################
 
 .. meta::
-   :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
+   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
 Deploy an application to Amazon EC2 instance(s) using AWS CodeDeploy.

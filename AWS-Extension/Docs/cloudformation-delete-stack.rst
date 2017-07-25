@@ -15,7 +15,7 @@ CloudFormation Delete Stack
 ###########################
 
 .. meta::
-   :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
+   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
 Deletes an AWS CloudFormation stack.

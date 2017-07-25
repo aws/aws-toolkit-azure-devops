@@ -15,35 +15,86 @@ AWS S3 Upload
 #############
 
 .. meta::
-   :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
+   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
 
-Upload file and folder content to an Amazon Simple Storage Service (S3) bucket.
+Synopsis
+--------
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS S3 Upload` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+Uploads file and folder content to an Amazon Simple Storage Service (S3) bucket.
 
-       .. image:: images/AwsS3UploadList.png
-          :alt: Select Aws S3 Upload
-          
-#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+Details
+-------
 
-       .. image:: images/AwsS3UploadTask.png
-          :alt: Aws S3 Upload  Task    
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AwsS3UploadScreen.png
-          :alt: Aws S3 Upload parameters      
-          
-#.  Enter the required parameters.
+This task accepts a source location from which to upload files to an Amazon S3 bucket. The target location in the bucket,
+or key prefix, can also be specified. If a target location is not supplied the files are uploaded to the bucket root. The files
+to be uploaded are specified using a set of one or more globbing patterns. The default pattern is ** which will cause all files
+in all folders at and beneath the source location to be uploaded, preserving the relative folder paths.
 
-        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-          credentials, see :ref:`task_reference`.   
-        * The AWS region.
-        * The name of the bucket where the content will be uploaded. If the bucket does not exist it will 
-          be created.
-          
-#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
+The task can optionally create the bucket to which the content is to be uploaded.
+
+Parameters
+----------
+
+:Display name:
+  A string to identify the task in the build process.
+:Required: Yes
+:Default Value: The name of the task suffixed with the bucket name.
+
+:AWS Credentials:
+  The name of the AWS service endpoint that will be used to supply credentials to the task to enable it to call AWS services. If you have
+  not already set up your credentials, see :ref:`task_reference`.
+:Required:  Yes
+:Default Value:  None
+
+:AWS Region:
+  The name of the region in which the bucket exists, or will be created. For example 'us-east-1', 'us-west-2' etc.
+:Required: Yes
+:Default Value:  None
+
+:Bucket Name:
+  The name of the bucket to which the files will be uploaded. Bucket names must be globally unique.
+:Required: Yes
+:Default Value:  None
+
+:Source Folder:
+  The folder location at which the globbing patterns to select files to upload will be run.
+:Required: No
+:Default Value:  None. If not specified the root of the working folders for the build process will be used.
+
+:Filename Patterns:
+  One or more globbing patterns, one per line, that will be used to select the files beneath the source folder to be uploaded.
+:Required: Yes
+:Default Value: **, to select all files and subfolders of the source location.
+
+:Target Folder:
+  The S3 key prefix that all uploaded files will share. You can think of this as specifying the folder path in the bucket.
+:Required: No
+:Default Value: None. If not specified the files will be uploaded to the root of the bucket.
+
+:Access Control:
+  Sets an access control list (ACL) on the uploaded files.
+:Required: No
+:Default Value: Private
+
+:Create S3 Bucket if it does not exist:
+  If checked and the specified bucket does not exist the task will attempt to automatically create it.
+:Required: No
+:Default Value: Auto-create (checked)
+
+:Overwrite:
+  If checked existing files in the bucket at the target location will be overwritten.
+:Required: No
+:Default Value: Overwrite (checked)
+
+:Flatten Folders:
+  If checked the relative subfolders of the files being uploaded will be removed causing all files to be placed directly into the
+  target location.
+:Required: No
+:Default Value: Preserve folder hierarchy (unchecked)
+
+
+  .. image:: images/AwsS3UploadScreen.png
+    :alt: Aws S3 Upload parameters
 

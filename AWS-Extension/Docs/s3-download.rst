@@ -15,7 +15,7 @@ AWS S3 Download
 ###############
 
 .. meta::
-   :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
+   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
 Download file and folder content from an Amazon Simple Storage Service (S3) bucket.

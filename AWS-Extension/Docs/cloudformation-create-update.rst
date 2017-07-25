@@ -15,7 +15,7 @@ AWS CloudFormation Create-Update Stack Task
 ###########################################
 
 .. meta::
-   :description: Using the tasks in the AWS tools fot Team System
+   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
 Creates a new AWS CloudFormation stack or updates the Stack if it exists.
