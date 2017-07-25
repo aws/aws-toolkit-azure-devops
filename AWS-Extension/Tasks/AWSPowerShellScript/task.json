@@ -83,7 +83,7 @@
             }
         },
         {
-            "name": "installModuleIfRequired",
+            "name": "autoInstallModule",
             "label": "Automatically install the AWSPowerShell module if not present on the agent",
             "type": "boolean",
             "defaultValue": "true",
@@ -99,8 +99,9 @@
     "messages": {
         "VerifyingAWSPowerShellModuleInstalled": "Verifying that the AWSPowerShell module is installed",
         "InstallingModule": "Module not found, installing",
-        "ImportingModule": "Importing module",
+        "ModuleInstalled": "Module installed",
         "InitializingContext": "Initializing credential and region context",
+        "ExecutingScript": "Executing user script",
         "AWSPowerShellModuleNotFound": "The AWSPowerShell module is not installed on this machine and auto-install option not selected"
     }
 }

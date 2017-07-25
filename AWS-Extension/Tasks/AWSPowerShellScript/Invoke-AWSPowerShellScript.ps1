@@ -2,22 +2,29 @@ Trace-VstsEnteringInvocation $MyInvocation
 Import-VstsLocStrings "$PSScriptRoot\Task.json"
 function Test-AWSPowerShellModuleInstalled($installIfRequired)
 {
-    Write-VstsTaskVerbose (Get-VstsLocString -Key "VerifyingAWSPowerShellModuleInstalled")
+    Write-Host (Get-VstsLocString -Key "VerifyingAWSPowerShellModuleInstalled")
 
     $awsModule = Get-Module -ListAvailable | ? { $_.Name -eq 'AWSPowerShell' }
     if (!$awsModule)
     {
         if ($installIfRequired)
         {
-            Write-VstsTaskVerbose (Get-VstsLocString -Key "InstallingModule")
-
-            Invoke-Command -ScriptBlock {Install-PackageProvider -Name NuGet -Force -Scope CurrentUser; Install-Module -Name AWSPowerShell -Force -Verbose -Scope CurrentUser}
+            Write-Host (Get-VstsLocString -Key "InstallingModule")
+            $installBlockString =
+@"
+Install-PackageProvider -Name NuGet -Force -Scope CurrentUser -Verbose
+Install-Module -Name AWSPowerShell -Force -Scope CurrentUser -Verbose
+"@
+            $installBlock = [Scriptblock]::Create($installBlockString)
+            Invoke-Command -ScriptBlock $installBlock
         }
         else
         {
             throw (Get-VstsLocString -Key "AWSPowerShellModuleNotFound")
         }
     }
+
+    Write-Host (Get-VstsLocString -Key "ModuleInstalled")
 }
 
 try
@@ -27,15 +34,12 @@ try
     $awsRegion = Get-VstsInput -Name 'regionName' -Require
     $scriptType = Get-VstsInput -Name 'scriptType' -Require
     $arguments = Get-VstsInput -Name arguments
-    $installIfRequired = Get-VstsInput -Name 'installModuleIfRequired' -AsBool
+    $installIfRequired = Get-VstsInput -Name 'autoInstallModule' -AsBool
 
     Test-AWSPowerShellModuleInstalled $installIfRequired
 
-    Write-VstsTaskVerbose (Get-VstsLocString -Key "ImportingModule")
-    Import-Module -Name AWSPowerShell
-
     # set the credentials into the default profile, with region
-    Write-VstsTaskVerbose (Get-VstsLocString -Key "InitializingContext")
+    Write-Host (Get-VstsLocString -Key "InitializingContext")
     $initParams = @{
         'AccessKey'=$awsEndpointAuth.Auth.Parameters.UserName
         'SecretKey'=$awsEndpointAuth.Auth.Parameters.Password
@@ -43,18 +47,26 @@ try
     }
     Initialize-AWSDefaultConfiguration @initParams
 
-    # run the user's command or script
-    if ($scriptType -eq 'inlineScript')
+    # Run the user's command or script. If the user gave us a file, load it
+    # into a script block. Prefer this over serializing a script block to
+    # disk in case the script contains sensitive material that the user
+    # might not expect to be left on the file system (should an error
+    # cause clean up failure)
+    if ($scriptType -eq 'filePath')
     {
-        $script = Get-VstsInput -Name 'inlineScript' -Require
-        $scriptblock = [scriptblock]::Create($script)
-        Write-Host "Scriptblock = $scriptblock"
-        Invoke-Command -ScriptBlock $scriptblock -ArgumentList $arguments -Verbose
+        $scriptFile = Get-VstsInput -Name 'scriptName' -Require
+        Test-Path -Path $scriptFile
+
+        $script = Get-Content -Path $scriptFile -Encoding UTF8
     }
     else
     {
-        Invoke-Command -FilePath (Get-VstsInput -Name scriptName -Require) -ArgumentList $arguments -Verbose
+        $script = Get-VstsInput -Name 'inlineScript' -Require
     }
+
+    $scriptblock = [Scriptblock]::Create($script)
+    Write-Host (Get-VstsLocString -Key "ExecutingScript")
+    Invoke-Command -ScriptBlock $scriptblock -ArgumentList $arguments -Verbose
 }
 finally
 {
