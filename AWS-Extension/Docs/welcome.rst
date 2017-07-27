@@ -29,3 +29,24 @@ to a deployment group of |EC2| instances managed by |CDlong|. Other tasks enable
 between |S3| buckets and the build area in the pipeline (upload and download), or to launch a |CFNlong|
 stack or deploy to |AEBlong| environments.
 
+What's in This Guide
+====================
+
+The AWS Tools for Team Services user guide describes how to install and use the AWS extension for 
+Visual Studio Team Services.
+
+:ref:`getting-started`
+
+    How to set up a Visual Studio Team Services account, install the AWS extension for Team Services 
+    and how to set up AWS credentials to use the tasks in the extension.
+
+:ref:`tutorials`
+
+    Demonstrates how to create and run a Team Services project utilizing a task installed with the 
+    AWS extension for Visual Studio Team Services
+    
+:ref:`task_reference`
+
+    Describes the tasks included in the AWS Extensions for Team Services.
+    
+    

@@ -10,38 +10,83 @@
 
 .. _aws-cli:
 
-#######
-AWS CLI
-#######
+#####
+|CLI|
+#####
 
 .. meta::
    :description: Using the tasks in the AWS Extensions to  Visual Studio Team System
    :keywords: extensions, tasks
 
+Synopsis
+========
+
 Run a Shell or Batch Script with AWS Commands Against an AWS Connection.
-========================================================================
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CLI` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+Description
+===========
 
-       .. image:: images/AWSCLIList.png
-          :alt: Select AWS CLI task
-          
-#.  The task will appear in the Build Process list with the message Some settings need attention. 
+The |CLI| uses a multipart structure on the command line. It starts with the base call to AWS. 
+The next part specifies a top-level command, which often represents an AWS service supported in the 
+|CLI|. Each AWS service has additional subcommands that specify the operation to perform. The 
+general CLI options, or the specific parameters for an operation, can be specified on the command 
+line in any order. If an exclusive parameter is specified multiple times, then only the last value applies.
 
-       .. image:: images/AWSCLITask.png
-          :alt: Select AWS CLI task      
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AWSCLIScreen.png
-          :alt: Select AWS CLI task      
-          
-#.  The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-    credentials, see :ref:`task_reference`.
+.. code-block:: sh
 
-    Enter the rest of the required parameters for the task. The task needs the region in which to call 
-    the AWS CLI and the command to execute.  The other fields are optional, for an explanation of each field 
-    click on the information icon following the name of the field.
+        $ aws <command> <subcommand> [options and parameters]
+
+Parameters can take various types of input values, such as numbers, strings, lists, maps, and JSON 
+structures.
+
+Parameters
+==========
+
+The following is the list of parameters available for you to set for the task. The required parameters 
+are noted by an '*', the others are optional.
+
+
+Displayname*
+------------
+    
+    By default the name of the task, |CLI|. You can rename it.
+
+AWS Credentials*
+----------------
+    
+    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+AWS Region*
+-----------
+    
+    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|. 
+
+Command*
+--------
+    
+    The |CLI| command to run. Run aws help in the |CLIlong| to get complete list of commands or see 
+    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
+
+Subcommand
+----------
+    
+    The |CLI| subcommand to run. Run aws help in the |CLIlong| to get complete list of commands or see 
+    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
+    
+
+Options and parameters
+----------------------
+
+    The arguments to pass to the |CLI| command. Run :code:`aws <command> --help` in the |CLIlong| to 
+    get complete list of arguments supported by the command.
+
+Advanced
+--------
+
+Fail on Standard Error
+~~~~~~~~~~~~~~~~~~~~~~
+
+    If this is true, this task will fail if any errors are written to the StandardError stream.
     
     
+

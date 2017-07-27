@@ -11,40 +11,117 @@
 .. _lambda-deploy:
 
 ###############################
-AWS Lambda .NET Core Deployment
+|LAMlong| .NET Core Deployment
 ###############################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
-Build and deploy a .NET Core AWS Lambda function.
+Synopsis
+========
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Execute Change Set` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+Build and deploy a .NET Core |LAMlong| function.
 
-       .. image:: images/AwsLambdaDeployList.png
-          :alt: Select Aws Lambda Deploy
-          
-#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+Description
+===========
 
-       .. image:: images/AwsLambdaDeployList.png
-          :alt: Aws Aws Lambda Deploy      
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AwsLambdaDeployScreen.png
-          :alt: Aws Aws Lambda Deploy parameters      
-          
-#.  Enter the required parameters.
+Lambda-based applications (also referred to as serverless applications) are composed of functions 
+triggered by events. A typical serverless application consists of one or more functions triggered 
+by events such as object uploads to Amazon S3, Amazon SNS notifications, and API actions. Those 
+functions can stand alone or leverage other resources such as DynamoDB tables or Amazon S3 buckets. 
+The most basic serverless application is simply a function.
 
-        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-          credentials, see :ref:`task_reference`.   
-        * The AWS region.
-        * The relative path to the location of the Lambda project.
-        * The type of deployment. *Lambda Deploy* performs a single Lambda function deloyment.
-          *Serverless Deploy* performs a deployment with AWS CloudFormation allowing multiple function deployment.
-          
-#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
+Parameters
+==========
+
+The following is the list of parameters available for you to set for the task. The required parameters 
+are noted by an '*', the others are optional.
+
+
+Displayname*
+------------
     
+    By default the name of the task, |LAMlong| .NET Core Deployment. You can rename it.
+
+AWS Credentials*
+----------------
     
+    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+AWS Region*
+-----------
+    
+    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.  
+
+Path to Lambda Project*
+-----------------------
+
+    The relative path to the location of the Lambda project.
+
+Command*
+--------
+
+    Either *Lambda Deploy* or *Serverless Deploy*.
+    
+    *Lambda Deploy* performs a single Lambda function deloyment.
+    *Serverless Deploy* performs a deployment with AWS CloudFormation allowing multiple function deployment.
+    
+Lambda Deploy Command: Lambda Function Properties
+-------------------------------------------------
+		
+Function Name
+~~~~~~~~~~~~~
+
+    The name of the Lambda function to invoke. You can also specify the |arnlong| (ARN) 
+    of the function.
+
+Function Role
+~~~~~~~~~~~~~
+
+    The name of the |IAMlong| Role that provides access to AWS services to the deployed Lambda function.
+
+Function Handler
+~~~~~~~~~~~~~~~~
+
+    The function within your code that Lambda calls to begin execution. Format is 
+    :code:`<assembly-name>::<type-name>::<function-name>`.
+
+Function Memory (MB)
+~~~~~~~~~~~~~~~~~~~~
+
+    Memory allocated to the Lambda function. The value must be in multiples of 64.
+
+Function Timout (Seconds)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    The function execution time at which Lambda should terminate the function.
+
+Serverless Deploy Command: Serverless Application Properties
+------------------------------------------------------------
+		
+Stack Name
+~~~~~~~~~~
+
+    |CFNlong| stack name. A stack is a collection of AWS resources that you can manage as a single unit
+
+S3 Bucket
+~~~~~~~~~
+
+    S3 bucket used to store the built project.
+
+S3 Prefix
+~~~~~~~~~
+
+    S3 object key prefix used for the objects uploaded to S3.
+
+
+Advanced
+--------
+		
+Additional Lambda Tools Command Line Arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Additional arguments when executing the 'dotnet lambda' command
+
+

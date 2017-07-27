@@ -12,9 +12,9 @@
 Document History
 ################
 
-This topic describes important changes to the |sdk-vsts-dg| over the course of its history.
+This topic describes important changes to the AWS Tools for Visual Studio Team Services over the course of its history.
 
 **This documentation was built on:** |today|
 
-Jun 28, 2017
+|today|
    New SDK version, 1.0 released.

@@ -10,43 +10,50 @@
 
 .. _cloudformation-delete-stack:
 
-###############################
-AWS CloudFormation Delete Stack
-###############################
+######################
+|CFNlong| Delete Stack
+######################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
-Deletes an AWS CloudFormation stack.
+Synopsis
+========
+
+Deletes an |CFNlong| stack.
+
+Description
+===========
+
+Deletes the specified stack.
+
+Parameters
+==========
+
+The following is the list of parameters available for you to set for the task. The required parameters 
+are noted by an '*', the others are optional.
 
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Delete Stack` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+Displayname*
+------------
+    
+    By default the name of the task, |CFNlong| Delete Stack. You can rename it.
 
-       .. image:: images/AwsCloudFormationDeleteStackList.png
-          :alt: Select Aws CloudFormation Delete Stack
-          
-#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+AWS Credentials*
+----------------
+    
+    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
 
-       .. image:: images/AwsCloudFormationDeleteStackTask.png
-          :alt: Aws CloudFormation Delete Stack Task      
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AwsCloudFormationDeleteStackScreen.png
-          :alt: Aws CloudFormation Delete Stack parameters      
+AWS Region*
+-----------
+    
+    AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html
 
-#.  Enter the required parameters.
 
-        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-          credentials, see :ref:`task_reference`.   
-        * The AWS region.
-        * The name of the stack to be deleted. 
-        
-#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.          
-
+Stack Name*
+-----------
+    
+    The name or the unique stack ID that is associated with the stack.
 
     
-    
-

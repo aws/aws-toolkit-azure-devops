@@ -10,43 +10,111 @@
 
 .. _codedeploy-deployment:
 
-#########################
-AWS CodeDeploy Deployment
-#########################
+###################
+|CDlong| Deployment
+###################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
-Deploy an application to Amazon EC2 instance(s) using AWS CodeDeploy.
+Synopsis
+========
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Delete Change Set` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+Deploy an application to |EC2| instance(s) using |CDlong|.
 
-       .. image:: images/AwsCodeDeployAppDeployList.png
-          :alt: Select Aws CloudFormation Delete Change Set
-          
-#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+Description
+===========
 
-       .. image:: images/AwsCodeDeployAppDeployTask.png
-          :alt: Aws CloudFormation Delete Change Set Task      
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AwsCodeDeployAppDeployScreen.png
-          :alt: Aws CloudFormation Delete Change Set parameters      
-          
-#.  Enter the required parameters.
+You can deploy a nearly unlimited variety of application content, such as code, web and configuration files, 
+executables, packages, scripts, multimedia files, and so on. |CDlong| can deploy application 
+content stored in |S3| buckets, GitHub repositories, or Bitbucket repositories. You do not need 
+to make changes to your existing code before you can use |CDlong|.
 
-        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-          credentials, see :ref:`task_reference`.   
-        * The AWS region.
-        * The name of the AWS CodeDeploy application.
-        * The name of the deployment group the revision will be deployed to.
-        * The location of the archive bundle containing the application revision artifacts to be deployed, 
-          including the :code:`appspec.yml` file. The task will upload this archive to S3 before requesting 
-          the deployment.
-        * The name of the bucket to which the revision bundle will be uploaded.
+Parameters
+==========
+
+The following is the list of parameters available for you to set for the task. The required parameters 
+are noted by an '*', the others are optional.
+
+
+Displayname*
+------------
+    
+    By default the name of the task, |CDlong| Deployment. You can rename it.
+
+AWS Credentials*
+----------------
+    
+    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+AWS Region*
+-----------
+    
+    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|. 
+
+Application Name*
+-----------------
+    
+    The name of the |CDlong| application.
+
+Deployment Group Name*
+----------------------
+    
+    The name of the deployment group the revision will be deployed to
+
+Revision Bundle*
+----------------
+
+    The location of the archive bundle containing the application revision artifacts to be deployed 
+    (including the appspec.yml file). The task will upload this archive to S3 before requesting the 
+    deployment be performed.
+    
+Bucket Name*
+------------
+
+    The name of the bucket to which the revision bundle will be will be uploaded.
+
+Target Folder
+-------------
+
+    Optional folder (key prefix) for the uploaded revision bundle in the bucket. If not specified the 
+    bundle will be uploaded to the root of the bucket.
+
+Description
+-----------
+
+    Optional description for the deployment.
+
+Existing File Behavior
+----------------------
+
+    How |CDlong| should handle files that already exist in a deployment target location but weren't 
+    part of the previous successful deployment.
+
+Advanced
+--------
+
+Update Outdated Instances Only
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If checked deploys to only those instances that are not running the latest application revision. 
+    Default: not checked.
+
+Ignore Application Stop Failures
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If checked then if the deployment causes the ApplicationStop deployment lifecycle event to an 
+    instance to fail, the deployment to that instance will not be considered to have failed at that 
+    point and will continue on to the BeforeInstall deployment lifecycle event. Default: not checked.
         
-#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
-
+Output
+------
+            
+Output Variable
+~~~~~~~~~~~~~~~
+        
+        The name of the variable that will contain the deployment ID on task completion. The variable 
+        can be used as $(variableName) to refer to the function result in subsequent tasks.
+        
+        

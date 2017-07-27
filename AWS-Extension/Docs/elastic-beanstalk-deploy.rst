@@ -10,39 +10,69 @@
 
 .. _elastic-beanstalk-deploy:
 
-################################
-AWS Elastic Beanstalk Deployment
-################################
+###################
+|EBlong| Deployment
+###################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
-Deploys an application to Amazon EC2 instance(s) using Elastic Beanstalk.
+Synopsis
+========
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Delete Change Set` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+    Deploys an application to |EC2| instance(s) using |EB|.
 
-       .. image:: images/AwsElasticBeanstalkDeployList.png
-          :alt: Select Aws Elastic Beanstalk Deploy
-          
-#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+Description
+===========
 
-       .. image:: images/AwsElasticBeanstalkDeployTask.png
-          :alt: Aws Elastic Beanstalk Deploy Task      
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AwsElasticBeanstalkDeployScreen.png
-          :alt: Aws Elastic Beanstalk Deploy parameters      
-          
-#.  Enter the required parameters.
+    Deploy and scale web applications and services developed with Java, .NET, PHP, Node.js, Python, Ruby, Go,
+    and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.
+    
+    |EB| automatically handles the deployment, from capacity provisioning, load balancing, 
+    auto-scaling to application health monitoring.
 
-        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-          credentials, see :ref:`task_reference`.   
-        * The AWS region.
-        * The path to the web deploy archive that contains the application to deploy to Elastic Beanstalk.
-        * The name of the AWS Beanstalk application.
-        * The name of the Elastic Beanstalk environment that will run the application.
-        
-#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
+Parameters
+==========
+
+The following is the list of parameters available for you to set for the task. The required parameters 
+are noted by an '*', the others are optional.
+
+
+Displayname*
+------------
+    
+    By default the name of the task, |EBlong| Deployment. You can rename it.
+
+AWS Credentials*
+----------------
+    
+    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+AWS Region*
+-----------
+    
+    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|. 
+
+Web Deploy Archive*
+-------------------
+
+    The path to web deploy archive that contains the application to deploy to |EB|.
+
+Beanstalk Application Name*
+---------------------------
+
+    The name of the |EB| application.
+    
+|EB| Environment Name*
+-----------------------------------
+
+    The name of the |EB| environment that will run the application.
+    
+    An environment represents the AWS resources (e.g. load balancer, Auto Scaling group, and EC2 instances) 
+    created specifically to run your application. 
+
+
+
+
+

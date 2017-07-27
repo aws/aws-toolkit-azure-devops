@@ -10,39 +10,65 @@
 
 .. _cloudformation-execute-changeset:
 
-#####################################
-AWS CloudFormation Execute Change Set
-#####################################
+############################
+|CFNlong| Execute Change Set
+############################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
    
-Execute an AWS CloudFormation change set to create or update a stack.
+
+Synopsis
+========
+
+Executes an |CFNlong| change set to create or update a stack.
+
+Description
+===========
+
+When you execute a change set, |CFNlong| deletes all other change sets associated with the 
+stack because they aren't valid for the updated stack.
+
+Updates a stack using the input information that was provided when the specified change set was created. 
+
+If a stack policy is associated with the stack, |CFNlong| enforces the policy during the update. 
+You can't specify a temporary stack policy that overrides the current policy.
+
+Parameters
+==========
+
+The following is the list of parameters available for you to set for the task. The required parameters 
+are noted by an '*', the others are optional.
 
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS CloudFormation Execute Change Set` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+Displayname*
+------------
+    
+    By default the name of the task, |CFNlong| Execute Change Set. You can rename it.
 
-       .. image:: images/AwsCloudFormationExecuteChangeSetList.png
-          :alt: Select Aws CloudFormation Execute Change Set
-          
-#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+AWS Credentials*
+----------------
+    
+    Select the AWS credentials to use. If needed, click on +, and add a new AWS connection.
 
-       .. image:: images/AwsCloudFormationExecuteChangeSetTask.png
-          :alt: Aws CloudFormation Execute Change Set Task      
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AwsCloudFormationExecuteChangeSetScreen.png
-          :alt: Aws CloudFormation Execute Change Set parameters      
-          
-#.  Enter the required parameters.
+AWS Region*
+-----------
+    
+    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.
 
-        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-          credentials, see :ref:`task_reference`.   
-        * The AWS region.
-        * The name or Amazon Resource Name (ARN) of the change set you want to execute.
-        
-#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
+Change Set Name*
+----------------
+    
+    The name or |arnlong| (ARN) of the change set that you want to execute.
+
+Stack Name
+----------
+    
+    The name that is associated with the stack. The name must be unique in the region in which you 
+    are creating the stack.
+
+    A stack name can contain only alphanumeric characters (case sensitive) and hyphens. It must start 
+    with an alphabetic character and cannot be longer than 128 characters.
+
 

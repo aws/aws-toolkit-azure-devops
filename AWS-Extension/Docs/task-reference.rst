@@ -38,8 +38,7 @@ that parameter whenever you set up a task.
 
        .. image:: images/AddNewAWSConnection.png
           :alt: Add an AWS connection
-          
-
+        
 .. toctree::
    :maxdepth: 1
    :titlesonly:

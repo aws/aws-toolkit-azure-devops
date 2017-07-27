@@ -8,6 +8,8 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
+.. _getting-started:
+
 ##############################################################
 Getting Started with AWS Tools for Visual Studio Team Services
 ##############################################################

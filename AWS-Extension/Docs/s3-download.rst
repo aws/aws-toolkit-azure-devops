@@ -18,31 +18,75 @@ AWS S3 Download
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
 
-Download file and folder content from an Amazon Simple Storage Service (S3) bucket.
+Synopsis
+========
 
-#.  Click the :guilabel:`Add` Task button in the pipeline to browse to and select the :samp:`AWS S3 Download` 
-    task from the AWS Tools extension you installed. Click :guilabel:`Add`.
+Download file and folder content from an |S3long| (S3) bucket.
 
-       .. image:: images/AwsS3DownloadList.png
-          :alt: Select Aws S3 Download
-          
-#.  The task will appear in the Build Process list with the message :guilabel:`Some settings need attention`. 
+Description
+===========
 
-       .. image:: images/AwsS3DownloadTask.png
-          :alt: Aws S3 Download  Task    
-          
-#.  Select the task and the task parameters window will be displayed in the right pane.
-          
-       .. image:: images/AwsS3DownloadScreen.png
-          :alt: Aws S3 Download parameters      
-          
-#.  Enter the required parameters.
+This task accepts a target folder location to which to download files from an |S3| bucket. The source 
+location in the bucket, or key prefix, can also be specified. If a source location is not supplied 
+the bucket root is used. The files to be downloaded are specified using a set of one or more globbing 
+patterns. The default pattern is ** which will cause all files in all folders at and beneath the source 
+ocation to be downloaded, preserving the relative folder paths.
 
-        * The first required parameter is labelled *AWS Credentials*. If you have not already set up your 
-          credentials, see :ref:`task_reference`.   
-        * The AWS region.
-        * The name of the bucket containing the content to be downloaded.
-        * The target folder to contain the downloaded content. You can use variables.
-          
-#.  Enter optional parameters, for an explanation of each field click on the information icon following the name of the field.
+Parameters
+==========
+
+The following is the list of parameters available for you to set for the task. The required parameters 
+are noted by an '*', the others are optional.
+
+Displayname*
+------------
     
+    By default the name of the task, AWS S3 Download. You can rename it or append the name of the 
+    associated S3 bucket to it.
+
+AWS Credentials*
+----------------
+    
+    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+AWS Region*
+-----------
+    
+    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.
+
+Bucket Name*
+------------
+
+    The name of the bucket containing the content to be download.
+
+Source Folder
+-------------
+
+    The source folder (key prefix) in the bucket that the content pattern(s) will be run against. 
+    If not set the root of the bucket is assumed.
+
+Filename Patterns
+-----------------
+
+    Glob patterns to select the file and folder content to be downloaded. Supports multiple lines of 
+    minimatch patterns. The default is :code:`**`.
+
+
+Target Folder*
+--------------
+
+    The target folder to contain the downloaded content. You can browse for it or can use 
+    `variables <https://www.visualstudio.com/en-us/docs/build/define/variables>`_.
+
+Advanced	
+--------
+	
+Overwrite
+~~~~~~~~~
+
+    If checked replace existing files in and beneath the target folder. If not checked and the file 
+    already exists in the target location an error is thrown. The default is checked (overwrite).
+    
+    
+    
+	
