@@ -1,14 +1,15 @@
 {
-    "name": "awscli",
+    "name": "sendmessage",
     "version": "0.9.44",
-    "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
-    "main": "AWSCLI.js",
+    "description": "Sends a message to an SQS queue or SNS topic.",
+    "main": "SendMessage.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
     "license": "MIT",
     "dependencies": {
+        "aws-sdk": "^2.88.0",
         "vsts-task-lib": "^2.0.6"
     }
 }

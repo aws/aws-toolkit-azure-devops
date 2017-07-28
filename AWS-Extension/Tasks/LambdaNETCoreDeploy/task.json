@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "42"
+        "Patch": "44"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Lambda: $(functionName) $(stackName)",

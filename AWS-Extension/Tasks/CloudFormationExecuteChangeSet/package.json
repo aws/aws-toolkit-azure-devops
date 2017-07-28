@@ -1,15 +1,15 @@
 {
-  "name": "cloudformationexecutechangeset",
-  "version": "0.9.0",
-  "description": "Executes an AWS CloudFormation change set",
-  "main": "CloudFormationExecuteChangeSet.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "aws-sdk": "^2.88.0",
-    "vsts-task-lib": "^2.0.6"
-  }
+    "name": "cloudformationexecutechangeset",
+    "version": "0.9.44",
+    "description": "Executes an AWS CloudFormation change set",
+    "main": "CloudFormationExecuteChangeSet.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "aws-sdk": "^2.88.0",
+        "vsts-task-lib": "^2.0.6"
+    }
 }

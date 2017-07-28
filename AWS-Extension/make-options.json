@@ -10,7 +10,8 @@
         "LambdaInvokeFunction",
         "LambdaNETCoreDeploy",
         "S3Download",
-        "S3Upload"
+        "S3Upload",
+        "SendMessage"
     ],
     "taskResources": [
         "*.ps1",

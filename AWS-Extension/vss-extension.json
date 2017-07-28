@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "0.9.42",
+    "version": "0.9.44",
     "name": "AWS Tools for Microsoft Visual Studio Team Services",
     "scopes": [
         "vso.build",
@@ -106,6 +106,9 @@
         },
         {
             "path": "Tasks/S3Upload"
+        },
+        {
+            "path": "Tasks/SendMessage"
         }
     ],
     "categories": [
@@ -285,6 +288,17 @@
             ],
             "properties": {
                 "name": "Tasks/S3Upload"
+            }
+        },
+        {
+            "id": "SendMessage",
+            "description": "Sends a message to an SNS topic or SQS queue",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/SendMessage"
             }
         }
     ]

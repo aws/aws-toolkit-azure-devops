@@ -1,15 +1,15 @@
 {
-  "name": "cloudformationdeletestack",
-  "version": "0.9.0",
-  "description": "Delete AWS CloudFormation stacks",
-  "main": "CloudFormationDeleteStack.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "aws-sdk": "^2.88.0",
-    "vsts-task-lib": "^2.0.6"
-  }
+    "name": "cloudformationdeletestack",
+    "version": "0.9.44",
+    "description": "Delete AWS CloudFormation stacks",
+    "main": "CloudFormationDeleteStack.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "aws-sdk": "^2.88.0",
+        "vsts-task-lib": "^2.0.6"
+    }
 }

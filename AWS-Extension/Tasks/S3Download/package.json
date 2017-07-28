@@ -1,15 +1,15 @@
 {
-  "name": "s3download",
-  "version": "0.9.1",
-  "description": "Download content from an AWS Simple Storage Service (S3) Bucket",
-  "main": "S3Download.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "aws-sdk": "^2.88.0",
-    "vsts-task-lib": "^2.0.6"
-  }
+    "name": "s3download",
+    "version": "0.9.44",
+    "description": "Download content from an AWS Simple Storage Service (S3) Bucket",
+    "main": "S3Download.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "aws-sdk": "^2.88.0",
+        "vsts-task-lib": "^2.0.6"
+    }
 }

@@ -167,10 +167,7 @@ target.updateversioninfo = function() {
     fs.writeFileSync(extensionManifestPath, JSON.stringify(extensionJson, null, 4));
 
     var packageJsonPath = path.join(__dirname, 'package.json');
-    var packageJson = JSON.parse(fs.readFileSync(packageJsonPath));
-    packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
-    console.log(`> package.json version updated to ${packageJson.version}`);
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4));
+    updatePackageJsonVersion(packageJsonPath, versionInfo);
 
     taskList.forEach(function (taskName) {
         var taskJsonPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
@@ -180,7 +177,19 @@ target.updateversioninfo = function() {
         taskJson.version.Patch = versionInfo.Patch;
         console.log(`> task ${taskName} version updated to ${taskJson.version.Major}.${taskJson.version.Minor}.${taskJson.version.Patch}`);
         fs.writeFileSync(taskJsonPath, JSON.stringify(taskJson, null, 4));
+
+        var packageJsonPath = path.join(__dirname, 'Tasks', taskName, 'package.json');
+        if (fs.existsSync(packageJsonPath)) {
+            updatePackageJsonVersion(packageJsonPath, versionInfo);
+        }
     });
+}
+
+function updatePackageJsonVersion(packageJsonPath, versionInfo) {
+    var packageJson = JSON.parse(fs.readFileSync(packageJsonPath));
+    packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
+    console.log(`> ${packageJsonPath} version updated to ${packageJson.version}`);
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4));
 }
 
 // builds the extension into a _build folder. If the --release switch is specified

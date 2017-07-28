@@ -1,14 +1,14 @@
 {
-  "name": "lambdanetcoredeploy",
-  "version": "0.9.0",
-  "description": "Builds and deploys an AWS Lambda function.",
-  "main": "LambdaNETCoreDeploy.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "vsts-task-lib": "^2.0.6"
-  }
+    "name": "lambdanetcoredeploy",
+    "version": "0.9.44",
+    "description": "Builds and deploys an AWS Lambda function.",
+    "main": "LambdaNETCoreDeploy.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "vsts-task-lib": "^2.0.6"
+    }
 }

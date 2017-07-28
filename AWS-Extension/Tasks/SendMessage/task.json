@@ -1,0 +1,101 @@
+{
+    "id": "2219c95b-b872-44ac-9ff9-a2553010f860",
+    "name": "SendMessage",
+    "friendlyName": "AWS Send Message",
+    "description": "Sends a message to an SNS topic or SQS queue.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [Amazon Simple Queue Service](https://aws.amazon.com/documentation/sqs/) and [Amazon Simple Notification Service](https://aws.amazon.com/documentation/sns/) documentation.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "0",
+        "Minor": "9",
+        "Patch": "44"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "Send Message: $(messageTarget)",
+    "groups": [],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+        },
+        {
+            "name": "messageTarget",
+            "label": "Message Target",
+            "type": "pickList",
+            "required": true,
+            "defaultValue": "topic",
+            "helpMarkDown": "The target (queue or topic) to which the message will be sent.",
+            "options": {
+                "topic": "SNS Topic",
+                "queue": "SQS Queue"
+            }
+        },
+        {
+            "name": "message",
+            "label": "Message",
+            "type": "multiline",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The message content to send.\n\nThe maximum size for both queue and topic targets is 256KB (262144 bytes, not 262144 characters)."
+        },
+        {
+            "name": "topicArn",
+            "label": "Topic ARN",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The Amazon Resource Name (ARN) of the topic you want to publish to.",
+            "visibleRule": "messageTarget = topic"
+        },
+        {
+            "name": "queueUrl",
+            "label": "Queue Url",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The URL of the Amazon SQS queue to which the message will be sent.",
+            "visibleRule": "messageTarget = queue"
+        },
+        {
+            "name": "delaySeconds",
+            "label": "Delay (seconds)",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The length of time, in seconds, for which to delay a specific message. Valid values: 0 to 900. Maximum: 15 minutes. Messages with a positive DelaySeconds value become available for processing after the delay period is finished. If you don't specify a value, the default value for the queue applies.",
+            "visibleRule": "messageTarget = queue"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "SendMessage.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "TopicDoesNotExist": "Topic %s does not exist",
+        "QueueDoesNotExist": "Queue %s does not exist",
+        "SendingToTopic": "Sending message to topic %s",
+        "SendingToQueue": "Sending message to queue %s",
+        "SendError": "Error during send, message: %s",
+        "TaskCompleted": "Successfully completed sending the message"
+    }
+}
