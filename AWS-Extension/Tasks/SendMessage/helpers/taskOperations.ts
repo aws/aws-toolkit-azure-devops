@@ -75,8 +75,6 @@ export class TaskOperations {
     }
 
     private static async sendMessageToQueue(taskParameters: TaskParameters.SendMessageTaskParameters): Promise<void> {
-        console.log(tl.loc('SendingToQueue', taskParameters.queueUrl));
-
         try {
             const request: awsSqsClient.SendMessageRequest = {
                 QueueUrl: taskParameters.queueUrl,
@@ -84,6 +82,9 @@ export class TaskOperations {
             };
             if (taskParameters.delaySeconds) {
                 request.DelaySeconds = taskParameters.delaySeconds;
+                console.log(tl.loc('SendingToQueueWithDelay', taskParameters.delaySeconds, taskParameters.queueUrl));
+            } else {
+                console.log(tl.loc('SendingToQueue', taskParameters.queueUrl));
             }
             await this.sqsClient.sendMessage(request).promise();
         } catch (err) {

@@ -95,6 +95,7 @@
         "QueueDoesNotExist": "Queue %s does not exist",
         "SendingToTopic": "Sending message to topic %s",
         "SendingToQueue": "Sending message to queue %s",
+        "SendingToQueueWithDelay": "Sending message, with delay %s seconds, to queue %s",
         "SendError": "Error during send, message: %s",
         "TaskCompleted": "Successfully completed sending the message"
     }
