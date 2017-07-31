@@ -3,24 +3,40 @@ Import-VstsLocStrings "$PSScriptRoot\Task.json"
 
 function Test-AWSPowerShellModuleInstalled($installIfRequired)
 {
-    Write-Host (Get-VstsLocString -Key "VerifyingAWSPowerShellModuleInstalled")
-
-    $awsModule = Get-Module -ListAvailable | ? { $_.Name -eq 'AWSPowerShell' }
-    if (!$awsModule)
+    try
     {
-        if ($installIfRequired)
+        if (!($PSVersionTable.PSEdition -eq "Desktop"))
         {
-            Write-Host (Get-VstsLocString -Key "InstallingModule")
-            Install-PackageProvider -Name NuGet -Force -Scope CurrentUser -Verbose
-            Install-Module -Name AWSPowerShell -Force -Scope CurrentUser -Verbose
+            Write-Host (Get-VstsLocString -Key "IncompatiblePowerShellEditionFound")
         }
         else
         {
-            throw (Get-VstsLocString -Key "AWSPowerShellModuleNotFound")
+            Write-Host (Get-VstsLocString -Key "CompatiblePowerShellEditionFound")
         }
-    }
 
-    Write-Host (Get-VstsLocString -Key "ModuleInstalled")
+        Write-Host (Get-VstsLocString -Key "VerifyingAWSPowerShellModuleInstalled")
+
+        $awsModule = Get-Module -ListAvailable | ? { $_.Name -eq 'AWSPowerShell' }
+        if (!$awsModule)
+        {
+            if ($installIfRequired)
+            {
+                Write-Host (Get-VstsLocString -Key "InstallingModule")
+                Install-PackageProvider -Name NuGet -Force -Scope CurrentUser -Verbose
+                Install-Module -Name AWSPowerShell -Force -Scope CurrentUser -Verbose
+            }
+            else
+            {
+                throw (Get-VstsLocString -Key "AWSPowerShellModuleNotFound")
+            }
+        }
+
+        Write-Host (Get-VstsLocString -Key "ModuleInstalled")
+    }
+    catch
+    {
+            Write-Host (Get-VstsLocString -Key "ErrorCheckingModuleInstall")
+    }
 }
 
 try

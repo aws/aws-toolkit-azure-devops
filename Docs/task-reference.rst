@@ -43,7 +43,8 @@ that parameter whenever you set up a task.
    :maxdepth: 1
    :titlesonly:
 
-   aws-cli   
+   aws-cli
+   awspowershell-module-script
    cloudformation-create-update
    cloudformation-delete-stack
    cloudformation-execute-changeset
@@ -53,6 +54,7 @@ that parameter whenever you set up a task.
    lambda-invoke
    s3-download
    s3-upload
+   send-message
 
 
 

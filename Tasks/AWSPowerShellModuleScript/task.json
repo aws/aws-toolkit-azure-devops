@@ -1,10 +1,10 @@
 {
     "id": "5abe1a20-85ba-44f4-a875-a24761c462e4",
-    "name": "AWSPowerShellScript",
-    "friendlyName": "AWSPowerShell Module Script",
-    "description": "Run a PowerShell script that uses cmdlets from the AWSPowerShell module",
+    "name": "AWSPowerShellModuleScript",
+    "friendlyName": "AWS Tools for Windows PowerShell Script",
+    "description": "Run a PowerShell script that uses the AWS Tools for Windows PowerShell",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWSPowerShell](https://www.powershellgallery.com/packages/AWSPowerShell) module.",
+    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -16,10 +16,10 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "44"
+        "Patch": "46"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "AWSPowerShell Script: $(scriptFile)",
+    "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",
     "groups": [],
     "inputs": [
         {
@@ -60,14 +60,6 @@
             "helpMarkDown": "Path of the script to execute. Should be fully qualified path or relative to the default working directory."
         },
         {
-            "name": "arguments",
-            "type": "string",
-            "label": "Arguments",
-            "defaultValue": "",
-            "required": false,
-            "helpMarkDown": "Arguments passed to the script.  Either ordinal parameters or named parameters"
-        },
-        {
             "name": "inlineScript",
             "type": "multiLine",
             "label": "Inline Script",
@@ -82,17 +74,25 @@
             }
         },
         {
+            "name": "arguments",
+            "type": "string",
+            "label": "Arguments",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Arguments passed to the script.  Either ordinal parameters or named parameters"
+        },
+        {
             "name": "autoInstallModule",
-            "label": "Automatically install the AWSPowerShell module if not present on the agent",
+            "label": "Automatically install the tools [Microsoft Windows build agents only]",
             "type": "boolean",
             "defaultValue": "true",
             "required": false,
-            "helpMarkDown": "Automatically installs the AWSPowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) before running the specified script. If unchecked and the module is not installed an error is thrown."
+            "helpMarkDown": "Automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) before running the specified script. If unchecked and the module is not installed an error is thrown.\n\nThis option only applies to agents running on Microsoft Windows."
         }
     ],
     "execution": {
         "PowerShell3": {
-            "target": "Invoke-AWSPowerShellScript.ps1"
+            "target": "Invoke-AWSPowerShellModuleScript.ps1"
         }
     },
     "messages": {
@@ -101,6 +101,9 @@
         "ModuleInstalled": "Module installed",
         "InitializingContext": "Initializing credential and region context",
         "ExecutingScript": "Executing user script",
-        "AWSPowerShellModuleNotFound": "The AWSPowerShell module is not installed on this machine and auto-install option not selected"
+        "AWSPowerShellModuleNotFound": "The AWSPowerShell module is not installed on this machine and auto-install option not selected",
+        "IncompatiblePowerShellEditionFound": "Current PowerShell edition is not 'Desktop', required for the AWSPowerShell module. Abandoning automatic installation.",
+        "CompatiblePowerShellEditionFound": "Current PowerShell edition is 'Desktop' and is compatible with the AWSPowerShell module",
+        "ErrorCheckingModuleInstall": "An error occurred while testing for module installation."
     }
 }

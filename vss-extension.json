@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "0.9.44",
+    "version": "0.9.46",
     "name": "AWS Tools for Microsoft Visual Studio Team Services",
     "scopes": [
         "vso.build",
@@ -78,7 +78,7 @@
             "path": "Tasks/AWSCLI"
         },
         {
-            "path": "Tasks/AWSPowerShellScript"
+            "path": "Tasks/AWSPowerShellModuleScript"
         },
         {
             "path": "Tasks/BeanstalkDeployApplication"
@@ -181,14 +181,14 @@
             }
         },
         {
-            "id": "AWSPowerShellScript",
-            "description": "Run a script that uses cmdlets in the AWSPowerShell module.",
+            "id": "AWSPowerShellModuleScript",
+            "description": "Run a PowerShell script that uses cmdlets from the AWS Tools for Windows PowerShell module.",
             "type": "ms.vss-distributed-task.task",
             "targets": [
                 "ms.vss-distributed-task.tasks"
             ],
             "properties": {
-                "name": "Tasks/AWSPowerShellScript"
+                "name": "Tasks/AWSPowerShellModuleScript"
             }
         },
         {
