@@ -10,9 +10,9 @@
 
 .. _elastic-beanstalk-deploy:
 
-###################
-|EBlong| Deployment
-###################
+########################
+|EBlong| Deployment Task
+########################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
@@ -21,56 +21,57 @@
 Synopsis
 ========
 
-    Deploys an application to |EC2| instance(s) using |EB|.
+    Deploys an application to |EC2| instances by using |EB|.
 
 Description
 ===========
 
-    Deploy and scale web applications and services developed with Java, .NET, PHP, Node.js, Python, Ruby, Go,
-    and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.
-    
-    |EB| automatically handles the deployment, from capacity provisioning, load balancing, 
-    auto-scaling to application health monitoring.
+    Deploys and scales web applications and services developed with Java, .NET, PHP, Node.js, Python,
+    Ruby, Go, and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.
+
+    |EB| automatically handles the deployment, from capacity provisioning, load balancing,
+    automatic scaling to application health monitoring.
 
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters 
-are noted by an '*', the others are optional.
+You can set the following parameters for the task. Required
+parameters are noted by an asterisk (*). Other parameters are optional.
 
 
 Displayname*
 ------------
-    
-    By default the name of the task, |EBlong| Deployment. You can rename it.
+
+    The default name of the task, |EBlong| Deployment. You can rename it.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|. 
+
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.
+
 
 Web Deploy Archive*
 -------------------
 
-    The path to web deploy archive that contains the application to deploy to |EB|.
+    The path to the web deploy archive that contains the application to deploy to |EB|.
 
 Beanstalk Application Name*
 ---------------------------
 
     The name of the |EB| application.
-    
+
 |EB| Environment Name*
 -----------------------------------
 
     The name of the |EB| environment that will run the application.
-    
-    An environment represents the AWS resources (e.g. load balancer, Auto Scaling group, and EC2 instances) 
-    created specifically to run your application. 
+
+    An environment represents the AWS resources (e.g., load balancer, Auto Scaling group, and |EC2| instances)
+    created specifically to run your application.
 
 
 

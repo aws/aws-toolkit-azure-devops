@@ -10,9 +10,9 @@
 
 .. _codedeploy-deployment:
 
-###################
-|CDlong| Deployment
-###################
+########################
+|CDlong| Deployment Task
+########################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
@@ -21,65 +21,67 @@
 Synopsis
 ========
 
-Deploy an application to |EC2| instance(s) using |CDlong|.
+Deploys an application to |EC2| instances by using |CDlong|.
 
 Description
 ===========
 
-You can deploy a nearly unlimited variety of application content, such as code, web and configuration files, 
-executables, packages, scripts, multimedia files, and so on. |CDlong| can deploy application 
-content stored in |S3| buckets, GitHub repositories, or Bitbucket repositories. You do not need 
-to make changes to your existing code before you can use |CDlong|.
+You can deploy a nearly unlimited variety of application content, such as code, web and configuration files,
+executable files, packages, scripts, and multimedia files. |CDlong| can deploy application
+content stored in |S3| buckets, GitHub repositories, or Bitbucket repositories. You don't need
+to change your existing code before you can use |CDlong|.
 
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters 
-are noted by an '*', the others are optional.
+You can set the following parameters for the task. Required
+parameters
+are noted by an asterisk (*). Other parameters are optional.
 
 
 Displayname*
 ------------
-    
-    By default the name of the task, |CDlong| Deployment. You can rename it.
+
+    The default name of the task, |CDlong| Deployment. You can rename it.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|. 
+
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
+    |AWS-gr|.
 
 Application Name*
 -----------------
-    
+
     The name of the |CDlong| application.
 
 Deployment Group Name*
 ----------------------
-    
-    The name of the deployment group the revision will be deployed to
+
+    The name of the deployment group the revision is deployed to.
 
 Revision Bundle*
 ----------------
 
-    The location of the archive bundle containing the application revision artifacts to be deployed 
-    (including the appspec.yml file). The task will upload this archive to S3 before requesting the 
-    deployment be performed.
-    
+    The location of the archive bundle containing the application revision artifacts to deploy
+    (including the appspec.yml file). The task uploads this archive to |S3| before requesting
+    deployment.
+
 Bucket Name*
 ------------
 
-    The name of the bucket to which the revision bundle will be will be uploaded.
+    The name of the bucket to which the revision bundle is uploaded.
 
 Target Folder
 -------------
 
-    Optional folder (key prefix) for the uploaded revision bundle in the bucket. If not specified the 
-    bundle will be uploaded to the root of the bucket.
+    Optional folder (key prefix) for the uploaded revision bundle in the bucket. If not specified the,
+    bundle is uploaded to the root of the bucket.
 
 Description
 -----------
@@ -89,7 +91,7 @@ Description
 Existing File Behavior
 ----------------------
 
-    How |CDlong| should handle files that already exist in a deployment target location but weren't 
+    How |CDlong| should handle files that already exist in a deployment target location but weren't
     part of the previous successful deployment.
 
 Advanced
@@ -98,23 +100,26 @@ Advanced
 Update Outdated Instances Only
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    If checked deploys to only those instances that are not running the latest application revision. 
+    If checked, deploys to only those instances that are not running the latest application revision.
+
     Default: not checked.
 
 Ignore Application Stop Failures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    If checked then if the deployment causes the ApplicationStop deployment lifecycle event to an 
-    instance to fail, the deployment to that instance will not be considered to have failed at that 
-    point and will continue on to the BeforeInstall deployment lifecycle event. Default: not checked.
-        
+    When checked, if the deployment causes the ApplicationStop deployment lifecycle event to an
+    instance to fail, the deployment to that instance is not considered failed at that
+    point. It continues on to the BeforeInstall deployment lifecycle event.
+
+    Default: not checked.
+
 Output
 ------
-            
+
 Output Variable
 ~~~~~~~~~~~~~~~
-        
-        The name of the variable that will contain the deployment ID on task completion. The variable 
-        can be used as $(variableName) to refer to the function result in subsequent tasks.
-        
-        
+
+        The name of the variable that will contain the deployment ID on task completion. You can use the
+        variable $(variableName) to refer to the function result in subsequent tasks.
+
+

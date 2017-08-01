@@ -10,14 +10,14 @@
 
 .. _cloudformation-execute-changeset:
 
-############################
-|CFNlong| Execute Change Set
-############################
+#################################
+|CFNlong| Execute Change Set Task
+#################################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: extensions, tasks
-   
+
 
 Synopsis
 ========
@@ -27,48 +27,51 @@ Executes an |CFNlong| change set to create or update a stack.
 Description
 ===========
 
-When you execute a change set, |CFNlong| deletes all other change sets associated with the 
+When you execute a change set, |CFNlong| deletes all other change sets associated with the
 stack because they aren't valid for the updated stack.
 
-Updates a stack using the input information that was provided when the specified change set was created. 
+|CFNlong| updates a stack using the input information that was provided when the specified change set
+was created.
 
-If a stack policy is associated with the stack, |CFNlong| enforces the policy during the update. 
+If a stack policy is associated with the stack, |CFNlong| enforces the policy during the update.
 You can't specify a temporary stack policy that overrides the current policy.
 
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters 
-are noted by an '*', the others are optional.
+You can set the following parameters for the task. Required
+parameters
+are noted by an asterisk (*). Other parameters are optional.
 
 
 Displayname*
 ------------
-    
-    By default the name of the task, |CFNlong| Execute Change Set. You can rename it.
+
+    The default name of the task, |CFNlong| Execute Change Set. You can rename it.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on +, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.
+
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
+    |AWS-gr|.
 
 Change Set Name*
 ----------------
-    
+
     The name or |arnlong| (ARN) of the change set that you want to execute.
 
 Stack Name
 ----------
-    
-    The name that is associated with the stack. The name must be unique in the region in which you 
+
+    The name that is associated with the stack. The name must be unique in the region in which you
     are creating the stack.
 
-    A stack name can contain only alphanumeric characters (case sensitive) and hyphens. It must start 
+    A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start
     with an alphabetic character and cannot be longer than 128 characters.
 
 

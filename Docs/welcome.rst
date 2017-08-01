@@ -18,8 +18,8 @@ AWS Tools for Microsoft Visual Studio Team Services
 ###################################################
 
 
-The AWS Tools for Team Services is a Visual Studio Team Services extension that contains AWS build tasks. 
-The AWS Tools for Team Services is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
+AWS Tools for Team Services is a Visual Studio Team Services extension that contains AWS build tasks.
+AWS Tools for Team Services is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
 
 You can use these tasks in a Team Services project
 or in an on-premises Team Foundation Services environment. Use the tasks to build
@@ -32,21 +32,21 @@ stack or deploy to |AEBlong| environments.
 What's in This Guide
 ====================
 
-The AWS Tools for Team Services user guide describes how to install and use the AWS extension for 
+The *AWS Tools for Team Services User Guide* describes how to install and use the AWS extension for
 Visual Studio Team Services.
 
 :ref:`getting-started`
 
-    How to set up a Visual Studio Team Services account, install the AWS extension for Team Services 
+    How to set up a Visual Studio Team Services account, install the AWS extension for Team Services
     and how to set up AWS credentials to use the tasks in the extension.
 
 :ref:`tutorials`
 
-    Demonstrates how to create and run a Team Services project utilizing a task installed with the 
+    Demonstrates how to create and run a Team Services project utilizing a task installed with the
     AWS extension for Visual Studio Team Services
-    
+
 :ref:`task_reference`
 
-    Describes the tasks included in the AWS Extensions for Team Services.
-    
-    
+    Describes the tasks included in the AWS Tools for Team Services.
+
+

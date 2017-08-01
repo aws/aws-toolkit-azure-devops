@@ -10,9 +10,9 @@
 
 .. _cloudformation-delete-stack:
 
-######################
-|CFNlong| Delete Stack
-######################
+###########################
+|CFNlong| Delete Stack Task
+###########################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
@@ -31,29 +31,30 @@ Deletes the specified stack.
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters 
-are noted by an '*', the others are optional.
+You can set the following parameters for the task. Required
+parameters are noted by an asterisk (*). Other parameters are optional.
 
 
 Displayname*
 ------------
-    
-    By default the name of the task, |CFNlong| Delete Stack. You can rename it.
+
+    The default name of the task, |CFNlong| Delete Stack. You can rename it.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html
+
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
+    |AWS-gr|.
 
 
 Stack Name*
 -----------
-    
-    The name or the unique stack ID that is associated with the stack.
 
-    
+    The name or unique stack ID that is associated with the stack.
+
+

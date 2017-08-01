@@ -10,50 +10,50 @@
 
 .. _lambda-invoke:
 
-#########################
-|LAMlong| Invoke Function
-#########################
+##############################
+|LAMlong| Invoke Function Task
+##############################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
-   :keywords: extensions, tasks       
+   :keywords: extensions, tasks
 
 Synopsis
 ========
 
-Invoke an |LAMlong| function with a JSON payload.
+Invokes an |LAMlong| function with a JSON payload.
 
 Description
 ===========
 
-Invokes a previously deployed Lambda function.	
+Invokes a previously deployed |LAM| function.
 
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters 
-are noted by an '*', the others are optional.
-
+You can set the following parameters for the task. Required
+parameters are noted by an asterisk (*). Other parameters are optional.
 
 Displayname*
 ------------
-    
-    By default the name of the task, |LAMlong| Invoke Function. You can rename it.
+
+    The default name of the task, |LAMlong| Invoke Function. You can rename it.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.  
+
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
+    |AWS-gr|.
 
 Function Name*
 --------------
 
-    The name of the Lambda function to invoke. You can also specify the |arnlong| (ARN) of the function.
+    The name of the |LAM| function to invoke. You can also specify the |arnlong| (ARN) of the function.
 
 Payload
 -------
@@ -64,20 +64,20 @@ Invocation Type
 ---------------
 
     Either *Asynchronous execution* or *Synchronous execution returning the output from the function*.
-    
+
 Synchronous Execution Output
 -----------------------------
-	
+
 Output Variable
 ~~~~~~~~~~~~~~~
 
-    The name of the variable that will contain the function output on task completion. The variable 
-    can be used as :code:`$(variableName)` to refer to the function result in subsequent tasks.
+    The name of the variable that will contain the function output on task completion. You can use the
+    variable as :code:`$(variableName)` to refer to the function result in subsequent tasks.
 
 Log Type
 ~~~~~~~~
 
-    For synchronous execution, returns the base64-encoded last 4 KB of log data produced by your Lambda 
-    function in the x-amz-log-result header.
-    
-    
+    For synchronous execution, returns the base64-encoded last 4 KB of log data produced by your |LAM|
+    function in the :code:`x-amz-log-result` header.
+
+

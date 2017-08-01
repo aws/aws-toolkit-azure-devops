@@ -13,22 +13,22 @@ Create an AWS Connection
 ########################
 
 .. meta::
-   :description: Create an AWS connection for AWS Tools for Team Services Extension
+   :description: Create an AWS connection for AWS Tools for Microsoft Visual Studio Team Services Task Reference
    :keywords: AWS, VSTS, Visual Studio Team Sevices Extension
 
-To deploy to AWS, an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services 
-using the Services tab in the Account Administration section. Add the AWS subscription to use in the 
-Build or Release Management definition by opening the Account Administration screen (gear icon on the 
+To deploy to AWS, an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services
+using the Services tab in the Account Administration section. Add the AWS subscription to use in the
+Build or Release Management definition by opening the Account Administration screen (gear icon on the
 top-right of the screen) and then click on the Services Tab. Click on :guilabel:`+ New Service Endpoint`.
 
    .. image:: images/CreateEndPoint.png
       :alt: Create an AWS Endpoint
-      
+
 Select the :guilabel:`AWS` endpoint type, and provide the following parameters:
 
 * Access Key ID
 * Secret Access Key
 * AWS region name
 
-For more information, see `About Access Keys <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console>`_. 
+For more information, see `About Access Keys <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console>`_.
 

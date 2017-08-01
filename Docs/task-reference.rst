@@ -10,51 +10,51 @@
 
 .. _task_reference:
 
-##############
-Task Reference
-##############
+##########################################
+AWS Tools for Team Services Task Reference
+##########################################
 
 .. meta::
    :description: Using the tasks in the AWS Tools for Team Services
    :keywords: extensions, tasks
 
-**AWS Tools for Team Services Tasks**
-
-The following topic list identifies the tasks included in the AWS Extensions for Team Services. 
+This reference describes the tasks that are included in the AWS Extensions
+for Team Services.
 
 .. _task_prerequisites:
 
 **Prerequisites**
 
-All the tasks require you have a AWS account. For information on setting up an account, see :ref:`setup-credentials`. 
-The first required parameter for each task is AWS Credentials. If you have not yet created an AWS Connection 
-click on the "+" to the right of the parameter. A  dialog appears asking you to enter your AWS access 
-key and secret key credentials, and to give the credentials a name. We suggest not using your root 
-credentials but using the credentials associated with an IAM user account. The secret key text is 
-automatically masked. Click :guilabel:`OK` to save the credentials into your Team Services account 
-and return to the configuration of the new task. The name for the new credentials has been entered 
-into the AWS Credentials field. Once created, those credentials are available in the pulldown list for 
-that parameter whenever you set up a task.
+* You must have an AWS account. For information on setting up an account,
+  see :ref:`setup-credentials`.
+* The first required parameter for each task is :code:`AWS Credentials`. If you haven't created an AWS
+Connection,
+  choose the "+" to the right of the parameter. A dialog box opens asking you to enter your AWS access
+  key and secret key credentials and to give the credentials a name. We do not recommend using your root
+  credentials. Instead, use the credentials associated with an IAM user account.
+  The secret key text is automatically masked. Choose :guilabel:`OK` to save the credentials
+  into your Team Services account and return to the configuration of the new task.
+  The name for the new credentials is entered into the :guilabel:`AWS Credentials` box.
+  Once created, those credentials are available in the parameter's list whenever you
+  set up a task.
 
        .. image:: images/AddNewAWSConnection.png
           :alt: Add an AWS connection
-        
+
 .. toctree::
    :maxdepth: 1
    :titlesonly:
 
-   aws-cli
-   awspowershell-module-script
-   cloudformation-create-update
-   cloudformation-delete-stack
-   cloudformation-execute-changeset
-   codedeploy-deployment
-   elastic-beanstalk-deploy
-   lambda-deploy
-   lambda-invoke
-   s3-download
-   s3-upload
-   send-message
+   |CLI| <aws-cli>
+   |CFNlong| Create-Update Stack <cloudformation-create-update>
+   |CFNlong| Delete Stack <cloudformation-delete-stack>
+   |CFNlong| Execute Change Set <cloudformation-execute-changeset>
+   |CDlong| Deployment <codedeploy-deployment>
+   |EBlong| Deployment <elastic-beanstalk-deploy>
+   |LAMlong| .NET Core Deployment <lambda-deploy>
+   |LAMlong| Invoke Function <lambda-invoke>
+   |S3| Download <s3-download>
+   |S3| Upload <s3-upload>
 
 
 

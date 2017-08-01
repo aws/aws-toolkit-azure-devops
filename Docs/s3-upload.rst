@@ -10,9 +10,9 @@
 
 .. _s3-upload:
 
-#############
-AWS S3 Upload
-#############
+################
+|S3| Upload Task
+################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
@@ -26,91 +26,100 @@ Uploads file and folder content to an |S3long| (S3) bucket.
 Description
 ===========
 
-This task accepts a source location from which to upload files to an |S3long| bucket. The target location in the bucket,
-or key prefix, can also be specified. If a target location is not supplied the files are uploaded to the bucket root. The files
-to be uploaded are specified using a set of one or more globbing patterns. The default pattern is :code:`**` which will cause all files
-in all folders at and beneath the source location to be uploaded, preserving the relative folder paths.
+This task accepts a source location from which to upload files to an |S3| bucket. The target location in the bucket,
+or key prefix, can also be specified. If you don't supply a target location, the files
+are uploaded to the bucket root. You specify the files
+to upload by using a set of one or more globbing patterns. The default pattern is :code:`**`, which
+causes all files in all folders at and beneath the source location to be uploaded, preserving the relative folder paths.
 
 The task can optionally create the bucket to which the content is to be uploaded.
 
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters 
-are noted by an '*', the others are optional.
+You can set the following parameters for the task. Required
+parameters are noted by an asterisk (*). Other parameters are optional.
 
 Displayname*
 ------------
-    
-    By default the name of the task, AWS S3 Upload. You can rename it or append the name of the 
+
+    The default name of the task, AWS S3 Upload. You can rename it or append the name of the
     associated S3 bucket to it.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on +, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|. 
+
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
+    |AWS-gr|.
+
 
 Bucket Name*
 ------------
 
-    The name of the bucket where the content will be uploaded. Bucket names must be globally unique. 
-    If the bucket does not exist it will be created.
+    The name of the bucket where the content will be uploaded. Bucket names must be globally unique.
+    If the bucket does not exist, it will be created.
 
 Source Folder
 -------------
 
-    The source folder that the content pattern(s) will be run against. You can browse for the folder. 
-    If not set the root of the repo is assumed. Use variables if the files are not in the repo. 
+    The source folder that the content patterns are run against. You can browse for the folder.
+    If not set, the root of the repository is assumed. Use variables if the files are not in the repo.
+
     Example: $(agent.builddirectory)
 
 Filename Patterns
 -----------------
 
-    One or more globbing patterns, one per line, that will be used to select the files in the 
-    source folder to be uploaded. Supports multiple lines of minimatch patterns. The default is :code:`**`, 
-    to select all files and subfolders of the source location.
+    One or more globbing patterns, one per line, that are used to select the files in the
+    source folder to be uploaded. Supports multiple lines of minimatch patterns.
+
+    Default: :code:`**` to select all files and subfolders of the source location.
 
 Target Folder*
 --------------
-    
-    The target folder (also known as key prefix) in the S3 bucket that all uploaded files will share, 
+
+    The target folder (also known as key prefix) in the S3 bucket that all uploaded files will share,
     or the folder path in the bucket. You can use variables.
-    
-    If not set the root of the bucket is assumed. 
+
+    If not set, the root of the bucket is assumed.
 
 Access Control
 --------------
 
-  The canned Access Control List (ACL) to apply to the uploaded content. See 
-  `Canned ACL <http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl>`_ for 
+  The canned access control list (ACL) to apply to the uploaded content. See
+  `Canned ACL <http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl>`_ for
   an explanation of the possible values.  The default is *Private*.
 
-Create S3 Bucket if it does not exist
+Create S3 Bucket If It Does Not Exist
 -------------------------------------
 
-  If checked and the specified bucket does not exist the task will attempt to automatically create it. 
-  The default is checked (auto-create).
+  If checked and the specified bucket does not exist, the task attempts to automatically create it.
+
+  Default: checked (auto-create).
 
 Advanced
 --------
-  
+
 Overwrite
 ~~~~~~~~~
 
-  If checked existing files in the bucket at the target location will be overwritten. The default is 
-  checked (overwrite).
+  If checked, existing files in the bucket at the target location are overwritten.
+
+  Default: checked (overwrite).
 
 Flatten Folders
 ~~~~~~~~~~~~~~~
 
-  If checked the relative subfolders of the files being uploaded are removed and all files are placed 
-  directly into the target location.  The default is unchecked (preserve folder hierachy)
- 
-    
-    
-	
+  If checked, the relative subfolders of the files being uploaded are removed and all files are placed
+  directly into the target location.
+
+  Default: unchecked (preserve folder hierachy).
+
+
+
+

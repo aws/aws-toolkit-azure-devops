@@ -10,9 +10,9 @@
 
 .. _lambda-deploy:
 
-###############################
-|LAMlong| .NET Core Deployment
-###############################
+###################################
+|LAMlong| .NET Core Deployment Task
+###################################
 
 .. meta::
    :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
@@ -21,107 +21,107 @@
 Synopsis
 ========
 
-Build and deploy a .NET Core |LAMlong| function.
+Builds and deploys a .NET Core |LAMlong| function.
 
 Description
 ===========
 
-Lambda-based applications (also referred to as serverless applications) are composed of functions 
-triggered by events. A typical serverless application consists of one or more functions triggered 
-by events such as object uploads to Amazon S3, Amazon SNS notifications, and API actions. Those 
-functions can stand alone or leverage other resources such as DynamoDB tables or Amazon S3 buckets. 
+|LAM|-based applications (also referred to as serverless applications) are composed of functions
+triggered by events. A typical serverless application consists of one or more functions triggered
+by events such as object uploads to |S3|, |SNS| notifications, and API actions. Those
+functions can stand alone or leverage other resources such as |DDBlong| tables or |S3| buckets.
 The most basic serverless application is simply a function.
 
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters 
-are noted by an '*', the others are optional.
-
+You can set the following parameters for the task. Required
+parameters are noted by an asterisk (*). Other parameters are optional.
 
 Displayname*
 ------------
-    
-    By default the name of the task, |LAMlong| .NET Core Deployment. You can rename it.
+
+    The default name of the task, |LAMlong| .NET Core Deployment. You can rename it.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on :guilabel:`+`, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.  
 
-Path to Lambda Project*
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
+    |AWS-gr|.
+
+Path to |LAM| Project*
 -----------------------
 
-    The relative path to the location of the Lambda project.
+    The relative path to the location of the |LAM| project.
 
 Command*
 --------
 
     Either *Lambda Deploy* or *Serverless Deploy*.
-    
-    *Lambda Deploy* performs a single Lambda function deloyment.
-    *Serverless Deploy* performs a deployment with AWS CloudFormation allowing multiple function deployment.
-    
-Lambda Deploy Command: Lambda Function Properties
--------------------------------------------------
-		
+
+    *Lambda Deploy* performs a single |LAM| function deloyment.
+    *Serverless Deploy* performs a deployment with |CFNlong|, allowing a multiple function deployment.
+
+|LAM| Deploy Command: |LAM| Function Properties
+-----------------------------------------------
+
 Function Name
 ~~~~~~~~~~~~~
 
-    The name of the Lambda function to invoke. You can also specify the |arnlong| (ARN) 
+    The name of the |LAM| function to invoke. You can also specify the |arnlong| (ARN)
     of the function.
 
 Function Role
 ~~~~~~~~~~~~~
 
-    The name of the |IAMlong| Role that provides access to AWS services to the deployed Lambda function.
+    The name of the |IAMlong| role that provides access to AWS services to the deployed |LAM| function.
 
 Function Handler
 ~~~~~~~~~~~~~~~~
 
-    The function within your code that Lambda calls to begin execution. Format is 
+    The function within your code that |LAM| calls to begin execution. The format is
     :code:`<assembly-name>::<type-name>::<function-name>`.
 
 Function Memory (MB)
 ~~~~~~~~~~~~~~~~~~~~
 
-    Memory allocated to the Lambda function. The value must be in multiples of 64.
+    The memory allocated to the |LAM| function. The value must be in multiples of 64.
 
 Function Timout (Seconds)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    The function execution time at which Lambda should terminate the function.
+    The function execution time at which |LAM| should terminate the function.
 
 Serverless Deploy Command: Serverless Application Properties
 ------------------------------------------------------------
-		
+
 Stack Name
 ~~~~~~~~~~
 
-    |CFNlong| stack name. A stack is a collection of AWS resources that you can manage as a single unit
+    |CFNlong| stack name. A stack is a collection of AWS resources that you can manage as a single unit.
 
 S3 Bucket
 ~~~~~~~~~
 
-    S3 bucket used to store the built project.
+    The S3 bucket used to store the built project.
 
 S3 Prefix
 ~~~~~~~~~
 
-    S3 object key prefix used for the objects uploaded to S3.
+    The S3 object key prefix used for the objects uploaded to |S3|.
 
 
 Advanced
 --------
-		
-Additional Lambda Tools Command Line Arguments
+
+Additional |LAM| Tools Command Line Arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Additional arguments when executing the 'dotnet lambda' command
+    Additional arguments you can use when executing the :code:`dotnet lambda` command.
 
 
