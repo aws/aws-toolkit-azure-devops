@@ -14,10 +14,10 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "46"
+        "Patch": "47"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "Send Message: $(messageTarget)",
+    "instanceNameFormat": "Send Message: $(topicArn) $(queueUrl)",
     "groups": [],
     "inputs": [
         {

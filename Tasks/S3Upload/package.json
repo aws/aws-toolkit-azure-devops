@@ -1,6 +1,6 @@
 {
     "name": "s3upload",
-    "version": "0.9.46",
+    "version": "0.9.47",
     "description": "Upload content to an AWS Simple Storage Service (S3) Bucket",
     "main": "S3Upload.js",
     "scripts": {

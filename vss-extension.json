@@ -1,14 +1,14 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "0.9.46",
+    "version": "0.9.47",
     "name": "AWS Tools for Microsoft Visual Studio Team Services",
     "scopes": [
         "vso.build",
         "vso.build_execute",
         "vso.release"
     ],
-    "description": "Tasks to support working with AWS including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and the AWS CLI.",
+    "description": "Tasks for working with AWS including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation, the AWSPowerShell module and the AWS CLI.",
     "publisher": "unknown",
     "public": false,
     "icons": {
@@ -33,8 +33,12 @@
         "CloudFormation",
         "AWS CLI",
         "Lambda",
+        "Serverless",
         "CodeDeploy",
-        "Elastic Beanstalk"
+        "Elastic Beanstalk",
+        "SNS",
+        "SQS",
+        "AWSPowerShell"
     ],
     "links": {
         "home": {
@@ -127,7 +131,7 @@
                 "displayName": "AWS",
                 "url": {
                     "displayName": "Server Url",
-                    "helpText": "Dummy url to satisfy the schema for a contribution.",
+                    "helpText": "AWS homepage.",
                     "value": "https://aws.amazon.com/",
                     "isVisible": "false"
                 },

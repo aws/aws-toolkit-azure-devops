@@ -8,7 +8,7 @@ var mopts = {
         'task',
         'publisher',
         'configuration',
-        'updateversioninfo'
+        'versionfield'
     ],
     boolean: [
         'release'
@@ -107,22 +107,21 @@ target.clean = function () {
 };
 
 // used in packaging builds to increment specific version components for the extension
-// and all tasks if the --updateversions switch was specified. Options to the switch
-// are:
-//     --updateversioninfo major - increments the major version, sets minor and patch to 0
-//     --updateversioninfo minor - increments the minor version, sets patch to 0
-//     --updateversioninfo patch - increments the patch version only
+// and all tasks. Options to the target are:
+//     --versionfield major - increments the major version, sets minor and patch to 0
+//     --versionfield minor - increments the minor version, sets patch to 0
+//     --versionfield patch - increments the patch version only
 //
 target.updateversioninfo = function() {
 
-    if (!options.updateversioninfo) {
+    if (!options.versionfield) {
         banner('> SKIPPING extension and task version update, --updateversioninfo not set');
         return;
     }
 
     var updateMajor = false;
     var updateMinor = false;
-    switch (options.updateversioninfo) {
+    switch (options.versionfield) {
         case 'patch': {
             banner('> Updating extension and task patch versions');
         }
@@ -141,7 +140,7 @@ target.updateversioninfo = function() {
         break;
 
         default:
-            throw new Error('Unknown version update option - ' + options.updateversioninfo + ', expected "major", "minor" or "patch"');
+            throw new Error('Unknown version update option - ' + options.versionfield + ', expected "major", "minor" or "patch"');
     }
 
     var versionInfoFile = path.join(__dirname, '_versioninfo.json');

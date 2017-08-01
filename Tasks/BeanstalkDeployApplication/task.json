@@ -2,9 +2,9 @@
     "id": "ACA12442-1E42-433A-91F4-82F8AA714DB1",
     "name": "BeanstalkDeployApplication",
     "friendlyName": "AWS Elastic Beanstalk Deployment",
-    "description": "Deploys an application to Amazon EC2 instance(s) using AWS Beanstalk.",
+    "description": "Deploys an application to Amazon EC2 instance(s) using AWS Elastic Beanstalk.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html)",
+    "helpMarkDown": "Please refer to [AWS Elastic Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html)",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "46"
+        "Patch": "47"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Elastic Beanstalk: $(applicationName)",
@@ -63,7 +63,7 @@
             "type": "filepath",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The path to web deploy archive that contains the application to deploy to Elastic Beanstalk.",
+            "helpMarkDown": "The path to the Web Deploy (msdeploy) archive that contains the application to deploy to Elastic Beanstalk.",
             "visibleRule": "applicationType = aspnet"
         },
         {
@@ -77,11 +77,11 @@
         },
         {
             "name": "applicationName",
-            "label": "Beanstalk Application Name",
+            "label": "Elastic Beanstalk Application Name",
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The name of the AWS Beanstalk application"
+            "helpMarkDown": "The name of the Elastic Beanstalk application"
         },
         {
             "name": "environmentName",
@@ -110,13 +110,13 @@
         "EventsComing": "Events from Elastic Beanstalk:",
         "FailedToFindEnvironment": "Failed to find environment when waiting for deployment completion",
         "FailedToDeploy": "Error deploy application version to Elastic Beanstalk",
-        "CreatingBeanstalkBundle": "Creating beanstalk deploymnent bundle at %s",
+        "CreatingBeanstalkBundle": "Creating Elastic Beanstalk deploymnent bundle at %s",
         "ArchiveSize": "Archive size: %s total bytes",
         "ZipError": "Zip Error: %s",
         "PublishingPath": "Publish Path: %s",
         "AddingAspNetCoreBundle": "Adding ASP.NET Core web app to beanstalk bundle, %s",
         "AddingFilesFromDotnetPublish": "Adding files from dotnet publish output folder.",
-        "AddingManifest": "Adding beanstalk manifest to beanstalk bundle",
+        "AddingManifest": "Adding Elastic Beanstalk manifest to bundle",
         "BundleComplete": "ASP.NET Core Beanstalk bundle complete",
         "ApplicationDoesNotExist": "Application %s does not exist",
         "EnvironmentDoesNotExist": "Environment %s does not exist for the application %s",

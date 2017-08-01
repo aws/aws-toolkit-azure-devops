@@ -2,7 +2,7 @@
     "id": "bdc51eaf-b608-42d5-8f1f-2aed6cf392ad",
     "name": "LambdaNETCoreDeploy",
     "friendlyName": "AWS Lambda .NET Core Deployment",
-    "description": "Build and deploy a .NET Core AWS Lambda function.",
+    "description": "Build and deploy a Serverless .NET Core application or AWS Lambda function.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)",
     "category": "Deploy",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "46"
+        "Patch": "47"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Lambda: $(functionName) $(stackName)",
@@ -111,7 +111,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "deployFunction",
-            "helpMarkDown": "Memory allocated to Lambda function. The value must be in multiples of 64."
+            "helpMarkDown": "Memory allocated to the Lambda function. The value must be in multiples of 64."
         },
         {
             "name": "functionTimeout",
