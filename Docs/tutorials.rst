@@ -18,62 +18,53 @@ Using the AWS Tools for Team Services
    :description: Programming information for the AWS Tools for Team Servicesa
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorial demonstrates how to create and run a Team Services project which uses the AWS S3 Upload task.
+The following tutorials demonstrate how to create and run Team Services projects which use the AWS tasks.
 
-Prerequisites
-=============
+**Prerequisites**
 
 * Either a Visual Studio Team Services account or Team Foundation Services locally installed.
 * An AWS account and preferably an associated IAM user account.
-* An S3 bucket.
+* Task specific permissions.
 
-To Install the AWS Extension for Visual Studio Team Services
-============================================================
+See :ref:`getting-started` for instructions to install the AWS Tools for Visual Studio Team Services
+and set up your credentials.
 
-Starting in the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_
-search on :samp:`AWS Tools`. The search results finds an extension published by Amazon Web Services 
-that contains a set of build tasks for AWS. If using Visual Studio Team Services online, click the :guilabel:`Install` 
-button to have the extension installed into your account. If using an on-premise Team Foundation Services setup, 
-click :guilabel:`Download` to install the extension locally.
+**Create a Project To Use AWS Tasks**
 
-       .. image:: images/AWSVSTSdownload.png
-          :alt: Download VSTS Extension
+Navigate to your Projects home page and click on :guilabel:`New Project`.
 
-To Create and Run a Project Using the AWS S3 Upload Task
-========================================================
+       .. image:: images/new-project.png
+          :alt: AWS Credential Field
 
-Navigate to your Projects home page and set up a simple ASP.Net Core project.  Choose to have the code 
-hosted in Team Services and complete setup of the initial project, including submitting a sample app 
-generated within Visual Studio on your workstation. The test environment is now ready to have a build pipeline defined.
-
-From the top menu bar in the project homepage click the :guilabel:`Build & Release link` to go to the Build Definitions 
-page for the project. Click the :guilabel:`New` button to generate a new build pipeline and select the ASP.NET Core 
-template to get started. This provides a default pipeline with the following default tasks:
-    
-       .. image:: images/startingbuilddefinition.png
-          :alt: New build pipeline
+Fill in the Create new project dialog and click :guilabel:`Create`.
           
+       .. image:: images/create-new-project-2.png
+          :alt: AWS Credential Field
           
-Add the S3 Upload Task to the Pipeline
--------------------------------------- 
+On the Get started page click on *or initialize with a README or gitignore*.  The :guilabel:`Add a README` 
+box appears as checked. Click :guilabel:`Initialize`.
 
-To capture the build output produced by the *Publish* task and upload it to Amazon S3 you need to add the 
-the AWS S3 Upload task between the existing *Publish* and *Publish Artifacts* tasks. Click the :guilabel:`Add Task` link. 
-In the right hand panel, scroll through the available tasks until you see the AWS S3 Upload task. 
-Click the :guilabel:`Add` button to add it to the build definition.
+       .. image:: images/create-new-project-4.png
+          :alt: AWS Credential Field
+ 
+The *Set up Build* page is displayed. Click on :guilabel:`Set up Build`.
 
-       .. image:: images/tasklist.png
-          :alt: AWS S3 Upload Task
-          
-If the new task is not added immediately after the *Publish* task, drag and drop it into position.
+       .. image:: images/create-new-project-setup-build.png
+          :alt: AWS Credential Field
+ 
+The *Choose a template* page is displayed. At this point you will select the template called for by the 
+tutorial.
 
-       .. image:: images/s3taskstart.png
-          :alt: AWS S3 Upload Task in Position
-          
-Configure the Task Credentials
-------------------------------
+       .. image:: images/create-new-project-select-template.png
+          :alt: AWS Credential Field
+           
+In the tutorial you will be walked through setting up the build process for that tutorial. When you add 
+the AWS task for that tutorial to the build process you will need to fill in it's property sheet. A property 
+common to all the AWS tasks worthy of explanation is *Task Credentials*.
 
-Tasks that make requests against AWS services such as AWS S3 need to have credentials configured. In 
+**Configure the Task Credentials**
+
+Tasks that make requests against AWS services need to have credentials configured. In 
 Team Systems terminology these are known as Service Endpoints. The AWS tasks provide a Service Endpoint 
 type called AWS to enable you to provide credentials. To quickly add credentials for this task, click 
 the :guilabel:`+` link to the right of the AWS Credentials field.
@@ -95,12 +86,9 @@ the options here might look familiar. Just as in those SDKs and tools you are co
 an AWS credential profile. Profiles have names, in this case  the value entered for :guilabel:`Connection name`, 
 that will be used to refer to this set of credentials in the task configuration. Enter the access key 
 and secret keys for the credentials you want to use and assign a name that you will remember, then 
-click :guilabel:`OK` to save them. The dialog will close and return to the S3 Upload task configuration with the 
+click :guilabel:`OK` to save them. The dialog will close and return to the task configuration with the 
 new credentials selected.
 
-       .. image:: images/credentialssaved.png
-          :alt: AWS Credential Dialog
-          
 The credentials you entered can be reused in other tasks, simply select the name you used to identify 
 the credentials in the AWS Credentials drop-down for the task you are configuring.
 
@@ -110,44 +98,12 @@ the credentials in the AWS Credentials drop-down for the task you are configurin
         IAM users, and then use those credentials. For more information, see 
         `Best Practices for Managing AWS Access Keys <https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html>`_.
 
-Configure Task Options
-----------------------
 
-With credentials configured and selected you can now complete the task configuration.
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
 
-* Set the region in which the bucket exists or will be created in, for example 'us-east-1', 'us-west-2' etc. 
-* Enter the name of the bucket (bucket names must be globally unique).
-* The :guilabel:`Source Folder` points to a folder in your build area that contains the content to be uploaded. 
-  Team Services provides a number of variables, detailed here, that you can use to avoid hard-coded paths. 
-  For this walk-through use the variable :guilabel:`Build.ArtifactStagingDirectory`, which is defined as 
-  *the local path on the agent where artifacts are copied to before being pushed to their destination*. 
-* :guilabel:`Filename Patterns` can contain one or more globbing patterns used to select files under the 
-  :guilabel:`Source Folder` for upload. The default value shown here selects all files recursively. Multiple patterns 
-  can be specified, one per line. For this walk-through, the preceeding task (*Publish*) emits a zip file 
-  containing the build which is the file that will be uploaded.
-* :guilabel:`Target Folder` is the *key prefix* in the bucket that will be applied to all of the uploaded files. 
-  You can think of this as a folder path. If no value is given the files are uploaded to the root of 
-  the bucket. Note that by default the relative folder hierarchy is preserved.
-* There are 3 additional options that can be set:
-    * Create S3 bucket if it does not exist. The task will fail if the bucket cannot be created.
-    * Overwrite (in the Advanced section) - this is selected by default.
-    * Flatten folders (also in Advanced section).          
-    
-Run the Build
--------------
-
-With the new task configured you are ready to run the build. Click the Save and queue option.
-
-       .. image:: images/s3taskfinal.png
-          :alt: Save and Queue the Build
-          
-During the build you will see the task output messages to the log.
-
-       .. image:: images/tasklog.png
-          :alt: Task Log
-
-That completes the walk-through. As you have seen using the new AWS tasks is easy to do.  Consider 
-expanding the project and adding other AWS tasks.
-
+   tutorial-eb
+   tutorial-s3
 
           

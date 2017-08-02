@@ -31,13 +31,16 @@ Prerequisites
 To Create and Run a Project Using the AWS S3 Upload Task
 ========================================================
 
-Navigate to your Projects home page and set up a simple ASP.Net Core project.  Choose to have the code 
-hosted in Team Services and complete setup of the initial project, including submitting a sample app 
-generated within Visual Studio on your workstation. The test environment is now ready to have a build pipeline defined.
+Create a VSTS project as described in :guilabel:`Create a Project To Use AWS Tasks` in :ref:`tutorials`.   
 
-From the top menu bar in the project homepage click the :guilabel:`Build & Release link` to go to the Build Definitions 
-page for the project. Click the :guilabel:`New` button to generate a new build pipeline and select the ASP.NET Core 
-template to get started. This provides a default pipeline with the following default tasks:
+On the *Choose a template* page select the basic *ASP.NET Core* template.  
+
+       .. image:: images/s3-select-template.png
+          :alt: Select a template
+
+On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.
+          
+This provides a default pipeline with the following default tasks:
     
        .. image:: images/startingbuilddefinition.png
           :alt: New build pipeline
@@ -46,8 +49,8 @@ template to get started. This provides a default pipeline with the following def
 Add the S3 Upload Task to the Pipeline
 -------------------------------------- 
 
-To capture the build output produced by the *Publish* task and upload it to Amazon S3 you need to add the 
-the AWS S3 Upload task between the existing *Publish* and *Publish Artifacts* tasks. Click the :guilabel:`Add Task` link. 
+To capture the build output produced by the *Publish* task and upload it to Amazon S3 you need to add  
+the *AWS S3 Upload* task between the existing *Publish* and *Publish Artifacts* tasks. Click the :guilabel:`Add Task` link. 
 In the right hand panel, scroll through the available tasks until you see the AWS S3 Upload task. 
 Click the :guilabel:`Add` button to add it to the build definition.
 
@@ -58,52 +61,36 @@ If the new task is not added immediately after the *Publish* task, drag and drop
 
        .. image:: images/s3taskstart.png
           :alt: AWS S3 Upload Task in Position
-          
-Configure the Task Credentials
-------------------------------
 
-Tasks that make requests against AWS services such as AWS S3 need to have credentials configured. In 
-Team Systems terminology these are known as Service Endpoints. The AWS tasks provide a Service Endpoint 
-type called AWS to enable you to provide credentials. To quickly add credentials for this task, click 
-the :guilabel:`+` link to the right of the AWS Credentials field.
+Click on the new task and you will see the properties for it in the right pane.
+
+Configure the Task Properties
+-----------------------------
+
+For the new task you need to make the following configurations changes.
+
+* AWS Credentials: To quickly add credentials for this task, click the :guilabel:`+` link to the 
+  right of the AWS Credentials field.
 
        .. image:: images/credentialsfield.png
           :alt: AWS Credential Field
-          
-Clicking the the gear link opens a new browser tab to a page where you can manage all your service 
-endpoints (including the new AWS type). You might add multiple service endpoints if you want to set 
-up multiple sets of AWS credentials for your tasks to use.
 
-Having clicked the :guilabel:`+` link a dialog window appears in which you can enter your AWS keys:
-
-       .. image:: images/credentialdialog.png
-          :alt: AWS Credential Dialog
-          
-If you have used any of the AWS SDKs or tools such as the AWS CLI or AWS Tools for Windows PowerShell 
-the options here might look familiar. Just as in those SDKs and tools you are constructing 
-an AWS credential profile. Profiles have names, in this case  the value entered for :guilabel:`Connection name`, 
-that will be used to refer to this set of credentials in the task configuration. Enter the access key 
-and secret keys for the credentials you want to use and assign a name that you will remember, then 
-click :guilabel:`OK` to save them. The dialog will close and return to the S3 Upload task configuration with the 
-new credentials selected.
-
-       .. image:: images/credentialssaved.png
-          :alt: AWS Credential Dialog
-          
-The credentials you entered can be reused in other tasks, simply select the name you used to identify 
-the credentials in the AWS Credentials drop-down for the task you are configuring.
-
-.. note::
+  Having clicked the :guilabel:`+` link a dialog window appears in which you can enter your AWS keys.
+  
+    .. note::
 
         We recommend that you do not use your account's root credentials. Instead, create one or more 
         IAM users, and then use those credentials. For more information, see 
         `Best Practices for Managing AWS Access Keys <https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html>`_.
 
-Configure Task Options
-----------------------
-
-With credentials configured and selected you can now complete the task configuration.
-
+        
+       .. image:: images/credentialdialog.png
+          :alt: AWS Credential Dialog
+          
+  Enter the access key and secret keys for the credentials you want to use and assign a name that 
+  you will remember, then click :guilabel:`OK` to save them. The dialog will close and return to the 
+  S3 Upload Task configuration with the new credentials selected.
+  
 * Set the region in which the bucket exists or will be created in, for example 'us-east-1', 'us-west-2' etc. 
 * Enter the name of the bucket (bucket names must be globally unique).
 * The :guilabel:`Source Folder` points to a folder in your build area that contains the content to be uploaded. 

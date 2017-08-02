@@ -22,7 +22,7 @@ AWS Tools for Microsoft Visual Studio Team Services
 
    welcome
    Getting Started <getting-started>
-   Using the AWS Tools for Team Services  <tutorial>
+   Using the AWS Tools for Team Services  <tutorials>
    Task Reference <task-reference>
    document-history
 

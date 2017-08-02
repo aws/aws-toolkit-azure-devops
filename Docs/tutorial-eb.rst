@@ -36,19 +36,15 @@ To Create and Run a Project Using the AWS Elastic Beanstalk Deployment Task
 Set Up a New Project and Build Process 
 --------------------------------------
 
-On the Setup Build screen click on :guilabel:`Setup Build`
+Create a VSTS project as described in :guilabel:`Create a Project To Use AWS Tasks` in :ref:`tutorials`.  
 
-       .. image:: images/set-up-build.png
-          :alt: Setup Build
-
-
-On the Choose a Template page select the ASP.NET template.  
+On the *Choose a template* page select the *ASP.NET Core (.NET Framework)* template.  
 
        .. image:: images/choose-template.png
           :alt: Select a template
           
-On the Build Process page set the Default agent queue fiels to Hosted VS2017.  Remove the 
-*Publish Artifact* task feom the end of the build definition.
+On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.  Remove the 
+*Publish Artifact* task from the end of the build definition.
 
        .. image:: images/build-definition.png
           :alt: Build Definition

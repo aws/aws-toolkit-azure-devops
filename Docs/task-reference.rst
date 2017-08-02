@@ -45,16 +45,18 @@ Connection,
    :maxdepth: 1
    :titlesonly:
 
-   |CLI| <aws-cli>
-   |CFNlong| Create-Update Stack <cloudformation-create-update>
-   |CFNlong| Delete Stack <cloudformation-delete-stack>
-   |CFNlong| Execute Change Set <cloudformation-execute-changeset>
-   |CDlong| Deployment <codedeploy-deployment>
-   |EBlong| Deployment <elastic-beanstalk-deploy>
-   |LAMlong| .NET Core Deployment <lambda-deploy>
-   |LAMlong| Invoke Function <lambda-invoke>
-   |S3| Download <s3-download>
-   |S3| Upload <s3-upload>
+   aws-cli
+   awspowershell-module-script
+   cloudformation-create-update
+   cloudformation-delete-stack
+   cloudformation-execute-changeset
+   codedeploy-deployment
+   elastic-beanstalk-deploy
+   lambda-deploy
+   lambda-invoke
+   s3-download
+   s3-upload
+   send-message
 
 
 

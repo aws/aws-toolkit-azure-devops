@@ -10,9 +10,9 @@
 
 .. _aws-cli:
 
-##########
-|CLI| Task
-##########
+#####
+|CLI|
+#####
 
 .. meta::
    :description: Using the tasks in the AWS Extensions to Visual Studio Team System
