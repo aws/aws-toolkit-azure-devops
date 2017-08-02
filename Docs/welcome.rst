@@ -18,35 +18,33 @@ AWS Tools for Microsoft Visual Studio Team Services
 ###################################################
 
 
-AWS Tools for Team Services is a Visual Studio Team Services extension that contains AWS build tasks.
-AWS Tools for Team Services is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
+AWS Tools for Microsoft Visual Studio Team Services (VSTS) is a Visual Studio Team Services extension that 
+contains AWS build tasks. AWS Tools for VSTS is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
 
-You can use these tasks in a Team Services project
-or in an on-premises Team Foundation Services environment. Use the tasks to build
-and release CI/CD pipelines to enable those pipelines to interact with AWS services. For example, a
-release pipeline can use the |CDlong| Application Deployment task to deploy the output from a build
-to a deployment group of |EC2| instances managed by |CDlong|. Other tasks enable you to transfer content
-between |S3| buckets and the build area in the pipeline (upload and download), or to launch a |CFNlong|
+You can use these tasks in a VSTS project or in an on-premises Team Foundation Services environment. 
+Use the tasks to build and release CI/CD pipelines to enable those pipelines to interact with AWS services. 
+For example, a release pipeline can use the |CDlong| Application Deployment task to deploy the output from a build 
+to a deployment group of |EC2| instances managed by |CDlong|. Other tasks enable you to transfer content 
+between |S3| buckets and the build area in the pipeline (upload and download), or to launch a |CFNlong| 
 stack or deploy to |AEBlong| environments.
 
 What's in This Guide
 ====================
 
-The *AWS Tools for Team Services User Guide* describes how to install and use the AWS extension for
-Visual Studio Team Services.
+The *AWS Tools for VSTS User Guide* describes how to install and use the AWS extension for VSTS.
 
 :ref:`getting-started`
 
-    How to set up a Visual Studio Team Services account, install the AWS extension for Team Services
+    How to set up a VSTS account, install the AWS extension for VSTS 
     and how to set up AWS credentials to use the tasks in the extension.
 
 :ref:`tutorials`
 
-    Demonstrates how to create and run a Team Services project utilizing a task installed with the
-    AWS extension for Visual Studio Team Services
+    Demonstrates how to create and run a VSTS project utilizing a task installed with the
+    AWS extension for VSTS.
 
 :ref:`task_reference`
 
-    Describes the tasks included in the AWS Tools for Team Services.
+    Describes the tasks included in the AWS Tools for VSTS.
 
 

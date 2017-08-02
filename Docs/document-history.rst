@@ -12,7 +12,8 @@
 Document History
 ################
 
-This topic describes important changes to the AWS Tools for Visual Studio Team Services over the course of its history.
+This topic describes important changes to the AWS Tools for Microsoft Visual Studio Team Services 
+over the course of its history.
 
 **This documentation was built on:** |today|
 

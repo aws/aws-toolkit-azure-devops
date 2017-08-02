@@ -10,24 +10,23 @@
 
 .. _tutorials:
    
-#####################################
-Using the AWS Tools for Team Services
-#####################################
+#############################################################
+Using the AWS Tools for Microsoft Visual Studio Team Services
+#############################################################
 
 .. meta::
-   :description: Programming information for the AWS Tools for Team Servicesa
+   :description: Programming information for the AWS Tools for Microsoft Visual Studio Team Servicesa
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorials demonstrate how to create and run Team Services projects which use the AWS tasks.
+The following tutorials demonstrate how to create and run Visual Studio Team Services (VSTS) projects which use the AWS tasks.
 
 **Prerequisites**
 
-* Either a Visual Studio Team Services account or Team Foundation Services locally installed.
+* Either a VSTS account or Team Foundation Services locally installed.
 * An AWS account and preferably an associated IAM user account.
 * Task specific permissions.
 
-See :ref:`getting-started` for instructions to install the AWS Tools for Visual Studio Team Services
-and set up your credentials.
+See :ref:`getting-started` for instructions to install the AWS Tools for VSTS and set up your credentials.
 
 **Create a Project To Use AWS Tasks**
 

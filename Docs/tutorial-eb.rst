@@ -15,17 +15,17 @@ Using the AWS Elastic Beanstalk Deployment Task
 ###############################################
 
 .. meta::
-   :description: Programming information for the AWS Tools for Team Servicesa
+   :description: Programming information for the AWS Tools for VSTSa
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorial demonstrates how to create and run a Team Services project which uses the AWS 
-Elastic Beanstalk Deployment Task.
+The following tutorial demonstrates how to create and run a Visual Studio Team Services (VSTS) project 
+which uses the *AWS Elastic Beanstalk Deployment* task.
 
 Prerequisites
 =============
 
-* Either a Visual Studio Team Services account or Team Foundation Services locally installed.
-* The AWS Extension for Visual Studio Team Services installed in Team Services.
+* Either a VSTS account or Team Foundation Services locally installed.
+* The AWS Extension for VSTS installed in VSTS.
 * An AWS account and preferably an associated IAM user account.
 * An Elastic Beanstalk applicaion and environment.
 

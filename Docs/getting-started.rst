@@ -10,38 +10,39 @@
 
 .. _getting-started:
 
-##############################################################
-Getting Started with AWS Tools for Visual Studio Team Services
-##############################################################
+###############
+Getting Started
+###############
 
-This section provides information about how to install, set up, and use the AWS Tools for Team Services.
+This section provides information about how to install, set up, and use the 
+AWS Tools for Microsoft Visual Studio Team Services.
 
-Set up a Visual Studio Team Services Account
-============================================
+Set up a VSTS Account
+=====================
 
-To use `Visual Studio Team Services <https://www.visualstudio.com/team-services/>`_,
-you need to sign up for
-`Visual Studio Team Services <https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services>`_.
+To use `Visual Studio Team Services (VSTS) <https://www.visualstudio.com/team-services/>`_,
+you need to sign up for a 
+`Visual Studio Team Services Account <https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services>`_.
 
-Install the AWS Tools for Team Services Extension
-=================================================
+Install the AWS Tools for VSTS Extension
+========================================
 
-The AWS extension for Team Services is installed from the
+The AWS extension for VSTS is installed from the
 `Visual Studio Marketplace <https://marketplace.visualstudio.com/vsts>`_.
-Sign in to your Visual Studio Team Services account, then search for *AWS Tools for Team Services*.
-Choose :guilabel:`Install` to download the extension for Visual Studio Team Services, or
-choose :guilabel:`Download` to download Team Foundation Server.
+Sign in to your VSTS account, then search for *AWS Tools for Microsoft Visual Studio Team Services*.
+Choose :guilabel:`Install` to download the extension for VSTS, or
+choose :guilabel:`Download` to download to Team Foundation Server.
 
        .. image:: images/AWSVSTSdownload.png
           :alt: Download Team Services Extension
 
 .. _setup-credentials:
 
-Set up AWS Credentials for the AWS Tools for Team Services
-==========================================================
+Set up AWS Credentials for the AWS Tools for VSTS
+=================================================
 
-To use the AWS Tools for Team Services to access AWS, you need an AWS account and AWS credentials. To increase the
-security of your AWS account, we recommend that you use an *|IAM| user* to provide access credentials
+To use the AWS Tools for VSTS to access AWS, you need an AWS account and AWS credentials. To increase the
+security of your AWS account, we recommend that you use an *IAM user* to provide access credentials
 instead of using your root account credentials.
 
 .. note:: For an overview of |IAM| users and why they are important for the security of your
@@ -57,11 +58,11 @@ instead of using your root account credentials.
        call and entering a PIN using your phone keypad.
 
 Next, create an IAM user and download (or copy) its secret access key. To use the
-AWS Tools for Team Services, you must have a set of valid AWS credentials, which consist of an access key
+AWS Tools for VSTS, you must have a set of valid AWS credentials, which consist of an access key
 and a secret key. These keys are used to sign programmatic web service requests and enable AWS to
 verify that the request comes from an authorized source. You can obtain a set of account credentials when
 you create your account. However, we recommend that you do not use these credentials with
-AWS Tools for Team Services. Instead, :iam-ug:`create one or more IAM users <Using_SettingUpUser>`,
+AWS Tools for VSTS. Instead, :iam-ug:`create one or more IAM users <Using_SettingUpUser>`,
 and use those credentials.
 
 .. topic:: To create an |IAM| user
@@ -90,15 +91,11 @@ and use those credentials.
 Create an AWS Connection
 ========================
 
-To use tasks in the extension, you must link an AWS subscription to Team Foundation
-Server
-or to Visual Studio Team Services.
-You can link your subscription from the :guilabel:`Services` tab in the Account Administration section.
-Add the AWS
-subscription to use in the
+To use tasks in the extension, you must link an AWS subscription to VSTS or Team Foundation
+Server. You can link your subscription from the :guilabel:`Services` tab 
+in the Account Administration section. Add the AWS subscription to use in the 
 Build or Release Management definition by opening the Account Administration page (choose the gear icon
-on
-the top right of the page), and then choose :guilabel:`Services`. Choose :guilabel:`+ New Service Endpoint`.
+on the top right of the page), and then choose :guilabel:`Services`. Choose :guilabel:`+ New Service Endpoint`. 
 Select the :guilabel:`AWS` endpoint type. This opens the :guilabel:`Add new AWS Connection` form.
 
    .. image:: images/AddNewAWSConnection.png
