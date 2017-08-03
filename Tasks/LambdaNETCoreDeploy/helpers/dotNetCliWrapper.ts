@@ -97,6 +97,6 @@ export class DotNetCliWrapper {
             env : this.env
         };
 
-        return await dotnet.exec(execOptions);
+        await dotnet.exec(execOptions);
     }
 }
