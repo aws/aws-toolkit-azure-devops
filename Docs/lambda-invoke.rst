@@ -15,18 +15,18 @@
 ##############################
 
 .. meta::
-   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
+   :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
    :keywords: extensions, tasks
 
 Synopsis
 ========
 
-Invokes an |LAMlong| function with a JSON payload.
+This task invokes an |LAMlong| function with a JSON payload.
 
 Description
 ===========
 
-Invokes a previously deployed |LAM| function.
+This task invokes a previously deployed |LAM| function.
 
 Parameters
 ==========

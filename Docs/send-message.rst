@@ -10,72 +10,76 @@
 
 .. _send-message:
 
-################
-AWS Send Message
-################
+#####################
+AWS Send Message Task
+#####################
 
 .. meta::
-   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
+   :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
    :keywords: extensions, tasks
 
 Synopsis
 ========
 
-Sends a message to a |SNSlong| (SNS) topic or a |SQSlong| (SQS) queue.
+Sends a message to an |SNSlong| (SNS) topic or to an |SQSlong| (SQS) queue.
 
 Description
 ===========
 
-This task accepts a message to be sent to either a |SNS| topic or a |SQS| queue. If the message is to be sent to
-a queue an optional delay (in seconds) can be configured. If no delay is specified the default associated with the queue
-is assumed.
+This task accepts a message to be sent to an |SNS| topic or to an |SQS| queue. If the message is to be
+sent to a queue, you can configure an optional delay (in seconds). If you don't specify a delay,
+the task assumes the default delay that is associated with the queue.
 
 Parameters
 ==========
 
-The following is the list of parameters available for you to set for the task. The required parameters
-are noted by an '*', the others are optional.
+You can set the following parameters for the task. Required
+parameters are noted by an asterisk (*). Other parameters are optional.
 
 Displayname*
 ------------
 
-    By default the name of the task, Send Message. The delivery target, topic or queue, is appended to the name.
+    The default name of the task, Send Message. The delivery target, topic or queue, is appended
+    to the name.
 
 AWS Credentials*
 ----------------
-    
-    Select the AWS credentials to use. If needed, click on +, and add a new AWS connection.
+
+    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
 
 AWS Region*
 -----------
-    
-    AWS region name, for more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|. 
+
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in
+    the |AWS-gr|.
 
 Message Target*
 ---------------
 
-    Select the target for the message, a topic in |SNS| or a |SQS| queue.
+    The target for the message, a topic in |SNS| or an |SQS| queue.
 
 Message
 -------
 
-    The message to be sent. For the permissable values see the respective service help pages for
+    The message to send. For the allowed values, see the respective service help pages for
     `Publish <https://docs.aws.amazon.com/sns/latest/api/API_Publish.html>`_ and
     `SendMessage <http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html>`_.
 
 Topic ARN*
 ----------
 
-    This is a required parameter only if Message Target is set to 'SNS Topic'. Supply the Amazon Resource Name (ARN) of the topic.
+    Required parameter only if :code:`Message Target` is set to :guilabel:`SNS Topic`. Supply the Amazon
+    Resource Name (ARN) of the topic.
 
 Queue Url*
 ----------
 
-    This is a required parameter only if Message Target is set to 'SQS Queue'. Supply the url of the queue.
+    Required parameter only if :code:`Message Target` is set to :guilabel:`SQS Queue`. Supply the URL
+    of the queue.
 
 Delay (seconds)
 ---------------
 
-    Available for |SQSlong| queues only. The length of time, in seconds, for which to delay a specific message. Valid
-    values: 0 to 900. Maximum: 15 minutes. Messages with a positive DelaySeconds value become available for processing
-    after the delay period is finished. If you don't specify a value, the default value for the queue applies.
+    Available for |SQS| queues only. The length of time, in seconds, to delay a specific message. Valid
+    values: 0 to 900. Maximum: 15 minutes. Messages with a positive :code:`DelaySeconds` value become available
+    for processing after the delay period is finished. If you don't specify a value, the default value for the queue applies.

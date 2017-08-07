@@ -15,18 +15,18 @@
 ########################
 
 .. meta::
-   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
+   :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
    :keywords: extensions, tasks
 
 Synopsis
 ========
 
-    Deploys an application to |EC2| instances by using |EB|.
+    This task deploys an application to |EC2| instances by using |EB|.
 
 Description
 ===========
 
-    Deploys and scales web applications and services developed with Java, .NET, PHP, Node.js, Python,
+    This task deploys and scales web applications and services developed with Java, .NET, PHP, Node.js, Python,
     Ruby, Go, and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.
 
     |EB| automatically handles the deployment, from capacity provisioning, load balancing,

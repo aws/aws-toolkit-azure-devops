@@ -15,7 +15,7 @@
 ########################
 
 .. meta::
-   :description: AWS Tools for Microsoft Visual Studio Team Services Task Reference
+   :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
    :keywords: extensions, tasks
 
 Synopsis

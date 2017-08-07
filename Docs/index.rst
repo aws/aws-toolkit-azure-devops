@@ -20,7 +20,7 @@ AWS Tools for Microsoft Visual Studio Team Services
    :maxdepth: 1
    :titlesonly:
 
-   welcome
+   Introduction <welcome>
    getting-started
    Using the Tools <tutorials>
    Task Reference <task-reference>
