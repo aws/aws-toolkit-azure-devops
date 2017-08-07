@@ -8,7 +8,7 @@
         "vso.build_execute",
         "vso.release"
     ],
-    "description": "Tasks for working with AWS including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation, the AWSPowerShell module and the AWS CLI.",
+    "description": "Tasks for Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and more, and running commands in the AWS Tools for Windows PowerShell module and the AWS CLI.",
     "publisher": "unknown",
     "public": false,
     "icons": {
@@ -175,7 +175,7 @@
         },
         {
             "id": "AWSCLI",
-            "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
+            "description": "Run an AWS CLI command against an AWS connection",
             "type": "ms.vss-distributed-task.task",
             "targets": [
                 "ms.vss-distributed-task.tasks"

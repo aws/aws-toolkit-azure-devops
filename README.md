@@ -1,5 +1,5 @@
 ## Overview
-The AWS Tools for Microsoft Visual Studio Team Services adds tasks to easily enable Team Services build and release pipelines to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS CLI and Tools for Windows PowerShell module. The tools include a new service endpoint type, *AWS*, to supply AWS credentials to the tasks at runtime.
+The AWS Tools for Microsoft Visual Studio Team Services adds tasks to easily enable Team Services build and release pipelines to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the Tools for Windows PowerShell module and AWS CLI. The tools include a new service endpoint type, *AWS*, to supply AWS credentials to the tasks at runtime.
 
 ## Highlighted Features
 ### Create an AWS Credentials Connection
