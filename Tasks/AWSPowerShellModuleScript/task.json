@@ -83,11 +83,11 @@
         },
         {
             "name": "autoInstallModule",
-            "label": "Automatically install the tools [Microsoft Windows build agents only]",
+            "label": "Automatically install the tools",
             "type": "boolean",
             "defaultValue": "true",
             "required": false,
-            "helpMarkDown": "Automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) before running the specified script. If unchecked and the module is not installed an error is thrown.\n\nThis option only applies to agents running on Microsoft Windows."
+            "helpMarkDown": "Automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) before running the specified script. If unchecked and the module is not installed the task will exit with an error."
         }
     ],
     "execution": {
