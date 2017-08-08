@@ -295,7 +295,7 @@ var ensureTool = function (name, versionArgs, validate) {
                 fail('expected version: ' + validate);
             }
         }
-        else {
+        else if(result.output) {
             validate(result.output.trim());
         }
     }

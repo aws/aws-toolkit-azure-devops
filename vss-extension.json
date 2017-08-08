@@ -51,14 +51,14 @@
             "uri": "https://aws.amazon.com/vsts"
         },
         "support": {
-            "uri": "https://github.com/awslabs/aws-vsts-extensions/issues"
+            "uri": "https://github.com/aws/aws-vststools/issues"
         },
         "repository": {
             "type": "git",
-            "uri": "https://github.com/awslabs/aws-vsts-extensions"
+            "uri": "https://github.com/aws/aws-vststools"
         },
         "issues": {
-            "uri": "https://github.com/awslabs/aws-vsts-extensions/issues"
+            "uri": "https://github.com/aws/aws-vststools/issues"
         }
     },
     "branding": {
@@ -149,7 +149,7 @@
                             {
                                 "id": "username",
                                 "name": "Access Key ID",
-                                "description": "AWS_ACCESS_KEY_ID",
+                                "description": "The AWS access key ID for signing programmatic requests.\nExample: AKIAIOSFODNN7EXAMPLE",
                                 "inputMode": "textbox",
                                 "validation": {
                                     "isRequired": true,
@@ -159,7 +159,7 @@
                             {
                                 "id": "password",
                                 "name": "Secret Access Key",
-                                "description": "AWS_SECRET_ACCESS_KEY",
+                                "description": "The AWS secret access key for signing programmatic requests.\nExample: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
                                 "inputMode": "passwordbox",
                                 "isConfidential": true,
                                 "validation": {
