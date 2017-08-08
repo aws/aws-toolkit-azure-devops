@@ -22,7 +22,7 @@ Please refer to [About Access Keys](https://aws.amazon.com/developers/access-key
 
 Upload files to an Amazon Simple Storage Service (S3) Bucket with the AWS S3 Upload task or download from a bucket with the AWS S3 Download task.
 
-![s3 upload](images/AWSFileUpload.png)
+![s3 upload](images/AWSS3Upload.png)
 
 ### Deploy .NET Core serverless applications or standalone functions to AWS Lambda
 
@@ -51,6 +51,10 @@ Deploy ASP.NET or ASP.NET Core applications to Elastic Beanstalk environments.
 Deploy applications to EC2 instances using CodeDeploy.
 
 ![CodeDeploy](images/AWSCodeDeploy.png)
+
+### Send a message to an Simple Notification Service Topic or Simple Queue Service Queue
+
+![SNSTopic](images/AWSSendMessage.png)
 
 ### Run AWS Tools for Windows PowerShell scripts
 
