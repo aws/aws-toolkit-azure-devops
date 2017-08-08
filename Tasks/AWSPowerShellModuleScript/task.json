@@ -102,8 +102,6 @@
         "InitializingContext": "Initializing credential and region context",
         "ExecutingScript": "Executing user script",
         "AWSPowerShellModuleNotFound": "The AWSPowerShell module is not installed on this machine and auto-install option not selected",
-        "IncompatiblePowerShellEditionFound": "Current PowerShell edition is not 'Desktop', required for the AWSPowerShell module. Abandoning automatic installation.",
-        "CompatiblePowerShellEditionFound": "Current PowerShell edition is 'Desktop' and is compatible with the AWSPowerShell module",
         "ErrorCheckingModuleInstall": "An error occurred while testing for module installation."
     }
 }

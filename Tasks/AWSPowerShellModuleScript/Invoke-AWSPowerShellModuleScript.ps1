@@ -12,15 +12,6 @@ function Test-AWSPowerShellModuleInstalled($installIfRequired)
 {
     try
     {
-        if (!($PSVersionTable.PSEdition -eq "Desktop"))
-        {
-            Write-Host (Get-VstsLocString -Key "IncompatiblePowerShellEditionFound")
-        }
-        else
-        {
-            Write-Host (Get-VstsLocString -Key "CompatiblePowerShellEditionFound")
-        }
-
         Write-Host (Get-VstsLocString -Key "VerifyingAWSPowerShellModuleInstalled")
 
         $awsModule = Get-Module -ListAvailable | ? { $_.Name -eq 'AWSPowerShell' }
