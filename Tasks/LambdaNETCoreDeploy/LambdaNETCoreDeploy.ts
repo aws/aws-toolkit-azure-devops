@@ -11,9 +11,11 @@ import path = require('path');
 import TaskParameters = require('./helpers/taskParameters');
 import TaskOperationHelpers = require('./helpers/taskOperations');
 
-tl.setResourcePath(path.join(__dirname, 'task.json'));
-
 function run(): Promise<void> {
+
+    tl.setResourcePath(path.join(__dirname, 'task.json'));
+    process.env.AWS_EXECUTION_ENV = 'VSTS-LambdaNETCoreDeploy';
+
     const taskParameters = new TaskParameters.NETCoreDeployTaskParameters();
     return TaskOperationHelpers.TaskOperations.deployFunction(taskParameters);
 }

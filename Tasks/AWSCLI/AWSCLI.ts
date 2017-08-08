@@ -12,6 +12,7 @@ import TaskOperationHelpers = require('./helpers/taskOperations');
 import TaskParameters = require('./helpers/taskParameters');
 
 tl.setResourcePath(path.join(__dirname, 'task.json'));
+process.env.AWS_EXECUTION_ENV = 'VSTS-AWSCLI';
 
 const taskParameters = new TaskParameters.CliTaskParameters();
 

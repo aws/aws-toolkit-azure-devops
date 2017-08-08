@@ -16,8 +16,7 @@ export function setUserAgentFromManifest(taskManifestFilePath: string) {
         const version = taskManifest.version;
         const userAgentString = 'AWS-VSTS/' +
                                 version.Major + '.' + version.Minor + '.' + version.Patch +
-                                ' Task/' +
-                                taskManifest.name;
+                                ' exec-env/VSTS-' + taskManifest.name;
 
         const AWS = require('aws-sdk/global');
         AWS.util.userAgent = () => {

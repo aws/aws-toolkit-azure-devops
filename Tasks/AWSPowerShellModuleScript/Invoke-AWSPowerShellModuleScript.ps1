@@ -8,6 +8,9 @@
 
 Trace-VstsEnteringInvocation $MyInvocation
 Import-VstsLocStrings "$PSScriptRoot\Task.json"
+
+$env:AWS_EXECUTION_ENV = 'VSTS-AWSPowerShellModuleScript'
+
 function Test-AWSPowerShellModuleInstalled($installIfRequired)
 {
     try
