@@ -10,15 +10,16 @@
 
 .. _tutorials:
    
-#############################################################
-Using the AWS Tools for Microsoft Visual Studio Team Services
-#############################################################
+############################
+Using the AWS Tools for VSTS
+############################
 
 .. meta::
-   :description: Programming information for the AWS Tools for Microsoft Visual Studio Team Servicesa
+   :description: Programming information for the AWS Tools for Microsoft Visual Studio Team Services
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorials demonstrate how to create and run Visual Studio Team Services (VSTS) projects which use the AWS tasks.
+The following tutorials demonstrate how to create and run AWS Tools for Microsoft Visual Studio Team 
+Services projects which use the AWS tasks.
 
 **Prerequisites**
 
@@ -57,46 +58,6 @@ tutorial.
        .. image:: images/create-new-project-select-template.png
           :alt: AWS Credential Field
            
-In the tutorial you will be walked through setting up the build process for that tutorial. When you add 
-the AWS task for that tutorial to the build process you will need to fill in it's property sheet. A property 
-common to all the AWS tasks worthy of explanation is *Task Credentials*.
-
-**Configure the Task Credentials**
-
-Tasks that make requests against AWS services need to have credentials configured. In 
-Team Systems terminology these are known as Service Endpoints. The AWS tasks provide a Service Endpoint 
-type called AWS to enable you to provide credentials. To quickly add credentials for this task, click 
-the :guilabel:`+` link to the right of the AWS Credentials field.
-
-       .. image:: images/credentialsfield.png
-          :alt: AWS Credential Field
-          
-Clicking the the gear link opens a new browser tab to a page where you can manage all your service 
-endpoints (including the new AWS type). You might add multiple service endpoints if you want to set 
-up multiple sets of AWS credentials for your tasks to use.
-
-Having clicked the :guilabel:`+` link a dialog window appears in which you can enter your AWS keys:
-
-       .. image:: images/credentialdialog.png
-          :alt: AWS Credential Dialog
-          
-If you have used any of the AWS SDKs or tools such as the AWS CLI or AWS Tools for Windows PowerShell 
-the options here might look familiar. Just as in those SDKs and tools you are constructing 
-an AWS credential profile. Profiles have names, in this case  the value entered for :guilabel:`Connection name`, 
-that will be used to refer to this set of credentials in the task configuration. Enter the access key 
-and secret keys for the credentials you want to use and assign a name that you will remember, then 
-click :guilabel:`OK` to save them. The dialog will close and return to the task configuration with the 
-new credentials selected.
-
-The credentials you entered can be reused in other tasks, simply select the name you used to identify 
-the credentials in the AWS Credentials drop-down for the task you are configuring.
-
-.. note::
-
-        We recommend that you do not use your account's root credentials. Instead, create one or more 
-        IAM users, and then use those credentials. For more information, see 
-        `Best Practices for Managing AWS Access Keys <https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html>`_.
-
 
 .. toctree::
    :maxdepth: 1
