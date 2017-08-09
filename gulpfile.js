@@ -36,13 +36,12 @@ gulp.task('test', function (cb) {
     make('test', cb);
 });
 
-gulp.task('updateversioninfo', function(cb) {
-    make('updateversioninfo', cb);
+gulp.task('updateversion', function(cb) {
+    make('updateversion', cb);
 });
 
 gulp.task('package', function (cb) {
     make('clean', cb) &&
-    make('updateversioninfo', cb) &&
     make('build', cb) &&
     make('test', cb) &&
     make('package', cb);

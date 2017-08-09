@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "50"
+        "Patch": "51"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Send Message: $(topicArn) $(queueUrl)",

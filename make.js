@@ -27,6 +27,7 @@ var os = require('os');
 var path = require('path');
 var semver = require('semver');
 var util = require('./make-util');
+var filenormalize = require('file-normalize');
 
 // util functions
 var cd = util.cd;
@@ -60,6 +61,10 @@ var commonBuildTasksRoot = path.join(buildTasksRoot, 'Common');
 var buildTestsRoot = path.join(buildRoot, 'Tests');
 var packageRoot = path.join(__dirname, '_package');
 var packageTasksRoot = path.join(packageRoot, 'Tasks');
+
+// global file names
+var masterVersionFile = '_versioninfo.json';
+var manifestFile = 'vss-extension.json';
 
 // node min version
 var minNodeVer = '4.0.0';
@@ -106,16 +111,18 @@ target.clean = function () {
     }
 };
 
-// used in packaging builds to increment specific version components for the extension
-// and all tasks. Options to the target are:
+// Updates the root _versionInfo.json file, incrementing specific version components
+// for the extension. As the extension and tasks build, the data contained in this
+// master version file are stamped into the various manifests.
+// Options to specify the version field to update:
 //     --versionfield major - increments the major version, sets minor and patch to 0
 //     --versionfield minor - increments the minor version, sets patch to 0
 //     --versionfield patch - increments the patch version only
 //
-target.updateversioninfo = function() {
+target.updateversion = function() {
 
     if (!options.versionfield) {
-        banner('> SKIPPING extension and task version update, --updateversioninfo not set');
+        banner('> SKIPPING _versioninfo.json update, --updateversioninfo not set');
         return;
     }
 
@@ -123,18 +130,18 @@ target.updateversioninfo = function() {
     var updateMinor = false;
     switch (options.versionfield) {
         case 'patch': {
-            banner('> Updating extension and task patch versions');
+            banner('> Updating patch version only');
         }
         break;
 
         case 'minor': {
-            banner('> Updating extension and task minor versions');
+            banner('> Updating minor version data, patch level reset to 0');
             updateMinor = true;
         }
         break;
 
         case 'major': {
-            banner('> Updating extension and task major versions');
+            banner('> Updating major version data, minor and patch levels forced to 0');
             updateMajor = true;
         }
         break;
@@ -143,9 +150,9 @@ target.updateversioninfo = function() {
             throw new Error('Unknown version update option - ' + options.versionfield + ', expected "major", "minor" or "patch"');
     }
 
-    var versionInfoFile = path.join(__dirname, '_versioninfo.json');
+    var versionInfoFile = path.join(__dirname, masterVersionFile);
     var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
-    console.log(`> Previous version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
+    console.log(`> ${masterVersionFile} previous version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
     if (updateMajor) {
         versionInfo.Major = (parseInt(versionInfo.Major) + 1).toString();
         versionInfo.Minor = '0';
@@ -156,42 +163,63 @@ target.updateversioninfo = function() {
     } else {
         versionInfo.Patch = (parseInt(versionInfo.Patch) + 1).toString();
     }
-    console.log(`> New version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
-    fs.writeFileSync(versionInfoFile, JSON.stringify(versionInfo, null, 4) + '\n');
+    console.log(`> ${masterVersionFile} new version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
+    serializeToFile(versionInfo, versionInfoFile);
+}
 
-    var extensionManifestPath = path.join(__dirname, 'vss-extension.json');
-    var extensionJson = JSON.parse(fs.readFileSync(extensionManifestPath));
+// Updates the vss-extension manifest version based on data contained in the root
+// _versioninfo.json control file.
+function versionstampExtension(extensionManifest, versionInfo) {
+    console.log(`> Updating version data for extension from master version file ${masterVersionFile}`);
+
+    var extensionManifestPath = path.join(__dirname, extensionManifest);
+    var oldContent = fs.readFileSync(extensionManifestPath);
+    var extensionJson = JSON.parse(oldContent);
     extensionJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
-    console.log(`> extension version updated to ${extensionJson.version}`);
-    fs.writeFileSync(extensionManifestPath, JSON.stringify(extensionJson, null, 4));
+    console.log(`> ...extension manifest updated to version ${extensionJson.version}`);
+    serializeToFile(extensionJson, extensionManifestPath);
 
     var packageJsonPath = path.join(__dirname, 'package.json');
     updatePackageJsonVersion(packageJsonPath, versionInfo);
-
-    taskList.forEach(function (taskName) {
-        var taskJsonPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
-        var taskJson = JSON.parse(fs.readFileSync(taskJsonPath));
-        taskJson.version.Major = versionInfo.Major;
-        taskJson.version.Minor = versionInfo.Minor;
-        taskJson.version.Patch = versionInfo.Patch;
-        console.log(`> task ${taskName} version updated to ${taskJson.version.Major}.${taskJson.version.Minor}.${taskJson.version.Patch}`);
-        fs.writeFileSync(taskJsonPath, JSON.stringify(taskJson, null, 4));
-
-        var packageJsonPath = path.join(__dirname, 'Tasks', taskName, 'package.json');
-        if (fs.existsSync(packageJsonPath)) {
-            updatePackageJsonVersion(packageJsonPath, versionInfo);
-        }
-    });
 }
 
+// Updates the task manifest and related package.json file based on data contained
+// in the root _versioninfo.json control file.
+function versionstampTask(taskName, versionInfo) {
+    console.log(`> Updating version data for task ${taskName} from master version file ${masterVersionFile}`)
+
+    var taskManifestPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
+    var oldContent = fs.readFileSync(taskManifestPath);
+    var taskManifest = JSON.parse(oldContent);
+    taskManifest.version.Major = versionInfo.Major;
+    taskManifest.version.Minor = versionInfo.Minor;
+    taskManifest.version.Patch = versionInfo.Patch;
+    console.log(`> ...stamped version ${taskManifest.version.Major}.${taskManifest.version.Minor}.${taskManifest.version.Patch} into task manifest`);
+    serializeToFile(taskManifest, taskManifestPath);
+
+    var packageJsonPath = path.join(__dirname, 'Tasks', taskName, 'package.json');
+    if (fs.existsSync(packageJsonPath)) {
+        updatePackageJsonVersion(packageJsonPath, versionInfo);
+    }
+}
+
+// Update version info in the specified package.json file
 function updatePackageJsonVersion(packageJsonPath, versionInfo) {
-    var packageJson = JSON.parse(fs.readFileSync(packageJsonPath));
+    var oldContent = fs.readFileSync(packageJsonPath);
+    var packageJson = JSON.parse(oldContent);
     packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
-    console.log(`> ${packageJsonPath} version updated to ${packageJson.version}`);
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4));
+    console.log(`> ...stamped version ${packageJson.version} into package.json`);
+    serializeToFile(packageJson, packageJsonPath);
 }
 
-// builds the extension into a _build folder. If the --release switch is specified
+// Common handler to serialize json manifests to file, ensuring we get normalized
+// line terminators and blank line at end of file.
+function serializeToFile(jsonObj, filePath) {
+    var content = filenormalize.normalizeEOL(JSON.stringify(jsonObj, null, 4) + '\n');
+    fs.writeFileSync(filePath, content);
+}
+
+// Builds the extension into a _build folder. If the --release switch is specified
 // the build is generated for production release (no map files, npm modules set to
 // production only)
 target.build = function() {
@@ -205,10 +233,21 @@ target.build = function() {
         }
     });
 
+    // load the master version info ready for stamping into the extension
+    // and task manifests
+    var versionInfoFile = path.join(__dirname, '_versioninfo.json');
+    var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
+
+    // stamp the master version into the extension manifest
+    versionstampExtension(manifestFile, versionInfo);
+
     taskList.forEach(function(taskName) {
         banner('> Building: ' + taskName);
         var taskPath = path.join(sourceTasksRoot, taskName);
         ensureExists(taskPath);
+
+        // stamp the master version into the task manifest and package.json files
+        versionstampTask(taskName, versionInfo);
 
         // load the task.json
         var outDir;
@@ -326,12 +365,15 @@ target.build = function() {
     banner('Build successful', true);
 }
 
+// NOTE: testing via Mocha or some other suitable framework will be added
+// in a future release. This target is retained as reference in preparation
+// for that work.
 //
-// Runs tests for the scope of tasks being built
-// if a root-level Tests folder exists.
+// Runs tests for the scope of tasks being built if a root-level Tests folder
+// exists.
 // npm test
 // node make.js test
-// node make.js test --task ShellScript --suite L0
+// node make.js test --task taskName --suite L0
 target.test = function() {
     var testsPath = path.join(__dirname, 'Tests');
     if (!pathExists(testsPath))
@@ -378,7 +420,6 @@ target.package = function() {
     mkdir(packageRoot);
 
     // stage license, readme and the extension manifest file
-    var manifestFile = 'vss-extension.json';
     var packageRootFiles =  [ manifestFile, 'LICENSE', 'README.md' ];
     packageRootFiles.forEach(function(item) {
         cp(path.join(__dirname, item), packageRoot);
