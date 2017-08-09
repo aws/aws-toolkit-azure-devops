@@ -28,7 +28,7 @@
   "bugs": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues",
   "homepage": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions",
   "devDependencies": {
-    "@types/node": "^8.0.19",
+    "@types/node": "^8.0.20",
     "adm-zip": "0.4.7",
     "clean-webpack-plugin": "^0.1.16",
     "file-loader": "^0.11.2",
@@ -55,7 +55,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.95.0",
+    "aws-sdk": "2.94.0",
     "shelljs": "^0.7.8",
     "vsts-task-lib": "^2.0.6"
   }
