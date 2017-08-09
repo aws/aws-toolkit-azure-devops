@@ -1,62 +1,62 @@
 {
-    "name": "aws-vsts-tools",
-    "version": "0.9.50",
-    "description": "AWS Tools for Visual Studio Team Services",
-    "private": true,
-    "main": "gulpfile.js",
-    "scripts": {
-        "build": "node make.js build",
-        "test": "node make.js test",
-        "package": "node make.js package",
-        "clean": "node make.js clean"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"
-    },
-    "keywords": [
-        "AWS",
-        "S3",
-        "CloudFormation",
-        "CLI",
-        "Lambda",
-        "CodeDeploy",
-        "EC2"
-    ],
-    "author": "Amazon Web Services LLC",
-    "license": "Apache",
-    "bugs": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues",
-    "homepage": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions",
-    "devDependencies": {
-        "@types/node": "^8.0.19",
-        "adm-zip": "0.4.7",
-        "clean-webpack-plugin": "^0.1.16",
-        "file-loader": "^0.11.2",
-        "grunt": "^1.0.0",
-        "grunt-contrib-copy": "*",
-        "grunt-contrib-jasmine": "*",
-        "grunt-exec": "*",
-        "gulp": "3.9.1",
-        "gulp-util": "3.0.8",
-        "jasmine": "^2.5.1",
-        "minimist": "^1.2.0",
-        "mocha": "3.5.0",
-        "modclean": "^2.1.0",
-        "node-uuid": "^1.4.8",
-        "rimraf": "^2.5.4",
-        "semver": "^5.4.1",
-        "sync-request": "^4.1.0",
-        "tfx-cli": "^0.4.9",
-        "ts-loader": "^2.2.2",
-        "tslint": "^5.5.0",
-        "typescript": "^2.4.1",
-        "validator": "^8.0.0",
-        "webpack": "^3.1.0",
-        "webpack-node-externals": "^1.6.0"
-    },
-    "dependencies": {
-        "aws-sdk": "^2.94.0",
-        "shelljs": "^0.7.8",
-        "vsts-task-lib": "^2.0.6"
-    }
+  "name": "aws-vsts-tools",
+  "version": "0.9.50",
+  "description": "AWS Tools for Visual Studio Team Services",
+  "private": true,
+  "main": "gulpfile.js",
+  "scripts": {
+    "build": "node make.js build",
+    "test": "node make.js test",
+    "package": "node make.js package",
+    "clean": "node make.js clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions"
+  },
+  "keywords": [
+    "AWS",
+    "S3",
+    "CloudFormation",
+    "CLI",
+    "Lambda",
+    "CodeDeploy",
+    "EC2"
+  ],
+  "author": "Amazon Web Services LLC",
+  "license": "Apache",
+  "bugs": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues",
+  "homepage": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions",
+  "devDependencies": {
+    "@types/node": "^8.0.19",
+    "adm-zip": "0.4.7",
+    "clean-webpack-plugin": "^0.1.16",
+    "file-loader": "^0.11.2",
+    "grunt": "^1.0.0",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-jasmine": "*",
+    "grunt-exec": "*",
+    "gulp": "3.9.1",
+    "gulp-util": "3.0.8",
+    "jasmine": "^2.5.1",
+    "minimist": "^1.2.0",
+    "mocha": "3.5.0",
+    "modclean": "^2.1.0",
+    "node-uuid": "^1.4.8",
+    "rimraf": "^2.5.4",
+    "semver": "^5.4.1",
+    "sync-request": "^4.1.0",
+    "tfx-cli": "^0.4.9",
+    "ts-loader": "^2.2.2",
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.1",
+    "validator": "^8.0.0",
+    "webpack": "^3.1.0",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.95.0",
+    "shelljs": "^0.7.8",
+    "vsts-task-lib": "^2.0.6"
+  }
 }

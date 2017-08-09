@@ -9,6 +9,6 @@
   "author": "Amazon Web Services",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.88.0"
+      "aws-sdk": "^2.95.0"
   }
 }
