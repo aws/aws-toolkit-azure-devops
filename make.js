@@ -8,7 +8,8 @@ var mopts = {
         'task',
         'publisher',
         'configuration',
-        'versionfield'
+        'versionfield',
+        'publishtoken'
     ],
     boolean: [
         'release'
@@ -476,4 +477,26 @@ target.package = function() {
     run(tfxcmd);
 
     banner('Packaging successful', true);
+}
+
+// used by CI that does official publish
+target.publish = function() {
+    banner('Publishing extension');
+
+    if (!options.publishtoken) {
+        fail('Missing --publishtoken switch');
+    }
+
+    var packages = matchFind('*.vsix', packageRoot, { noRecurse: true, matchBase: true });
+    if (packages.length != 1) {
+        fail(`Found ${packages.length} vsix files in ${packageRoot} folder, only expected one!`);
+    }
+
+    var vsixPackage = packages[0];
+    console.log(`> Publishing ${vsixPackage}`);
+
+    var tfxcmd = 'tfx extension publish --vsix ' + vsixPackage + ' --token ' + options.publishtoken;
+    run(tfxcmd);
+
+    banner('Publishing successful', true);
 }
