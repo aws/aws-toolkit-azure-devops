@@ -4,7 +4,7 @@
     "friendlyName": "AWS Lambda Invoke Function",
     "description": "Invokes an AWS Lambda function with a JSON payload.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)",
+    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "51"
+        "Patch": "52"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Invoke Lambda Function: $(functionName)",
@@ -33,7 +33,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
         },
         {
             "name": "regionName",
@@ -41,7 +41,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
         },
         {
             "name": "functionName",
@@ -65,7 +65,7 @@
             "defaultValue": "RequestResponse",
             "options": {
                 "Event": "Asynchronous execution",
-                "RequestResponse": "Synchronous execution, returning the output from the function"
+                "RequestResponse": "Synchronous execution, returning the output from the function."
             }
         },
         {

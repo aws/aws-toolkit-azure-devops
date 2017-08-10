@@ -2,9 +2,9 @@
     "id": "5abe1a20-85ba-44f4-a875-a24761c462e4",
     "name": "AWSPowerShellModuleScript",
     "friendlyName": "AWS Tools for Windows PowerShell Script",
-    "description": "Run a PowerShell script that uses the AWS Tools for Windows PowerShell",
+    "description": "Run a PowerShell script that uses the AWS Tools for Windows PowerShell module.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module.",
+    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module. The module can be automatically installed if not already present.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -16,7 +16,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "51"
+        "Patch": "52"
     },
     "minimumAgentVersion": "2.115.0",
     "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",
@@ -34,7 +34,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
         },
         {
             "name": "regionName",
@@ -42,7 +42,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
         },
         {
             "name": "scriptType",
@@ -50,10 +50,10 @@
             "label": "Type",
             "defaultValue": "filePath",
             "required": false,
-            "helpMarkDown": "Source of the script to run: File Path or Inline",
+            "helpMarkDown": "The source of the script to run. You can choose a file containing the script or enter the script inline in the task's configuration.",
             "options": {
-                "filePath": "File Path",
-                "inline": "Inline"
+                "filePath": "Script file",
+                "inline": "Inline Script"
             }
         },
         {
@@ -63,7 +63,7 @@
             "defaultValue": "",
             "required": true,
             "visibleRule": "scriptType = filePath",
-            "helpMarkDown": "Path of the script to execute. Must be a fully qualified path or relative to $(System.DefaultWorkingDirectory)."
+            "helpMarkDown": "The path of the script to execute. Must be a fully qualified path or relative to $(System.DefaultWorkingDirectory)."
         },
         {
             "name": "arguments",
@@ -72,7 +72,7 @@
             "visibleRule": "scriptType = filePath",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Arguments passed to the script.  Either ordinal parameters or named parameters"
+            "helpMarkDown": "Optional arguments to pass to the script. You can specify either ordinal or named parameters."
         },
         {
             "name": "inlineScript",
@@ -80,7 +80,7 @@
             "label": "Inline Script",
             "defaultValue": "# You can write your powershell script inline here (the AWSPowerShell module will automatically import).\n\n Write-Host \"Hello World\"",
             "required": true,
-            "helpMarkDown": "",
+            "helpMarkDown": "The script to execute.",
             "visibleRule": "scriptType = inline",
             "properties": {
                 "resizable": "true",
@@ -94,7 +94,7 @@
             "type": "boolean",
             "defaultValue": "true",
             "required": false,
-            "helpMarkDown": "Tests for and automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) if required before running the script."
+            "helpMarkDown": "Tests for and automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) if not already installed, before running the script."
         },
         {
             "name": "errorActionPreference",
@@ -133,7 +133,7 @@
             "label": "Working Directory",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "Working directory where the script is run.",
+            "helpMarkDown": "The working directory where the script is run.",
             "groupName": "advanced"
         }
     ],
@@ -147,12 +147,12 @@
     },
     "messages": {
         "GeneratingScript": "Generating script.",
-        "TestingModuleInstalled": "Checking AWSPowerShell module is installed",
-        "InstallingModule": "...module not found, installing latest",
+        "TestingModuleInstalled": "Checking AWSPowerShell module is installed.",
+        "InstallingModule": "...module not found, installing latest version.",
         "InitializingContext": "Initializing AWS credentials for script. Region context set to {0}.",
         "PS_ExitCode": "PowerShell exited with code '{0}'.",
         "PS_FormattedCommand": "Formatted command: {0}",
-        "PS_InvalidErrorActionPreference": "Invalid ErrorActionPreference '{0}'. The value must be one of: 'Stop', 'Continue', or 'SilentlyContinue'",
+        "PS_InvalidErrorActionPreference": "Invalid ErrorActionPreference '{0}'. The value must be one of: 'Stop', 'Continue', or 'SilentlyContinue'.",
         "PS_InvalidFilePath": "Invalid file path '{0}'. A path to a .ps1 file is required.",
         "PS_UnableToDetermineExitCode": "Unexpected exception. Unable to determine the exit code from powershell."
     }

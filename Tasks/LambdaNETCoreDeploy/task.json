@@ -2,9 +2,9 @@
     "id": "bdc51eaf-b608-42d5-8f1f-2aed6cf392ad",
     "name": "LambdaNETCoreDeploy",
     "friendlyName": "AWS Lambda .NET Core Deployment",
-    "description": "Build and deploy a Serverless .NET Core application or AWS Lambda function.",
+    "description": "Build and deploy a Serverless .NET Core application or AWS Lambda function",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/)",
+    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "51"
+        "Patch": "52"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Lambda: $(functionName) $(stackName)",
@@ -44,7 +44,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
         },
         {
             "name": "regionName",
@@ -52,7 +52,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
         },
         {
             "name": "lambdaProjectPath",
@@ -60,18 +60,18 @@
             "type": "filepath",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The relative path to the location of the Lambda project"
+            "helpMarkDown": "The relative path to the location of the Lambda project to deploy."
         },
         {
             "name": "command",
-            "type": "pickList",
-            "label": "Command",
+            "type": "radio",
+            "label": "Deployment Type",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The type of deployment. \"Lambda Deploy\" performs a single Lambda function deployment. \"Serverless Deploy\" performs a deployment with AWS CloudFormation allowing multiple function deployment.",
+            "helpMarkDown": "The type of deployment to perform. \"Function\" deploys a single function to AWS Lambda. \"Serverless application\" performs a deployment using AWS CloudFormation, allowing multiple function deployment.",
             "options": {
-                "deployFunction": "Lambda Deploy",
-                "deployServerless": "Serverless Deploy"
+                "deployFunction": "Function",
+                "deployServerless": "Serverless application"
             },
             "properties": {
                 "EditableOptions": "False"
@@ -84,7 +84,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "deployFunction",
-            "helpMarkDown": "The name of the Lambda function to invoke. You can also specify the Amazon Resource Name (ARN) of the function."
+            "helpMarkDown": "The name for the deployed Lambda function."
         },
         {
             "name": "functionRole",
@@ -129,7 +129,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "deployServerless",
-            "helpMarkDown": "AWS CloudFormation Stack Name."
+            "helpMarkDown": "The name of the AWS CloudFormation stack."
         },
         {
             "name": "s3Bucket",
@@ -138,7 +138,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "deployServerless",
-            "helpMarkDown": "S3 bucket used to store the built project."
+            "helpMarkDown": "The name of the S3 bucket used to store the built project."
         },
         {
             "name": "s3Prefix",
@@ -147,7 +147,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "deployServerless",
-            "helpMarkDown": "S3 object key prefix used for the objects uploaded to S3."
+            "helpMarkDown": "The object key prefix to be used for the deployment objects that will be uploaded to S3."
         },
         {
             "name": "additionalArgs",
@@ -156,7 +156,7 @@
             "required": false,
             "defaultValue": "",
             "groupName": "advanced",
-            "helpMarkDown": "Additional arguments when executing the 'dotnet lambda' command"
+            "helpMarkDown": "Additional arguments when executing the 'dotnet lambda' command."
         }
     ],
     "execution": {

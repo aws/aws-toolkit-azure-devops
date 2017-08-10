@@ -2,9 +2,9 @@
     "id": "ACA12442-1E42-433A-91F4-82F8AA714DB1",
     "name": "BeanstalkDeployApplication",
     "friendlyName": "AWS Elastic Beanstalk Deployment",
-    "description": "Deploys an application to Amazon EC2 instance(s) using AWS Elastic Beanstalk.",
+    "description": "Deploys an application to Amazon EC2 instance(s) using AWS Elastic Beanstalk",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS Elastic Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html)",
+    "helpMarkDown": "Please refer to [AWS Elastic Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html) for more details on deploying applications with AWS Elastic Beanstalk.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "51"
+        "Patch": "52"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Elastic Beanstalk: $(applicationName)",
@@ -32,7 +32,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
         },
         {
             "name": "regionName",
@@ -40,15 +40,15 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
         },
         {
             "name": "applicationType",
-            "type": "pickList",
+            "type": "radio",
             "label": "Application Type",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "The type of .NET web application.",
+            "helpMarkDown": "The type of .NET web application to deploy.",
             "options": {
                 "aspnet": "ASP.NET (Source: Web Deploy Archive)",
                 "aspnetCoreWindows": "ASP.NET Core (Source: dotnet publish)"
@@ -81,7 +81,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The name of the Elastic Beanstalk application"
+            "helpMarkDown": "The name of the Elastic Beanstalk application to update."
         },
         {
             "name": "environmentName",
@@ -89,7 +89,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The name of the Elastic Beanstalk environment that will run the application"
+            "helpMarkDown": "The name of the Elastic Beanstalk environment that will run the application."
         }
     ],
     "execution": {

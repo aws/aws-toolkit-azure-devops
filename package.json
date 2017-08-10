@@ -1,6 +1,6 @@
 {
     "name": "aws-vsts-tools",
-    "version": "0.9.51",
+    "version": "0.9.52",
     "description": "AWS Tools for Visual Studio Team Services",
     "private": true,
     "main": "gulpfile.js",

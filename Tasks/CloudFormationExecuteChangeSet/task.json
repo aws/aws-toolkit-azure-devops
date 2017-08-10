@@ -4,7 +4,7 @@
     "friendlyName": "AWS CloudFormation Execute Change Set",
     "description": "Executes an AWS CloudFormation change set to create or update a stack.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)",
+    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more information on working with AWS CloudFormation.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "51"
+        "Patch": "52"
     },
     "runsOn": [
         "Agent"
@@ -35,7 +35,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'"
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
         },
         {
             "name": "regionName",
@@ -43,7 +43,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html"
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
         },
         {
             "name": "changeSetName",
@@ -59,7 +59,7 @@
             "label": "Stack Name",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "If you specified the name of a change set to execute, specify the stack name or ID (ARN) that is associated with it."
+            "helpMarkDown": "The stack name or Amazon Resource Name (ARN) of the stack associated with the change set. This value is required if you specified the name of a change set to execute. If the change set ARN was specified this field is optional."
         },
         {
             "name": "outputVariable",
