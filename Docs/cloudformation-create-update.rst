@@ -75,6 +75,40 @@ Template Parameters File
 ------------------------
 
     The path to the file containing the template parameters.
+    
+Create or update the stack using a change set
+---------------------------------------------
+
+    If checked a change set will be created that contains a list of changes that will be applied to a 
+    stack and then validated. If the changes validate successfully the change set can then be executed 
+    to effect the changes. You can elect to use a change set to both create a new stack or update a 
+    new stack.
+    
+    Default: not checked.
+    
+Capabilities
+------------
+
+    Capabilities that must be specified before |CFNlong| can update certain stacks. Some stack 
+    templates might include resources that can affect permissions in your AWS account, for example by 
+    creating new AWS Identity and Access Management (IAM) users. For those stacks you must explcitly 
+    acknowledge their capabilities by specifying this parameter.
+
+Create/update IAM Resources ('CAPABILITY_IAM')
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        If your stack maqnipulates IAM resources, you can specify either capability otherwise an 
+        :code:`InsufficientCapabilities' error will be returned.
+
+        Default: checked.
+        
+Create/update Named IAM Resources ('CAPABILITY_NAMED_IAM')
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        If your stack maqnipulates IAM resources with custom names, , you must add this capability 
+        otherwise an :code:`InsufficientCapabilities' error will be returned.
+        
+        Default: checked.
 
 Advanced
 --------

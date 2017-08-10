@@ -79,7 +79,8 @@ For the new task you need to make the following configurations changes.
        .. image:: images/credentialdialog.png
           :alt: AWS Credential Dialog
           
-  This task requires credentials for a user with a policy enabling the user to upload files to S3. 
+  This task requires credentials for a user with a policy enabling the user to put objects to S3. 
+  If the create S3 bucket option is enabled you also need permission to create a bucket.
   Enter the access key and secret keys for the credentials you want to use and assign a name that 
   you will remember.
   
