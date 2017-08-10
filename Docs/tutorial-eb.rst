@@ -24,34 +24,32 @@ which uses the *AWS Elastic Beanstalk Deployment* task.
 Prerequisites
 =============
 
-* Either a VSTS account or Team Foundation Services locally installed.
-* The AWS Extension for VSTS installed in VSTS.
+* The AWS Tools for VSTS installed in VSTS or an on-premises Team Foundation Server.
 * An AWS account and preferably an associated IAM user account.
-* An Elastic Beanstalk applicaion and environment.
+* An Elastic Beanstalk application and environment.
 
 
-To Create and Run a Project Using the AWS Elastic Beanstalk Deployment Task
+To Create and Run a Project Using the |AEBlong| Deployment Task
 ===========================================================================
 
 Set Up a New Project and Build Process 
 --------------------------------------
 
-Create a VSTS project as described in :guilabel:`Create a Project To Use AWS Tasks` in :ref:`tutorials`.  
-
-On the *Choose a template* page select the *ASP.NET Core (.NET Framework)* template.  
+The tutorial assumes the use of the *ASP.NET Core (.NET Framework)* template.  
 
        .. image:: images/choose-template.png
           :alt: Select a template
           
 On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.  Remove the 
-*Publish Artifact* task from the end of the build definition.
+*Publish Artifact* task from the end of the build definition. It is not needed since you are deploying 
+to |AEB|.
 
        .. image:: images/build-definition.png
           :alt: Build Definition
         
           
-Add the AWS Elastic Beanstalk Deployment Task to the Pipeline
--------------------------------------------------------------- 
+Add the AWS Elastic Beanstalk Deployment Task to the Build Definition
+---------------------------------------------------------------------
 
 Click the :guilabel:`Add Task` link. In the right hand panel, scroll through the available tasks until 
 you see the AWS Elastic Beanstalk Deployment task. Click the :guilabel:`Add` button to add it to bottom 
@@ -68,15 +66,23 @@ Click on the new task and you will see the properties for it in the right pane.
 Configure the Task Properties
 -----------------------------
 
-For the new task you need to make the following configurations changes.
+For the new task you need to make the following configuration changes.
 
-* AWS Credentials: To quickly add credentials for this task, click the :guilabel:`+` link to the 
-  right of the AWS Credentials field.
+* AWS Credentials: If you have existing AWS credentials for this task in the Services page endpoints 
+  list you can select them by clinking the gear icon to the right of the  AWS Credentials field.  
+  If not, to quickly add credentials for this task, click the :guilabel:`+` link.
 
        .. image:: images/credentialsfield.png
           :alt: AWS Credential Field
 
-  Having clicked the :guilabel:`+` link a dialog window appears in which you can enter your AWS keys.
+  This opens the :guilabel:`Add new AWS Connection` form.
+  
+       .. image:: images/credentialdialog.png
+          :alt: AWS Credential Dialog
+          
+  This task requires credentials for a user with a policy enabling the user to update a Beanstalk 
+  environment and describe an environment status and events. Enter the access key and secret keys for 
+  the credentials you want to use and assign a name that you will remember.
   
     .. note::
 
@@ -84,16 +90,12 @@ For the new task you need to make the following configurations changes.
         IAM users, and then use those credentials. For more information, see 
         `Best Practices for Managing AWS Access Keys <https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html>`_.
 
-       .. image:: images/credentialdialog.png
-          :alt: AWS Credential Dialog
           
-  For this task the credentials should be for an Identity and Access Management user with an policy 
-  enabling the user to update a Beanstalk environment and describe an environment status and events.
-  Enter the access key and secret keys for the credentials you want to use and assign a name that 
-  you will remember, then click :guilabel:`OK` to save them. The dialog will close and return to the 
-  Elastic Beanstalk Deployment Task configuration with the new credentials selected.
+  Click :guilabel:`OK` 
+  to save them. The dialog will close and return to the Elastic Beanstalk Deployment Task configuration 
+  with the new credentials selected.
 
-       .. image:: images/credentialssaved.png
+       .. image:: images/credentialssavedEB.png
           :alt: AWS Credential Dialog
 
 * AWS Region: The AWS region that that the Beanstalk environment is running in.
@@ -103,7 +105,7 @@ For the new task you need to make the following configurations changes.
   have a ".zip" extension. It can be found in the build artifacts staging directory which can be 
   referenced as :code:`$(build.artifactstagingdirectory)`.
 * Beanstalk Application Name: The name you used to create the Beanstalk application. A Beanstalk 
-  application is the container of a collection environments running the .NET web application.
+  application is the container for the environment for the .NET web application.
 * Beanstalk Environment Name: The name you used to create the Beanstalk environment. A Beanstalk 
   environment contains the actual provisioned resources that are running the .NET web application.
           

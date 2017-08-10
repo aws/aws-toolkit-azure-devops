@@ -10,9 +10,9 @@
 
 .. _s3-download:
 
-##################
-|S3| Download Task
-##################
+####################
+AWS S3 Download Task
+####################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference

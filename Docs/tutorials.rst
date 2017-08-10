@@ -18,46 +18,18 @@ Using the AWS Tools for VSTS
    :description: Programming information for the AWS Tools for Microsoft Visual Studio Team Services
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorials demonstrate how to create and run AWS Tools for Microsoft Visual Studio Team 
-Services projects which use the AWS tasks.
+The following tutorials demonstrate how to use tasks from the AWS Tools for Microsoft Visual Studio Team 
+Services in your VSTS projects.
 
 **Prerequisites**
 
-* Either a VSTS account or Team Foundation Services locally installed.
+* Either a VSTS account or on-premise Team Foundation Server.
 * An AWS account and preferably an associated IAM user account.
 * Task specific permissions.
+* An existing VSTS project with the build definition template specified in the tutorial.
 
 See :ref:`getting-started` for instructions to install the AWS Tools for VSTS and set up your credentials.
 
-**Create a Project To Use AWS Tasks**
-
-Navigate to your Projects home page and click on :guilabel:`New Project`.
-
-       .. image:: images/new-project.png
-          :alt: AWS Credential Field
-
-Fill in the Create new project dialog and click :guilabel:`Create`.
-          
-       .. image:: images/create-new-project-2.png
-          :alt: AWS Credential Field
-          
-On the Get started page click on *or initialize with a README or gitignore*.  The :guilabel:`Add a README` 
-box appears as checked. Click :guilabel:`Initialize`.
-
-       .. image:: images/create-new-project-4.png
-          :alt: AWS Credential Field
- 
-The *Set up Build* page is displayed. Click on :guilabel:`Set up Build`.
-
-       .. image:: images/create-new-project-setup-build.png
-          :alt: AWS Credential Field
- 
-The *Choose a template* page is displayed. At this point you will select the template called for by the 
-tutorial.
-
-       .. image:: images/create-new-project-select-template.png
-          :alt: AWS Credential Field
-           
 
 .. toctree::
    :maxdepth: 1

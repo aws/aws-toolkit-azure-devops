@@ -10,9 +10,9 @@
 
 .. _s3-upload:
 
-################
-|S3| Upload Task
-################
+##################
+AWS S3 Upload Task
+##################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference

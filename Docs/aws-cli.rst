@@ -21,7 +21,7 @@
 Synopsis
 ========
 
-Runs a shell or batch script with AWS commands against an AWS connection.
+Runs a AWS command against an AWS connection.
 
 Description
 ===========
@@ -36,7 +36,7 @@ applies.
 
 .. code-block:: sh
 
-        $ aws <command> <subcommand> [options and parameters]
+        <command> <subcommand> [options and parameters]
 
 Parameters can take various types of input values such as numbers, strings, lists, maps, and JSON
 structures.

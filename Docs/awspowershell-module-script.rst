@@ -10,9 +10,9 @@
 
 .. _awspowershell-module-script:
 
-############################################
-AWS Tools for Windows PowerShell Script Task
-############################################
+#####################
+|TWPlong| Script Task
+#####################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
@@ -32,13 +32,13 @@ configuration. When the task runs on Windows build agents,
 it can optionally install the |TWP| module before running the script.
 
 .. note:: If an installation is performed, the module is installed in the :code:`current user`
-         scope. Then the location is compatible with automatic module load. As a result, you don't
+         scope. The location is compatible with automatic module load. As a result, you don't
          need to import the module in your script.
 
 Parameters
 ==========
 
-You an set the following parameters for the task. Required parameters
+You can set the following parameters for the task. Required parameters
 are noted by an asterisk (*). Other parameters are optional.
 
 Name*

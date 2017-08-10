@@ -18,30 +18,42 @@ AWS Tools for Microsoft Visual Studio Team Services
 ###################################################
 
 
-AWS Tools for Microsoft Visual Studio Team Services is a Visual Studio Team Services (VSTS) extension that 
-contains AWS tasks. AWS Tools for VSTS is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
+AWS Tools for Microsoft Visual Studio Team Services is is an extension for Visual Studio Team Services that contains tasks you can use in build definitions in VSTS to interact with AWS services. 
+AWS Tools for VSTS is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
 
-You can use these tasks in a VSTS project or in an on-premises Team Foundation Services environment. 
-Use the tasks to build and release CI/CD pipelines to enable those pipelines to interact with AWS services. 
-For example, a release pipeline can use the |CDlong| Application Deployment task to deploy the output from a build 
-to a deployment group of |EC2| instances managed by |CDlong|. Other tasks enable you to run a PowerShell script, transfer content 
-between |S3| buckets and the build area in the pipeline (upload and download), send a message to an |SNS| topic or an |SQS| queue, 
-to launch an |CFNlong| stack or deploy to |AEBlong| environments.
+You can use these tasks in a VSTS project or in an on-premises Team Foundation Server environment. 
+Use the AWS tasks in VSTS build and release definitions to interact with AWS services. The available 
+AWS tasks include:
+
+* Deployment tasks
+    * |CDlong| Deployment Application Task
+    * |CFNlong| Create-Update Stack Task
+    * |CFNlong| Delete Stack Task
+    * |CFNlong| Execute Change Set Task
+    * |EBlong| Deployment Task
+    * |LAMlong| .NET Core Deployment Task
+    * |LAMlong| Invoke Function Task
+* General purpose tasks
+    * |CLI|
+    * |TWPlong| Script Task
+    * AWS S3 Download Task
+    * AWS S3 Upload Task
+    * AWS Send Message Task
 
 What's in This Guide
 ====================
 
-The AWS Tools for VSTS User Guide describes how to install and use the AWS extension for VSTS.
+The AWS Tools for VSTS User Guide describes how to install and use the AWS Tools for VSTS.
 
 :ref:`getting-started`
 
-    How to set up a VSTS account, install the AWS extension for VSTS 
-    and how to set up AWS credentials to use the tasks in the extension.
+    How to set up a VSTS account, install the AWS Tools for VSTS 
+    and how to set up AWS credentials to use the tasks.
 
 :ref:`tutorials`
 
     Demonstrates how to create and run a VSTS project utilizing a task installed with the
-    AWS extension for VSTS.
+    AWS Tools for VSTS.
 
 :ref:`task_reference`
 

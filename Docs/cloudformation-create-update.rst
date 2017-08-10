@@ -52,7 +52,8 @@ AWS Credentials*
 AWS Region*
 -----------
 
-    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the|AWS-gr|.
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in 
+    the |AWS-gr|.
 
 
 Stack Name*

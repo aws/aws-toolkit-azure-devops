@@ -27,11 +27,11 @@ you need to sign up for a
 Install the AWS Tools for VSTS Extension
 ========================================
 
-The AWS extension for VSTS is installed from the
+The AWS Tools for VSTS is installed from the
 `Visual Studio Marketplace <https://marketplace.visualstudio.com/vsts>`_.
 Sign in to your VSTS account, then search for *AWS Tools for Microsoft Visual Studio Team Services*.
-Choose :guilabel:`Install` to download the extension for VSTS, or
-choose :guilabel:`Download` to download to Team Foundation Server.
+Choose :guilabel:`Install` to download to VSTS, or
+choose :guilabel:`Download` to install into an on-premises Team Foundation Server.
 
        .. image:: images/AWSVSTSdownload.png
           :alt: Download Team Services Extension
@@ -73,7 +73,7 @@ and use those credentials.
 
     #.  If you don't have any |IAM| users set up, choose :guilabel:`Create New Users` to create one.
 
-    #.  Select the |IAM user| in the list that you want to use to access AWS.
+    #.  Select the |IAM| user in the list that you want to use to access AWS.
 
     #.  Open the :guilabel:`Security Credentials` tab, and then choose :guilabel:`Create Access Key`.
 
@@ -91,7 +91,7 @@ and use those credentials.
 Create an AWS Connection
 ========================
 
-To use tasks in the extension, you must link an AWS subscription to VSTS or Team Foundation
+To use the tasks contained in the tools, you must link an AWS subscription to VSTS or Team Foundation
 Server. You can link your subscription from the :guilabel:`Services` tab 
 in the Account Administration section. Add the AWS subscription to use in the 
 Build or Release Management definition by opening the Account Administration page (choose the gear icon
@@ -107,7 +107,8 @@ Provide the following parameters, and then click :guilabel:`OK`:
 * Access key ID
 * Secret access key
 
-Use this connection name to refer to these credentials when configuring AWS tasks.
+The connection name is used to refer to these credentials when you are configuring tasks that access 
+AWS in your build and release definitions.
 
 For more information, see `About Access Keys <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console>`_.
 

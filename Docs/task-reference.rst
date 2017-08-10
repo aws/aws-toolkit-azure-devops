@@ -18,7 +18,7 @@ Task Reference
    :description: Using the tasks in the AWS Tools for VSTS
    :keywords: extensions, tasks
 
-This reference describes the tasks that are included in the AWS Extension
+This reference describes the tasks that are included in the AWS Tools
 for Microsoft Visual Studio Team Services.
 
 .. _task_prerequisites:
@@ -37,6 +37,7 @@ for Microsoft Visual Studio Team Services.
   Once created, those credentials are available in the parameter's list whenever you
   set up a task.
 
+  
        .. image:: images/AddNewAWSConnection.png
           :alt: Add an AWS connection
 
@@ -45,7 +46,6 @@ for Microsoft Visual Studio Team Services.
    :titlesonly:
 
    aws-cli
-   awspowershell-module-script
    cloudformation-create-update
    cloudformation-delete-stack
    cloudformation-execute-changeset
@@ -56,6 +56,7 @@ for Microsoft Visual Studio Team Services.
    s3-download
    s3-upload
    send-message
+   awspowershell-module-script
 
 
 

@@ -10,9 +10,9 @@
 
 .. _codedeploy-deployment:
 
-########################
-|CDlong| Deployment Task
-########################
+####################################
+|CDlong| Deployment Application Task
+####################################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
@@ -26,10 +26,8 @@ Deploys an application to |EC2| instances by using |CDlong|.
 Description
 ===========
 
-You can deploy a nearly unlimited variety of application content, such as code, web and configuration files,
-executable files, packages, scripts, and multimedia files. |CDlong| can deploy application
-content stored in |S3| buckets, GitHub repositories, or Bitbucket repositories. You don't need
-to change your existing code before you can use |CDlong|.
+This can be a variety of application content, such as code, web and configuration files,
+executable files, packages, scripts, and multimedia files. 
 
 Parameters
 ==========
@@ -68,9 +66,11 @@ Deployment Group Name*
 Revision Bundle*
 ----------------
 
-    The location of the archive bundle containing the application revision artifacts to deploy
-    (including the appspec.yml file). The task uploads this archive to |S3| before requesting
-    deployment.
+    The location of the application revision artifacts to deploy. You can supply a filename or folder. 
+    If a folder is supplied the task will recursively zip the folder contents into an archive file 
+    before uploading the archive to |S3|. If a filename is supplied the task uploads it unmodified 
+    to |S3|. CodeDeploy requires the appspec.yml file describing the application to exist at the root 
+    of the specified folder or archive file.
 
 Bucket Name*
 ------------

@@ -21,7 +21,7 @@
 Synopsis
 ========
 
-Builds and deploys a .NET Core |LAMlong| function.
+Builds and deploys a .NET Core |LAMlong| function or serverless application.
 
 Description
 ===========

@@ -24,24 +24,21 @@ which uses the *AWS S3 Upload* task.
 Prerequisites
 =============
 
-* Either a VSTS account or Team Foundation Services locally installed.
-* The AWS Extension for VSTS installed in VSTS.
+* The AWS Tools for VSTS installed in VSTS or an on-premises Team Foundation Server.
 * An AWS account and preferably an associated IAM user account.
 * An S3 bucket.
 
 To Create and Run a Project Using the AWS S3 Upload Task
 ========================================================
 
-Create a VSTS project as described in :guilabel:`Create a Project To Use AWS Tasks` in :ref:`tutorials`.   
-
-On the *Choose a template* page select the basic *ASP.NET Core* template.  
+The tutorial assumes the use of the **ASP.NET Core* template.  
 
        .. image:: images/s3-select-template.png
           :alt: Select a template
 
 On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.
           
-This provides a default pipeline with the following default tasks:
+This provides a default build definition with the following default tasks:
     
        .. image:: images/startingbuilddefinition.png
           :alt: New build pipeline
@@ -69,14 +66,22 @@ Configure the Task Properties
 -----------------------------
 
 For the new task you need to make the following configurations changes.
-
-* AWS Credentials: To quickly add credentials for this task, click the :guilabel:`+` link to the 
-  right of the AWS Credentials field.
+  
+* AWS Credentials: If you have existing AWS credentials for this task in the Services page endpoints 
+  list you can select them by clinking the gear icon to the right of the  AWS Credentials field.  
+  If not, to quickly add credentials for this task, click the :guilabel:`+` link.
 
        .. image:: images/credentialsfield.png
           :alt: AWS Credential Field
 
-  Having clicked the :guilabel:`+` link a dialog window appears in which you can enter your AWS keys.
+  This opens the :guilabel:`Add new AWS Connection` form.
+  
+       .. image:: images/credentialdialog.png
+          :alt: AWS Credential Dialog
+          
+  This task requires credentials for a user with a policy enabling the user to upload files to S3. 
+  Enter the access key and secret keys for the credentials you want to use and assign a name that 
+  you will remember.
   
     .. note::
 
@@ -84,13 +89,14 @@ For the new task you need to make the following configurations changes.
         IAM users, and then use those credentials. For more information, see 
         `Best Practices for Managing AWS Access Keys <https://docs.aws.amazon.com/general/latest/gr/aws-access-keys-best-practices.html>`_.
 
-        
-       .. image:: images/credentialdialog.png
-          :alt: AWS Credential Dialog
           
-  Enter the access key and secret keys for the credentials you want to use and assign a name that 
-  you will remember, then click :guilabel:`OK` to save them. The dialog will close and return to the 
-  S3 Upload Task configuration with the new credentials selected.
+  Click :guilabel:`OK` 
+  to save them. The dialog will close and return to the AWS S3 Upload Task configuration 
+  with the new credentials selected.
+
+       .. image:: images/credentialssavedS3.png
+          :alt: AWS Credential Dialog
+
   
 * Set the region in which the bucket exists or will be created in, for example 'us-east-1', 'us-west-2' etc. 
 * Enter the name of the bucket (bucket names must be globally unique).
@@ -115,10 +121,15 @@ Run the Build
 
 With the new task configured you are ready to run the build. Click the Save and queue option.
 
-       .. image:: images/s3taskfinal.png
+       .. image:: images/s3taskfinal2.png
           :alt: Save and Queue the Build
           
-During the build you will see the task output messages to the log.
+During the build you can view the log by clicking on the build number in the queue message. 
+
+       .. image:: images/click-on-build-number-to-view-log.png
+          :alt: Save and Queue the Build
+
+When the build has completed you will be able to see the S3 upload logs.
 
        .. image:: images/tasklog.png
           :alt: Task Log
