@@ -18,9 +18,15 @@
         "Minor": "9",
         "Patch": "51"
     },
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.115.0",
     "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",
-    "groups": [],
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": false
+        }
+    ],
     "inputs": [
         {
             "name": "awsCredentials",
@@ -40,14 +46,14 @@
         },
         {
             "name": "scriptType",
-            "type": "pickList",
+            "type": "radio",
             "label": "Type",
             "defaultValue": "filePath",
-            "required": true,
-            "helpMarkDown": "Type of the script: File Path or Inline Script",
+            "required": false,
+            "helpMarkDown": "Source of the script to run: File Path or Inline",
             "options": {
-                "inlineScript": "Inline Script",
-                "filePath": "File Path"
+                "filePath": "File Path",
+                "inline": "Inline"
             }
         },
         {
@@ -57,29 +63,30 @@
             "defaultValue": "",
             "required": true,
             "visibleRule": "scriptType = filePath",
-            "helpMarkDown": "Path of the script to execute. Should be fully qualified path or relative to the default working directory."
-        },
-        {
-            "name": "inlineScript",
-            "type": "multiLine",
-            "label": "Inline Script",
-            "defaultValue": "# You can write your powershell scripts inline here. \n# You can also pass predefined and custom variables to this scripts using arguments\n\n# The AWSPowerShell module will be imported for you.\n\n Write-Host \"Hello World\"",
-            "required": true,
-            "helpMarkDown": "",
-            "visibleRule": "scriptType = inlineScript",
-            "properties": {
-                "resizable": "true",
-                "rows": "10",
-                "maxLength": "500"
-            }
+            "helpMarkDown": "Path of the script to execute. Must be a fully qualified path or relative to $(System.DefaultWorkingDirectory)."
         },
         {
             "name": "arguments",
             "type": "string",
             "label": "Arguments",
+            "visibleRule": "scriptType = filePath",
             "defaultValue": "",
             "required": false,
             "helpMarkDown": "Arguments passed to the script.  Either ordinal parameters or named parameters"
+        },
+        {
+            "name": "inlineScript",
+            "type": "multiLine",
+            "label": "Inline Script",
+            "defaultValue": "# You can write your powershell script inline here (the AWSPowerShell module will automatically import).\n\n Write-Host \"Hello World\"",
+            "required": true,
+            "helpMarkDown": "",
+            "visibleRule": "scriptType = inline",
+            "properties": {
+                "resizable": "true",
+                "rows": "10",
+                "maxLength": "5000"
+            }
         },
         {
             "name": "autoInstallModule",
@@ -87,21 +94,66 @@
             "type": "boolean",
             "defaultValue": "true",
             "required": false,
-            "helpMarkDown": "Automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) before running the specified script. If unchecked and the module is not installed the task will exit with an error."
+            "helpMarkDown": "Tests for and automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) if required before running the script."
+        },
+        {
+            "name": "errorActionPreference",
+            "type": "pickList",
+            "label": "ErrorActionPreference",
+            "required": false,
+            "defaultValue": "stop",
+            "options": {
+                "stop": "Stop",
+                "continue": "Continue",
+                "silentlyContinue": "SilentlyContinue"
+            },
+            "helpMarkDown": "Prepends the line `$ErrorActionPreference = 'VALUE'` at the top of your script."
+        },
+        {
+            "name": "failOnStderr",
+            "type": "boolean",
+            "label": "Fail on Standard Error",
+            "required": false,
+            "defaultValue": "false",
+            "helpMarkDown": "If this is true, this task will fail if any errors are written to the error pipeline, or if any data is written to the Standard Error stream. Otherwise the task will rely on the exit code to determine failure.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "ignoreLASTEXITCODE",
+            "type": "boolean",
+            "label": "Ignore $LASTEXITCODE",
+            "required": false,
+            "defaultValue": "false",
+            "helpMarkDown": "If this is false, the line `if ((Test-Path -LiteralPath variable:\\LASTEXITCODE)) { exit $LASTEXITCODE }` is appended to the end of your script. This will cause the last exit code from an external command to be propagated as the exit code of powershell. Otherwise the line is not appended to the end of your script.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "workingDirectory",
+            "type": "filePath",
+            "label": "Working Directory",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Working directory where the script is run.",
+            "groupName": "advanced"
         }
     ],
     "execution": {
         "PowerShell3": {
-            "target": "Invoke-AWSPowerShellModuleScript.ps1"
+            "target": "RunAWSPowerShellModuleScript.ps1",
+            "platforms": [
+                "windows"
+            ]
         }
     },
     "messages": {
-        "VerifyingAWSPowerShellModuleInstalled": "Verifying that the AWSPowerShell module is installed",
-        "InstallingModule": "Module not found, installing",
-        "ModuleInstalled": "Module installed",
-        "InitializingContext": "Initializing credential and region context",
-        "ExecutingScript": "Executing user script",
-        "AWSPowerShellModuleNotFound": "The AWSPowerShell module is not installed on this machine and auto-install option not selected",
-        "ErrorCheckingModuleInstall": "An error occurred while testing for module installation."
+        "GeneratingScript": "Generating script.",
+        "TestingModuleInstalled": "Checking AWSPowerShell module is installed",
+        "InstallingModule": "...module not found, installing latest",
+        "InitializingContext": "Initializing AWS credentials for script. Region context set to {0}.",
+        "PS_ExitCode": "PowerShell exited with code '{0}'.",
+        "PS_FormattedCommand": "Formatted command: {0}",
+        "PS_InvalidErrorActionPreference": "Invalid ErrorActionPreference '{0}'. The value must be one of: 'Stop', 'Continue', or 'SilentlyContinue'",
+        "PS_InvalidFilePath": "Invalid file path '{0}'. A path to a .ps1 file is required.",
+        "PS_UnableToDetermineExitCode": "Unexpected exception. Unable to determine the exit code from powershell."
     }
 }
