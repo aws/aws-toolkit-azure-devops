@@ -97,16 +97,16 @@ Capabilities
 Create/update IAM Resources ('CAPABILITY_IAM')
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        If your stack maqnipulates IAM resources, you can specify either capability otherwise an 
-        :code:`InsufficientCapabilities' error will be returned.
+        If your stack manipulates IAM resources, you can specify either capability otherwise an 
+        :code:`InsufficientCapabilities` error will be returned.
 
         Default: checked.
         
 Create/update Named IAM Resources ('CAPABILITY_NAMED_IAM')
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        If your stack maqnipulates IAM resources with custom names, , you must add this capability 
-        otherwise an :code:`InsufficientCapabilities' error will be returned.
+        If your stack manipulates IAM resources with custom names, you must add this capability 
+        otherwise an :code:`InsufficientCapabilities` error will be returned.
         
         Default: checked.
 
