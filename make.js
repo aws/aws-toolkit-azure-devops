@@ -12,7 +12,8 @@ var mopts = {
         'publishtoken'
     ],
     boolean: [
-        'release'
+        'release',
+        'stamptasks'
     ]
 };
 var options = minimist(process.argv, mopts);
@@ -118,37 +119,35 @@ target.clean = function () {
 // Options to specify the version field to update:
 //     --versionfield major - increments the major version, sets minor and patch to 0
 //     --versionfield minor - increments the minor version, sets patch to 0
-//     --versionfield patch - increments the patch version only
+//     --versionfield patch - increments the patch version only (this is the default
+//                            behavior if --versionfield is not specified)
 //
 target.updateversion = function() {
 
-    if (!options.versionfield) {
-        banner('> SKIPPING _versioninfo.json update, --updateversioninfo not set');
-        return;
-    }
-
     var updateMajor = false;
     var updateMinor = false;
-    switch (options.versionfield) {
-        case 'patch': {
-            banner('> Updating patch version only');
+    if (options.versionfield) {
+        switch (options.versionfield) {
+            case 'patch': {
+                banner('> Updating patch version only');
+            }
+            break;
+    
+            case 'minor': {
+                banner('> Updating minor version data, patch level reset to 0');
+                updateMinor = true;
+            }
+            break;
+    
+            case 'major': {
+                banner('> Updating major version data, minor and patch levels forced to 0');
+                updateMajor = true;
+            }
+            break;
+    
+            default:
+                throw new Error('Unknown version update option - ' + options.versionfield + ', expected "major", "minor" or "patch"');
         }
-        break;
-
-        case 'minor': {
-            banner('> Updating minor version data, patch level reset to 0');
-            updateMinor = true;
-        }
-        break;
-
-        case 'major': {
-            banner('> Updating major version data, minor and patch levels forced to 0');
-            updateMajor = true;
-        }
-        break;
-
-        default:
-            throw new Error('Unknown version update option - ' + options.versionfield + ', expected "major", "minor" or "patch"');
     }
 
     var versionInfoFile = path.join(__dirname, masterVersionFile);
@@ -166,6 +165,16 @@ target.updateversion = function() {
     }
     console.log(`> ${masterVersionFile} new version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
     serializeToFile(versionInfo, versionInfoFile);
+
+    // if option set, stamps the version into the extension and task
+    // manifests (this saves having to do a build to update versions
+    // in the source repo)
+    if (options.stamptasks) {
+        versionstampExtension(manifestFile, versionInfo);
+        taskList.forEach(function(taskName) {
+            versionstampTask(taskName, versionInfo);
+        });
+    }
 }
 
 // Updates the vss-extension manifest version based on data contained in the root
