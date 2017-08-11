@@ -46,3 +46,7 @@ gulp.task('package', function (cb) {
     make('test', cb) &&
     make('package', cb);
 });
+
+gulp.task('publish', function (cb) {
+    make('publish', cb);
+})
