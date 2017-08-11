@@ -18,7 +18,7 @@ AWS Tools for Microsoft Visual Studio Team Services
 ###################################################
 
 
-AWS Tools for Microsoft Visual Studio Team Services is is an extension for Visual Studio Team Services that contains tasks you can use in build definitions in VSTS to interact with AWS services. 
+AWS Tools for Microsoft Visual Studio Team Services is an extension for Visual Studio Team Services that contains tasks you can use in build definitions in VSTS to interact with AWS services. 
 AWS Tools for VSTS is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
 
 You can use these tasks in a VSTS project or in an on-premises Team Foundation Server environment. 

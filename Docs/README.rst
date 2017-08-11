@@ -99,8 +99,6 @@ repository.
 .. =================================================================================
 
 .. _`available sphinx builders`: http://www.sphinx-doc.org/en/stable/builders.html
-.. _`aws java developer guide`: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/welcome.html
-.. _`aws sdk for java`: https://aws.amazon.com/sdk-for-java/
 .. _`forking the repository`: https://help.github.com/articles/fork-a-repo/
 .. _`pull request`: https://help.github.com/articles/using-pull-requests/
 .. _`shared content`: https://github.com/awsdocs/aws-doc-shared-content

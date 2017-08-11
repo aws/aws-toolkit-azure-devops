@@ -10,16 +10,16 @@
 
 .. _tutorial-s3:
    
-############################
-Using the AWS S3 Upload Task
-############################
+################################
+Archiving Build Artifacts to AWS
+################################
 
 .. meta::
    :description: Programming information for the AWS Tools for VSTSa
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorial demonstrates how to create and run a Visual Studio Team Services (VSTS) project 
-which uses the *AWS S3 Upload* task.
+The following tutorial demonstrates how to use the *AWS S3 Upload* task to upload archival data to 
+an |S3long| (|S3|) bucket from a Visual Studio Team Services (VSTS) build definition.
 
 Prerequisites
 =============
@@ -44,11 +44,11 @@ This provides a default build definition with the following default tasks:
           :alt: New build pipeline
           
           
-Add the S3 Upload Task to the Pipeline
--------------------------------------- 
+Add the S3 Upload Task to the Build Definition
+---------------------------------------------- 
 
 To capture the build output produced by the *Publish* task and upload it to Amazon S3 you need to add  
-the *AWS S3 Upload* task between the existing *Publish* and *Publish Artifacts* tasks. Click the :guilabel:`Add Task` link. 
+the *AWS S3 Upload* task between the existing *Publish* and *Publish Artifacts* tasks. Click the  :guilabel:`Add Task` link. 
 In the right hand panel, scroll through the available tasks until you see the AWS S3 Upload task. 
 Click the :guilabel:`Add` button to add it to the build definition.
 

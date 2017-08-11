@@ -10,16 +10,16 @@
 
 .. _tutorial-eb:
    
-###############################################
-Using the AWS Elastic Beanstalk Deployment Task
-###############################################
+###################################
+Deploying an ASP.NET Web App to AWS
+###################################
 
 .. meta::
    :description: Programming information for the AWS Tools for VSTSa
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorial demonstrates how to create and run a Visual Studio Team Services (VSTS) project 
-which uses the *AWS Elastic Beanstalk Deployment* task.
+The following tutorial demonstrates how to use the *AWS Elastic Beanstalk Deployment* task to deploy 
+a web application to the AWS Cloud from a Visual Studio Team Services (VSTS) build definition.
 
 Prerequisites
 =============
@@ -52,7 +52,7 @@ Add the AWS Elastic Beanstalk Deployment Task to the Build Definition
 ---------------------------------------------------------------------
 
 Click the :guilabel:`Add Task` link. In the right hand panel, scroll through the available tasks until 
-you see the AWS Elastic Beanstalk Deployment task. Click the :guilabel:`Add` button to add it to bottom 
+you see the *AWS Elastic Beanstalk Deployment* task. Click the :guilabel:`Add` button to add it to bottom 
 of the build definition.
 
        .. image:: images/elastic-beanstalk-task-in-list.png
