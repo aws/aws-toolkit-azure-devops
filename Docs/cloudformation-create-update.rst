@@ -81,7 +81,7 @@ Create or update the stack using a change set
 
     If checked a change set will be created that contains a list of changes that will be applied to a 
     stack and then validated. If the changes validate successfully the change set can then be executed 
-    to effect the changes. You can elect to use a change set to both create a new stack or update a 
+    to effect the changes. You can elect to use a change set to either create a new stack or update a 
     new stack.
     
     Default: not checked.
@@ -91,7 +91,7 @@ Capabilities
 
     Capabilities that must be specified before |CFNlong| can update certain stacks. Some stack 
     templates might include resources that can affect permissions in your AWS account, for example by 
-    creating new AWS Identity and Access Management (IAM) users. For those stacks you must explcitly 
+    creating new AWS Identity and Access Management (IAM) users. For those stacks you must explicitly 
     acknowledge their capabilities by specifying this parameter.
 
 Create/update IAM Resources ('CAPABILITY_IAM')
