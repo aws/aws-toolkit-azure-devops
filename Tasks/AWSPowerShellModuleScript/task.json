@@ -139,9 +139,10 @@
     },
     "messages": {
         "GeneratingScript": "Generating script.",
-        "TestingModuleInstalled": "Checking AWSPowerShell module is installed.",
-        "InstallingModule": "Module not found. Installing latest version to current user scope.",
-        "InitializingContext": "Initializing AWS credentials for script. Region context set to {0}.",
+        "TestingModuleInstalled": "Checking install status for AWSPowerShell module.",
+        "InstallingModule": "Module not found. Installing latest version to current user scope (this may take a few minutes).",
+        "UsingNugetProvider": "Install-Module not available. Attempting to use NuGet provider.",
+        "InitializingAWSContext": "Initializing AWS credentials for script. Region context set to {0}.",
         "PS_ExitCode": "PowerShell exited with code '{0}'.",
         "PS_FormattedCommand": "Formatted command: {0}",
         "PS_InvalidErrorActionPreference": "Invalid ErrorActionPreference '{0}'. The value must be one of: 'Stop', 'Continue', or 'SilentlyContinue'.",

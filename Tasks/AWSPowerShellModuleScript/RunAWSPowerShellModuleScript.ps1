@@ -24,7 +24,6 @@ $installCheckSnippet = @(
 )
 
 $metricsSnippet = @(
-    "Set-Item -Path env:AWS_EXECUTION_ENV -Value 'VSTS-AWSPowerShellModuleScript'"
 )
 
 # Adapting code from the VSTS-Tasks 'PowerShell' task to construct an overall
@@ -35,8 +34,32 @@ try
     $awsEndpoint = Get-VstsInput -Name 'awsCredentials' -Require
     $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
     $awsRegion = Get-VstsInput -Name 'regionName' -Require
-    $scriptType = Get-VstsInput -Name 'scriptType' -Require
 
+    # install the module if not present
+    Write-Host (Get-VstsLocString -Key 'TestingModuleInstalled')
+    if (!(Get-Module -Name AWSPowerShell -ListAvailable))
+    {
+        Write-Host (Get-VstsLocString -Key 'InstallingModule')
+        try
+        {
+            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+        }
+        catch
+        {
+            Write-Host (Get-VstsLocString -Key 'UsingNugetProvider')
+            Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force
+            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+        }
+    }
+
+    Write-Host (Get-VstsLocString -Key 'InitializingAWSContext' -ArgumentList $awsRegion)
+    Import-Module -Name AWSPowerShell
+    Initialize-AWSDefaultConfiguration -AccessKey $awsEndpointAuth.Auth.Parameters.UserName -SecretKey $awsEndpointAuth.Auth.Parameters.Password -Region $awsRegion
+
+    # poke metrics tag into the environment
+    Set-Item -Path env:AWS_EXECUTION_ENV -Value 'VSTS-AWSPowerShellModuleScript'
+
+    $scriptType = Get-VstsInput -Name 'scriptType' -Require
     $input_errorActionPreference = Get-VstsInput -Name 'errorActionPreference' -Default 'Stop'
     switch ($input_errorActionPreference.ToUpperInvariant())
     {
@@ -82,13 +105,6 @@ try
     Write-Host (Get-VstsLocString -Key 'GeneratingScript')
     $contents = @()
     $contents += "`$ErrorActionPreference = '$input_errorActionPreference'"
-
-    $contents += $installCheckSnippet
-    $contents += $metricsSnippet
-
-    $contents += "Write-Host " + (Get-VstsLocString -Key 'InitializingContext' -ArgumentList $awsRegion)
-    $contents += "Set-AWSCredential -AccessKey $($awsEndpointAuth.Auth.Parameters.UserName) -SecretKey $($awsEndpointAuth.Auth.Parameters.Password)"
-    $contents += "Set-DefaultAWSRegion $awsRegion"
 
     if ("$input_targetType".ToUpperInvariant() -eq 'FILEPATH')
     {
