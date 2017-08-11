@@ -15,7 +15,7 @@ Import-VstsLocStrings "$PSScriptRoot\task.json"
 # script snippets we'll inject
 $installCheckSnippet = @(
     "Write-Host " + (Get-VstsLocString -Key 'TestingModuleInstalled')
-    "if (!(Get-Module -Name AWSPowerShell))"
+    "if (!(Get-Module -Name AWSPowerShell -ListAvailable))"
     "{"
         "    Write-Host " + (Get-VstsLocString -Key 'InstallingModule')
         "    Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force"
@@ -36,7 +36,6 @@ try
     $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
     $awsRegion = Get-VstsInput -Name 'regionName' -Require
     $scriptType = Get-VstsInput -Name 'scriptType' -Require
-    $installIfRequired = Get-VstsInput -Name 'autoInstallModule' -AsBool
 
     $input_errorActionPreference = Get-VstsInput -Name 'errorActionPreference' -Default 'Stop'
     switch ($input_errorActionPreference.ToUpperInvariant())
@@ -84,11 +83,7 @@ try
     $contents = @()
     $contents += "`$ErrorActionPreference = '$input_errorActionPreference'"
 
-    if ($installIfRequired)
-    {
-        $contents += $installCheckSnippet
-    }
-
+    $contents += $installCheckSnippet
     $contents += $metricsSnippet
 
     $contents += "Write-Host " + (Get-VstsLocString -Key 'InitializingContext' -ArgumentList $awsRegion)

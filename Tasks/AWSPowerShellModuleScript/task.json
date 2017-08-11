@@ -4,7 +4,7 @@
     "friendlyName": "AWS Tools for Windows PowerShell Script",
     "description": "Run a PowerShell script that uses the AWS Tools for Windows PowerShell module.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module. The module can be automatically installed if not already present.",
+    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module. The module will be automatically installed if needed.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -16,7 +16,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "52"
+        "Patch": "53"
     },
     "minimumAgentVersion": "2.115.0",
     "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",
@@ -89,14 +89,6 @@
             }
         },
         {
-            "name": "autoInstallModule",
-            "label": "Automatically install the tools",
-            "type": "boolean",
-            "defaultValue": "true",
-            "required": false,
-            "helpMarkDown": "Tests for and automatically installs the AWS Tools for Windows PowerShell module from the [PowerShell Gallery](https://www.powershellgallery.com/packages/AWSPowerShell/) if not already installed, before running the script."
-        },
-        {
             "name": "errorActionPreference",
             "type": "pickList",
             "label": "ErrorActionPreference",
@@ -148,7 +140,7 @@
     "messages": {
         "GeneratingScript": "Generating script.",
         "TestingModuleInstalled": "Checking AWSPowerShell module is installed.",
-        "InstallingModule": "...module not found, installing latest version.",
+        "InstallingModule": "Module not found. Installing latest version to current user scope.",
         "InitializingContext": "Initializing AWS credentials for script. Region context set to {0}.",
         "PS_ExitCode": "PowerShell exited with code '{0}'.",
         "PS_FormattedCommand": "Formatted command: {0}",
