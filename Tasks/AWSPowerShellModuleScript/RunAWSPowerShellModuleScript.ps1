@@ -12,25 +12,16 @@ param()
 Trace-VstsEnteringInvocation $MyInvocation
 Import-VstsLocStrings "$PSScriptRoot\task.json"
 
-# script snippets we'll inject
-$installCheckSnippet = @(
-    "Write-Host " + (Get-VstsLocString -Key 'TestingModuleInstalled')
-    "if (!(Get-Module -Name AWSPowerShell -ListAvailable))"
-    "{"
-        "    Write-Host " + (Get-VstsLocString -Key 'InstallingModule')
-        "    Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force"
-        "    Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force"
-    "}"
-)
-
-$metricsSnippet = @(
-)
-
-# Adapting code from the VSTS-Tasks 'PowerShell' task to construct an overall
-# script containing our install test, metrics setup, credential and region context
-# and finally the user supplied script, which we hand off to PowerShell to run.
+# Adapting code from the VSTS-Tasks 'PowerShell' task to install (if needed)
+# and set up the executing context for AWS, then handing the user script
+# off to PowerShell for execution
 try
 {
+    Assert-VstsAgent -Minimum '2.115.0'
+
+    $tempDirectory = Get-VstsTaskVariable -Name 'agent.tempDirectory' -Require
+    Assert-VstsPath -LiteralPath $tempDirectory -PathType 'Container'
+
     $awsEndpoint = Get-VstsInput -Name 'awsCredentials' -Require
     $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
     $awsRegion = Get-VstsInput -Name 'regionName' -Require
@@ -78,13 +69,16 @@ try
     Assert-VstsPath -LiteralPath $input_workingDirectory -PathType 'Container'
 
     $scriptType = Get-VstsInput -Name 'scriptType' -Require
+    $input_arguments = Get-VstsInput -Name 'arguments'
+    
     if ("$scriptType".ToUpperInvariant() -eq "FILEPATH")
     {
         $input_filePath = Get-VstsInput -Name 'filePath' -Require
         try
         {
             Assert-VstsPath -LiteralPath $input_filePath -PathType Leaf
-        } catch
+        }
+        catch
         {
             Write-Error (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
         }
@@ -93,28 +87,33 @@ try
         {
             Write-Error (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
         }
-
-        $input_arguments = Get-VstsInput -Name 'arguments'
     }
     else
     {
         $input_script = Get-VstsInput -Name 'inlineScript' -Require
+        # construct a name to a temp file that will hold the inline script, so
+        # we can pass arguments to it
+        $input_filePath = [System.IO.Path]::Combine($tempDirectory, "$([System.Guid]::NewGuid()).ps1")
     }
 
-    # Generate the script contents.
+    # Generate the script contents
     Write-Host (Get-VstsLocString -Key 'GeneratingScript')
     $contents = @()
     $contents += "`$ErrorActionPreference = '$input_errorActionPreference'"
 
-    if ("$input_targetType".ToUpperInvariant() -eq 'FILEPATH')
+    # by writing an inline script to a file, and then dot sourcing that from
+    # the outer script we construct (ie behaving as if the user had chosen
+    # filepath mode) we gain the ability to pass arguments to both modes
+    if ("$scriptType".ToUpperInvariant() -eq 'INLINE')
     {
-        $contents += ". '$("$input_filePath".Replace("'", "''"))' $input_arguments".Trim()
-        Write-Host (Get-VstsLocString -Key 'PS_FormattedCommand' -ArgumentList ($contents[-1]))
+        $userScript += "$input_script".Replace("`r`n", "`n").Replace("`n", "`r`n")
+        $joinedContents = [System.String]::Join(([System.Environment]::NewLine), $userScript)
+        $null = [System.IO.File]::WriteAllText($input_filePath, $joinedContents, ([System.Text.Encoding]::UTF8))
     }
-    else
-    {
-        $contents += "$input_script".Replace("`r`n", "`n").Replace("`n", "`r`n")
-    }
+
+    $contents += ". '$("$input_filePath".Replace("'", "''"))' $input_arguments".Trim()
+
+    Write-Host (Get-VstsLocString -Key 'PS_FormattedCommand' -ArgumentList ($contents[-1]))
 
     if (!$input_ignoreLASTEXITCODE)
     {
@@ -126,10 +125,9 @@ try
         $contents += '}'
     }
 
-    # Write the script to disk.
-    Assert-VstsAgent -Minimum '2.115.0'
-    $tempDirectory = Get-VstsTaskVariable -Name 'agent.tempDirectory' -Require
-    Assert-VstsPath -LiteralPath $tempDirectory -PathType 'Container'
+    # Write the outer script dot-sourcing the user script which is now temporarily stored
+    # in another script file (if it was provided inline) or in the original file the user
+    # configured the task with
     $filePath = [System.IO.Path]::Combine($tempDirectory, "$([System.Guid]::NewGuid()).ps1")
     $joinedContents = [System.String]::Join(([System.Environment]::NewLine), $contents)
     $null = [System.IO.File]::WriteAllText($filePath, $joinedContents, ([System.Text.Encoding]::UTF8))

@@ -45,12 +45,20 @@
             "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
         },
         {
+            "name": "arguments",
+            "type": "string",
+            "label": "Arguments",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Optional arguments to pass to the script. You can specify either ordinal or named parameters."
+        },
+        {
             "name": "scriptType",
             "type": "radio",
-            "label": "Type",
+            "label": "Script Source",
             "defaultValue": "filePath",
             "required": false,
-            "helpMarkDown": "The source of the script to run. You can choose a file containing the script or enter the script inline in the task's configuration.",
+            "helpMarkDown": "The source of the script to run. You can choose a file containing the script or enter the script in the task's configuration.",
             "options": {
                 "filePath": "Script file",
                 "inline": "Inline Script"
@@ -63,16 +71,7 @@
             "defaultValue": "",
             "required": true,
             "visibleRule": "scriptType = filePath",
-            "helpMarkDown": "The path of the script to execute. Must be a fully qualified path or relative to $(System.DefaultWorkingDirectory)."
-        },
-        {
-            "name": "arguments",
-            "type": "string",
-            "label": "Arguments",
-            "visibleRule": "scriptType = filePath",
-            "defaultValue": "",
-            "required": false,
-            "helpMarkDown": "Optional arguments to pass to the script. You can specify either ordinal or named parameters."
+            "helpMarkDown": "The path of the script file to execute. Must be a fully qualified path or relative to $(System.DefaultWorkingDirectory)."
         },
         {
             "name": "inlineScript",
