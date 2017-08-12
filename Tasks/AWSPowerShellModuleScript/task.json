@@ -57,7 +57,7 @@
             }
         },
         {
-            "name": "scriptName",
+            "name": "filePath",
             "type": "filePath",
             "label": "Script Path",
             "defaultValue": "",
