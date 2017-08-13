@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "0.9.54",
+    "version": "0.9.55",
     "name": "AWS Tools for Microsoft Visual Studio Team Services",
     "scopes": [
         "vso.build",
@@ -65,9 +65,7 @@
         "color": "rgb(220, 235, 252)",
         "theme": "light"
     },
-    "galleryFlags": [
-        "Preview"
-    ],
+    "galleryFlags": [],
     "screenshots": [
         {
             "path": "images/screenshot.png"
