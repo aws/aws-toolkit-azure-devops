@@ -46,7 +46,7 @@
             "name": "applicationType",
             "type": "radio",
             "label": "Application Type",
-            "defaultValue": "",
+            "defaultValue": "aspnet",
             "required": true,
             "helpMarkDown": "The type of .NET web application to deploy.",
             "options": {
@@ -77,7 +77,7 @@
         },
         {
             "name": "applicationName",
-            "label": "Elastic Beanstalk Application Name",
+            "label": "Application Name",
             "type": "string",
             "required": true,
             "defaultValue": "",
@@ -85,7 +85,7 @@
         },
         {
             "name": "environmentName",
-            "label": "Elastic Beanstalk Environment Name",
+            "label": "Environment Name",
             "type": "string",
             "required": true,
             "defaultValue": "",

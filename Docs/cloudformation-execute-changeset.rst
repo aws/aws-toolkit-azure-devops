@@ -68,10 +68,10 @@ Change Set Name*
 Stack Name
 ----------
 
-    The name that is associated with the stack. The name must be unique in the region in which you
-    are creating the stack.
+    The stack name or Amazon Resource Name (ARN) of the stack associated with the change set. This value is required if you specified the name of a change set to execute. If the change set ARN was specified this field is optional.
 
-    A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start
+    The name must be unique in the region in which you
+    are creating the stack. A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start
     with an alphabetic character and cannot be longer than 128 characters.
 
 

@@ -21,7 +21,7 @@
 Synopsis
 ========
 
-Runs a AWS command against an AWS connection.
+Runs a command using the AWS CLI. The AWS CLI must have been installed previously.
 
 Description
 ===========

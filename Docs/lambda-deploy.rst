@@ -59,16 +59,16 @@ Path to |LAM| Project*
 
     The relative path to the location of the |LAM| project.
 
-Command*
---------
+Deployment Type*
+----------------
 
-    Either *Lambda Deploy* or *Serverless Deploy*.
+    Either *Function* or *Serverless application*.
 
-    *Lambda Deploy* performs a single |LAM| function deloyment.
-    *Serverless Deploy* performs a deployment with |CFNlong|, allowing a multiple function deployment.
+    *Function* performs a single |LAM| function deloyment.
+    *Serverless application* performs a deployment with |CFNlong|, allowing a multiple function deployment.
 
-|LAM| Deploy Command: |LAM| Function Properties
------------------------------------------------
+Function Deployment: |LAM| Function Properties
+----------------------------------------------
 
 Function Name
 ~~~~~~~~~~~~~
@@ -97,8 +97,8 @@ Function Timout (Seconds)
 
     The function execution time at which |LAM| should terminate the function.
 
-Serverless Deploy Command: Serverless Application Properties
-------------------------------------------------------------
+Serverless Application Deployment: Serverless Application Properties
+--------------------------------------------------------------------
 
 Stack Name
 ~~~~~~~~~~

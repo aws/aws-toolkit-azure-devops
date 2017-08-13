@@ -68,7 +68,7 @@
             "type": "filepath",
             "label": "Template File",
             "defaultValue": "",
-            "required": false,
+            "required": true,
             "helpMarkDown": "Path to the template file for the stack. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {

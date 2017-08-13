@@ -42,7 +42,7 @@ are noted by an asterisk (*). Other parameters are optional.
 Displayname*
 ------------
 
-    The default name of the task, |CFNlong| Create-Update Stack. You can rename it.
+    The default name of the task, Create/Update Stack. You can rename it.
 
 AWS Credentials*
 ----------------
@@ -65,8 +65,8 @@ Stack Name*
     A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start
     with an alphabetic character and cannot be longer than 128 characters.
 
-Template File
--------------
+Template File*
+--------------
 
     The path to the template file for the stack. For more information, see
     :CFN-ug:`Template Anatomy <template-anatomy>` in the |CFN-ug|.
@@ -83,14 +83,31 @@ Create or update the stack using a change set
     stack and then validated. If the changes validate successfully the change set can then be executed 
     to effect the changes. You can elect to use a change set to either create a new stack or update a 
     new stack.
-    
+
     Default: not checked.
-    
+
+Change Set Name
+---------------
+
+    This parameter is required if the option to use a change set is selected. Specifies the name of the change set to be created to validate and optionally execute to create or update the stack.
+
+Description
+-----------
+
+    Optional description for the change set.
+
+Automatically execute the change set
+------------------------------------
+
+    If checked the change set is automatically executed upon successful validation. If not checked the change set is validated but not executed. You can execute the change set subsequently using the  :code:`|CFNlong| Execute Change Set` task.
+
+    Default: checked.
+
 Capabilities
 ------------
 
     Capabilities that must be specified before |CFNlong| can update certain stacks. Some stack 
-    templates might include resources that can affect permissions in your AWS account, for example by 
+    templates might include resources that can affect permissions in your AWS account, for example by
     creating new AWS Identity and Access Management (IAM) users. For those stacks you must explicitly 
     acknowledge their capabilities by specifying this parameter.
 

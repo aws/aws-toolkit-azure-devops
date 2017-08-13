@@ -21,15 +21,14 @@
 Synopsis
 ========
 
-Runs a PowerShell script that uses cmdlets from the |TWPlong| module.
+Runs a PowerShell script that uses cmdlets from the |TWPlong| module. The module is automatically installed if not already available in the environment.
 
 Description
 ===========
 
-This task accepts a PowerShell script that uses cmdlets from the |TWP| module to interact with AWS services.
+This task accepts a PowerShell command or script that uses cmdlets from the |TWP| module to interact with AWS services.
 You can specify the script to run via its file name, or you can enter it into the task
-configuration. When the task runs on Windows build agents,
-it can optionally install the |TWP| module before running the script.
+configuration. Prior to running the supplied script the task tests to see if the required |TWP| module is already installed. If it is not installed the latest available version from the `PowerShell Gallery <https://www.powershellgallery.com/packages/AWSPowerShell>`_ is downloaded and installed.
 
 .. note:: If an installation is performed, the module is installed in the :code:`current user`
          scope. The location is compatible with automatic module load. As a result, you don't
@@ -55,37 +54,52 @@ AWS Credentials*
 AWS Region*
 -----------
 
-    The AWS Region name used by the cmdlets in the module. For more information, see :aws-gr:`Regions
+    The default AWS Region to be assumed by the cmdlets in the module. AWS cmdlets invoked without a -Region parameter will automatically use this value. For more information, see :aws-gr:`Regions
     and Endpoints <rande>` in the |AWS-gr|.
 
-Type*
-------
+Arguments
+---------
 
-    The type of script to run. Choose :guilabel:`File Path` to run a script that is contained in a file.
+    Optional arguments to be passed to the script. You can use ordinal or named parameters.
+
+Script Source*
+--------------
+
+    The type of script to run. Choose :guilabel:`Script File` to run a script that is contained in a file.
     Choose :guilabel:`Inline Script` to enter the script to run in the task configuration.
 
 Script Path*
 ------------
 
-    Required if the :code:`Type` parameter is set to :guilabel:`File Path`.
+    Required if the :code:`Script Source` parameter is set to :guilabel:`Script File`.
     Specify the full path to the script you want to run.
 
 Inline Script*
 --------------
 
-    Required if the :code:`Type` parameter is set to :guilabel:`Inline Script`. Enter the text of the
+    Required if the :code:`Script Source` parameter is set to :guilabel:`Inline Script`. Enter the text of the
     script to run.
 
-Arguments
----------
+ErrorActionPreference
+---------------------
 
-   Optional arguments to pass to the script. You can use ordinal or named parameters.
+    Prepends the line `$ErrorActionPreference = 'VALUE'` at the top of your script.
 
-Automatically install the tools
--------------------------------
+Advanced
+--------
 
-    Applies to build agents running on Windows only. If selected, the task checks whether
-    the |TWP| module is already available. If it isn't, the task attempts to install it from
-    the `PowerShell Gallery <https://www.powershellgallery.com/packages/AWSPowerShell>`_
-    to the current user scope location.
+Fail on Standard Error
+~~~~~~~~~~~~~~~~~~~~~~
+
+    If this option is selected this task will fail if any errors are written to the error pipeline, or if any data is written to the Standard Error stream. Otherwise the task will rely on the exit code to determine failure.
+
+Ignore $LASTEXITCODE
+~~~~~~~~~~~~~~~~~~~~
+
+    If this option is not selected the line `if ((Test-Path -LiteralPath variable:\\LASTEXITCODE)) { exit $LASTEXITCODE }` is appended to the end of your script. This will cause the last exit code from an external command to be propagated as the exit code of powershell. Otherwise the line is not appended to the end of your script.
+
+Working Directory
+~~~~~~~~~~~~~~~~~
+
+    The working directory where the script is run.
 

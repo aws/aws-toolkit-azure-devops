@@ -55,18 +55,28 @@ AWS Region*
     The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.
 
 
-Web Deploy Archive*
--------------------
+Application Type*
+-----------------
 
-    The path to the web deploy archive that contains the application to deploy to |EB|.
+    The type of application bundle to deploy. ASP.NET application deployments use Web Deploy archives. ASP.NET Core deployments are performed using the :code:`dotnet publish` command line tool.
 
-Beanstalk Application Name*
----------------------------
+Web Deploy Archive
+------------------
+
+    Required if :code:`Application Type` is set to 'ASP.NET'. The path to the web deploy archive that contains the application to deploy to |EB|.
+
+Published Application Path
+--------------------------
+
+    Required if :code:`Application Type` is set to 'ASP.NET Core'. The path to the directory where the command 'dotnet publish' outputted the published application.
+
+Application Name*
+-----------------
 
     The name of the |EB| application.
 
-|EB| Environment Name*
------------------------------------
+Environment Name*
+-----------------
 
     The name of the |EB| environment that will run the application.
 
