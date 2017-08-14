@@ -37,7 +37,7 @@ that will produce a Web Deploy archive for deployment.
        .. image:: images/choose-template.png
           :alt: Select a template
           
-On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.  
+The build process page containing the default tasks for the template is displayed.  
 
        .. image:: images/build-definition.png
           :alt: Build Definition
