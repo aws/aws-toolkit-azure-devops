@@ -1,6 +1,6 @@
 {
     "name": "beanstalk.deploy",
-    "version": "0.9.55",
+    "version": "0.9.56",
     "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
     "main": "BeanstalkDeployApplication.js",
     "scripts": {
