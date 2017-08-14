@@ -16,7 +16,7 @@
     "version": {
         "Major": "0",
         "Minor": "9",
-        "Patch": "56"
+        "Patch": "57"
     },
     "minimumAgentVersion": "2.115.0",
     "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",

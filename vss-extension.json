@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "0.9.56",
+    "version": "0.9.57",
     "name": "AWS Tools for Microsoft Visual Studio Team Services",
     "scopes": [
         "vso.build",
@@ -51,14 +51,14 @@
             "uri": "https://aws.amazon.com/vsts"
         },
         "support": {
-            "uri": "https://github.com/aws/aws-vststools/issues"
+            "uri": "https://github.com/aws/aws-vsts-tools/issues"
         },
         "repository": {
             "type": "git",
-            "uri": "https://github.com/aws/aws-vststools"
+            "uri": "https://github.com/aws/aws-vsts-tools"
         },
         "issues": {
-            "uri": "https://github.com/aws/aws-vststools/issues"
+            "uri": "https://github.com/aws/aws-vsts-tools/issues"
         }
     },
     "branding": {

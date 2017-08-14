@@ -1,6 +1,6 @@
 {
     "name": "cloudformationdeletestack",
-    "version": "0.9.56",
+    "version": "0.9.57",
     "description": "Delete AWS CloudFormation stacks",
     "main": "CloudFormationDeleteStack.js",
     "scripts": {
