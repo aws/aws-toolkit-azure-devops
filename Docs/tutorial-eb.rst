@@ -28,21 +28,16 @@ Prerequisites
 * An AWS account and preferably an associated IAM user account.
 * An Elastic Beanstalk application and environment.
 
+Deploying an ASP.NET Application Using the |AEBlong| Deployment Task
+====================================================================
 
-To Create and Run a Project Using the |AEBlong| Deployment Task
-===========================================================================
-
-Set Up a New Project and Build Process 
---------------------------------------
-
-The tutorial assumes the use of the *ASP.NET Core (.NET Framework)* template.  
+This walkthrough assumes you are using a build based on the ASP.NET Core (.NET Framework) template 
+that will produce a Web Deploy archive for deployment.  
 
        .. image:: images/choose-template.png
           :alt: Select a template
           
-On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.  Remove the 
-*Publish Artifact* task from the end of the build definition. It is not needed since you are deploying 
-to |AEB|.
+On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.  
 
        .. image:: images/build-definition.png
           :alt: Build Definition
@@ -68,9 +63,9 @@ Configure the Task Properties
 
 For the new task you need to make the following configuration changes.
 
-* AWS Credentials: If you have existing AWS credentials for this task in the Services page endpoints 
-  list you can select them by clinking the gear icon to the right of the  AWS Credentials field.  
-  If not, to quickly add credentials for this task, click the :guilabel:`+` link.
+* AWS Credentials: If you have existing AWS credentials configured for your tasks you can select them
+  using the dropdown link in the field. If not, to quickly add credentials for this task, click the 
+  :guilabel:`+` link.
 
        .. image:: images/credentialsfield.png
           :alt: AWS Credential Field
@@ -104,9 +99,9 @@ For the new task you need to make the following configuration changes.
   above, the file will have the same name as the directory containing the web application and will 
   have a ".zip" extension. It can be found in the build artifacts staging directory which can be 
   referenced as :code:`$(build.artifactstagingdirectory)`.
-* Beanstalk Application Name: The name you used to create the Beanstalk application. A Beanstalk 
+* Application Name: The name you used to create the Beanstalk application. A Beanstalk 
   application is the container for the environment for the .NET web application.
-* Beanstalk Environment Name: The name you used to create the Beanstalk environment. A Beanstalk 
+* Environment Name: The name you used to create the Beanstalk environment. A Beanstalk 
   environment contains the actual provisioned resources that are running the .NET web application.
           
 

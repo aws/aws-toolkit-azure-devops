@@ -15,23 +15,21 @@
 #####
 
 .. meta::
-   :description: Using the tasks in the AWS Extensions to Visual Studio Team System
+   :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
    :keywords: extensions, tasks
 
 Synopsis
 ========
 
-Runs a command using the AWS CLI. The AWS CLI must have been installed previously.
+Runs a command using the |CLI|. You must have the |CLI| installed to use this task.
 
 Description
 ===========
 
 The |CLI| uses a multipart structure on the command line. It starts with the base call to AWS.
-The next part specifies a top-level command, which often represents an AWS service supported in the
-|CLI|. Each AWS service has additional subcommands that specify the operation to perform. You can specify
-the
-general CLI options, or the specific parameters for an operation, on the command
-line in any order. If you specify an exclusive parameter multiple times,  only the last value
+The next part specifies a top-level command, which often represents an AWS service that the |CLI| supports. Each AWS service has additional subcommands that specify the operation to perform. You can specify
+the general |CLI| options, or the specific parameters for an operation, in any order on the command
+line. If you specify an exclusive parameter multiple times, only the last value
 applies.
 
 .. code-block:: sh

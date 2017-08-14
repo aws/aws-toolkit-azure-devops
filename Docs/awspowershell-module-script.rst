@@ -21,14 +21,17 @@
 Synopsis
 ========
 
-Runs a PowerShell script that uses cmdlets from the |TWPlong| module. The module is automatically installed if not already available in the environment.
+Runs a PowerShell script that uses cmdlets from the |TWPlong| module. The module is automatically installed
+if it isn't already available in the environment.
 
 Description
 ===========
 
 This task accepts a PowerShell command or script that uses cmdlets from the |TWP| module to interact with AWS services.
 You can specify the script to run via its file name, or you can enter it into the task
-configuration. Prior to running the supplied script the task tests to see if the required |TWP| module is already installed. If it is not installed the latest available version from the `PowerShell Gallery <https://www.powershellgallery.com/packages/AWSPowerShell>`_ is downloaded and installed.
+configuration. Before running the supplied script, the task tests to see if the required |TWP| module
+is already installed. If it isn't installed, the latest available version from the `PowerShell Gallery
+<https://www.powershellgallery.com/packages/AWSPowerShell>`_ is downloaded and installed.
 
 .. note:: If an installation is performed, the module is installed in the :code:`current user`
          scope. The location is compatible with automatic module load. As a result, you don't
@@ -54,13 +57,14 @@ AWS Credentials*
 AWS Region*
 -----------
 
-    The default AWS Region to be assumed by the cmdlets in the module. AWS cmdlets invoked without a -Region parameter will automatically use this value. For more information, see :aws-gr:`Regions
+    The default AWS Region that the cmdlets assume in the module. AWS cmdlets invoked without
+    a :code:`-Region` parameter automatically use this value. For more information, see :aws-gr:`Regions
     and Endpoints <rande>` in the |AWS-gr|.
 
 Arguments
 ---------
 
-    Optional arguments to be passed to the script. You can use ordinal or named parameters.
+    Optional arguments to pass to the script. You can use ordinal or named parameters.
 
 Script Source*
 --------------
@@ -91,15 +95,16 @@ Advanced
 Fail on Standard Error
 ~~~~~~~~~~~~~~~~~~~~~~
 
-    If this option is selected this task will fail if any errors are written to the error pipeline, or if any data is written to the Standard Error stream. Otherwise the task will rely on the exit code to determine failure.
+    If this option is selected, the task will fail if any errors are written to the error pipeline, or
+    if any data is written to the Standard Error stream. Otherwise, the task relies on the exit code to determine failure.
 
 Ignore $LASTEXITCODE
 ~~~~~~~~~~~~~~~~~~~~
 
-    If this option is not selected the line `if ((Test-Path -LiteralPath variable:\\LASTEXITCODE)) { exit $LASTEXITCODE }` is appended to the end of your script. This will cause the last exit code from an external command to be propagated as the exit code of powershell. Otherwise the line is not appended to the end of your script.
+    If this option is not selected, the line `if ((Test-Path -LiteralPath variable:\\LASTEXITCODE)) { exit $LASTEXITCODE }` is appended to the end of your script. This causes the last exit code from an external command to propagate as the exit code of PowerShell. Otherwise, the line is not appended to the end of your script.
 
 Working Directory
 ~~~~~~~~~~~~~~~~~
 
-    The working directory where the script is run.
+    The working directory where the script runs.
 

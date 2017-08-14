@@ -35,7 +35,7 @@ See :ref:`getting-started` for instructions to install the AWS Tools for VSTS an
    :maxdepth: 1
    :titlesonly:
 
-   tutorial-eb
    tutorial-s3
+   tutorial-eb
 
           

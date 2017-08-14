@@ -28,7 +28,7 @@ Install the AWS Tools for VSTS Extension
 ========================================
 
 The AWS Tools for VSTS is installed from the
-`Visual Studio Marketplace <https://marketplace.visualstudio.com/vsts>`_.
+`Visual Studio Marketplace <https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools>`_.
 Sign in to your VSTS account, then search for *AWS Tools for Microsoft Visual Studio Team Services*.
 Choose :guilabel:`Install` to download to VSTS, or
 choose :guilabel:`Download` to install into an on-premises Team Foundation Server.

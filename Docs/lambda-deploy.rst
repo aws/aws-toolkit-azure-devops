@@ -26,10 +26,10 @@ Builds and deploys a .NET Core |LAMlong| function or serverless application.
 Description
 ===========
 
-|LAM|-based applications (also referred to as serverless applications) are composed of functions
+Applications that are based on |LAM| (also referred to as serverless applications) are composed of functions
 triggered by events. A typical serverless application consists of one or more functions triggered
 by events such as object uploads to |S3|, |SNS| notifications, and API actions. Those
-functions can stand alone or leverage other resources such as |DDBlong| tables or |S3| buckets.
+functions can stand alone or use other resources such as |DDBlong| tables or |S3| buckets.
 The most basic serverless application is simply a function.
 
 Parameters
@@ -55,7 +55,7 @@ AWS Region*
     |AWS-gr|.
 
 Path to |LAM| Project*
------------------------
+----------------------
 
     The relative path to the location of the |LAM| project.
 
@@ -79,7 +79,7 @@ Function Name
 Function Role
 ~~~~~~~~~~~~~
 
-    The name of the |IAMlong| role that provides access to AWS services to the deployed |LAM| function.
+    The name of the |IAM| role that provides access to AWS services to the deployed |LAM| function.
 
 Function Handler
 ~~~~~~~~~~~~~~~~
@@ -119,8 +119,8 @@ S3 Prefix
 Advanced
 --------
 
-Additional |LAM| Tools Command Line Arguments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Additional Command Line Arguments for |LAM| Tools
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Additional arguments you can use when executing the :code:`dotnet lambda` command.
 

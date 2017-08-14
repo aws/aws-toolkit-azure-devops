@@ -29,7 +29,7 @@ Description
     This task deploys and scales web applications and services developed with Java, .NET, PHP, Node.js, Python,
     Ruby, Go, and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.
 
-    |EB| automatically handles the deployment, from capacity provisioning, load balancing,
+    |EB| automatically handles the deployment, from capacity provisioning, load balancing, and
     automatic scaling to application health monitoring.
 
 Parameters
@@ -52,7 +52,8 @@ AWS Credentials*
 AWS Region*
 -----------
 
-    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in |AWS-gr|.
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
+    |AWS-gr|.
 
 
 Application Type*
@@ -63,12 +64,14 @@ Application Type*
 Web Deploy Archive
 ------------------
 
-    Required if :code:`Application Type` is set to 'ASP.NET'. The path to the web deploy archive that contains the application to deploy to |EB|.
+    Required if :code:`Application Type` is set to :guilabel:`ASP.NET`. The path to the web deploy archive 
+    that contains the application to deploy to |EB|.
 
 Published Application Path
 --------------------------
 
-    Required if :code:`Application Type` is set to 'ASP.NET Core'. The path to the directory where the command 'dotnet publish' outputted the published application.
+    Required if :code:`Application Type` is set to :guilabel:`ASP.NET Core`. The path to the directory where the
+    command :code:`dotnet publish` outputs the published application.
 
 Application Name*
 -----------------

@@ -40,8 +40,7 @@ Parameters
 ==========
 
 You can set the following parameters for the task. Required
-parameters
-are noted by an asterisk (*). Other parameters are optional.
+parameters are noted by an asterisk (*). Other parameters are optional.
 
 
 Displayname*
@@ -68,7 +67,9 @@ Change Set Name*
 Stack Name
 ----------
 
-    The stack name or Amazon Resource Name (ARN) of the stack associated with the change set. This value is required if you specified the name of a change set to execute. If the change set ARN was specified this field is optional.
+    The stack name or ARN of the stack that is associated with the change set. This value is required
+    if you specify the name of a change set to execute. If the change set ARN is specified, this field
+    is optional.
 
     The name must be unique in the region in which you
     are creating the stack. A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start

@@ -28,22 +28,15 @@ Prerequisites
 * An AWS account and preferably an associated IAM user account.
 * An S3 bucket.
 
-To Create and Run a Project Using the AWS S3 Upload Task
-========================================================
+Archiving Build Artifacts with the AWS S3 Upload Task
+=====================================================
 
-The tutorial assumes the use of the **ASP.NET Core* template.  
-
-       .. image:: images/s3-select-template.png
-          :alt: Select a template
-
-On the *Build Process* page set the Default agent queue field to *Hosted VS2017*.
-          
-This provides a default build definition with the following default tasks:
+This walkthrough assumes you are using a build based on the ASP.NET Core template which contains the 
+following default tasks.  
     
        .. image:: images/startingbuilddefinition.png
           :alt: New build pipeline
-          
-          
+                   
 Add the S3 Upload Task to the Build Definition
 ---------------------------------------------- 
 
@@ -67,9 +60,9 @@ Configure the Task Properties
 
 For the new task you need to make the following configurations changes.
   
-* AWS Credentials: If you have existing AWS credentials for this task in the Services page endpoints 
-  list you can select them by clinking the gear icon to the right of the  AWS Credentials field.  
-  If not, to quickly add credentials for this task, click the :guilabel:`+` link.
+* AWS Credentials: If you have existing AWS credentials configured for your tasks you can select them
+  using the dropdown link in the field. If not, to quickly add credentials for this task, click the 
+  :guilabel:`+` link.
 
        .. image:: images/credentialsfield.png
           :alt: AWS Credential Field
@@ -115,7 +108,8 @@ For the new task you need to make the following configurations changes.
 * There are 3 additional options that can be set:
     * Create S3 bucket if it does not exist. The task will fail if the bucket cannot be created.
     * Overwrite (in the Advanced section) - this is selected by default.
-    * Flatten folders (also in Advanced section).          
+    * Flatten folders (also in Advanced section). Flattens the folder structure and copies all files 
+      into the specified target folder in the bucket, removing their relative paths to the source folder.         
     
 Run the Build
 -------------

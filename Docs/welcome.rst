@@ -18,12 +18,11 @@ AWS Tools for Microsoft Visual Studio Team Services
 ###################################################
 
 
-AWS Tools for Microsoft Visual Studio Team Services is an extension for Visual Studio Team Services that contains tasks you can use in build definitions in VSTS to interact with AWS services. 
-AWS Tools for VSTS is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/>`_.
+AWS Tools for Microsoft Visual Studio Team Services is an extension for Visual Studio Team Services that contains tasks you can use in build and release definitions in VSTS to interact with AWS services. 
+AWS Tools for VSTS is available through the `Visual Studio Marketplace <https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools>`_.
 
 You can use these tasks in a VSTS project or in an on-premises Team Foundation Server environment. 
-Use the AWS tasks in VSTS build and release definitions to interact with AWS services. The available 
-AWS tasks include:
+The available AWS tasks include:
 
 * Deployment tasks
     * |CDlong| Deployment Application Task
@@ -52,8 +51,7 @@ The AWS Tools for VSTS User Guide describes how to install and use the AWS Tools
 
 :ref:`tutorials`
 
-    Demonstrates how to create and run a VSTS project utilizing a task installed with the
-    AWS Tools for VSTS.
+    Walk-through topics demonstrating how to use tasks in the AWS Tools for VSTS in your build and release definitions.
 
 :ref:`task_reference`
 

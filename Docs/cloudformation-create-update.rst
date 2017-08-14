@@ -15,8 +15,8 @@
 ##################################
 
 .. meta::
-    :description:
-         :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
+    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
+   :keywords: extensions, tasks
 
 Synopsis
 ========
@@ -27,7 +27,7 @@ Description
 ===========
 
 If the stack doesn't exist, this task creates a stack as specified in the parameters.
-If the stack exists, this task updates a stack as specified in the parameters. When you need to change
+If the stack exists, this task updates it as specified in the parameters. When you need to change
 a stack's
 settings or its resources, update the stack instead of deleting it and creating
 a new stack.
@@ -37,7 +37,6 @@ Parameters
 
 You can set the following parameters for the task. Required parameters
 are noted by an asterisk (*). Other parameters are optional.
-
 
 Displayname*
 ------------
@@ -52,7 +51,7 @@ AWS Credentials*
 AWS Region*
 -----------
 
-    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in 
+    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in
     the |AWS-gr|.
 
 
@@ -75,56 +74,59 @@ Template Parameters File
 ------------------------
 
     The path to the file containing the template parameters.
-    
-Create or update the stack using a change set
+
+Create or Update the Stack Using a Change Set
 ---------------------------------------------
 
-    If checked a change set will be created that contains a list of changes that will be applied to a 
-    stack and then validated. If the changes validate successfully the change set can then be executed 
-    to effect the changes. You can elect to use a change set to either create a new stack or update a 
-    new stack.
+    If checked, a change set that contains a list of changes to apply to a
+    stack will be created and then validated. If the changes validate successfully, the change set can be executed
+    to effect the changes. You can choose to use a change set to create a new stack or update an 
+    existing stack.
 
     Default: not checked.
 
 Change Set Name
 ---------------
 
-    This parameter is required if the option to use a change set is selected. Specifies the name of the change set to be created to validate and optionally execute to create or update the stack.
+    This parameter is required if the option to use a change set is selected. Specifies the name of the
+    change set to create and then validate, and optionally execute to create or update the stack.
 
 Description
 -----------
 
     Optional description for the change set.
 
-Automatically execute the change set
+Automatically Execute the Change Set
 ------------------------------------
 
-    If checked the change set is automatically executed upon successful validation. If not checked the change set is validated but not executed. You can execute the change set subsequently using the  :code:`|CFNlong| Execute Change Set` task.
+    If checked, the change set is automatically executed when validation succeeds. If it isn't checked
+    the change set is validated but not executed. You can execute the change set subsequently by using
+    the  :code:`|CFNlong| Execute Change Set` task.
 
     Default: checked.
 
 Capabilities
 ------------
 
-    Capabilities that must be specified before |CFNlong| can update certain stacks. Some stack 
+    Capabilities that you must specify before |CFNlong| can update certain stacks. Some stack
     templates might include resources that can affect permissions in your AWS account, for example by
-    creating new AWS Identity and Access Management (IAM) users. For those stacks you must explicitly 
+    creating new AWS Identity and Access Management (IAM) users. For those stacks, you must explicitly
     acknowledge their capabilities by specifying this parameter.
 
-Create/update IAM Resources ('CAPABILITY_IAM')
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create or Update IAM Resources ('CAPABILITY_IAM')
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        If your stack manipulates IAM resources, you can specify either capability otherwise an 
-        :code:`InsufficientCapabilities` error will be returned.
+        If your stack manipulates IAM resources, you can specify either capability. Otherwise, an
+        :code:`InsufficientCapabilities` error is returned.
 
         Default: checked.
-        
-Create/update Named IAM Resources ('CAPABILITY_NAMED_IAM')
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        If your stack manipulates IAM resources with custom names, you must add this capability 
-        otherwise an :code:`InsufficientCapabilities` error will be returned.
-        
+Create or Update Named IAM Resources ('CAPABILITY_NAMED_IAM')
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        If your stack manipulates IAM resources with custom names, you must add this capability.
+        Otherwise, an :code:`InsufficientCapabilities` error is returned.
+
         Default: checked.
 
 Advanced
@@ -133,8 +135,8 @@ Advanced
 Role ARN
 ~~~~~~~~
 
-        The |arnlong| (ARN) of an |IAMlong| (|IAM|) role that
-        |CFNlong| assumes when executing the change set. |CFNlong| uses the role's
+        The |arnlong| (ARN) of an |IAM| role that
+        |CFNlong| assumes when it executes the change set. |CFNlong| uses the role's
         credentials to make calls on your behalf. |CFNlong| uses this role for all future
         operations on the stack. As long as users have permission to operate on the stack,
         |CFNlong| uses this role even if the users don't have permission to pass it.
@@ -177,7 +179,7 @@ On Failure
 Disable Rollback
 ~~~~~~~~~~~~~~~~
 
-        If checked, disables rollback of the stack if stack creation failed. You can specify either
+        If checked, disables rollback of the stack if stack creation failed. You can specify
         :code:`DisableRollback` or :code:`OnFailure`, but not both.
 
         Default: not checked.
@@ -185,7 +187,8 @@ Disable Rollback
 Output Variable
 ~~~~~~~~~~~~~~~
 
-        The name of the variable that will contain the ID of the stack on task completion. You can use
+        The name of the variable that will contain the stack ID on task completion. You can
+        use
         the variable as :code:`$(variableName)` to refer to the stack ID in subsequent tasks.
 
 
