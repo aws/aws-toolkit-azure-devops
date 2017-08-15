@@ -14,9 +14,9 @@
         "DotNetFramework"
     ],
     "version": {
-        "Major": "0",
-        "Minor": "9",
-        "Patch": "57"
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "0"
     },
     "minimumAgentVersion": "2.115.0",
     "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",
