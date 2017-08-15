@@ -1,5 +1,5 @@
 {
-    "id": "19d98754-eb4c-450b-abcf-9a799de60003",
+    "id": "c9e49f96-6c7d-4420-97f1-5e0dfd816354",
     "name": "LambdaInvokeFunction",
     "friendlyName": "AWS Lambda Invoke Function",
     "description": "Invokes an AWS Lambda function with a JSON payload.",

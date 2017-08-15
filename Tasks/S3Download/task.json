@@ -1,5 +1,5 @@
 {
-    "id": "369b7be3-fc8a-41ff-94b8-9798e6108dd0",
+    "id": "30f6a876-1d27-450c-b2bb-9f390a592082",
     "name": "S3Download",
     "friendlyName": "AWS S3 Download",
     "description": "Download file and folder content from an Amazon Simple Storage Service (S3) Bucket",

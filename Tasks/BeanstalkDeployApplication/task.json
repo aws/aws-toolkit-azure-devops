@@ -1,5 +1,5 @@
 {
-    "id": "ACA12442-1E42-433A-91F4-82F8AA714DB1",
+    "id": "1399d161-270d-4ee9-b913-78b177165406",
     "name": "BeanstalkDeployApplication",
     "friendlyName": "AWS Elastic Beanstalk Deployment",
     "description": "Deploys an application to Amazon EC2 instance(s) using AWS Elastic Beanstalk",

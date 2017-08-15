@@ -1,5 +1,5 @@
 {
-    "id": "bdc51eaf-b608-42d5-8f1f-2aed6cf392ad",
+    "id": "0c632a66-60d4-498a-88c8-1c69cc057ef1",
     "name": "LambdaNETCoreDeploy",
     "friendlyName": "AWS Lambda .NET Core Deployment",
     "description": "Build and deploy a Serverless .NET Core application or AWS Lambda function",

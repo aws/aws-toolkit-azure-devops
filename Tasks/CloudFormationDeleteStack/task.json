@@ -1,5 +1,5 @@
 {
-    "id": "562cc516-4bea-4b60-b441-f924edf7dcf6",
+    "id": "089bda61-367d-4d7c-a06b-88f7e2f20f22",
     "name": "CloudFormationDeleteStack",
     "friendlyName": "AWS CloudFormation Delete Stack",
     "description": "Deletes an AWS CloudFormation stack.",

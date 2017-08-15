@@ -1,5 +1,5 @@
 {
-    "id": "2219c95b-b872-44ac-9ff9-a2553010f860",
+    "id": "67d18db7-e637-48f8-80b3-91f440db4931",
     "name": "SendMessage",
     "friendlyName": "AWS Send Message",
     "description": "Sends a message to an SNS topic or SQS queue",
