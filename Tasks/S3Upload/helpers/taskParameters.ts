@@ -20,6 +20,7 @@ export class UploadTaskParameters {
     public globExpressions: string[];
     public filesAcl: string;
     public createBucket: boolean;
+    public contentType: string;
 
     constructor() {
         try {
@@ -36,6 +37,7 @@ export class UploadTaskParameters {
             this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
             this.filesAcl = tl.getInput('filesAcl', false);
             this.createBucket = tl.getBoolInput('createBucket');
+            this.contentType = tl.getInput('contentType', false);
         } catch (error) {
             throw new Error(error.message);
         }

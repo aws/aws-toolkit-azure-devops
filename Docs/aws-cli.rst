@@ -21,7 +21,8 @@
 Synopsis
 ========
 
-Runs a command using the |CLI|. You must have the |CLI| installed to use this task.
+Runs a command using the |CLI|. Note that you must have the |CLI| installed to use this task. See `Installing the AWS Command Line Interface
+<https://docs.aws.amazon.com/cli/latest/userguide/installing.html>`_ for more details.
 
 Description
 ===========

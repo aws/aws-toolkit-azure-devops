@@ -4,7 +4,7 @@
     "friendlyName": "AWS CLI",
     "description": "Run an AWS CLI command",
     "author": "Amazon Web Services",
-    "helpMarkDown": "The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts. You must have the AWS CLI installed to use this task.",
+    "helpMarkDown": "The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts. You must have the AWS CLI installed to use this task. See http://docs.aws.amazon.com/cli/latest/userguide/installing.html for more details.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "1"
+        "Patch": "2"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS CLI: $(awsCommand)",

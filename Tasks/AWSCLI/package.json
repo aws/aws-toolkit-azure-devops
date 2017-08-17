@@ -1,6 +1,6 @@
 {
     "name": "awscli",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
     "main": "AWSCLI.js",
     "scripts": {
