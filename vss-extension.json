@@ -41,25 +41,22 @@
         "AWSPowerShell"
     ],
     "links": {
-        "home": {
-            "uri": "https://aws.amazon.com/vsts?referer=vsmarketplace"
-        },
         "getstarted": {
             "uri": "https://aws.amazon.com/vsts?referer=vsmarketplace"
         },
         "learn": {
             "uri": "https://aws.amazon.com/vsts?referer=vsmarketplace"
         },
+        "license": {
+            "uri": "https://github.com/aws/aws-vsts-tools/blob/master/LICENSE"
+        },
         "support": {
             "uri": "https://github.com/aws/aws-vsts-tools/issues"
-        },
-        "repository": {
-            "type": "git",
-            "uri": "https://github.com/aws/aws-vsts-tools"
-        },
-        "issues": {
-            "uri": "https://github.com/aws/aws-vsts-tools/issues"
         }
+    },
+    "repository": {
+        "type": "git",
+        "uri": "https://github.com/aws/aws-vsts-tools"
     },
     "branding": {
         "color": "rgb(220, 235, 252)",
