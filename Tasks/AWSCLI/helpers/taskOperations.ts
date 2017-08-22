@@ -43,18 +43,24 @@ export class TaskOperations {
 
     private static async configureAwsCli(taskParameters: TaskParameters.CliTaskParameters) {
         const awsCliPath = tl.which('aws');
+
+        tl.debug('configure access key');
         const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath);
         awsCliTool.line('configure set aws_access_key_id');
         awsCliTool.arg(taskParameters.awsKeyId);
-        await awsCliTool.exec(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+        awsCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+
         tl.debug('configure secret access key');
-        awsCliTool.line('configure set aws_secret_access_key');
-        awsCliTool.arg(taskParameters.awsSecretKey);
-        await awsCliTool.exec(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+        const awsCliTool2: tr.ToolRunner = tl.tool(awsCliPath);
+        awsCliTool2.line('configure set aws_secret_access_key');
+        awsCliTool2.arg(taskParameters.awsSecretKey);
+        awsCliTool2.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+
         tl.debug('configure region');
-        awsCliTool.line('configure set');
-        awsCliTool.arg('default.region');
-        awsCliTool.arg(taskParameters.awsRegion);
-        await awsCliTool.exec(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+        const awsCliTool3: tr.ToolRunner = tl.tool(awsCliPath);
+        awsCliTool3.line('configure set');
+        awsCliTool3.arg('default.region');
+        awsCliTool3.arg(taskParameters.awsRegion);
+        awsCliTool3.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
     }
 }
