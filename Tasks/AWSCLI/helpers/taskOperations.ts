@@ -27,7 +27,7 @@ export class TaskOperations {
             awsCliTool.arg(taskParameters.awsCliCommand);
             awsCliTool.arg(taskParameters.awsCliSubCommand);
             if (taskParameters.awsCliParameters != null) {
-                awsCliTool.arg(taskParameters.awsCliParameters);
+                awsCliTool.line(taskParameters.awsCliParameters);
             }
             const code: number = await awsCliTool.exec(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
             tl.debug(`return code: ${code}`);

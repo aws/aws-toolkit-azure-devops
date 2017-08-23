@@ -1,3 +1,7 @@
+### 1.0.4 (2017-08-23)
+
+* Fixed issue handling otional arguments to the AWS CLI task. The original processing resulted in the arguments being enclosed in quotes which (depending on the command) could lead to an error being returned by the CLI.
+
 ### 1.0.3 (2017-08-23)
 
 * Fixed issue in the AWS CLI task when configuring credentials and default region.
