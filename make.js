@@ -496,15 +496,22 @@ target.publish = function() {
         fail('Missing --publishtoken switch');
     }
 
-    var packages = matchFind('*.vsix', packageRoot, { noRecurse: true, matchBase: true });
-    if (packages.length != 1) {
+    if (!options.publisher) {
+        fail('Missing --publisher, needed to select vsix to upload');
+    }
+
+    var vsixNamePattern = options.publisher + '.aws-vsts-tools-*.vsix';
+    var packages = matchFind(vsixNamePattern, packageRoot, { noRecurse: true, matchBase: true });
+    if (packages.length === 0){
+        fail(`Failed to find a vsix to publish using name pattern ${vsixNamePattern}`);
+    } else if (packages.length > 1) {
         fail(`Found ${packages.length} vsix files in ${packageRoot} folder, only expected one!`);
     }
 
     var vsixPackage = packages[0];
-    console.log(`> Publishing ${vsixPackage}`);
-
     var tfxcmd = 'tfx extension publish --vsix ' + vsixPackage + ' --token ' + options.publishtoken;
+    console.log(`> Publishing: ${tfxcmd}`);
+
     run(tfxcmd);
 
     banner('Publishing successful', true);
