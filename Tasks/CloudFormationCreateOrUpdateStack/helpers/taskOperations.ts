@@ -110,9 +110,7 @@ export class TaskOperations {
 
         try {
             template = await this.loadTemplateFile(taskParameters.templateFile);
-            if (taskParameters.templateParametersFile) {
-                templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
-            }
+            templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
         } catch (err) {
             console.error(tl.loc('TemplateFilesLoadFailure', err.message), err);
             throw err;
@@ -156,9 +154,7 @@ export class TaskOperations {
 
         try {
             template = await this.loadTemplateFile(taskParameters.templateFile);
-            if (taskParameters.templateParametersFile) {
-                templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
-            }
+            templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
         } catch (err) {
             console.error(tl.loc('TemplateFilesLoadFailure', err.message), err);
             throw err;
@@ -300,15 +296,25 @@ export class TaskOperations {
 
     private static async loadTemplateFile(templateFile: string): Promise<string> {
         console.log(tl.loc('LoadingTemplateFile', templateFile));
+        if (!tl.exist(templateFile)) {
+            throw new Error(tl.loc('TemplateFileDoesNotExist', templateFile));
+        }
         const template = fs.readFileSync(templateFile, 'utf8');
         tl.debug('Successfully loaded template file');
         return template;
     }
 
     private static async loadParametersFromFile(parametersFile: string): Promise<awsCloudFormation.Parameters> {
-        console.log(tl.loc('LoadingTemplateParameterFile', parametersFile));
+        if (!parametersFile) {
+            console.log(tl.loc('NoParametersFileSpecified'));
+            return null;
+        }
+        console.log(tl.loc('LoadingTemplateParametersFile', parametersFile));
+        if (!tl.exist(parametersFile)) {
+            throw new Error(tl.loc('ParametersFileDoesNotExist', parametersFile));
+        }
         const templateParameters = JSON.parse(fs.readFileSync(parametersFile, 'utf8'));
-        tl.debug('Successfully loaded template file');
+        tl.debug('Successfully loaded template parameters file');
         return templateParameters;
     }
 

@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "2"
+        "Patch": "3"
     },
     "runsOn": [
         "Agent"
@@ -67,7 +67,6 @@
             "name": "templateFile",
             "type": "filepath",
             "label": "Template File",
-            "defaultValue": "",
             "required": true,
             "helpMarkDown": "Path to the template file for the stack. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
@@ -163,7 +162,7 @@
             "name": "onFailure",
             "type": "pickList",
             "label": "On Failure",
-            "defaultValue": "",
+            "defaultValue": "ROLLBACK",
             "groupName": "Options",
             "required": false,
             "helpMarkDown": "Determines what action will be taken if stack creation fails. \n\n Default: Rollback",
@@ -207,7 +206,8 @@
         "CreateStackWithChangeSet": "Creating stack with template file %s, parameters file %s, change set %s",
         "UpdateStackWithChangeSet": "Updating stack with template file %s, parameters file %s, change set %s",
         "LoadingTemplateFile": "Loading template file from %s",
-        "LoadingTemplateParameterFile": "Loading template parameters file from %s",
+        "TemplateFileDoesNotExist": "Template file '%s' does not exist",
+        "LoadingTemplateParametersFile": "Loading template parameters file '%s'",
         "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
         "StackCreated": "Stack %s transitioned to create complete status",
         "StackCreationFailed": "Stack %s failed to reach completion status, error: %s",
@@ -234,6 +234,8 @@
         "FailedToDeleteChangeSet": "Request to delete change set failed with error: %s",
         "AddingCapability": "Setting capability %s for stack",
         "AutoExecuteChangeSetOption": "Auto execute change set option: %s",
-        "CreatingChangeSet": "Creating %s type change set %s"
+        "CreatingChangeSet": "Creating %s type change set %s",
+        "NoParametersFileSpecified": "No parameters file specified",
+        "ParametersFileDoesNotExist": "Parameters file '%s' could not be found."
     }
 }

@@ -7,6 +7,7 @@
   */
 
 import tl = require('vsts-task-lib/task');
+import fs = require('fs');
 
 export class CreateOrUpdateStackTaskParameters {
     public awsKeyId: string;
@@ -38,7 +39,17 @@ export class CreateOrUpdateStackTaskParameters {
             this.stackName = tl.getInput('stackName', true);
 
             this.templateFile = tl.getPathInput('templateFile', true, true);
+
+            // For currently unknown reason, if the user does not give a value then instead of an empty/null
+            // path (per default value for the field), we get what appears to be the root of the repository
+            // path. To solve this without needing to add a task parameter to indicate we should use a parameter
+            // file (a breaking change) we do a simple directory vs file test
             this.templateParametersFile = tl.getPathInput('templateParametersFile', false, true);
+            if (this.templateParametersFile) {
+                if (fs.statSync(this.templateParametersFile).isDirectory()) {
+                    this.templateParametersFile = null;
+                }
+            }
 
             this.useChangeSet = tl.getBoolInput('useChangeSet', false);
             this.changeSetName = tl.getInput('changeSetName', this.useChangeSet);
