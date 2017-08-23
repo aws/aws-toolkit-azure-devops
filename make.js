@@ -13,7 +13,8 @@ var mopts = {
     ],
     boolean: [
         'release',
-        'stamptasks'
+        'stamptasks',
+        'dryrun'
     ]
 };
 var options = minimist(process.argv, mopts);
@@ -512,7 +513,12 @@ target.publish = function() {
     var tfxcmd = 'tfx extension publish --vsix ' + vsixPackage + ' --token ' + options.publishtoken;
     console.log(`> Publishing: ${tfxcmd}`);
 
-    run(tfxcmd);
+    if (options.dryrun) {
+        console.log('> !! --dryrun option specified, the command was not run and package not published');
+    } else {
+        console.log('> !! executing command to publish to the marketplace')
+        run(tfxcmd);
+    }
 
-    banner('Publishing successful', true);
+    banner('Publish target completed', true);
 }
