@@ -1,6 +1,6 @@
 {
     "name": "s3download",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Download content from an AWS Simple Storage Service (S3) Bucket",
     "main": "S3Download.js",
     "scripts": {
