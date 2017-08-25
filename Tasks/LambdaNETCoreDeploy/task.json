@@ -57,7 +57,7 @@
         {
             "name": "lambdaProjectPath",
             "label": "Path to Lambda Project",
-            "type": "filepath",
+            "type": "filePath",
             "required": true,
             "defaultValue": "",
             "helpMarkDown": "The relative path to the location of the Lambda project to deploy."
@@ -66,7 +66,7 @@
             "name": "command",
             "type": "radio",
             "label": "Deployment Type",
-            "defaultValue": "",
+            "defaultValue": "deployFunction",
             "required": true,
             "helpMarkDown": "The type of deployment to perform. \"Function\" deploys a single function to AWS Lambda. \"Serverless application\" performs a deployment using AWS CloudFormation, allowing multiple function deployment.",
             "options": {

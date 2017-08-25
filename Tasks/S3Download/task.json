@@ -68,7 +68,7 @@
         },
         {
             "name": "targetFolder",
-            "type": "filepath",
+            "type": "filePath",
             "label": "Target Folder",
             "defaultValue": "",
             "required": true,

@@ -51,7 +51,7 @@
         {
             "name": "message",
             "label": "Message",
-            "type": "multiline",
+            "type": "multiLine",
             "required": true,
             "defaultValue": "",
             "helpMarkDown": "The message content to send.\n\nThe maximum size for both queue and topic targets is 256KB (262144 bytes, not 262144 characters)."

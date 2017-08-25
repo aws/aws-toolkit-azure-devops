@@ -66,7 +66,7 @@
         {
             "name": "revisionBundle",
             "label": "Revision Bundle",
-            "type": "filepath",
+            "type": "filePath",
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "The artifacts to be deployed.\n\nYou can supply a folder or a filename to this parameter. If a folder is supplied the task will zip the contents of the folder recursively into an archive file before uploading the archive to Amazon S3. If a filename is supplied the task uploads it, unmodified, to Amazon S3. Note that CodeDeploy requires the appspec.yml file describing the application to exist at the root of the specified folder or archive file."
@@ -98,7 +98,7 @@
         {
             "name": "fileExistsBehavior",
             "label": "Existing File Behavior",
-            "type": "picklist",
+            "type": "pickList",
             "defaultValue": "DISALLOW",
             "helpMarkDown": "How AWS CodeDeploy should handle files that already exist in a deployment target location but weren't part of the previous successful deployment.",
             "options": {

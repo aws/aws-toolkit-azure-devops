@@ -19,11 +19,6 @@
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Elastic Beanstalk: $(applicationName)",
     "groups": [
-        {
-            "name": "advanced",
-            "displayName": "Advanced",
-            "isExpanded": false
-        }
     ],
     "inputs": [
         {
@@ -60,7 +55,7 @@
         {
             "name": "webDeploymentArchive",
             "label": "Web Deploy Archive",
-            "type": "filepath",
+            "type": "filePath",
             "required": true,
             "defaultValue": "",
             "helpMarkDown": "The path to the Web Deploy (msdeploy) archive that contains the application to deploy to Elastic Beanstalk.",
@@ -69,7 +64,7 @@
         {
             "name": "dotnetPublishPath",
             "label": "Published Application Path",
-            "type": "filepath",
+            "type": "filePath",
             "required": true,
             "defaultValue": "",
             "helpMarkDown": "The path to the directory where the command 'dotnet publish' outputted the published application.",

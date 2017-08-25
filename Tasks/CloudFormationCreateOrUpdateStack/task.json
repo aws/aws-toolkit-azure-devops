@@ -65,14 +65,14 @@
         },
         {
             "name": "templateFile",
-            "type": "filepath",
+            "type": "filePath",
             "label": "Template File",
             "required": true,
             "helpMarkDown": "Path to the template file for the stack. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
         },
         {
             "name": "templateParametersFile",
-            "type": "filepath",
+            "type": "filePath",
             "label": "Template Parameters File",
             "defaultValue": "",
             "required": false,
@@ -142,7 +142,7 @@
         },
         {
             "name": "resourceTypes",
-            "type": "multiline",
+            "type": "multiLine",
             "label": "Resource Types",
             "defaultValue": "",
             "groupName": "Advanced",
@@ -151,7 +151,7 @@
         },
         {
             "name": "notificationARNs",
-            "type": "multiline",
+            "type": "multiLine",
             "label": "Notification ARNs",
             "defaultValue": "",
             "required": false,

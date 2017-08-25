@@ -79,7 +79,7 @@
         },
         {
             "name": "logType",
-            "type": "picklist",
+            "type": "pickList",
             "label": "Log Type",
             "defaultValue": "None",
             "helpMarkDown": "For synchronous execution, returns the base64-encoded last 4 KB of log data produced by your Lambda function in the x-amz-log-result header.",
