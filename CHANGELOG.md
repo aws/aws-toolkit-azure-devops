@@ -1,3 +1,7 @@
+### 1.0.5 (2017-08025)
+
+* Corrected casing of some field types in the task definitions to fix issues with on-premise TFS 2017 installations not showing some fields in the CloudFormation tasks.
+
 ### 1.0.4 (2017-08-23)
 
 * Fixed issue handling otional arguments to the AWS CLI task. The original processing resulted in the arguments being enclosed in quotes which (depending on the command) could lead to an error being returned by the CLI.
