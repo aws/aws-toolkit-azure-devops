@@ -1,4 +1,8 @@
-### 1.0.5 (2017-08025)
+### 1.0.6 (2017-09-08)
+
+* Fixed issue with S3 Upload task to correctly find files with user given GLOB.
+
+### 1.0.5 (2017-08-25)
 
 * Corrected casing of some field types in the task definitions to fix issues with on-premise TFS 2017 installations not showing some fields in the CloudFormation tasks.
 
