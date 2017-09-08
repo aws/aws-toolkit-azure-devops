@@ -318,7 +318,7 @@ export class TaskOperations {
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder);
         const allPaths = tl.find(taskParameters.sourceFolder); // default find options (follow sym links)
         tl.debug(tl.loc('AllPaths', allPaths));
-        const matchedPaths = tl.match(allPaths, taskParameters.globExpressions); // default match options
+        const matchedPaths = tl.match(allPaths, taskParameters.globExpressions, taskParameters.sourceFolder); // default match options
         tl.debug(tl.loc('MatchedPaths', matchedPaths));
         const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory()); // filter-out directories
         tl.debug(tl.loc('MatchedFiles', matchedFiles));
