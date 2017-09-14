@@ -1,3 +1,7 @@
+### 1.0.7 (2017-09-14)
+
+* Fixed issue with CodeDeploy deployment task not setting output variable (https://github.com/aws/aws-vsts-tools/pull/19)
+
 ### 1.0.6 (2017-09-08)
 
 * Fixed issue with S3 Upload task to correctly find files with user given GLOB.
