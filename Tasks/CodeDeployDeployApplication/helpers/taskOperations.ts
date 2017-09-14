@@ -26,6 +26,12 @@ export class TaskOperations {
 
         const bundleKey = await this.uploadBundle(taskParameters);
         const deploymentId: string = await this.deployRevision(taskParameters, bundleKey);
+
+        if (taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
+            tl.setVariable(taskParameters.outputVariable, deploymentId);
+        }
+
         await this.waitForDeploymentCompletion(taskParameters.applicationName, deploymentId);
 
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
