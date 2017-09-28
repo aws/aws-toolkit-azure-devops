@@ -23,7 +23,7 @@ Services in your VSTS projects.
 
 **Prerequisites**
 
-* Either a VSTS account or on-premise Team Foundation Server.
+* Either a VSTS account or on-premises Team Foundation Server.
 * An AWS account and preferably an associated IAM user account.
 * Task specific permissions.
 * An existing VSTS project with the build definition template specified in the tutorial.
