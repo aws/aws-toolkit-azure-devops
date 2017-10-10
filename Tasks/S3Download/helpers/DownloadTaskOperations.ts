@@ -11,13 +11,14 @@ import path = require('path');
 import fs = require('fs');
 import mm = require('minimatch');
 
-import awsS3Client = require('aws-sdk/clients/s3');
-import TaskParameters = require('./taskParameters');
+import S3 = require('aws-sdk/clients/s3');
+import Parameters = require('./DownloadTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async downloadArtifacts(taskParameters: TaskParameters.DownloadTaskParameters): Promise<void> {
+    public static async downloadArtifacts(taskParameters: Parameters.TaskParameters): Promise<void> {
         this.createServiceClients(taskParameters);
 
         const exists = await this.testBucketExists(taskParameters.bucketName);
@@ -30,18 +31,20 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static s3Client: awsS3Client;
+    private static s3Client: S3;
 
-    private static createServiceClients(taskParameters: TaskParameters.DownloadTaskParameters) {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
 
-        this.s3Client = new awsS3Client({
+        const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
-            }
-        });
+            },
+            s3ForcePathStyle: taskParameters.forcePathStyleAddressing
+        };
+        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }
 
     private static async testBucketExists(bucketName: string): Promise<boolean> {
@@ -53,7 +56,7 @@ export class TaskOperations {
         }
     }
 
-    private static async downloadFiles(taskParameters: TaskParameters.DownloadTaskParameters) {
+    private static async downloadFiles(taskParameters: Parameters.TaskParameters) {
 
         let msgSource: string;
         if (taskParameters.sourceFolder) {
@@ -94,7 +97,7 @@ export class TaskOperations {
         return Promise.all(allDownloads);
     }
 
-    private static downloadFile(s3Params: awsS3Client.GetObjectRequest, dest: string): Promise<void> {
+    private static downloadFile(s3Params: S3.GetObjectRequest, dest: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             const dir: string = path.dirname(dest);
@@ -111,7 +114,7 @@ export class TaskOperations {
         });
     }
 
-    private static async fetchAllObjectKeys(taskParameters: TaskParameters.DownloadTaskParameters) : Promise<string[]> {
+    private static async fetchAllObjectKeys(taskParameters: Parameters.TaskParameters) : Promise<string[]> {
         if (taskParameters.sourceFolder) {
             console.log(tl.loc('ListingKeysFromPrefix', taskParameters.sourceFolder, taskParameters.bucketName));
         } else {
@@ -121,7 +124,7 @@ export class TaskOperations {
         const allKeys: string[] = [];
         let nextToken : string = null;
         do {
-            const params: awsS3Client.ListObjectsRequest = {
+            const params: S3.ListObjectsRequest = {
                 Bucket: taskParameters.bucketName,
                 Prefix: taskParameters.sourceFolder,
                 Marker: nextToken

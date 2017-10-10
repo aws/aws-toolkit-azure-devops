@@ -7,8 +7,9 @@
   */
 
 import tl = require('vsts-task-lib/task');
+import sdkutils = require('sdkutils/sdkutils');
 
-export class DeployTaskParameters {
+export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;
@@ -22,6 +23,7 @@ export class DeployTaskParameters {
     public readonly applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows';
 
     constructor() {
+        super();
         try {
             const awsEndpoint = tl.getInput('awsCredentials', true);
             const awsEndpointAuth = tl.getEndpointAuthorization(awsEndpoint, false);

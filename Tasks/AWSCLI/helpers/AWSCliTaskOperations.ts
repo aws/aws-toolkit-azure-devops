@@ -8,7 +8,7 @@
 
 import tl = require('vsts-task-lib/task');
 import tr = require('vsts-task-lib/toolrunner');
-import TaskParameters = require('./taskParameters');
+import Parameters = require('./AWSCliTaskParameters');
 
 export class TaskOperations {
     public static checkIfAwsCliIsInstalled() {
@@ -19,7 +19,7 @@ export class TaskOperations {
         }
     }
 
-    public static async executeCommand(taskParameters: TaskParameters.CliTaskParameters) {
+    public static async executeCommand(taskParameters: Parameters.TaskParameters) {
         try {
             await this.configureAwsCli(taskParameters);
             const awsCliPath = tl.which('aws');
@@ -41,7 +41,7 @@ export class TaskOperations {
         }
     }
 
-    private static async configureAwsCli(taskParameters: TaskParameters.CliTaskParameters) {
+    private static async configureAwsCli(taskParameters: Parameters.TaskParameters) {
         const awsCliPath = tl.which('aws');
 
         tl.debug('configure access key');

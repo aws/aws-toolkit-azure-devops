@@ -9,14 +9,15 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
-import awsCloudFormation = require('aws-sdk/clients/cloudformation');
+import CloudFormation = require('aws-sdk/clients/cloudformation');
 import { AWSError } from 'aws-sdk/lib/error';
+import sdkutils = require('sdkutils/sdkutils');
 
-import TaskParameters = require('./taskParameters');
+import Parameters = require('./ExecuteChangeSetTaskParameters');
 
 export class TaskOperations {
 
-    public static async executeChangeSet(taskParameters: TaskParameters.ExecuteChangeSetTaskParameters): Promise<void> {
+    public static async executeChangeSet(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         this.createServiceClients(taskParameters);
 
@@ -52,24 +53,25 @@ export class TaskOperations {
         }
     }
 
-    private static cloudFormationClient: awsCloudFormation;
+    private static cloudFormationClient: CloudFormation;
 
-    private static createServiceClients(taskParameters: TaskParameters.ExecuteChangeSetTaskParameters) {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
 
-        this.cloudFormationClient = new awsCloudFormation({
+        const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15',
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             },
             region: taskParameters.awsRegion
-        });
+        };
+        this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);
     }
 
     private static async verifyResourcesExist(changeSetName: string, stackName: string): Promise<string> {
 
         try {
-            const request: awsCloudFormation.DescribeChangeSetInput = {
+            const request: CloudFormation.DescribeChangeSetInput = {
                 ChangeSetName: changeSetName
             };
             if (stackName) {

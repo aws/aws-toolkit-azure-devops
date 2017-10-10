@@ -8,14 +8,15 @@
 
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import TaskOperationHelpers = require('./helpers/taskOperations');
-import TaskParameters = require('./helpers/taskParameters');
+
+import Parameters = require('./helpers/AWSCliTaskParameters');
+import Operations = require('./helpers/AWSCliTaskOperations');
 
 tl.setResourcePath(path.join(__dirname, 'task.json'));
 process.env.AWS_EXECUTION_ENV = 'VSTS-AWSCLI';
 
-const taskParameters = new TaskParameters.CliTaskParameters();
+const taskParameters = new Parameters.TaskParameters();
 
-if (TaskOperationHelpers.TaskOperations.checkIfAwsCliIsInstalled()) {
-    TaskOperationHelpers.TaskOperations.executeCommand(taskParameters);
+if (Operations.TaskOperations.checkIfAwsCliIsInstalled()) {
+    Operations.TaskOperations.executeCommand(taskParameters);
 }

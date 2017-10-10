@@ -11,14 +11,15 @@ import path = require('path');
 import fs = require('fs');
 import Q = require('q');
 import archiver = require('archiver');
-import awsBeanstalkClient = require('aws-sdk/clients/elasticbeanstalk');
-import awsS3Client = require('aws-sdk/clients/s3');
-import TaskParameters = require('./taskParameters');
+import Beanstalk = require('aws-sdk/clients/elasticbeanstalk');
+import S3 = require('aws-sdk/clients/s3');
+import Parameters = require('./DeployApplicationTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
+    public static async deploy(taskParameters: Parameters.TaskParameters): Promise<void> {
         this.constructServiceClients(taskParameters);
 
         await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.environmentName);
@@ -45,28 +46,30 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
 
-    private static beanstalkClient: awsBeanstalkClient;
-    private static s3Client: awsS3Client;
+    private static beanstalkClient: Beanstalk;
+    private static s3Client: S3;
 
-    private static constructServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
+    private static constructServiceClients(taskParameters: Parameters.TaskParameters) {
 
-        this.beanstalkClient = new awsBeanstalkClient({
+        const beanstalkOpts: Beanstalk.ClientConfiguration = {
             apiVersion: '2010-12-01',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-        });
+        };
+        this.beanstalkClient = sdkutils.createAndConfigureSdkClient(Beanstalk, beanstalkOpts, taskParameters, tl.debug);
 
-        this.s3Client = new awsS3Client({
+        const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-        });
+        };
+        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }
 
     private static async prepareAspNetCoreBundle(dotnetPublishPath : string) : Promise<string> {
@@ -141,12 +144,12 @@ export class TaskOperations {
 
     private static async updateEnvironment(bucketName: string, key: string, application: string, environment: string, versionLabel: string ): Promise<void> {
 
-        const sourceBundle: awsBeanstalkClient.S3Location = {
+        const sourceBundle: Beanstalk.S3Location = {
             'S3Bucket' : bucketName,
             'S3Key' : key
         };
 
-        const versionRequest: awsBeanstalkClient.CreateApplicationVersionMessage = {
+        const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
             'ApplicationName' : application,
             'VersionLabel' : versionLabel,
             'SourceBundle' : sourceBundle
@@ -155,7 +158,7 @@ export class TaskOperations {
         await this.beanstalkClient.createApplicationVersion(versionRequest).promise();
         console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel));
 
-        const request: awsBeanstalkClient.UpdateEnvironmentMessage = {
+        const request: Beanstalk.UpdateEnvironmentMessage = {
             'ApplicationName' : application,
             'EnvironmentName' : environment,
             'VersionLabel' : versionLabel
@@ -178,7 +181,7 @@ export class TaskOperations {
         console.log(tl.loc('UploadingBundle', applicationBundlePath, key, bucketName));
         const fileBuffer = fs.createReadStream(applicationBundlePath);
         try {
-            const response: awsS3Client.ManagedUpload.SendData = await this.s3Client.upload({
+            const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
                 Bucket: bucketName,
                 Key: key,
                 Body: fileBuffer
@@ -193,12 +196,12 @@ export class TaskOperations {
 
     private static async waitForDeploymentCompletion(applicationName: string, environmentName: string, startingEventDate : Date) : Promise<void> {
 
-        const requestEnvironment : awsBeanstalkClient.DescribeEnvironmentsMessage = {
+        const requestEnvironment : Beanstalk.DescribeEnvironmentsMessage = {
             'ApplicationName': applicationName,
             'EnvironmentNames' : [environmentName]
         };
 
-        const requestEvents : awsBeanstalkClient.DescribeEventsMessage = {
+        const requestEvents : Beanstalk.DescribeEventsMessage = {
             'ApplicationName': applicationName,
             'EnvironmentName' : environmentName,
             'StartTime' : startingEventDate
@@ -210,7 +213,7 @@ export class TaskOperations {
         console.log(tl.loc('EventsComing'));
 
         let success = true;
-        let environment : awsBeanstalkClient.EnvironmentDescription;
+        let environment : Beanstalk.EnvironmentDescription;
         do {
             await this.sleep(5000);
 
@@ -249,7 +252,7 @@ export class TaskOperations {
 
     private static async getLatestEventDate(applicationName: string, environmentName: string) : Promise<Date> {
 
-        const requestEvents : awsBeanstalkClient.DescribeEventsMessage = {
+        const requestEvents : Beanstalk.DescribeEventsMessage = {
             'ApplicationName': applicationName,
             'EnvironmentName' : environmentName
         };

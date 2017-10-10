@@ -8,7 +8,7 @@
 
 import tl = require('vsts-task-lib/task');
 
-export class CliTaskParameters {
+export class TaskParameters {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;

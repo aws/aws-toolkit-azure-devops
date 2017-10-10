@@ -8,18 +8,20 @@
 
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import TaskParameters = require('./helpers/taskParameters');
-import TaskOperationHelpers = require('./helpers/taskOperations');
-import sdkUserAgent = require('sdkuseragent/sdkuseragent');
+
+import sdkutils = require('sdkutils/sdkutils');
+
+import Parameters = require('./helpers/ExecuteChangeSetTaskParameters');
+import Operations = require('./helpers/ExecuteChangeSetTaskOperations');
 
 function run(): Promise<void> {
 
     const taskManifestFile = path.join(__dirname, 'task.json');
     tl.setResourcePath(taskManifestFile);
-    sdkUserAgent.setUserAgentFromManifest(taskManifestFile);
+    sdkutils.setSdkUserAgentFromManifest(taskManifestFile);
 
-    const taskParameters = new TaskParameters.ExecuteChangeSetTaskParameters();
-    return TaskOperationHelpers.TaskOperations.executeChangeSet(taskParameters);
+    const taskParameters = new Parameters.TaskParameters();
+    return Operations.TaskOperations.executeChangeSet(taskParameters);
 }
 
 // run

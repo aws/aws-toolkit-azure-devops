@@ -8,18 +8,20 @@
 
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import TaskParameters = require('./helpers/taskParameters');
-import TaskOperationHelpers = require('./helpers/taskOperations');
-import sdkUserAgent = require('sdkuseragent/sdkuseragent');
+
+import sdkutils = require('sdkutils/sdkutils');
+
+import Parameters = require ('./helpers/SendMessageTaskParameters');
+import Operations = require('./helpers/SendMessageTaskOperations');
 
 function run(): Promise<void> {
 
     const taskManifestFile = path.join(__dirname, 'task.json');
     tl.setResourcePath(taskManifestFile);
-    sdkUserAgent.setUserAgentFromManifest(taskManifestFile);
+    sdkutils.setSdkUserAgentFromManifest(taskManifestFile);
 
-    const taskParameters = new TaskParameters.SendMessageTaskParameters();
-    return TaskOperationHelpers.TaskOperations.sendMessage(taskParameters);
+    const taskParameters = new Parameters.TaskParameters();
+    return Operations.TaskOperations.sendMessage(taskParameters);
 }
 
 // run

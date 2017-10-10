@@ -9,15 +9,15 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
-import awsCloudFormation = require('aws-sdk/clients/cloudformation');
-import awsS3 = require('aws-sdk/clients/s3');
+import CloudFormation = require('aws-sdk/clients/cloudformation');
+import S3 = require('aws-sdk/clients/s3');
+import Parameters = require('./CreateOrUpdateStackTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-
-import TaskParameters = require('./taskParameters');
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async createOrUpdateStack(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters): Promise<void> {
+    public static async createOrUpdateStack(taskParameters: Parameters.TaskParameters): Promise<void> {
         this.createServiceClients(taskParameters);
 
         let stackId: string = await this.testStackExists(taskParameters.stackName);
@@ -37,35 +37,37 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.stackName, stackId));
     }
 
-    private static cloudFormationClient: awsCloudFormation;
-    private static s3Client: awsS3;
+    private static cloudFormationClient: CloudFormation;
+    private static s3Client: S3;
 
-    private static createServiceClients(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
 
-        this.cloudFormationClient = new awsCloudFormation({
+        const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15',
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             },
             region: taskParameters.awsRegion
-        });
+        };
+        this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);
 
-        this.s3Client = new awsS3({
+        const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             },
             region: taskParameters.awsRegion
-        });
+        };
+        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }
 
     private static async testStackExists(stackName: string): Promise<string> {
         console.log(tl.loc('CheckingForStackExistence', stackName));
 
         try {
-            const response: awsCloudFormation.DescribeStacksOutput = await this.cloudFormationClient.describeStacks({
+            const response: CloudFormation.DescribeStacksOutput = await this.cloudFormationClient.describeStacks({
                 StackName: stackName
             }).promise();
             if (response.Stacks.length > 0) {
@@ -103,10 +105,10 @@ export class TaskOperations {
         return false;
     }
 
-    private static async createStack(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<string> {
+    private static async createStack(taskParameters: Parameters.TaskParameters) : Promise<string> {
 
         let template: string;
-        let templateParameters: awsCloudFormation.Parameters;
+        let templateParameters: CloudFormation.Parameters;
 
         try {
             template = await this.loadTemplateFile(taskParameters.templateFile);
@@ -122,7 +124,7 @@ export class TaskOperations {
         } else {
             console.log(tl.loc('CreateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
 
-            const request: awsCloudFormation.CreateStackInput = {
+            const request: CloudFormation.CreateStackInput = {
                 StackName: taskParameters.stackName,
                 OnFailure: taskParameters.onFailure,
                 Parameters: templateParameters,
@@ -135,7 +137,7 @@ export class TaskOperations {
             request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
 
             try {
-                const response: awsCloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise();
+                const response: CloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise();
                 tl.debug(`Stack id ${response.StackId}`);
                 await this.waitForStackCreation(request.StackName);
                 return response.StackId;
@@ -146,11 +148,11 @@ export class TaskOperations {
         }
     }
 
-    private static async updateStack(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters) : Promise<void> {
+    private static async updateStack(taskParameters: Parameters.TaskParameters) : Promise<void> {
         console.log(tl.loc('UpdateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
 
         let template: string;
-        let templateParameters: awsCloudFormation.Parameters;
+        let templateParameters: CloudFormation.Parameters;
 
         try {
             template = await this.loadTemplateFile(taskParameters.templateFile);
@@ -164,7 +166,7 @@ export class TaskOperations {
             console.log(tl.loc('UpdateStackWithChangeSet', taskParameters.templateFile, taskParameters.templateParametersFile, taskParameters.changeSetName));
             await this.createOrUpdateWithChangeSet(taskParameters, 'UPDATE', template, templateParameters);
         } else {
-            const request: awsCloudFormation.UpdateStackInput = {
+            const request: CloudFormation.UpdateStackInput = {
                 StackName: taskParameters.stackName,
                 Parameters: templateParameters,
                 TemplateBody: template,
@@ -176,7 +178,7 @@ export class TaskOperations {
             request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
 
             try {
-                const response: awsCloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise();
+                const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise();
                 await this.waitForStackUpdate(request.StackName);
             } catch (err) {
                 if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
@@ -187,17 +189,17 @@ export class TaskOperations {
         }
     }
 
-    private static async createOrUpdateWithChangeSet(taskParameters: TaskParameters.CreateOrUpdateStackTaskParameters,
+    private static async createOrUpdateWithChangeSet(taskParameters: Parameters.TaskParameters,
                                                      changesetType: string,
                                                      templateBody: string,
-                                                     templateParameters: awsCloudFormation.Parameters) : Promise<string> {
+                                                     templateParameters: CloudFormation.Parameters) : Promise<string> {
 
         const changeSetExists = await this.testChangeSetExists(taskParameters.changeSetName, taskParameters.stackName);
         if (changeSetExists) {
             await this.deleteExistingChangeSet(taskParameters.changeSetName, taskParameters.stackName);
         }
 
-        const request: awsCloudFormation.CreateChangeSetInput = {
+        const request: CloudFormation.CreateChangeSetInput = {
             ChangeSetName: taskParameters.changeSetName,
             ChangeSetType: changesetType,
             StackName: taskParameters.stackName,
@@ -213,7 +215,7 @@ export class TaskOperations {
 
         try {
             console.log(tl.loc('CreatingChangeSet', changesetType, taskParameters.changeSetName));
-            const response: awsCloudFormation.CreateChangeSetOutput = await this.cloudFormationClient.createChangeSet(request).promise();
+            const response: CloudFormation.CreateChangeSetOutput = await this.cloudFormationClient.createChangeSet(request).promise();
 
             tl.debug(`Change set id ${response.Id}, stack id ${response.StackId}`);
             await this.waitForChangeSetCreation(request.ChangeSetName, request.StackName);
@@ -304,7 +306,7 @@ export class TaskOperations {
         return template;
     }
 
-    private static async loadParametersFromFile(parametersFile: string): Promise<awsCloudFormation.Parameters> {
+    private static async loadParametersFromFile(parametersFile: string): Promise<CloudFormation.Parameters> {
         if (!parametersFile) {
             console.log(tl.loc('NoParametersFileSpecified'));
             return null;

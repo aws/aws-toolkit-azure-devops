@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "7"
+        "Patch": "8"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "S3 Upload: $(bucketName)",
@@ -22,6 +22,11 @@
         {
             "name": "advanced",
             "displayName": "Advanced",
+            "isExpanded": false
+        },
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
             "isExpanded": false
         }
     ],
@@ -125,6 +130,33 @@
             "required": false,
             "helpMarkDown": "Set a custom content type for the uploaded files.\nThe task will apply built-in defaults for common file types (html, css, js, image files). This parameter can be used to override the built-in defaults. Note that any value is applied to all files processed by the task.",
             "groupName": "advanced"
+        },
+        {
+            "name": "forcePathStyleAddressing",
+            "type": "boolean",
+            "label": "Force path style addressing",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If enabled path style URLs will be used for S3 objects. The default is off meaning the task will automatically switch between virtual host style addressing and path style addressing depending on whether the bucket name is DNS compatible.<br/><br/>For more information see [Virtual Hosting of Buckets](http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html).",
+            "groupName": "advanced"
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If set the request data sent to AWS service calls is output to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If set the body data of non-streaming responses returned by AWS service calls are output to the task's debug log.",
+            "groupName": "diagnostic"
         }
     ],
     "execution": {

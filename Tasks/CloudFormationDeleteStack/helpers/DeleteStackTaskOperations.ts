@@ -9,14 +9,14 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
-import awsCloudFormation = require('aws-sdk/clients/cloudformation');
+import CloudFormation = require('aws-sdk/clients/cloudformation');
+import Parameters = require('./DeleteStackTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-
-import TaskParameters = require('./taskParameters');
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async deleteStack(taskParameters: TaskParameters.DeleteStackTaskParameters): Promise<void> {
+    public static async deleteStack(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         this.createServiceClients(taskParameters);
 
@@ -31,18 +31,19 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static cloudFormationClient: awsCloudFormation;
+    private static cloudFormationClient: CloudFormation;
 
-    private static createServiceClients(taskParameters: TaskParameters.DeleteStackTaskParameters) {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
 
-        this.cloudFormationClient = new awsCloudFormation({
+        const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15',
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             },
             region: taskParameters.awsRegion
-        });
+        };
+        this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);
     }
 
     private static async verifyResourcesExist(stackName: string): Promise<void> {

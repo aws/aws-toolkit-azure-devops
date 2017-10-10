@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "7"
+        "Patch": "8"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy with CodeDeploy: $(applicationName)",
@@ -27,6 +27,11 @@
         {
             "name": "OutputOptions",
             "displayName": "Output",
+            "isExpanded": false
+        },
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
             "isExpanded": false
         }
     ],
@@ -131,6 +136,24 @@
             "groupName": "OutputOptions",
             "helpMarkDown": "The name of the variable that will contain the deployment ID on task completion. The variable can be used as $(variableName) to refer to the function result in subsequent tasks.",
             "required": false
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If set the request data sent to AWS service calls is output to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If set the body data of non-streaming responses returned by AWS service calls are output to the task's debug log.",
+            "groupName": "diagnostic"
         }
     ],
     "execution": {

@@ -14,13 +14,19 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "7"
+        "Patch": "8"
     },
     "runsOn": [
         "Agent"
     ],
     "minimumAgentVersion": "1.91.0",
-    "groups": [],
+    "groups": [
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
+            "isExpanded": false
+        }
+    ],
     "instanceNameFormat": "Delete Stack: $(stackName)",
     "inputs": [
         {
@@ -46,6 +52,24 @@
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "The name of the stack to delete."
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If set the request data sent to AWS service calls is output to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If set the body data of non-streaming responses returned by AWS service calls are output to the task's debug log.",
+            "groupName": "diagnostic"
         }
     ],
     "execution": {

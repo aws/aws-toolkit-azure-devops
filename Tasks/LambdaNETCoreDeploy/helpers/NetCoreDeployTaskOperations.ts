@@ -11,11 +11,11 @@ import path = require('path');
 import fs = require('fs');
 import proc = require('child_process');
 import { DotNetCliWrapper } from './dotNetCliWrapper';
-import TaskParameters = require('./taskParameters');
+import Parameters = require('./NetCoreDeployTaskParameters');
 
 export class TaskOperations {
 
-    public static async deployFunction(taskParameters: TaskParameters.NETCoreDeployTaskParameters): Promise<void> {
+    public static async deployFunction(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const cwd = this.determineProjectDirectory(taskParameters.lambdaProjectPath);
         console.log(tl.loc('DeployingProjectAt', cwd));

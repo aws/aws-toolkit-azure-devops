@@ -9,15 +9,16 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
-import awsGlobal = require('aws-sdk/global');
-import awsS3Client = require('aws-sdk/clients/s3');
-import TaskParameters = require('./taskParameters');
+import AWS = require('aws-sdk/global');
+import S3 = require('aws-sdk/clients/s3');
+import Parameters = require('./UploadTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async uploadArtifacts(taskParameters: TaskParameters.UploadTaskParameters): Promise<void> {
-        this.s3Client = this.createServiceClients(taskParameters);
+    public static async uploadArtifacts(taskParameters: Parameters.TaskParameters): Promise<void> {
+        this.createServiceClients(taskParameters);
 
         if (taskParameters.createBucket) {
             await this.createBucketIfNotExist(taskParameters.bucketName, taskParameters.awsRegion);
@@ -32,18 +33,20 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static s3Client: awsS3Client;
+    private static s3Client: S3;
 
-    private static createServiceClients(taskParameters: TaskParameters.UploadTaskParameters): awsS3Client {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters): void {
 
-        return new awsS3Client({
+        const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
-            }
-        });
+            },
+            s3ForcePathStyle: taskParameters.forcePathStyleAddressing
+        };
+        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }
 
     private static async createBucketIfNotExist(bucketName: string, region: string) : Promise<void> {
@@ -71,7 +74,7 @@ export class TaskOperations {
         }
     }
 
-    private static async uploadFiles(taskParameters: TaskParameters.UploadTaskParameters) {
+    private static async uploadFiles(taskParameters: Parameters.TaskParameters) {
 
         let msgTarget: string;
         if (taskParameters.targetFolder) {
@@ -121,7 +124,7 @@ export class TaskOperations {
                         }
                     }
                     console.log(tl.loc('UploadingFile', matchedFile, contentType));
-                    const response: awsS3Client.ManagedUpload.SendData = await this.s3Client.upload({
+                    const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
                         Bucket: taskParameters.bucketName,
                         Key: targetPath,
                         Body: fileBuffer,
@@ -313,7 +316,7 @@ export class TaskOperations {
         [ '.wmv', 'video/x-ms-wmv' ]
     ]);
 
-    private static findFiles(taskParameters: TaskParameters.UploadTaskParameters): string[] {
+    private static findFiles(taskParameters: Parameters.TaskParameters): string[] {
         console.log(`Searching ${taskParameters.sourceFolder} for files to upload`);
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder);
         const allPaths = tl.find(taskParameters.sourceFolder); // default find options (follow sym links)

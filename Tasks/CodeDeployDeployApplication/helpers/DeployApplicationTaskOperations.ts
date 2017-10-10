@@ -11,14 +11,15 @@ import path = require('path');
 import fs = require('fs');
 import Q = require('q');
 import archiver = require('archiver');
-import awsCodeDeployClient = require('aws-sdk/clients/codedeploy');
-import awsS3Client = require('aws-sdk/clients/s3');
-import TaskParameters = require('./taskParameters');
+import CodeDeploy = require('aws-sdk/clients/codedeploy');
+import S3 = require('aws-sdk/clients/s3');
+import Parameters = require('./DeployApplicationTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async deploy(taskParameters: TaskParameters.DeployTaskParameters): Promise<void> {
+    public static async deploy(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         this.createServiceClients(taskParameters);
 
@@ -37,28 +38,30 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
     }
 
-    private static codeDeployClient: awsCodeDeployClient;
-    private static s3Client: awsS3Client;
+    private static codeDeployClient: CodeDeploy;
+    private static s3Client: S3;
 
-    private static createServiceClients(taskParameters: TaskParameters.DeployTaskParameters) {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
 
-        this.codeDeployClient = new awsCodeDeployClient({
+        const codeDeployOpts: CodeDeploy.ClientConfiguration = {
             apiVersion: '2014-10-06',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-        });
+        };
+        this.codeDeployClient = sdkutils.createAndConfigureSdkClient(CodeDeploy, codeDeployOpts, taskParameters, tl.debug);
 
-        this.s3Client = new awsS3Client({
+        const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-        });
+        };
+        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }
 
     private static async verifyResourcesExist(appName: string, groupName: string): Promise<void> {
@@ -76,7 +79,7 @@ export class TaskOperations {
         }
     }
 
-    private static async uploadBundle(taskParameters: TaskParameters.DeployTaskParameters): Promise<string> {
+    private static async uploadBundle(taskParameters: Parameters.TaskParameters): Promise<string> {
 
         let archiveName: string;
         let autoCreatedArchive: boolean = false;
@@ -98,7 +101,7 @@ export class TaskOperations {
         console.log(tl.loc('UploadingBundle', archiveName, key, taskParameters.bucketName));
         const fileBuffer = fs.createReadStream(archiveName);
         try {
-            const response: awsS3Client.ManagedUpload.SendData = await this.s3Client.upload({
+            const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
                 Bucket: taskParameters.bucketName,
                 Key: key,
                 Body: fileBuffer
@@ -153,7 +156,7 @@ export class TaskOperations {
         return archiveName;
     }
 
-    private static async deployRevision(taskParameters: TaskParameters.DeployTaskParameters, bundleKey: string): Promise<string> {
+    private static async deployRevision(taskParameters: Parameters.TaskParameters, bundleKey: string): Promise<string> {
         console.log(tl.loc('DeployingRevision'));
 
         // use bundle key as taskParameters.revisionBundle might be pointing at a folder
@@ -168,7 +171,7 @@ export class TaskOperations {
         }
 
         try {
-            const request: awsCodeDeployClient.CreateDeploymentInput = {
+            const request: CodeDeploy.CreateDeploymentInput = {
                 applicationName: taskParameters.applicationName,
                 deploymentGroupName: taskParameters.deploymentGroupName,
                 description: taskParameters.description,
@@ -184,7 +187,7 @@ export class TaskOperations {
                     }
                 }
             };
-            const response: awsCodeDeployClient.CreateDeploymentOutput = await this.codeDeployClient.createDeployment(request).promise();
+            const response: CodeDeploy.CreateDeploymentOutput = await this.codeDeployClient.createDeployment(request).promise();
             console.log(tl.loc('DeploymentStarted', taskParameters.deploymentGroupName, taskParameters.applicationName, response.deploymentId));
             return response.deploymentId;
         } catch (err) {
@@ -200,7 +203,7 @@ export class TaskOperations {
 
             this.codeDeployClient.waitFor('deploymentSuccessful',
                                           { deploymentId },
-                                          function(err: AWSError, data: awsCodeDeployClient.GetDeploymentOutput) {
+                                          function(err: AWSError, data: CodeDeploy.GetDeploymentOutput) {
                 if (err) {
                     throw new Error(tl.loc('DeploymentFailed', applicationName, err.message));
                 } else {

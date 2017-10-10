@@ -7,8 +7,9 @@
   */
 
 import tl = require('vsts-task-lib/task');
+import sdkutils = require('sdkutils/sdkutils');
 
-export class DownloadTaskParameters {
+export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;
@@ -17,8 +18,10 @@ export class DownloadTaskParameters {
     public targetFolder: string;
     public globExpressions: string[];
     public overwrite: boolean;
+    public forcePathStyleAddressing: boolean;
 
     constructor() {
+        super();
         try {
             const awsEndpoint = tl.getInput('awsCredentials', true);
             const awsEndpointAuth = tl.getEndpointAuthorization(awsEndpoint, false);
@@ -30,6 +33,7 @@ export class DownloadTaskParameters {
             this.targetFolder = tl.getPathInput('targetFolder', true, false);
             this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
             this.overwrite = tl.getBoolInput('overwrite', false);
+            this.forcePathStyleAddressing = tl.getBoolInput('forcePathStyleAddressing', false);
         } catch (error) {
             throw new Error(error.message);
         }

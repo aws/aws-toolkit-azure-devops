@@ -7,8 +7,9 @@
   */
 
 import tl = require('vsts-task-lib/task');
+import sdkutils = require('sdkutils/sdkutils');
 
-export class UploadTaskParameters {
+export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public awsKeyId: string;
     public awsSecretKey: string;
     public awsRegion: string;
@@ -21,8 +22,10 @@ export class UploadTaskParameters {
     public filesAcl: string;
     public createBucket: boolean;
     public contentType: string;
+    public forcePathStyleAddressing: boolean;
 
     constructor() {
+        super();
         try {
             const awsEndpoint = tl.getInput('awsCredentials', true);
             const awsEndpointAuth = tl.getEndpointAuthorization(awsEndpoint, false);
@@ -38,6 +41,7 @@ export class UploadTaskParameters {
             this.filesAcl = tl.getInput('filesAcl', false);
             this.createBucket = tl.getBoolInput('createBucket');
             this.contentType = tl.getInput('contentType', false);
+            this.forcePathStyleAddressing = tl.getBoolInput('forcePathStyleAddressing', false);
         } catch (error) {
             throw new Error(error.message);
         }

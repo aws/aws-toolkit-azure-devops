@@ -1,8 +1,8 @@
 {
-  "name": "sdkuseragent",
+  "name": "sdkutils",
   "version": "1.0.0",
-  "description": "Helper routine for manipulating the AWS SDK user agent",
-  "main": "sdkuseragent.js",
+  "description": "Helper routine for manipulating the AWS SDK user agent and global configuration settings",
+  "main": "sdkutils.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,5 +10,5 @@
   "license": "MIT",
   "dependencies": {
       "aws-sdk": "2.94.0"
-  }
+    }
 }

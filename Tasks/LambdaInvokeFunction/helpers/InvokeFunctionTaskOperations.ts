@@ -8,13 +8,14 @@
 
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import awsLambdaClient = require('aws-sdk/clients/lambda');
-import TaskParameters = require('./taskParameters');
+import Lambda = require('aws-sdk/clients/lambda');
+import Parameters = require('./InvokeFunctionTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async invokeFunction(taskParameters: TaskParameters.InvokeFunctionTaskParameters): Promise<void> {
+    public static async invokeFunction(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         this.createServiceClients(taskParameters);
 
@@ -22,14 +23,14 @@ export class TaskOperations {
 
         console.log(tl.loc('InvokingFunction', taskParameters.functionName));
 
-        const params: awsLambdaClient.InvocationRequest = {
+        const params: Lambda.InvocationRequest = {
             FunctionName: taskParameters.functionName,
             InvocationType: taskParameters.invocationType,
             LogType: taskParameters.logType,
             Payload: JSON.stringify(taskParameters.payload)
         };
         try {
-            const data: awsLambdaClient.InvocationResponse = await this.lambdaClient.invoke(params).promise();
+            const data: Lambda.InvocationResponse = await this.lambdaClient.invoke(params).promise();
             if (taskParameters.outputVariable) {
                 const outValue: string = data.Payload.toString();
 
@@ -49,11 +50,11 @@ export class TaskOperations {
         }
     }
 
-    private static lambdaClient: awsLambdaClient;
+    private static lambdaClient: Lambda;
 
-    private static createServiceClients(taskParameters: TaskParameters.InvokeFunctionTaskParameters) {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
 
-        const lambdaConfig = {
+        const lambdaOpts: Lambda.ClientConfiguration = {
             apiVersion: '2015-03-31',
             region: taskParameters.awsRegion,
             credentials: {
@@ -62,7 +63,7 @@ export class TaskOperations {
             }
         };
 
-       this.lambdaClient = new awsLambdaClient(lambdaConfig);
+       this.lambdaClient = sdkutils.createAndConfigureSdkClient(Lambda, lambdaOpts, taskParameters, tl.debug);
     }
 
     private static async verifyResourcesExist(functionName: string): Promise<void> {

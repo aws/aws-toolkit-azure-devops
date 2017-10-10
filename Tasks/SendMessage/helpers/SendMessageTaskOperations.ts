@@ -8,14 +8,15 @@
 
 import tl = require('vsts-task-lib/task');
 import path = require('path');
-import awsSqsClient = require('aws-sdk/clients/sqs');
-import awsSnsClient = require('aws-sdk/clients/sns');
-import TaskParameters = require('./taskParameters');
+import SQS = require('aws-sdk/clients/sqs');
+import SNS = require('aws-sdk/clients/sns');
+import Parameters = require('./SendMessageTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
+import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskOperations {
 
-    public static async sendMessage(taskParameters: TaskParameters.SendMessageTaskParameters): Promise<void> {
+    public static async sendMessage(taskParameters: Parameters.TaskParameters): Promise<void> {
         this.createServiceClients(taskParameters);
 
         if (taskParameters.messageTarget === 'topic') {
@@ -29,28 +30,30 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static sqsClient: awsSqsClient;
-    private static snsClient: awsSnsClient;
+    private static sqsClient : SQS;
+    private static snsClient : SNS;
 
-    private static createServiceClients(taskParameters: TaskParameters.SendMessageTaskParameters) {
+    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
 
-       this.sqsClient = new awsSqsClient({
+       const sqsOpts: SQS.ClientConfiguration = {
             apiVersion: '2012-11-05',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-       });
+       };
+       this.sqsClient = sdkutils.createAndConfigureSdkClient(SQS, sqsOpts, taskParameters, tl.debug);
 
-       this.snsClient = new awsSnsClient({
+       const snsOpts: SNS.ClientConfiguration = {
             apiVersion: '2010-03-31',
             region: taskParameters.awsRegion,
             credentials: {
                 accessKeyId: taskParameters.awsKeyId,
                 secretAccessKey: taskParameters.awsSecretKey
             }
-       });
+       };
+       this.snsClient = sdkutils.createAndConfigureSdkClient(SNS, snsOpts, taskParameters, tl.debug);
     }
 
     private static async verifyTopicExists(topicArn: string): Promise<void> {
@@ -69,7 +72,7 @@ export class TaskOperations {
         }
     }
 
-    private static async sendMessageToTopic(taskParameters: TaskParameters.SendMessageTaskParameters): Promise<void> {
+    private static async sendMessageToTopic(taskParameters: Parameters.TaskParameters): Promise<void> {
         console.log(tl.loc('SendingToTopic', taskParameters.topicArn));
 
         try {
@@ -82,9 +85,9 @@ export class TaskOperations {
         }
     }
 
-    private static async sendMessageToQueue(taskParameters: TaskParameters.SendMessageTaskParameters): Promise<void> {
+    private static async sendMessageToQueue(taskParameters: Parameters.TaskParameters): Promise<void> {
         try {
-            const request: awsSqsClient.SendMessageRequest = {
+            const request: SQS.SendMessageRequest = {
                 QueueUrl: taskParameters.queueUrl,
                 MessageBody: taskParameters.message
             };
