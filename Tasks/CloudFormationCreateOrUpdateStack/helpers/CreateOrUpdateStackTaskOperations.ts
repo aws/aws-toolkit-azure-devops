@@ -215,20 +215,20 @@ export class TaskOperations {
         request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
 
         try {
+            // note that we can create a change set with no changes, but when we wait for completion it's then
+            // that we get a validation failure, which we check for inside waitForChangeSetCreation
             console.log(tl.loc('CreatingChangeSet', changesetType, taskParameters.changeSetName));
             const response: CloudFormation.CreateChangeSetOutput = await this.cloudFormationClient.createChangeSet(request).promise();
 
             tl.debug(`Change set id ${response.Id}, stack id ${response.StackId}`);
-            await this.waitForChangeSetCreation(request.ChangeSetName, request.StackName);
-            if (taskParameters.autoExecuteChangeSet) {
+            const changesToApply = await this.waitForChangeSetCreation(request.ChangeSetName, request.StackName);
+            if (changesToApply && taskParameters.autoExecuteChangeSet) {
                 await this.executeChangeSet(taskParameters.changeSetName, taskParameters.stackName);
             }
             return response.StackId;
         }  catch (err) {
-            if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
-                console.error(tl.loc('ChangeSetCreationFailed', err.message), err);
-                throw err;
-            }
+            console.error(tl.loc('ChangeSetCreationFailed', err.message), err);
+            throw err;
         }
     }
 
@@ -323,10 +323,19 @@ export class TaskOperations {
 
     // If there were no changes, a validation error is thrown which we want to suppress
     // rather than erroring out and failing the build.
-    private static isNoWorkToDoValidationError(errCode: string, errMessage: string): boolean {
+    private static isNoWorkToDoValidationError(errCodeOrStatus: string, errMessage: string): boolean {
+        let noWorkToDo: boolean = false;
         try {
-            if (errCode.search(/ValidationError/) !== -1 && errMessage.search(/^No updates are to be performed./) !== -1) {
-                tl.warning(tl.loc('NoWorkToDo'));
+            if (errCodeOrStatus.search(/ValidationError/) !== -1 && errMessage.search(/^No updates are to be performed./) !== -1) {
+                // first case comes back when we're updating stacks without change sets
+                noWorkToDo = true;
+            } else if (errCodeOrStatus.search(/FAILED/) !== -1 && errMessage.search(/^The submitted information didn't contain changes./) !== -1) {
+                // this case comes back when we're updating using change sets
+                noWorkToDo = true;
+            }
+
+            if (noWorkToDo) {
+                console.log(tl.loc('NoWorkToDo'));
                 return true;
             }
         // tslint:disable-next-line:no-empty
@@ -356,15 +365,27 @@ export class TaskOperations {
         }
     }
 
-    private static async waitForChangeSetCreation(changeSetName: string, stackName: string) : Promise<void> {
+    private static async waitForChangeSetCreation(changeSetName: string, stackName: string) : Promise<boolean> {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName));
         try {
-            await this.cloudFormationClient.waitFor('changeSetCreateComplete',
+            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete',
                                                     { ChangeSetName: changeSetName, StackName: stackName }).promise();
             console.log(tl.loc('ChangeSetValidated'));
         } catch (err) {
-            throw new Error(tl.loc('ChangeSetValidationFailed', stackName, changeSetName, err.message));
+            // Inspect to see if the error was down to the service reporting (as an exception trapped
+            // by the waiter) that the set has no changes. If that is the case, return a signal to
+            // the caller that no work is needed rather than fail the task. This allows CI pipelines
+            // with multiple stacks to be updated when some stacks have no changes.
+            // https://github.com/aws/aws-vsts-tools/issues/28
+            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
+            if (this.isNoWorkToDoValidationError(response.Status, response.StatusReason)) {
+                return false;
+            } else {
+                throw new Error(tl.loc('ChangeSetValidationFailed', stackName, changeSetName, err.message));
+            }
         }
+
+        return true;
     }
 
 }

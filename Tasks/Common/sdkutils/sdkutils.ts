@@ -68,7 +68,7 @@ export function createAndConfigureSdkClient(awsService: any,
                 const httpResponse = response.httpResponse;
 
                 if (logRequestData) {
-                    logger(`---${response.requestId} request data---`);
+                    logger(`---Request data for ${response.requestId}---`);
                     logger(`  Path: ${httpRequest.path}`);
                     logger('  Headers:');
                     Object.keys(httpRequest.headers).forEach((element) => {
@@ -79,7 +79,7 @@ export function createAndConfigureSdkClient(awsService: any,
                 }
 
                 if (logResponseData) {
-                    logger('---${response.requestId} response data---');
+                    logger(`---Response data for request ${response.requestId}---`);
                     logger(`  Status code: ${httpResponse.statusCode}`);
                     if (response.httpResponse.headers) {
                         logger(`  Headers:`);
