@@ -74,7 +74,7 @@ export class TaskOperations {
                 return response.Stacks[0].StackId;
             }
         } catch (err) {
-            tl.debug(`Test for stack ${stackName} threw exception: ${err.message}, assuming stack does not exist`);
+            console.log(tl.loc('StackLookupFailed', stackName, err.Message));
         }
 
         return null;
@@ -96,10 +96,11 @@ export class TaskOperations {
     private static async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
         try {
             console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName));
-            await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
+            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
+            console.log(tl.loc('ChangeSetExists ', changeSetName, response.Status));
             return true;
         } catch (err) {
-            tl.debug(`Test for change set ${changeSetName} for stack ${stackName} threw exception: ${err.message}, assuming change set does not exist`);
+            console.log(tl.loc('ChangeSetLookupFailed', changeSetName, err.message));
         }
 
         return false;
@@ -362,7 +363,7 @@ export class TaskOperations {
                                                     { ChangeSetName: changeSetName, StackName: stackName }).promise();
             console.log(tl.loc('ChangeSetValidated'));
         } catch (err) {
-            throw new Error(tl.loc('ChangeSetValidationFailed', changeSetName, err.message));
+            throw new Error(tl.loc('ChangeSetValidationFailed', stackName, changeSetName, err.message));
         }
     }
 
