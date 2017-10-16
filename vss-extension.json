@@ -146,7 +146,6 @@
                                 "name": "Access Key ID",
                                 "description": "The AWS access key ID for signing programmatic requests.\nExample: AKIAIOSFODNN7EXAMPLE",
                                 "inputMode": "textbox",
-                                "isConfidential": false,
                                 "validation": {
                                     "isRequired": true,
                                     "dataType": "string"
