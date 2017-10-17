@@ -100,7 +100,7 @@
             "label": "Log Request",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "If set the request data sent to AWS service calls is output to the task's debug log.",
+            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
             "groupName": "diagnostic"
         },
         {
@@ -109,7 +109,7 @@
             "label": "Log Response",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "If set the body data of non-streaming responses returned by AWS service calls are output to the task's debug log.",
+            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
             "groupName": "diagnostic"
         }
     ],
