@@ -335,7 +335,7 @@ export class TaskOperations {
             }
 
             if (noWorkToDo) {
-                console.log(tl.loc('NoWorkToDo'));
+                tl.warning(tl.loc('NoWorkToDo'));
                 return true;
             }
         // tslint:disable-next-line:no-empty
