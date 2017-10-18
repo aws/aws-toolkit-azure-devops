@@ -67,6 +67,9 @@ export function createAndConfigureSdkClient(awsService: any,
                 const httpRequest = response.request.httpRequest;
                 const httpResponse = response.httpResponse;
 
+                // Choosing to not log request or response body content at this stage, partly to avoid
+                // having to detect and avoid streaming content or object uploads, and partly to avoid
+                // the possibility of logging sensitive data
                 if (logRequestData) {
                     logger(`---Request data for ${response.requestId}---`);
                     logger(`  Path: ${httpRequest.path}`);
@@ -74,8 +77,6 @@ export function createAndConfigureSdkClient(awsService: any,
                     Object.keys(httpRequest.headers).forEach((element) => {
                         logger(`    ${element}=${httpRequest.headers[element]}`);
                     });
-                    // choosing not to log httpResponse.body as it could be content
-                    // upload, as opposed to parameters to control the service operation
                 }
 
                 if (logResponseData) {
@@ -86,16 +87,6 @@ export function createAndConfigureSdkClient(awsService: any,
                         for (const k of Object.keys(httpResponse.headers)) {
                             logger(`    ${k}=${httpResponse.headers[k]}`);
                         }
-                    }
-
-                    if (!httpResponse.streaming) {
-                        let body: string;
-                        if (httpResponse.body) {
-                            body = httpResponse.body.toString();
-                        }
-                        logger('  Body: ' + (body ? body.toString() : '(empty body)'));
-                    } else {
-                        logger('  Body: (streaming content)');
                     }
                 }
             } catch (err) {
