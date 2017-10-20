@@ -17,9 +17,19 @@ Import-VstsLocStrings "$PSScriptRoot\task.json"
 # off to PowerShell for execution
 try
 {
-    Assert-VstsAgent -Minimum '2.115.0'
+    # Agent.TempDirectory was added in agent version 2.115.0, which may not
+    # be available in 2015 installs of TFS, so probe for and fallback to
+    # another temp location variable if necessary. This allows us to set
+    # minimunm agent version that's compatible with TFS 2015 editions
+    # preventing an issue causing our tasks to not be listed after install
+    # if a higher agent version is specified.
+    $tempDirectory = Get-VstsTaskVariable -Name 'agent.tempDirectory'
+    if (!$tempDirectory)
+    {
+        Write-Host 'Agent.TempDirectory not available, falling back to user temp location'
+        $tempDirectory = $env:TEMP
+    }
 
-    $tempDirectory = Get-VstsTaskVariable -Name 'agent.tempDirectory' -Require
     Assert-VstsPath -LiteralPath $tempDirectory -PathType 'Container'
 
     $awsEndpoint = Get-VstsInput -Name 'awsCredentials' -Require
@@ -91,8 +101,9 @@ try
     else
     {
         $input_script = Get-VstsInput -Name 'inlineScript' -Require
-        # construct a name to a temp file that will hold the inline script, so
-        # we can pass arguments to it
+        # Construct a name to a temp file that will hold the inline script, so
+        # we can pass arguments to it. We will delete this file on exit from
+        # the task.
         $input_filePath = [System.IO.Path]::Combine($tempDirectory, "$([System.Guid]::NewGuid()).ps1")
     }
 
@@ -101,13 +112,15 @@ try
     $contents = @()
     $contents += "`$ErrorActionPreference = '$input_errorActionPreference'"
 
-    # by writing an inline script to a file, and then dot sourcing that from
+    # By writing an inline script to a file, and then dot sourcing that from
     # the outer script we construct (ie behaving as if the user had chosen
-    # filepath mode) we gain the ability to pass arguments to both modes
+    # filepath mode) we gain the ability to pass arguments to both modes.
+    # We don't need to clean this file up on exit.
     if ("$scriptType".ToUpperInvariant() -eq 'INLINE')
     {
         $userScript += "$input_script".Replace("`r`n", "`n").Replace("`n", "`r`n")
         $joinedContents = [System.String]::Join(([System.Environment]::NewLine), $userScript)
+        Write-Host "Writing inline script to temporary file $input_filePath"
         $null = [System.IO.File]::WriteAllText($input_filePath, $joinedContents, ([System.Text.Encoding]::UTF8))
     }
 
@@ -130,6 +143,7 @@ try
     # configured the task with
     $filePath = [System.IO.Path]::Combine($tempDirectory, "$([System.Guid]::NewGuid()).ps1")
     $joinedContents = [System.String]::Join(([System.Environment]::NewLine), $contents)
+    Write-Host "Writing temporary wrapper script for invoking user script to $filePath"
     $null = [System.IO.File]::WriteAllText($filePath, $joinedContents, ([System.Text.Encoding]::UTF8))
 
     # Prepare the external command values.
@@ -222,5 +236,11 @@ try
 }
 finally
 {
+    if ($scriptType -And "$scriptType".ToUpperInvariant() -eq "INLINE")
+    {
+        Write-Host "Cleaning up temporary script file $input_filePath"
+        Remove-Item -Path $input_filePath -Force
+    }
+
     Trace-VstsLeavingInvocation $MyInvocation
 }
