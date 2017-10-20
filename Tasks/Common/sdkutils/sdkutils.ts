@@ -61,8 +61,7 @@ export function createAndConfigureSdkClient(awsService: any,
         request.on('complete', (response) => {
 
             try {
-                // always want request id, so send that to regular console logger
-                console.log(`AWS ${operation} request ID: ${response.requestId}`);
+                logger(`AWS ${operation} request ID: ${response.requestId}`);
 
                 const httpRequest = response.request.httpRequest;
                 const httpResponse = response.httpResponse;
