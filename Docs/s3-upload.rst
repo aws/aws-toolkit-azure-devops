@@ -120,6 +120,11 @@ Flatten Folders
 
   Default: unchecked (preserve folder hierachy).
 
+Force path style addressing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    If checked the task will always use path style addressing to work with the bucket. The default
+    behavior, when unchecked, is to use virtual host style addressing if the bucket name is DNS
+    compatible and path style otherwise. For more information see `Virtual Hosting of Buckets <http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`_.
 
 

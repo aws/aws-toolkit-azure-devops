@@ -75,7 +75,9 @@ export class TaskOperations {
     private static async prepareAspNetCoreBundle(dotnetPublishPath : string) : Promise<string> {
 
         const defer = Q.defer();
-        const deploymentBundle = tl.getVariable('Agent.TempDirectory') + '/ebDeploymentBundle.zip';
+
+        const tempDirectory = sdkutils.getTempLocation();
+        const deploymentBundle = tempDirectory + '/ebDeploymentBundle.zip';
         const output = fs.createWriteStream(deploymentBundle);
         console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle));
 

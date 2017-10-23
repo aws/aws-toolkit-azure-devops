@@ -128,8 +128,7 @@ export class TaskOperations {
         // echo what we do with Elastic Beanstalk deployments and use time as a version suffix,
         // creating the zip file inside the supplied folder
         const versionSuffix = '.v' + new Date().getTime();
-        // Agent.TempDirectory is a private temp location we can use
-        const tempDir = tl.getVariable('Agent.TempDirectory');
+        const tempDir = sdkutils.getTempLocation();
         const archiveName = path.join(tempDir, applicationName + versionSuffix +  '.zip');
 
         const output = fs.createWriteStream(archiveName);

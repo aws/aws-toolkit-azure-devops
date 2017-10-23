@@ -1,3 +1,19 @@
+### 1.0.8 (2017-10-23)
+
+* Fixed issue with missing tasks after installation of the tools into Team Foundation Server 2015.
+    https://github.com/aws/aws-vsts-tools/issues/33 and https://github.com/aws/aws-vsts-tools/issues/23.
+
+* Fixed bug in CloudFormationCreateOrUpdateStack task. When updating multiple stacks in a pipeline using change sets, if earlier stacks in the pipeline had no changes the task would error out. The fix switches the task to instead emit a warning to the build log for stacks where no changes are detected.
+    https://github.com/aws/aws-vsts-tools/issues/28.
+
+* Updated the AWS service endpoint type so the access key field does not default to 'IsConfidential'. This helps verifying credential rotation when updating the endpoint. This change does not affect or modify the secret key field in the endpoint.
+    https://github.com/aws/aws-vsts-tools/pull/30.
+
+* Added request/response header and AWS request id logging diagnostics to tasks that invoke AWS service APIs using the AWS SDK for Node.js. The service response's request id value is always emitted to the debug log for a task (viewable when the system.debug variable is set true). Additionally tasks can be configured to emit request and response headers to the debug log using new diagnostic options in the task parameters. This information can be useful when contacting AWS support.
+
+* Added 'Force path style addressing' parameter to the S3 upload and download tasks. The default addressing for S3 buckets when using these tasks is to use
+  virtual host style if the bucket name is DNS compatible, otherwise path style. If this option is selected path style will always be used.
+
 ### 1.0.7 (2017-09-14)
 
 * Fixed issue with CodeDeploy deployment task not setting output variable (https://github.com/aws/aws-vsts-tools/pull/19)

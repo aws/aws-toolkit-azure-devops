@@ -43,6 +43,18 @@ export function setSdkUserAgentFromManifest(taskManifestFilePath: string) {
     }
 }
 
+// prefer Agent.TempDirectory but if not available due to use of a lower agent version
+// (it was added in agent v2.115.0), fallback to using TEMP
+export function getTempLocation() : string {
+    let tempDirectory = tl.getVariable('Agent.TempDirectory');
+    if (!tempDirectory) {
+        tempDirectory = process.env.TEMP;
+        console.log(`Agent.TempDirectory not available, falling back to TEMP location at ${tempDirectory}`);
+    }
+
+    return tempDirectory;
+}
+
 // Returns a new instance of a service client, having attached request handlers
 // to enable tracing of request/response data if the task is so configured. The
 // default behavior for all clients is to simply emit the service request ID
