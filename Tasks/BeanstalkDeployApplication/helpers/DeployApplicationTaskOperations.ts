@@ -20,7 +20,7 @@ import sdkutils = require('sdkutils/sdkutils');
 export class TaskOperations {
 
     public static async deploy(taskParameters: Parameters.TaskParameters): Promise<void> {
-        this.constructServiceClients(taskParameters);
+        await this.constructServiceClients(taskParameters);
 
         await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.environmentName);
 
@@ -49,25 +49,19 @@ export class TaskOperations {
     private static beanstalkClient: Beanstalk;
     private static s3Client: S3;
 
-    private static constructServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async constructServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const beanstalkOpts: Beanstalk.ClientConfiguration = {
             apiVersion: '2010-12-01',
-            region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            }
+            credentials: taskParameters.Credentials,
+            region: taskParameters.awsRegion
         };
         this.beanstalkClient = sdkutils.createAndConfigureSdkClient(Beanstalk, beanstalkOpts, taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            }
+            credentials: taskParameters.Credentials,
+            region: taskParameters.awsRegion
         };
         this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }

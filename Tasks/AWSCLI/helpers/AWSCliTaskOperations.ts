@@ -21,6 +21,11 @@ export class TaskOperations {
 
     public static async executeCommand(taskParameters: Parameters.TaskParameters) {
         try {
+            // assume role credentials are not currently supported
+            if (taskParameters.AssumeRoleARN) {
+                throw new Error('Assume role-based temporary credentials are not currently supported for this task');
+            }
+
             await this.configureAwsCli(taskParameters);
             const awsCliPath = tl.which('aws');
             const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath);
@@ -44,16 +49,17 @@ export class TaskOperations {
     private static async configureAwsCli(taskParameters: Parameters.TaskParameters) {
         const awsCliPath = tl.which('aws');
 
+        const credentials = taskParameters.Credentials;
         tl.debug('configure access key');
         const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath);
         awsCliTool.line('configure set aws_access_key_id');
-        awsCliTool.arg(taskParameters.awsKeyId);
+        awsCliTool.arg(credentials.accessKeyId);
         awsCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
 
         tl.debug('configure secret access key');
         const awsCliTool2: tr.ToolRunner = tl.tool(awsCliPath);
         awsCliTool2.line('configure set aws_secret_access_key');
-        awsCliTool2.arg(taskParameters.awsSecretKey);
+        awsCliTool2.arg(credentials.secretAccessKey);
         awsCliTool2.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
 
         tl.debug('configure region');

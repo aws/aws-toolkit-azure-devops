@@ -1,3 +1,7 @@
+### 1.0.9 (20170-10-25)
+
+* Added the ability to configure credentials based on assuming a role to the AWS endpoint type, supported by all tasks except for the AWS CLI task. We will extend assume-role capability to the AWS CLI task in a future update.
+
 ### 1.0.8 (2017-10-23)
 
 * Fixed issue with missing tasks after installation of the tools into Team Foundation Server 2015.

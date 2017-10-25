@@ -18,7 +18,7 @@ export class TaskOperations {
 
     public static async deleteStack(taskParameters: Parameters.TaskParameters): Promise<void> {
 
-        this.createServiceClients(taskParameters);
+        await this.createServiceClients(taskParameters);
 
         await this.verifyResourcesExist(taskParameters.stackName);
 
@@ -33,14 +33,11 @@ export class TaskOperations {
 
     private static cloudFormationClient: CloudFormation;
 
-    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15',
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            },
+            credentials: taskParameters.Credentials,
             region: taskParameters.awsRegion
         };
         this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);

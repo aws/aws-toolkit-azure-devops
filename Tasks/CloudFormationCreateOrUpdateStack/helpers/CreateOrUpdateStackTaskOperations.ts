@@ -18,7 +18,7 @@ import sdkutils = require('sdkutils/sdkutils');
 export class TaskOperations {
 
     public static async createOrUpdateStack(taskParameters: Parameters.TaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        await this.createServiceClients(taskParameters);
 
         let stackId: string = await this.testStackExists(taskParameters.stackName);
         if (stackId) {
@@ -40,24 +40,18 @@ export class TaskOperations {
     private static cloudFormationClient: CloudFormation;
     private static s3Client: S3;
 
-    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15',
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            },
+            credentials: taskParameters.Credentials,
             region: taskParameters.awsRegion
         };
         this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            },
+            credentials: taskParameters.Credentials,
             region: taskParameters.awsRegion
         };
         this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);

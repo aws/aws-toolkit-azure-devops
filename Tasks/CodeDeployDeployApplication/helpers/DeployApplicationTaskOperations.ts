@@ -21,7 +21,7 @@ export class TaskOperations {
 
     public static async deploy(taskParameters: Parameters.TaskParameters): Promise<void> {
 
-        this.createServiceClients(taskParameters);
+        await this.createServiceClients(taskParameters);
 
         await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.deploymentGroupName);
 
@@ -41,25 +41,19 @@ export class TaskOperations {
     private static codeDeployClient: CodeDeploy;
     private static s3Client: S3;
 
-    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const codeDeployOpts: CodeDeploy.ClientConfiguration = {
             apiVersion: '2014-10-06',
-            region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            }
+            credentials: taskParameters.Credentials,
+            region: taskParameters.awsRegion
         };
         this.codeDeployClient = sdkutils.createAndConfigureSdkClient(CodeDeploy, codeDeployOpts, taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            }
+            credentials: taskParameters.Credentials,
+            region: taskParameters.awsRegion
         };
         this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }

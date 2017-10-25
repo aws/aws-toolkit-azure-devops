@@ -17,7 +17,7 @@ import sdkutils = require('sdkutils/sdkutils');
 export class TaskOperations {
 
     public static async sendMessage(taskParameters: Parameters.TaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        await this.createServiceClients(taskParameters);
 
         if (taskParameters.messageTarget === 'topic') {
             await this.verifyTopicExists(taskParameters.topicArn);
@@ -33,26 +33,20 @@ export class TaskOperations {
     private static sqsClient : SQS;
     private static snsClient : SNS;
 
-    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
        const sqsOpts: SQS.ClientConfiguration = {
             apiVersion: '2012-11-05',
-            region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            }
-       };
+            credentials: taskParameters.Credentials,
+            region: taskParameters.awsRegion
+        };
        this.sqsClient = sdkutils.createAndConfigureSdkClient(SQS, sqsOpts, taskParameters, tl.debug);
 
        const snsOpts: SNS.ClientConfiguration = {
             apiVersion: '2010-03-31',
-            region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            }
-       };
+            credentials: taskParameters.Credentials,
+            region: taskParameters.awsRegion
+        };
        this.snsClient = sdkutils.createAndConfigureSdkClient(SNS, snsOpts, taskParameters, tl.debug);
     }
 

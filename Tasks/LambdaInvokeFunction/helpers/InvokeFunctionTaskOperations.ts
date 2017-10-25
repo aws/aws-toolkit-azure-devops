@@ -17,7 +17,7 @@ export class TaskOperations {
 
     public static async invokeFunction(taskParameters: Parameters.TaskParameters): Promise<void> {
 
-        this.createServiceClients(taskParameters);
+        await this.createServiceClients(taskParameters);
 
         await this.verifyResourcesExist(taskParameters.functionName);
 
@@ -52,15 +52,12 @@ export class TaskOperations {
 
     private static lambdaClient: Lambda;
 
-    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const lambdaOpts: Lambda.ClientConfiguration = {
             apiVersion: '2015-03-31',
-            region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            }
+            credentials: taskParameters.Credentials,
+            region: taskParameters.awsRegion
         };
 
        this.lambdaClient = sdkutils.createAndConfigureSdkClient(Lambda, lambdaOpts, taskParameters, tl.debug);

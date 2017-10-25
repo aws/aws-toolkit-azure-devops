@@ -19,7 +19,7 @@ import sdkutils = require('sdkutils/sdkutils');
 export class TaskOperations {
 
     public static async downloadArtifacts(taskParameters: Parameters.TaskParameters): Promise<void> {
-        this.createServiceClients(taskParameters);
+        await this.createServiceClients(taskParameters);
 
         const exists = await this.testBucketExists(taskParameters.bucketName);
         if (!exists) {
@@ -33,15 +33,12 @@ export class TaskOperations {
 
     private static s3Client: S3;
 
-    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
+            credentials: taskParameters.Credentials,
             region: taskParameters.awsRegion,
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            },
             s3ForcePathStyle: taskParameters.forcePathStyleAddressing
         };
         this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);

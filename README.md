@@ -18,6 +18,8 @@ Select the *AWS* endpoint type and provide the following parameters
 
 Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/). Note that we strongly suggest the use of access and secret keys generated for an Identity and Access Management (IAM) user account.
 
+You can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the task(s) to use. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds). Currently assume role credentials are supported by all tasks except the AWS CLI task.
+
 ![aws endpoint](images/AWSEndpoint.png)
 
 ### Transfer Files to and from Amazon S3 Buckets

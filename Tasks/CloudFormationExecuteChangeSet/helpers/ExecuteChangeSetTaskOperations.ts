@@ -19,7 +19,7 @@ export class TaskOperations {
 
     public static async executeChangeSet(taskParameters: Parameters.TaskParameters): Promise<void> {
 
-        this.createServiceClients(taskParameters);
+        await this.createServiceClients(taskParameters);
 
         const stackId = await this.verifyResourcesExist(taskParameters.changeSetName, taskParameters.stackName);
         let waitForStackUpdate: boolean = false;
@@ -55,14 +55,11 @@ export class TaskOperations {
 
     private static cloudFormationClient: CloudFormation;
 
-    private static createServiceClients(taskParameters: Parameters.TaskParameters) {
+    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15',
-            credentials: {
-                accessKeyId: taskParameters.awsKeyId,
-                secretAccessKey: taskParameters.awsSecretKey
-            },
+            credentials: taskParameters.Credentials,
             region: taskParameters.awsRegion
         };
         this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);

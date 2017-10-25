@@ -55,7 +55,16 @@ try
 
     Write-Host (Get-VstsLocString -Key 'InitializingAWSContext' -ArgumentList $awsRegion)
     Import-Module -Name AWSPowerShell
-    Initialize-AWSDefaultConfiguration -AccessKey $awsEndpointAuth.Auth.Parameters.UserName -SecretKey $awsEndpointAuth.Auth.Parameters.Password -Region $awsRegion
+    if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn)
+    {
+        Write-Host 'Task configured to use credentials scoped to role.'
+        Set-AWSCredential -AccessKey $awsEndpointAuth.Auth.Parameters.UserName -SecretKey $awsEndpointAuth.Auth.Parameters.Password -StoreAs 'AssumeRoleMaster'
+        Initialize-AWSDefaultConfiguration -RoleArn $awsEndpointAuth.Auth.Parameters.AssumeRoleArn -SourceProfile 'AssumeRoleMaster' -Region $awsRegion
+    }
+    else
+    {
+        Initialize-AWSDefaultConfiguration -AccessKey $awsEndpointAuth.Auth.Parameters.UserName -SecretKey $awsEndpointAuth.Auth.Parameters.Password -Region $awsRegion
+    }
 
     # poke metrics tag into the environment
     Set-Item -Path env:AWS_EXECUTION_ENV -Value 'VSTS-AWSPowerShellModuleScript'
@@ -80,7 +89,7 @@ try
 
     $scriptType = Get-VstsInput -Name 'scriptType' -Require
     $input_arguments = Get-VstsInput -Name 'arguments'
-    
+
     if ("$scriptType".ToUpperInvariant() -eq "FILEPATH")
     {
         $input_filePath = Get-VstsInput -Name 'filePath' -Require
