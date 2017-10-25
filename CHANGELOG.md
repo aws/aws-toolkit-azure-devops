@@ -1,4 +1,4 @@
-### 1.0.9 (20170-10-25)
+### 1.0.10 (20170-10-25)
 
 * Added the ability to configure credentials based on assuming a role to the AWS endpoint type, supported by all tasks except for the AWS CLI task. We will extend assume-role capability to the AWS CLI task in a future update.
 
