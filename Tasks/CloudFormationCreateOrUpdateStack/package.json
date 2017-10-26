@@ -1,6 +1,6 @@
 {
     "name": "cloudformationcreatestack",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "Create an AWS CloudFormation stacks",
     "main": "CloudFormationCreateStack.js",
     "scripts": {

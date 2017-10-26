@@ -1,4 +1,8 @@
-### 1.0.10 (20170-10-25)
+### 1.0.11 (2017-10-26)
+
+* Fixed various issues caused by a second copy of the AWS SDK for Node.js being included in tasks.
+
+### 1.0.10 (2017-10-25)
 
 * Added the ability to configure credentials based on assuming a role to the AWS endpoint type, supported by all tasks except for the AWS CLI task. We will extend assume-role capability to the AWS CLI task in a future update.
 
