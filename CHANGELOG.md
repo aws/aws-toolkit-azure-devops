@@ -1,3 +1,9 @@
+### 1.0.12 (2017-10-27)
+
+* Added support for detecting proxy settings on agents and configuring the tasks to use the proxy.
+* Extended support for assume role credentials to the AWSCLI and LambdaNETCoreDeploy tasks.
+* Extended the AWS endpoint type to also support cross-account assume role credentials, where an external ID may need to be specified.
+
 ### 1.0.11 (2017-10-26)
 
 * Fixed various issues caused by a second copy of the AWS SDK for Node.js being included in tasks.

@@ -6,6 +6,7 @@
   * the License.
   */
 
+import { parse, format, Url } from 'url';
 import tl = require('vsts-task-lib/task');
 import tr = require('vsts-task-lib/toolrunner');
 import Parameters = require('./AWSCliTaskParameters');
@@ -21,12 +22,9 @@ export class TaskOperations {
 
     public static async executeCommand(taskParameters: Parameters.TaskParameters) {
         try {
-            // assume role credentials are not currently supported
-            if (taskParameters.AssumeRoleARN) {
-                throw new Error('Assume role-based temporary credentials are not currently supported for this task');
-            }
-
             await this.configureAwsCli(taskParameters);
+            await taskParameters.configureHttpProxyFromAgentProxyConfiguration('AWSCLI');
+
             const awsCliPath = tl.which('aws');
             const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath);
             awsCliTool.arg(taskParameters.awsCliCommand);
@@ -49,24 +47,35 @@ export class TaskOperations {
     private static async configureAwsCli(taskParameters: Parameters.TaskParameters) {
         const awsCliPath = tl.which('aws');
 
-        const credentials = taskParameters.Credentials;
-        tl.debug('configure access key');
-        const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath);
-        awsCliTool.line('configure set aws_access_key_id');
-        awsCliTool.arg(credentials.accessKeyId);
-        awsCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+        // if assume role credentials are in play, make sure the initial generation
+        // of temporary credentials has been performed
+        await taskParameters.Credentials.getPromise().then(() => {
+            tl.debug('configure access key');
+            const accessKeyCliTool: tr.ToolRunner = tl.tool(awsCliPath);
+            accessKeyCliTool.line('configure set aws_access_key_id');
+            accessKeyCliTool.arg(taskParameters.Credentials.accessKeyId);
+            accessKeyCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
 
-        tl.debug('configure secret access key');
-        const awsCliTool2: tr.ToolRunner = tl.tool(awsCliPath);
-        awsCliTool2.line('configure set aws_secret_access_key');
-        awsCliTool2.arg(credentials.secretAccessKey);
-        awsCliTool2.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+            tl.debug('configure secret access key');
+            const secretKeyCliTool: tr.ToolRunner = tl.tool(awsCliPath);
+            secretKeyCliTool.line('configure set aws_secret_access_key');
+            secretKeyCliTool.arg(taskParameters.Credentials.secretAccessKey);
+            secretKeyCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
 
-        tl.debug('configure region');
-        const awsCliTool3: tr.ToolRunner = tl.tool(awsCliPath);
-        awsCliTool3.line('configure set');
-        awsCliTool3.arg('default.region');
-        awsCliTool3.arg(taskParameters.awsRegion);
-        awsCliTool3.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+            if (taskParameters.Credentials.sessionToken) {
+                tl.debug('configure session token');
+                const sessionTokenCliTool: tr.ToolRunner = tl.tool(awsCliPath);
+                sessionTokenCliTool.line('configure set aws_session_token');
+                sessionTokenCliTool.arg(taskParameters.Credentials.sessionToken);
+                sessionTokenCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+            }
+
+            tl.debug('configure region');
+            const awsCliTool3: tr.ToolRunner = tl.tool(awsCliPath);
+            awsCliTool3.line('configure set');
+            awsCliTool3.arg('default.region');
+            awsCliTool3.arg(taskParameters.awsRegion);
+            awsCliTool3.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+        });
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "sendmessage",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "Sends a message to an SQS queue or SNS topic.",
     "main": "SendMessage.js",
     "scripts": {

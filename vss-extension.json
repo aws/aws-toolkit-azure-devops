@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "name": "AWS Tools for Microsoft Visual Studio Team Services",
     "scopes": [
         "vso.build",
@@ -178,6 +178,17 @@
                                 "id": "roleSessionName",
                                 "name": "Role Session Name",
                                 "description": "Optional identifier for the assumed role session. If not specified the tasks will use a default name of 'aws-vsts-tools'.\nUse the role session name to uniquely identify a session when the same role is assumed by different principals or for different reasons. In cross-account scenarios, the role session name is visible to, and can be logged by the account that owns the role. The role session name is also used in the ARN of the assumed role principal. This means that subsequent cross-account API requests using the temporary security credentials will expose the role session name to the external account in their CloudTrail logs.",
+                                "inputMode": "textbox",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": false,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "externalId",
+                                "name": "External ID",
+                                "description": "A unique identifier that is used by third parties when assuming roles in their customers' accounts, aka cross-account role access.",
                                 "inputMode": "textbox",
                                 "isConfidential": false,
                                 "validation": {

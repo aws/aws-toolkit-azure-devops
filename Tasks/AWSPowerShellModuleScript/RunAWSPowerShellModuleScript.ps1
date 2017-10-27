@@ -66,6 +66,13 @@ try
         Initialize-AWSDefaultConfiguration -AccessKey $awsEndpointAuth.Auth.Parameters.UserName -SecretKey $awsEndpointAuth.Auth.Parameters.Password -Region $awsRegion
     }
 
+    # Was not able to get the Get-VstsWebProxy helper to work, plus it has a
+    # minimum agent version of 2.105.8 so instead we attempt to read the Agent.Proxy*
+    # variables directly
+    $agentProxyUrl = Get-VstsTaskVariable -Name 'Agent.ProxyUrl'
+    $agentProxyUserName = Get-VstsTaskVariable -Name 'Agent.ProxyUsername';
+    $agentProxyPassword = Get-VstsTaskVariable -Name 'Agent.ProxyPassword';
+
     # poke metrics tag into the environment
     Set-Item -Path env:AWS_EXECUTION_ENV -Value 'VSTS-AWSPowerShellModuleScript'
 
@@ -120,6 +127,28 @@ try
     Write-Host (Get-VstsLocString -Key 'GeneratingScript')
     $contents = @()
     $contents += "`$ErrorActionPreference = '$input_errorActionPreference'"
+
+    if ($agentProxyUrl)
+    {
+        $proxyUri = [Uri]$agentProxyUrl
+
+        $proxyCommand = "Set-AWSProxy"
+        $proxyCommand += " -Hostname $($proxyUri.Host)"
+        $proxyCommand += " -Port $($proxyUri.Port)"
+
+        if ($agentProxyUserName)
+        {
+            $proxyCommand += " -Username $agentProxyUserName"
+        }
+        if ($agentProxyPassword)
+        {
+            $proxyCommand += " -Password $agentProxyPassword"
+        }
+
+        Write-Host "Configuring script for proxy at $($proxyUri.Scheme)://$($proxyUri.Host):$($proxyUri.Port)"
+
+        $contents += $proxyCommand
+    }
 
     # By writing an inline script to a file, and then dot sourcing that from
     # the outer script we construct (ie behaving as if the user had chosen

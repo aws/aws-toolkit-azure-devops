@@ -1,6 +1,6 @@
 {
     "name": "lambdainvokefunction",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "Invokes an AWS Lambda function with a JSON payload.",
     "main": "LambdaInvokeFunction.js",
     "scripts": {

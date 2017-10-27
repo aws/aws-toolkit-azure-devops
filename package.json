@@ -1,6 +1,6 @@
 {
     "name": "aws-vsts-tools",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "AWS Tools for Visual Studio Team Services",
     "private": true,
     "main": "gulpfile.js",
@@ -57,6 +57,7 @@
     },
     "dependencies": {
         "aws-sdk": "2.94.0",
+        "https-proxy-agent": "2.1.0",
         "shelljs": "0.7.8",
         "vsts-task-lib": "2.0.6"
     }
