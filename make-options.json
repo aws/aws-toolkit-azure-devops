@@ -11,7 +11,8 @@
         "LambdaNETCoreDeploy",
         "S3Download",
         "S3Upload",
-        "SendMessage"
+        "SendMessage",
+        "SystemsManagerGetParameter"
     ],
     "taskResources": [
         "*.ps1",

@@ -1,0 +1,15 @@
+{
+    "name": "systemsmanagergetparameter",
+    "version": "1.0.12",
+    "description": "Gets the value of one or more parameters from the Systems Manager parameter store and adds them as variables to the current build or release definition.",
+    "main": "SystemsManagerGetParameter.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "aws-sdk": "2.94.0",
+        "vsts-task-lib": "^2.0.6"
+    }
+}

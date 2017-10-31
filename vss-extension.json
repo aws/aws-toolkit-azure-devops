@@ -108,6 +108,9 @@
         },
         {
             "path": "Tasks/SendMessage"
+        },
+        {
+            "path": "Tasks/SystemsManagerGetParameter"
         }
     ],
     "categories": [
@@ -332,6 +335,17 @@
             ],
             "properties": {
                 "name": "Tasks/SendMessage"
+            }
+        },
+        {
+            "id": "SystemsManagerGetParameter",
+            "description": "Read one or more parameter store values into build variables",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/SystemsManagerGetParameter"
             }
         }
     ]
