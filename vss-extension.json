@@ -38,7 +38,9 @@
         "Elastic Beanstalk",
         "SNS",
         "SQS",
-        "AWSPowerShell"
+        "AWSPowerShell",
+        "EC2 Container Registry",
+        "EC2 Systems Manager"
     ],
     "links": {
         "getstarted": {
@@ -93,6 +95,9 @@
         },
         {
             "path": "Tasks/CodeDeployDeployApplication"
+        },
+        {
+            "path": "Tasks/ECRPushImage"
         },
         {
             "path": "Tasks/LambdaInvokeFunction"
@@ -280,6 +285,17 @@
             ],
             "properties": {
                 "name": "Tasks/CodeDeployDeployApplication"
+            }
+        },
+        {
+            "id": "ECRPushImage",
+            "description": "Push a local Docker image to EC2 Container Registry",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/ECRPushImage"
             }
         },
         {

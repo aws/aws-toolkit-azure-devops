@@ -57,6 +57,7 @@
     },
     "dependencies": {
         "aws-sdk": "2.94.0",
+        "base-64": "0.1.0",
         "https-proxy-agent": "2.1.0",
         "shelljs": "0.7.8",
         "vsts-task-lib": "2.0.6"

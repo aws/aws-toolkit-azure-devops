@@ -1,0 +1,16 @@
+{
+    "name": "ecrpushimage",
+    "version": "1.0.12",
+    "description": "Pushes a local Docker image to EC2 Container Registry",
+    "main": "ECRPushImage.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "aws-sdk": "2.94.0",
+        "base-64": "0.1.0",
+        "vsts-task-lib": "^2.0.6"
+    }
+}

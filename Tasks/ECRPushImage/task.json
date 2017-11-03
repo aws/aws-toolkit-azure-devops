@@ -1,0 +1,155 @@
+{
+    "id": "467d1870-1a00-4755-b00d-9642129fe759",
+    "name": "ECRPushImage",
+    "friendlyName": "AWS EC2 Container Registry Push Image",
+    "description": "Push a local Docker image to EC2 Container Registry",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [Amazon EC2 Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/) documentation for working with this service.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "12"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "Push Image: ",
+    "groups": [
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
+        },
+        {
+            "name": "imageSource",
+            "type": "radio",
+            "label": "Image Source",
+            "required": true,
+            "defaultValue": "imagename",
+            "helpMarkDown": "The identity of the image to push.",
+            "options": {
+                "imagename": "Image name with optional tag",
+                "imageid": "Image ID"
+            },
+            "properties": {
+                "EditableOptions": "false"
+            }
+        },
+        {
+            "name": "sourceImageName",
+            "label": "Source Image Name",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Required if the image is to be identified using a repository name and tag",
+            "visibleRule": "imageSource = imagename"
+        },
+        {
+            "name": "sourceImageTag",
+            "label": "Source Image Tag",
+            "type": "string",
+            "required": false,
+            "defaultValue": "latest",
+            "helpMarkDown": "Required if the image is to be identified using a repository name and tag. If a tag value is not supplied, 'latest' is assumed",
+            "visibleRule": "imageSource = imagename"
+        },
+        {
+            "name": "sourceImageId",
+            "label": "Source Image ID",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Required if the image is to be identified using the image ID",
+            "visibleRule": "imageSource = imageId"
+        },
+        {
+            "name": "repositoryName",
+            "label": "Target Repository Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the repository to push the image to."
+        },
+        {
+            "name": "pushTag",
+            "label": "Target Repository Tag",
+            "type": "string",
+            "required": false,
+            "defaultValue": "latest",
+            "helpMarkDown": "Optional tag for the new image in the repository. If not specified, ECR will assume 'latest'."
+        },
+        {
+            "name": "autoCreateRepository",
+            "label": "Create repository if it does not exist",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "If selected the task will attempt to create the repository if it does not exist."
+        },
+        {
+            "name": "registryId",
+            "label": "Target Registry ID",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "ID of the registry to push to. If not specified, your default registry in the selected region is assumed."
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
+            "groupName": "diagnostic"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "ECRPushImage.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "PushImageWithId": "Pushing image with ID '%s'",
+        "PushImageWithName": "Pushing image '%s'",
+        "RequestingAuthToken": "Obtaining authentication token for ECR login",
+        "AddingTag": "Adding tag '%s' to image '%s'",
+        "PushingImage": "Pushing image '%s' to EC2 Container Registry",
+        "InvokingDockerCommand": "Invoking '%s' with command '%s'",
+        "TestingForRepository": "Testing existence of repository '%s'",
+        "CreatingRepository": "Repository not found, attempting to create",
+        "TaskCompleted": "Successfully completed sending the message"
+    }
+}
