@@ -21,7 +21,6 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public repositoryName: string;
     public pushTag: string;
     public autoCreateRepository: boolean;
-    public registryId: string;
 
     constructor() {
         super();
@@ -37,7 +36,6 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.repositoryName = tl.getInput('repositoryName', true);
             this.pushTag = tl.getInput('pushTag', false);
             this.autoCreateRepository = tl.getBoolInput('autoCreateRepository', false);
-            this.registryId = tl.getInput('registryId');
         } catch (error) {
             throw new Error(error.message);
         }

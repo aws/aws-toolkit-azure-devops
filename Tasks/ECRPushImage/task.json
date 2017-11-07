@@ -109,14 +109,6 @@
             "helpMarkDown": "If selected the task will attempt to create the repository if it does not exist."
         },
         {
-            "name": "registryId",
-            "label": "Target Registry ID",
-            "type": "string",
-            "required": false,
-            "defaultValue": "",
-            "helpMarkDown": "ID of the registry to push to. If not specified, your default registry in the selected region is assumed."
-        },
-        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",

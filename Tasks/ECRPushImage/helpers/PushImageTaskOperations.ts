@@ -30,11 +30,11 @@ export class TaskOperations {
             console.log(tl.loc('PushImageWithId', taskParameters.imageIdSource));
         }
 
-        const authData = await this.getEcrAuthorizationData(taskParameters.registryId);
+        const authData = await this.getEcrAuthorizationData();
         const endpoint = parse(authData.proxyEndpoint).host;
 
         if (taskParameters.autoCreateRepository) {
-            await this.createRepositoryIfNeeded(taskParameters.repositoryName, taskParameters.registryId);
+            await this.createRepositoryIfNeeded(taskParameters.repositoryName);
         }
 
         const targetImageName = this.constructTaggedImageName(taskParameters.repositoryName, taskParameters.pushTag);
@@ -68,13 +68,12 @@ export class TaskOperations {
         return imageName;
     }
 
-    private static async createRepositoryIfNeeded(repository: string, registry: string): Promise<void> {
+    private static async createRepositoryIfNeeded(repository: string): Promise<void> {
         console.log(tl.loc('TestingForRepository', repository));
 
         try {
             await this.ecrClient.describeRepositories({
-                repositoryNames: [ repository ],
-                registryId: registry
+                repositoryNames: [ repository ]
             }).promise();
         } catch (err) {
             if (err.code === 'RepositoryNotFoundException') {
@@ -103,14 +102,10 @@ export class TaskOperations {
         await this.runDockerCommand('push', [ imageRef ]);
     }
 
-    private static async getEcrAuthorizationData(registryId: string): Promise<ECR.AuthorizationData> {
+    private static async getEcrAuthorizationData(): Promise<ECR.AuthorizationData> {
         try {
             console.log(tl.loc('RequestingAuthToken'));
-            let registries: ECR.GetAuthorizationTokenRegistryIdList;
-            if (registryId) {
-                registries = [ registryId ];
-            }
-            const response = await this.ecrClient.getAuthorizationToken({registryIds: registries}).promise();
+            const response = await this.ecrClient.getAuthorizationToken().promise();
             return response.authorizationData[0];
         } catch (err) {
             throw new Error('Failed to obtain authorization token to log in to ECR, error: ' + err);
