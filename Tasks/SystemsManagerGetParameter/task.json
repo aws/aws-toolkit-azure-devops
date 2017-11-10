@@ -92,7 +92,7 @@
             "options": {
                 "none": "Use parameter name (including any path) as variable name",
                 "leaf": "Use leaf of pathed parameter name as variable name",
-                "substitute": "Replace path character (/) with another character",
+                "substitute": "Replace text in the parameter name using a regular expression",
                 "custom": "Use custom name"
             }
         },
@@ -107,7 +107,7 @@
             "options": {
                 "none": "Use parameter names (including any paths) as variable names",
                 "leaf": "Use leaf of parameter names as variable names",
-                "substitute": "Replace path character (/) with another character"
+                "substitute": "Replace text in the parameter name using a regular expression"
             }
         },
         {
@@ -120,12 +120,39 @@
             "visibleRule": "singleNameTransform = custom"
         },
         {
-            "name": "pathSubstitutionCharacter",
-            "label": "Path (/) substitution character",
+            "name": "replacementPattern",
+            "label": "Replacement Pattern",
             "type": "string",
             "required": false,
-            "defaultValue": "_",
-            "helpMarkDown": "The character to be substituted for / in parameter paths when using the parameter name as the variable name. Defaults to '_' if not specified.",
+            "defaultValue": "",
+            "helpMarkDown": "A regular expression defining the text in the parameter name that is to be replaced to form the variable name. This field is required if text replacement is selected for the Variable Name Transform option.",
+            "visibleRule": "hierarchyNameTransform = substitute || singleNameTransform = substitute"
+        },
+        {
+            "name": "replacementText",
+            "label": "Replacement Text",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The text to use to replace the matched pattern defined in the field Text Replacement Pattern. If an empty string is supplied the text identified by the pattern is simply removed from the parameter name.",
+            "visibleRule": "hierarchyNameTransform = substitute || singleNameTransform = substitute"
+        },
+        {
+            "name": "globalMatch",
+            "label": "Global Match",
+            "type": "boolean",
+            "defaultValue": "true",
+            "required": "false",
+            "helpMarkDown": "If set a global match is performed with the specified pattern.",
+            "visibleRule": "hierarchyNameTransform = substitute || singleNameTransform = substitute"
+        },
+        {
+            "name": "caseInsensitiveMatch",
+            "label": "Case-insensitive Match",
+            "type": "boolean",
+            "defaultValue": "true",
+            "required": false,
+            "helpMarkDown": "If set a case-insensitive match is performed with the specified pattern.",
             "visibleRule": "hierarchyNameTransform = substitute || singleNameTransform = substitute"
         },
         {
@@ -157,7 +184,6 @@
         "ReadingParameterHierarchy": "Reading parameter hierarchy with path %s, recursive mode = %s",
         "SettingVariable": "Setting variable %s from parameter %s, is secret = %s",
         "TransformedParameterName": "Transformed input parameter name %s to build variable name %s",
-        "MissingVariableName": "Variable name must be supplied if transform is set to 'custom'",
         "UsingParameterNameForVariable": "Using original parameter name %s for build variable",
         "TaskCompleted": "Successfully created variables from parameter value(s)."
     }

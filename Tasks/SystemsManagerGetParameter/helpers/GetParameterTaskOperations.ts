@@ -20,14 +20,14 @@ export class TaskOperations {
 
         switch (taskParameters.readMode) {
             case 'single': {
-                await this.readSingleParameterValue(taskParameters)
+                await this.readSingleParameterValue(taskParameters);
             }
-                break;
+            break;
 
             case 'hierarchy': {
                 await this.readParameterHierarchy(taskParameters);
             }
-                break;
+            break;
         }
 
         console.log(tl.loc('TaskCompleted'));
@@ -48,10 +48,7 @@ export class TaskOperations {
     // Reads a single parameter value and stores it into the supplied variable name. SecureString parameter
     // types are stored as secret variables.
     private static async readSingleParameterValue(taskParameters: Parameters.TaskParameters): Promise<void> {
-        const outputVariableName = this.transformParameterToVariableName(taskParameters.parameterName,
-                                                                         taskParameters.variableNameTransform,
-                                                                         taskParameters.customVariableName,
-                                                                         taskParameters.pathSubstitutionCharacter);
+        const outputVariableName = this.transformParameterToVariableName(taskParameters);
 
         const response = await this.ssmClient.getParameter({
             Name: taskParameters.parameterName,
@@ -87,10 +84,7 @@ export class TaskOperations {
             }).promise();
 
             for (const p of response.Parameters) {
-                const outputVariableName = this.transformParameterToVariableName(p.Name,
-                                                                                 taskParameters.variableNameTransform,
-                                                                                 null,
-                                                                                 taskParameters.pathSubstitutionCharacter);
+                const outputVariableName = this.transformParameterToVariableName(taskParameters);
                 const isSecret = p.Type === 'SecureString';
                 console.log(tl.loc('SettingVariable', outputVariableName, p.Name, isSecret));
 
@@ -101,20 +95,17 @@ export class TaskOperations {
         } while (nextToken);
     }
 
-    private static transformParameterToVariableName(parameterName: string,
-                                                    transform: string,
-                                                    customVariableName: string,
-                                                    pathSubstitutionCharacter: string): string {
+    private static transformParameterToVariableName(taskParameters:  Parameters.TaskParameters): string {
 
         let outputVariableName: string;
-        switch (transform) {
+        switch (taskParameters.variableNameTransform) {
             case 'none': {
-                outputVariableName = parameterName;
+                outputVariableName = taskParameters.parameterName;
             }
             break;
 
             case 'leaf': {
-                const parts = parameterName.split(/\//);
+                const parts = taskParameters.parameterName.split(/\//);
                 // if the name ended in /, walk backwards
                 for (let i: number = parts.length - 1; i > 0; i--) {
                     if (parts[i]) {
@@ -124,31 +115,39 @@ export class TaskOperations {
                 }
 
                 if (!outputVariableName) {
-                    throw new Error(`Failed to determine leaf component of parameter name ${parameterName}`);
+                    throw new Error(`Failed to determine leaf component of parameter name ${taskParameters.parameterName}`);
                 }
             }
             break;
 
             case 'substitute': {
-                outputVariableName = parameterName.replace(/\//g, pathSubstitutionCharacter);
+                let flags: string = '';
+                if (taskParameters.globalMatch) {
+                    flags += 'g';
+                }
+                if (taskParameters.caseInsensitiveMatch) {
+                    flags += 'i';
+                }
+                const pattern = new RegExp(taskParameters.replacementPattern, flags);
+                outputVariableName = taskParameters.parameterName.replace(pattern, taskParameters.replacementText);
             }
             break;
 
             // note this mode is only applicable to single name parameter reads
             case 'custom': {
-                outputVariableName = customVariableName;
+                outputVariableName = taskParameters.customVariableName;
             }
             break;
 
             default: {
-                throw new Error(`Unknown name transform mode ${transform}`);
+                throw new Error(`Unknown name transform mode ${taskParameters.variableNameTransform}`);
             }
         }
 
-        if (transform === 'none') {
-            console.log(tl.loc('UsingParameterNameForVariable', parameterName));
+        if (taskParameters.variableNameTransform === 'none') {
+            console.log(tl.loc('UsingParameterNameForVariable', taskParameters.parameterName));
         } else {
-            console.log(tl.loc('TransformedParameterName', parameterName, outputVariableName));
+            console.log(tl.loc('TransformedParameterName', taskParameters.parameterName, outputVariableName));
         }
 
         return outputVariableName;

@@ -10,7 +10,6 @@
   import sdkutils = require('sdkutils/sdkutils');
 
   export class TaskParameters extends sdkutils.AWSTaskParametersBase {
-    private readonly defaultPathSubstitutionCharacter: string = '_';
 
     public readMode: string;
     public parameterName: string;
@@ -18,7 +17,10 @@
     public recursive: boolean;
     public variableNameTransform: string;
     public customVariableName: string;
-    public pathSubstitutionCharacter: string = this.defaultPathSubstitutionCharacter;
+    public replacementPattern: string;
+    public replacementText: string;
+    public globalMatch: boolean;
+    public caseInsensitiveMatch: boolean;
 
     constructor() {
         super();
@@ -35,20 +37,15 @@
 
             switch (this.variableNameTransform) {
                 case 'substitute': {
-                    this.pathSubstitutionCharacter = tl.getInput('pathSubstitutionCharacter', false);
-                    if (this.pathSubstitutionCharacter && this.pathSubstitutionCharacter.length > 1) {
-                        this.pathSubstitutionCharacter = this.pathSubstitutionCharacter[0];
-                    } else {
-                        this.pathSubstitutionCharacter = this.defaultPathSubstitutionCharacter;
-                    }
+                    this.replacementPattern = tl.getInput('replacementPattern', true);
+                    this.replacementText = tl.getInput('replacementText', false) || '';
+                    this.globalMatch = tl.getBoolInput('globalMatch', false);
+                    this.caseInsensitiveMatch = tl.getBoolInput('caseInsensitiveMatch', false);
                 }
                 break;
 
                 case 'custom': {
-                    this.customVariableName = tl.getInput('customVariableName', false);
-                    if (!this.customVariableName || this.customVariableName.length === 0) {
-                        throw new Error(tl.loc('MissingVariableName'));
-                    }
+                    this.customVariableName = tl.getInput('customVariableName', true);
                 }
                 break;
 
