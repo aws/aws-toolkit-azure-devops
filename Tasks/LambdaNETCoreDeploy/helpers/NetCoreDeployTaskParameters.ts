@@ -35,6 +35,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
             this.functionName = tl.getInput('functionName', false);
             this.functionRole = tl.getInput('functionRole', false);
+            this.functionHandler = tl.getInput('functionHandler', false);
 
             if(tl.getInput('functionMemory', false)) {
                 this.functionMemory = parseInt(tl.getInput('functionMemory', false), 10);

@@ -54,7 +54,13 @@ export class DotNetCliWrapper {
         return this.executeAsync(args, additionalArgs);
     }
 
-    public lambdaDeployAsync(awsRegion: string, functionName: string, functionRole : string, functionMemory : number, functionTimeout : number, additionalArgs : string) : Promise<void>  {
+    public lambdaDeployAsync(awsRegion: string,
+                             functionName: string,
+                             functionHandler: string,
+                             functionRole : string,
+                             functionMemory : number,
+                             functionTimeout : number,
+                             additionalArgs : string) : Promise<void>  {
         const args = Array<string>();
 
         args.push('lambda');
@@ -70,6 +76,10 @@ export class DotNetCliWrapper {
         if (functionName) {
             args.push('-fn');
             args.push(functionName);
+        }
+        if (functionHandler) {
+            args.push('-fh');
+            args.push(functionHandler);
         }
         if (functionRole) {
             args.push('--function-role');

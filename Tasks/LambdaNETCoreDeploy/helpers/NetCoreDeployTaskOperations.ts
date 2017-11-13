@@ -58,6 +58,7 @@ export class TaskOperations {
                 await wrapper.lambdaDeployAsync(
                     taskParameters.awsRegion,
                     taskParameters.functionName,
+                    taskParameters.functionHandler,
                     taskParameters.functionRole,
                     taskParameters.functionMemory,
                     taskParameters.functionTimeout,
