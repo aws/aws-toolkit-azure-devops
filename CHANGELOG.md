@@ -1,3 +1,7 @@
+### 1.0.13 (2017-11-13)
+
+* Fixed [issue](https://github.com/aws/aws-vsts-tools/issues/37) with the Lambda .NET Core deployment task ignoring any value specified for the Function Handler variable declared on the task.
+
 ### 1.0.12 (2017-10-27)
 
 * Added support for detecting proxy settings on agents and configuring the tasks to use the proxy.
