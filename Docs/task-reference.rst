@@ -52,6 +52,7 @@ for Microsoft Visual Studio Team Services.
    codedeploy-deployment
    elastic-beanstalk-deploy
    lambda-deploy
+   lambda-netcore-deploy
    lambda-invoke
    s3-download
    s3-upload

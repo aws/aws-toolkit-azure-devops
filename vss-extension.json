@@ -100,6 +100,9 @@
             "path": "Tasks/ECRPushImage"
         },
         {
+            "path": "Tasks/LambdaDeployFunction"
+        },
+        {
             "path": "Tasks/LambdaInvokeFunction"
         },
         {
@@ -296,6 +299,17 @@
             ],
             "properties": {
                 "name": "Tasks/ECRPushImage"
+            }
+        },
+        {
+            "id": "LambdaDeployFunction",
+            "description": "General purpose deployment for AWS Lambda functions",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/LambdaDeployFunction"
             }
         },
         {

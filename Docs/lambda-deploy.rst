@@ -11,7 +11,7 @@
 .. _lambda-deploy:
 
 ###################################
-|LAMlong| .NET Core Deployment Task
+|LAMlong| Deployment Task
 ###################################
 
 .. meta::
@@ -21,7 +21,10 @@
 Synopsis
 ========
 
-Builds and deploys a .NET Core |LAMlong| function or serverless application.
+Supports deployment of |LAMlong| functions for all supported |LAM| language runtimes. Note that
+this task can be used to deploy .NET Core-based functions but it does not build the deployment
+package first. To perform a build and deployment for .NET Core-based functions, or to deploy
+.NET Core-based serverless applications, please refer to the |LAMlong| .NET Core Deployment task.
 
 Description
 ===========
@@ -41,7 +44,7 @@ parameters are noted by an asterisk (*). Other parameters are optional.
 Displayname*
 ------------
 
-    The default name of the task, |LAMlong| .NET Core Deployment. You can rename it.
+    The default name of the task, |LAMlong| Deploy Function. You can rename it.
 
 AWS Credentials*
 ----------------
@@ -54,74 +57,117 @@ AWS Region*
     The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
     |AWS-gr|.
 
-Path to |LAM| Project*
-----------------------
-
-    The relative path to the location of the |LAM| project.
-
-Deployment Type*
+Deployment Mode*
 ----------------
 
-    Either *Function* or *Serverless application*.
+    The operating mode for the task. The default setting, *Update code only*, just uploads new code for an already
+    published function. The alternative setting, *Update code and configuration (or create a new function)* can be
+    used to publish new functions or to deploy new code, and other configuration settings, to a pre-existing function.
+    When updating code and configuration the task performs the configuration changes first, then uploads and optionally
+    publishes the new code.
 
-    *Function* performs a single |LAM| function deloyment.
-    *Serverless application* performs a deployment with |CFNlong|, allowing a multiple function deployment.
+Function Name*
+--------------
 
-Function Deployment: |LAM| Function Properties
-----------------------------------------------
+    The name of the function to update or create.
 
-Function Name
-~~~~~~~~~~~~~
+Description
+-----------
 
-    The name of the |LAM| function to invoke. You can also specify the |arnlong| (ARN)
-    of the function.
+    A short, user-defined function description. Lambda does not use this value. Assign a meaningful description as you see fit.
 
-Function Role
-~~~~~~~~~~~~~
+Function Handler*
+-----------------
 
-    The name of the |IAM| role that provides access to AWS services to the deployed |LAM| function.
+    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the
+    name of the handler that will be called when your function is invoked. Different languages have different rules
+    for the formatting of this field. For more information, see https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html.
 
-Function Handler
-~~~~~~~~~~~~~~~~
+Runtime*
+--------
 
-    The function within your code that |LAM| calls to begin execution. The format is
-    :code:`<assembly-name>::<type-name>::<function-name>`.
+    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the language
+    runtime appropriate to the code you are deploying.
 
-Function Memory (MB)
-~~~~~~~~~~~~~~~~~~~~
+Code Location*
+--------------
 
-    The memory allocated to the |LAM| function. The value must be in multiples of 64.
+    Specifies the source location of the deployment package to be uploaded. You can choose from a file in the local file
+    system or a file previously uploaded to Amazon S3. If the source location is Amazon S3 you can also optionally specify
+    a specific version of the file.
 
-Function Timout (Seconds)
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Role ARN or Name*
+-----------------
 
-    The function execution time at which |LAM| should terminate the function.
+    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the role
+    to be assumed when your is invoked. The role supplies credentials (if needed) to your function as well as
+    controlling AWS resource access. You can specify either the name of the role or the role's Amazon Resource Name (ARN).
+    If the role name is specified the task will retrieve and use the role ARN for you.
 
-Serverless Application Deployment: Serverless Application Properties
---------------------------------------------------------------------
+Memory Size
+-----------
 
-Stack Name
-~~~~~~~~~~
+    Displayed when creating a new function, or updating code and configuration for an existing function. The amount of memory, in MB,
+    your Lambda function is given. Lambda uses this memory size to infer the amount of CPU and memory allocated to your function. Your
+    function use-case determines your CPU and memory requirements. For example, a database operation might need less memory compared
+    to an image processing function. The default value is 128 MB. The value must be a multiple of 64 MB.
 
-    |CFNlong| stack name. A stack is a collection of AWS resources that you can manage as a single unit.
+Timeout
+-------
 
-S3 Bucket
-~~~~~~~~~
+    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the execution time
+    at which Lambda should terminate the function. Because the execution time has cost implications, we recommend you set this value
+    based on your expected execution time. The default is 3 seconds.
 
-    The S3 bucket used to store the built project.
+Publish
+-------
 
-S3 Prefix
-~~~~~~~~~
-
-    The S3 object key prefix used for the objects uploaded to |S3|.
-
+    This parameter can be used to request AWS Lambda to create or update the Lambda function and publish a version as an atomic operation.
 
 Advanced
 --------
 
-Additional Command Line Arguments for |LAM| Tools
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Advanced settings are only displayed when creating a new function, or updating code and configuration for an existing function.
 
-    Additional arguments you can use when executing the :code:`dotnet lambda` command.
+Dead Letter ARN
+~~~~~~~~~~~~~~~
 
+    The Amazon Resource Name (ARN) of an Amazon SQS queue or Amazon SNS topic to be used as your Dead Letter Queue (DLQ).
+
+KMS Key ARN
+~~~~~~~~~~~
+
+    The Amazon Resource Name (ARN) of the KMS key used to encrypt your function's environment variables. If not provided,
+    |LAMlong| will use a default service key.
+
+Environment Variables
+~~~~~~~~~~~~~~~~~~~~~
+
+    Your function's environment configuration settings. Specify one pair per line, in *key*=*value* format.
+
+Tags
+~~~~
+
+    List of tags (key-value pairs) assigned to the new function. Enter as *key*=*value*, one per line. Tags can only be specified
+    when creating a new function and are ignored when updating functions.
+
+Security Group IDs
+~~~~~~~~~~~~~~~~~~
+
+    List of security group IDs, one per line. If your Lambda function accesses resources in a VPC at least one security group and one
+    subnet ID must be specified, which must belong to the same VPC.
+
+Subnet IDs
+~~~~~~~~~~
+
+    List of subnet IDs, one per line. If your Lambda function accesses resources in a VPC at least one security group and one subnet
+    ID must be specified, which must belong to the same VPC.
+
+Tracing configuration
+~~~~~~~~~~~~~~~~~~~~~
+
+    Your function's trace settings. Can be either X-Ray, PassThrough or Active. If PassThrough, Lambda will only trace the request from
+    an upstream service if it contains a tracing header with "sampled=1". If Active, Lambda will respect any tracing header it receives
+    from an upstream service. The default setting of X-Ray means that if no tracing header is received, Lambda will call X-Ray for a
+    tracing decision.
 

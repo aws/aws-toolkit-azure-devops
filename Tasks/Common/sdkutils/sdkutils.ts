@@ -11,6 +11,7 @@ import path = require('path');
 import fs = require('fs');
 import { parse, format, Url } from 'url';
 import STS = require('aws-sdk/clients/sts');
+import IAM = require('aws-sdk/clients/iam');
 import AWS = require('aws-sdk/global');
 import HttpsProxyAgent = require('https-proxy-agent');
 
@@ -250,4 +251,21 @@ export function createAndConfigureSdkClient(awsService: any,
     });
 
     return new awsService(awsServiceOpts);
+}
+
+export async function roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {
+    if (roleName.startsWith('arn:')) {
+        return roleName;
+    }
+
+    try {
+        console.log(`Attempting to retrieve Amazon Resource Name (ARN) for role ${roleName}`);
+
+        const response = await iamClient.getRole({
+            RoleName: roleName
+        }).promise();
+        return response.Role.Arn;
+    } catch (err) {
+        throw new Error(`Error while obtaining ARN: ${err}`);
+    }
 }

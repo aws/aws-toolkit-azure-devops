@@ -1,0 +1,305 @@
+{
+    "id": "ec87c253-756f-4a7a-be91-4f1c60f9d8fe",
+    "name": "LambdaDeployFunction",
+    "friendlyName": "AWS Lambda Deploy Function",
+    "description": "General purpose deployment of AWS Lambda functions for all supported language runtimes.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "13"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "Deploy Lambda Function: $(functionName)",
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": true,
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
+            "name": "outputOptions",
+            "displayName": "Output",
+            "isExpanded": false
+        },
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
+        },
+        {
+            "name": "deploymentMode",
+            "type": "radio",
+            "label": "Deployment Mode",
+            "defaultValue": "codeonly",
+            "required": true,
+            "helpMarkDown": "Selects the type of deployment. You can deploy new function code to an existing function or you can specify settings for both code and configuration. For the 'code and configuration' mode if the function does not exist it will be created.",
+            "options": {
+                "codeonly": "Update code only",
+                "codeandconfiguration": "Update code and configuration (or create a new function)"
+            }
+        },
+        {
+            "name": "functionName",
+            "type": "string",
+            "label": "Function Name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The name of the Lambda function to create or update. You can also specify the Amazon Resource Name (ARN) of the function."
+        },
+        {
+            "name": "description",
+            "type": "string",
+            "label": "Description",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "A short, user-defined function description. Lambda does not use this value. Assign a meaningful description as you see fit.",
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
+            "name": "functionHandler",
+            "type": "string",
+            "label": "Function Handler",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The function within your code that Lambda calls to begin execution. For Node.js, it is the module-name.export value in your function. For Java, it can be package.class-name::handler or package.class-name. For more information, see [Programming Model](https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html)",
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
+            "name": "runtime",
+            "type": "pickList",
+            "label": "Runtime",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "The runtime environment for the Lambda function you are uploading.",
+            "options": {
+                "nodejs": "nodejs",
+                "nodejs4.3": "nodejs4.3",
+                "nodejs6.10": "nodejs6.10",
+                "java8": "java8",
+                "python2.7": "python2.7",
+                "python3.6": "python3.6",
+                "dotnetcore1.0": "dotnetcore1.0",
+                "nodejs4.3-edge": "nodejs4.3-edge"
+            },
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
+            "name": "codeLocation",
+            "type": "radio",
+            "label": "Code Location",
+            "defaultValue": "localfile",
+            "required": true,
+            "helpMarkDown": "The source of the code for the function. You can select a zip file in the work area or a zip file previously uploaded to Amazon S3.",
+            "options": {
+                "localfile": "Zip file in the work area",
+                "s3object": "Zip file in Amazon S3"
+            }
+        },
+        {
+            "name": "localZipFile",
+            "type": "filePath",
+            "label": "Zip File Path",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Path to the zip file containing the function code to deploy. Required if Deployment Source is set to 'Zip file in the work area'.",
+            "visibleRule": "codeLocation = localfile"
+        },
+        {
+            "name": "s3Bucket",
+            "type": "string",
+            "label": "S3 Bucket Name",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the bucket containing the previously uploaded zip file of the function's code. Required if Deployment Source is set to 'Zip file in Amazon S3'.",
+            "visibleRule": "codeLocation = s3object"
+        },
+        {
+            "name": "s3ObjectKey",
+            "type": "string",
+            "label": "S3 Object Key",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The key (name) of the object in the bucket containing the function's code.  Required if Deployment Source is set to 'Zip file in Amazon S3'.",
+            "visibleRule": "codeLocation = s3object"
+        },
+        {
+            "name": "s3ObjectVersion",
+            "type": "string",
+            "label": "S3 Object Version",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Version of the S3 object containing the function code (optional)",
+            "visibleRule": "codeLocation = s3object"
+        },
+        {
+            "name": "roleARN",
+            "type": "string",
+            "label": "Role ARN or Name",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The Amazon Resource Name (ARN), or name, of the IAM role that Lambda assumes when it executes your function to access any other Amazon Web Services (AWS) resources. If a role name is supplied the task will attempt to retrieve the ARN automatically.",
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
+            "name": "memorySize",
+            "type": "string",
+            "label": "Memory Size",
+            "required": false,
+            "defaultValue": "128",
+            "helpMarkDown": "The amount of memory, in MB, your Lambda function is given. Lambda uses this memory size to infer the amount of CPU and memory allocated to your function. Your function use-case determines your CPU and memory requirements. For example, a database operation might need less memory compared to an image processing function. The default value is 128 MB. The value must be a multiple of 64 MB.",
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
+            "name": "timeout",
+            "type": "string",
+            "label": "Timeout",
+            "required": false,
+            "defaultValue": "3",
+            "helpMarkDown": "The function execution time at which Lambda should terminate the function. Because the execution time has cost implications, we recommend you set this value based on your expected execution time. The default is 3 seconds.",
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
+            "name": "publish",
+            "type": "boolean",
+            "label": "Publish",
+            "required": false,
+            "defaultValue": "true",
+            "helpMarkDown": "If set, requests AWS Lambda to create or update the Lambda function and publish a version as an atomic operation."
+        },
+        {
+            "name": "deadLetterARN",
+            "type": "string",
+            "label": "Dead Letter ARN",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The target ARN (Amazon Resource Name) of an Amazon SQS queue or Amazon SNS topic.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "kmsKeyARN",
+            "type": "string",
+            "label": "KMS Key ARN",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The Amazon Resource Name (ARN) of the KMS key used to encrypt your function's environment variables. If not provided, AWS Lambda will use a default service key.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "environment",
+            "type": "multiLine",
+            "label": "Environment Variables",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The key-value pairs that represent your environment's configuration settings. Enter as Name=Value, one per line.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "tags",
+            "type": "multiLine",
+            "label": "Tags",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The list of tags (key-value pairs) assigned to the new function. Enter as Key=Value, one per line. Tags can only be specified when creating a new function and are ignored when updating functions.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "securityGroups",
+            "type": "multiLine",
+            "label": "Security Group IDs",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "List of security group IDs, one per line. If your Lambda function accesses resources in a VPC at least one security group and one subnet ID must be specified, which must belong to the same VPC.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "subnets",
+            "type": "multiLine",
+            "label": "Subnet IDs",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "List of subnet IDs, one per line. If your Lambda function accesses resources in a VPC at least one security group and one subnet ID must be specified, which must belong to the same VPC.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "tracingConfig",
+            "type": "pickList",
+            "label": "Tracing Configuration",
+            "required": false,
+            "defaultValue": "XRay",
+            "helpMarkDown": "Trace settings for your function.",
+            "options": {
+                "XRay": "X-Ray",
+                "Active": "Respect any tracing header received from an upstream service",
+                "PassThrough": "Only trace the request from an upstream service if it contains a tracing header with 'sampled=1'"
+            },
+            "groupName": "advanced"
+        },
+        {
+            "name": "outputVariable",
+            "type": "string",
+            "label": "Output Variable",
+            "defaultValue": "",
+            "groupName": "outputOptions",
+            "helpMarkDown": "The name of the variable that will contain the Amazon Resource Name (ARN) of the created or updated function on task completion. The variable can be used as $(variableName) to refer to the function result in subsequent tasks.",
+            "required": false
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
+            "groupName": "diagnostic"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "LambdaDeployFunction.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "CreatingFunction": "Creating new function %s",
+        "UpdatingFunctionCode": "Updating code for function %s",
+        "UpdatingFunctionConfiguration": "Updating configuration for function %s",
+        "FunctionNotFound": "Function %s does not exist, cannot update code only",
+        "TaskCompleted": "Completed create or update of Lambda function %s, function ARN %s"
+    }
+}
