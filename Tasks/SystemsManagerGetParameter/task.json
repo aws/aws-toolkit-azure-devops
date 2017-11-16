@@ -2,7 +2,7 @@
     "id": "57EF2AF4-CD99-4298-BF77-2FEB5DC51863",
     "name": "SystemsManagerGetParameter",
     "friendlyName": "AWS EC2 Get Systems Manager Parameter",
-    "description": "Reads the value of one or more parameters from the store and adds them as variables to the current build or release definition",
+    "description": "Reads the value of one or more parameters from the EC2 Parameter Store and adds them as variables to the current build or release definition",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [EC2 Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) for more information.",
     "category": "Deploy",
@@ -17,7 +17,7 @@
         "Patch": "13"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "Read EC2 Systems Manager Parameter: $(parameterName)$(parameterNamePrefix)",
+    "instanceNameFormat": "Get EC2 Systems Manager Parameter: $(parameterName)$(parameterNamePrefix)",
     "groups": [
         {
             "name": "diagnostic",

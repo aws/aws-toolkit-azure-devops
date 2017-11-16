@@ -48,7 +48,7 @@ export class TaskOperations {
     // Reads a single parameter value and stores it into the supplied variable name. SecureString parameter
     // types are stored as secret variables.
     private static async readSingleParameterValue(taskParameters: Parameters.TaskParameters): Promise<void> {
-        const outputVariableName = this.transformParameterToVariableName(taskParameters);
+        const outputVariableName = this.transformParameterToVariableName(taskParameters, null);
 
         const response = await this.ssmClient.getParameter({
             Name: taskParameters.parameterName,
@@ -84,7 +84,7 @@ export class TaskOperations {
             }).promise();
 
             for (const p of response.Parameters) {
-                const outputVariableName = this.transformParameterToVariableName(taskParameters);
+                const outputVariableName = this.transformParameterToVariableName(taskParameters, p.Name);
                 const isSecret = p.Type === 'SecureString';
                 console.log(tl.loc('SettingVariable', outputVariableName, p.Name, isSecret));
 
@@ -95,17 +95,28 @@ export class TaskOperations {
         } while (nextToken);
     }
 
-    private static transformParameterToVariableName(taskParameters:  Parameters.TaskParameters): string {
+    // Transforms the read parameter name depending on task settings. If the task was set
+    // to read a single parameter, the input parameter name is in the task parameters. When
+    // reading a hierarchy, we pass in the individual parameter name from the collection
+    // read by the task.
+    private static transformParameterToVariableName(taskParameters:  Parameters.TaskParameters, readParameterName: string): string {
+
+        let inputParameterName: string;
+        if (readParameterName) {
+            inputParameterName = readParameterName;
+        } else {
+            inputParameterName = taskParameters.parameterName;
+        }
 
         let outputVariableName: string;
         switch (taskParameters.variableNameTransform) {
             case 'none': {
-                outputVariableName = taskParameters.parameterName;
+                outputVariableName = inputParameterName;
             }
             break;
 
             case 'leaf': {
-                const parts = taskParameters.parameterName.split(/\//);
+                const parts = inputParameterName.split(/\//);
                 // if the name ended in /, walk backwards
                 for (let i: number = parts.length - 1; i > 0; i--) {
                     if (parts[i]) {
@@ -129,7 +140,7 @@ export class TaskOperations {
                     flags += 'i';
                 }
                 const pattern = new RegExp(taskParameters.replacementPattern, flags);
-                outputVariableName = taskParameters.parameterName.replace(pattern, taskParameters.replacementText);
+                outputVariableName = inputParameterName.replace(pattern, taskParameters.replacementText);
             }
             break;
 
@@ -145,9 +156,9 @@ export class TaskOperations {
         }
 
         if (taskParameters.variableNameTransform === 'none') {
-            console.log(tl.loc('UsingParameterNameForVariable', taskParameters.parameterName));
+            console.log(tl.loc('UsingParameterNameForVariable', inputParameterName));
         } else {
-            console.log(tl.loc('TransformedParameterName', taskParameters.parameterName, outputVariableName));
+            console.log(tl.loc('TransformedParameterName', inputParameterName, outputVariableName));
         }
 
         return outputVariableName;
