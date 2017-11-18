@@ -1,0 +1,249 @@
+{
+    "id": "bc6233ad-6a33-41c0-b2af-9d71898008d0",
+    "name": "SystemsManagerRunCommand",
+    "friendlyName": "AWS Systems Manager Run Command",
+    "description": "Run a command remotely on a fleet of EC2 instances and/or on-premise machines.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) for more information.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "13"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "Systems Manager Run Command: $(documentName)",
+    "groups": [
+        {
+            "name": "instanceSelection",
+            "displayName": "Instance Selection",
+            "isExpanded": true
+        },
+        {
+            "name": "notifications",
+            "displayName": "SNS Notifications",
+            "isExpanded": false
+        },
+        {
+            "name": "output",
+            "displayName": "S3 Output",
+            "isExpanded": false
+        },
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
+        },
+        {
+            "name": "documentName",
+            "label": "Document Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the Systems Manager document to execute. This can be a public document or a custom document."
+        },
+        {
+            "name": "documentParameters",
+            "label": "Parameters",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The required and optional parameters specified in the document being executed."
+        },
+        {
+            "name": "comment",
+            "label": "Comment",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "User-specified information about the command, such as a brief description of what the command should do. Maximum length 100 characters."
+        },
+        {
+            "name": "serviceRoleARN",
+            "label": "Service Role ARN",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The Amazon Resource Name (ARN) or name of the IAM role that Systems Manager uses to send notifications. If the name of a role is supplied the task will automatically determine the ARN."
+        },
+        {
+            "name": "instanceSelector",
+            "label": "Select Targets by",
+            "type": "pickList",
+            "required": true,
+            "defaultValue": "fromInstanceIds",
+            "helpMarkDown": "Sets how the list of instances to be targeted are specified. You can supply a list of instance IDs, or tags (as key=value pairs) for search criteria or you can supply the instance IDs from a build variable. The value of the build variable should be a comma delimited list of IDs.",
+            "options": {
+                "fromInstanceIds": "Manually Selecting Instances",
+                "fromTags": "Specifying a Tag",
+                "fromBuildVariable": "Build Variable (command delimited list of instance IDs)"
+            },
+            "groupName": "instanceSelection"
+        },
+        {
+            "name": "instanceIds",
+            "label": "Instance IDs",
+            "type": "multiLine",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The instance IDs where the command should execute. You can specify a maximum of 50 IDs. If you prefer not to list individual instance IDs, you can instead send commands to a fleet of instances using the Targets parameter, which accepts EC2 tags. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if Instance IDs is selected above.",
+            "visibleRule": "instanceSelector = fromInstanceIds",
+            "groupName": "instanceSelection"
+        },
+        {
+            "name": "instanceTags",
+            "label": "Tags",
+            "type": "multiLine",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "A list of search criteria that targets instances using a Key=Value combination that you specify, one per line. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if Tag Search Criteria is selected above.",
+            "visibleRule": "instanceSelector = fromTags",
+            "groupName": "instanceSelection"
+        },
+        {
+            "name": "instanceBuildVariable",
+            "label": "Build Variable Name",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the build variable containing the list of instance IDs to target, as a comma delimited list. This parameter is required if Build Variable is selected above",
+            "visibleRule": "instanceSelector = fromBuildVariable",
+            "groupName": "instanceSelection"
+        },
+        {
+            "name": "maxConcurrency",
+            "label": "Execution Concurrency",
+            "type": "string",
+            "required": false,
+            "defaultValue": "50",
+            "helpMarkDown": "The maximum number of instances that are allowed to execute the command at the same time. You can specify a number such as 10 or a percentage such as 10%. The default value is 50. For more information about how to use MaxConcurrency, see [Using Concurrency Controls](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-velocity.html).",
+            "groupName": "instanceSelection"
+        },
+        {
+            "name": "maxErrors",
+            "label": "Max Errors Before Stop",
+            "type": "string",
+            "required": false,
+            "defaultValue": "50",
+            "helpMarkDown": "The maximum number of errors allowed without the command failing. When the command fails one more time beyond the value of MaxErrors, the systems stops sending the command to additional targets. You can specify a number like 10 or a percentage like 10%. The default value is 50. For more information about how to use MaxErrors, see [Using Error Controls](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-maxerrors.html).",
+            "groupName": "instanceSelection"
+        },
+        {
+            "name": "timeout",
+            "label": "Timeout (seconds)",
+            "type": "string",
+            "required": false,
+            "defaultValue": "600",
+            "helpMarkDown": "If this time is reached and the command has not already started executing, it will not execute.\n\nMinimum value of 30. Maximum value of 2592000",
+            "groupName": "instanceSelection"
+        },
+        {
+            "name": "notificationArn",
+            "label": "Notification ARN",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "groupName": "notifications",
+            "helpMarkDown": "An Amazon Resource Name (ARN) for a Simple Notification Service (SNS) topic. Run Command pushes notifications about command status changes to this topic."
+        },
+        {
+            "name": "notificationEvents",
+            "label": "Notification Events",
+            "type": "pickList",
+            "required": false,
+            "defaultValue": "all",
+            "groupName": "notifications",
+            "helpMarkDown": "The different events for which you can receive notifications. For more information see [Setting Up Events and Notifications](https://docs.aws.amazon.com/systems-manager/latest/userguide/monitor-commands.html).",
+            "options": {
+                "all": "All",
+                "inprogress": "InProgress",
+                "success": "Success",
+                "timedout": "TimedOut",
+                "cancelled": "Cancelled",
+                "failed": "Failed"
+            }
+        },
+        {
+            "name": "notificationType",
+            "label": "Notification Type",
+            "type": "pickList",
+            "required": false,
+            "defaultValue": "none",
+            "groupName": "notifications",
+            "helpMarkDown": "Command: Receive notification when the status of a command changes. Invocation: For commands sent to multiple instances, receive notification on a per-instance basis when the status of a command changes.",
+            "options": {
+                "command": "Command",
+                "invocation": "Invocation"
+            }
+        },
+        {
+            "name": "outputS3BucketName",
+            "label": "S3 Bucket Name",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "groupName": "output",
+            "helpMarkDown": "The name of the S3 bucket where command execution responses should be stored."
+        },
+        {
+            "name": "outputS3KeyPrefix",
+            "label": "S3 Key Prefix",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "groupName": "output",
+            "helpMarkDown": "The directory structure within the S3 bucket where the responses should be stored."
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
+            "groupName": "diagnostic"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "SystemsManagerSendCommand.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "InstanceIdsFromVariableFailed": "Failed to retrieve list of instance IDs from build variable %s",
+        "TaskCompleted": "Successfully created variables from parameter value(s)."
+    }
+}

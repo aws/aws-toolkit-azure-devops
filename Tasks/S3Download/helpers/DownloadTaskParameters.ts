@@ -16,6 +16,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public globExpressions: string[];
     public overwrite: boolean;
     public forcePathStyleAddressing: boolean;
+    public flattenFolders: boolean;
 
     constructor() {
         super();
@@ -26,6 +27,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
             this.overwrite = tl.getBoolInput('overwrite', false);
             this.forcePathStyleAddressing = tl.getBoolInput('forcePathStyleAddressing', false);
+            this.flattenFolders = tl.getBoolInput('flattenFolders', false);
         } catch (error) {
             throw new Error(error.message);
         }

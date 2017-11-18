@@ -64,7 +64,7 @@ export class TaskOperations {
             const response: CloudFormation.DescribeStacksOutput = await this.cloudFormationClient.describeStacks({
                 StackName: stackName
             }).promise();
-            if (response.Stacks.length > 0) {
+            if (response.Stacks && response.Stacks.length > 0) {
                 return response.Stacks[0].StackId;
             }
         } catch (err) {

@@ -119,6 +119,9 @@
         },
         {
             "path": "Tasks/SystemsManagerGetParameter"
+        },
+        {
+            "path": "Tasks/SystemsManagerRunCommand"
         }
     ],
     "categories": [
@@ -369,13 +372,24 @@
         },
         {
             "id": "SystemsManagerGetParameter",
-            "description": "Read one or more parameter store values into build variables",
+            "description": "Read one or more Systems Manager Parameter Store values into build variables",
             "type": "ms.vss-distributed-task.task",
             "targets": [
                 "ms.vss-distributed-task.tasks"
             ],
             "properties": {
                 "name": "Tasks/SystemsManagerGetParameter"
+            }
+        },
+        {
+            "id": "SystemsManagerRunCommand",
+            "description": "Run a command remotely on a fleet of EC2 instances and/or on-premise machines",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/SystemsManagerRunCommand"
             }
         }
     ]

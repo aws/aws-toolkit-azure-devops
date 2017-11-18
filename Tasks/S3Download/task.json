@@ -98,6 +98,15 @@
             "groupName": "advanced"
         },
         {
+            "name": "flattenFolders",
+            "type": "boolean",
+            "label": "Flatten folders",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "Removes any key (folder) structure from the objects and copies them all. Objects with the same leaf name will be overwritten if the Overwrite setting is set (otherwise an error will be thrown).",
+            "groupName": "advanced"
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",

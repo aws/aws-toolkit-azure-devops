@@ -72,7 +72,13 @@ export class TaskOperations {
         for (const glob of taskParameters.globExpressions) {
             const matchedKeys = await this.matchObjectKeys(allKeys, taskParameters.sourceFolder, glob);
             for (const matchedKey of matchedKeys) {
-                const dest: string = path.join(taskParameters.targetFolder, matchedKey);
+                let dest: string;
+                if (taskParameters.flattenFolders) {
+                    const fname: string = path.basename(matchedKey);
+                    dest = path.join(taskParameters.targetFolder, fname);
+                } else {
+                    dest = path.join(taskParameters.targetFolder, matchedKey);
+                }
 
                 if (fs.existsSync(dest)) {
                     if (taskParameters.overwrite) {

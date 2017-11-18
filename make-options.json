@@ -14,7 +14,8 @@
         "S3Download",
         "S3Upload",
         "SendMessage",
-        "SystemsManagerGetParameter"
+        "SystemsManagerGetParameter",
+        "SystemsManagerRunCommand"
     ],
     "taskResources": [
         "*.ps1",
