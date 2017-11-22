@@ -39,7 +39,7 @@
         "SNS",
         "SQS",
         "AWSPowerShell",
-        "EC2 Container Registry",
+        "Elastic Container Registry",
         "EC2 Systems Manager"
     ],
     "links": {
@@ -295,7 +295,7 @@
         },
         {
             "id": "ECRPushImage",
-            "description": "Push a local Docker image to EC2 Container Registry",
+            "description": "Push a local Docker image to Elastic Container Registry",
             "type": "ms.vss-distributed-task.task",
             "targets": [
                 "ms.vss-distributed-task.tasks"

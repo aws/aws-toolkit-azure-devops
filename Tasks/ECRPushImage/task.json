@@ -1,10 +1,10 @@
 {
     "id": "467d1870-1a00-4755-b00d-9642129fe759",
     "name": "ECRPushImage",
-    "friendlyName": "AWS EC2 Container Registry Push Image",
-    "description": "Push a local Docker image to EC2 Container Registry",
+    "friendlyName": "AWS Elastic Container Registry Push",
+    "description": "Push a local Docker image to AWS Elastic Container Registry",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Amazon EC2 Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/) documentation for working with this service.",
+    "helpMarkDown": "Please refer to [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/) documentation for working with this service.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -138,7 +138,7 @@
         "PushImageWithName": "Pushing image '%s'",
         "RequestingAuthToken": "Obtaining authentication token for ECR login",
         "AddingTag": "Adding tag '%s' to image '%s'",
-        "PushingImage": "Pushing image '%s' to EC2 Container Registry",
+        "PushingImage": "Pushing image '%s' to Elastic Container Registry",
         "InvokingDockerCommand": "Invoking '%s' with command '%s'",
         "TestingForRepository": "Testing existence of repository '%s'",
         "CreatingRepository": "Repository not found, attempting to create",
