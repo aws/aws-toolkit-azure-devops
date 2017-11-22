@@ -294,7 +294,8 @@ export class TaskOperations {
         try {
             const response = await this.beanstalkClient.describeEnvironments({
                 ApplicationName: applicationName,
-                EnvironmentNames: [ environmentName ]
+                EnvironmentNames: [ environmentName ],
+                IncludeDeleted: false
             }).promise();
 
             envExists = response.Environments.length === 1;
