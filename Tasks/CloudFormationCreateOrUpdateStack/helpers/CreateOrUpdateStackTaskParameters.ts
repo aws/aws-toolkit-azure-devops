@@ -11,8 +11,15 @@ import fs = require('fs');
 import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+
+    public readonly fileSource: string = 'file';
+    public readonly urlSource: string = 'url';
+
     public stackName: string;
+    public templateSource: string;
     public templateFile: string;
+    public s3Bucket: string;
+    public templateUrl: string;
     public templateParametersFile: string;
     public useChangeSet: boolean;
     public changeSetName: string;
@@ -33,7 +40,13 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
         try {
             this.stackName = tl.getInput('stackName', true);
 
-            this.templateFile = tl.getPathInput('templateFile', true, true);
+            this.templateSource = tl.getInput('templateSource', true);
+            if (this.templateSource === this.fileSource) {
+                this.templateFile = tl.getPathInput('templateFile', true, true);
+                this.s3Bucket = tl.getInput('s3Bucket', false);
+            } else {
+                this.templateUrl = tl.getInput('templateUrl', true);
+            }
 
             // For currently unknown reason, if the user does not give a value then instead of an empty/null
             // path (per default value for the field), we get what appears to be the root of the repository

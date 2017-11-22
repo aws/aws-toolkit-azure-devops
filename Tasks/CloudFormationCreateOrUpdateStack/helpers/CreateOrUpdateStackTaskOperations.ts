@@ -23,10 +23,18 @@ export class TaskOperations {
         let stackId: string = await this.testStackExists(taskParameters.stackName);
         if (stackId) {
             console.log(tl.loc('StackExists'));
-            await this.updateStack(taskParameters);
+            if (taskParameters.useChangeSet) {
+                stackId = await this.createOrUpdateWithChangeSet(taskParameters, 'UPDATE');
+            } else {
+                await this.updateStack(taskParameters);
+            }
         } else {
             console.log(tl.loc('StackDoesNotExist'));
-            stackId = await this.createStack(taskParameters);
+            if (taskParameters.useChangeSet) {
+                stackId = await this.createOrUpdateWithChangeSet(taskParameters, 'CREATE');
+            } else {
+                stackId = await this.createStack(taskParameters);
+            }
         }
 
         if (taskParameters.outputVariable) {
@@ -102,93 +110,84 @@ export class TaskOperations {
 
     private static async createStack(taskParameters: Parameters.TaskParameters) : Promise<string> {
 
-        let template: string;
-        let templateParameters: CloudFormation.Parameters;
+        const request: CloudFormation.CreateStackInput = {
+            StackName: taskParameters.stackName,
+            OnFailure: taskParameters.onFailure,
+            RoleARN: taskParameters.roleARN
+        };
 
-        try {
-            template = await this.loadTemplateFile(taskParameters.templateFile);
-            templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
-        } catch (err) {
-            console.error(tl.loc('TemplateFilesLoadFailure', err.message), err);
-            throw err;
+        if (taskParameters.templateSource === taskParameters.fileSource) {
+            if (taskParameters.s3Bucket) {
+                request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3Bucket);
+            } else {
+                request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+            }
+        } else {
+            request.TemplateURL = taskParameters.templateUrl;
         }
 
-        if (taskParameters.useChangeSet) {
-            console.log(tl.loc('CreateStackWithChangeSet', taskParameters.templateFile, taskParameters.templateParametersFile, taskParameters.changeSetName));
-            return await this.createOrUpdateWithChangeSet(taskParameters, 'CREATE', template, templateParameters);
-        } else {
-            console.log(tl.loc('CreateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
+        if (taskParameters.templateParametersFile) {
+            request.Parameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
+        }
 
-            const request: CloudFormation.CreateStackInput = {
-                StackName: taskParameters.stackName,
-                OnFailure: taskParameters.onFailure,
-                Parameters: templateParameters,
-                TemplateBody: template,
-                RoleARN: taskParameters.roleARN
-            };
+        console.log(tl.loc('CreateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
 
-            request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
-            request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
-            request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
-            request.Tags = this.getTags(taskParameters.tags);
+        request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
+        request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
+        request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
+        request.Tags = this.getTags(taskParameters.tags);
 
-            try {
-                const response: CloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise();
-                tl.debug(`Stack id ${response.StackId}`);
-                await this.waitForStackCreation(request.StackName);
-                return response.StackId;
-            } catch (err) {
-                console.error(tl.loc('StackCreateRequestFailed', err.message), err);
-                throw err;
-            }
+        try {
+            const response: CloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise();
+            tl.debug(`Stack id ${response.StackId}`);
+            await this.waitForStackCreation(request.StackName);
+            return response.StackId;
+        } catch (err) {
+            console.error(tl.loc('StackCreateRequestFailed', err.message), err);
+            throw err;
         }
     }
 
     private static async updateStack(taskParameters: Parameters.TaskParameters) : Promise<void> {
         console.log(tl.loc('UpdateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
 
-        let template: string;
-        let templateParameters: CloudFormation.Parameters;
+        const request: CloudFormation.UpdateStackInput = {
+            StackName: taskParameters.stackName,
+            RoleARN: taskParameters.roleARN
+        };
 
-        try {
-            template = await this.loadTemplateFile(taskParameters.templateFile);
-            templateParameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
-        } catch (err) {
-            console.error(tl.loc('TemplateFilesLoadFailure', err.message), err);
-            throw err;
+        if (taskParameters.templateSource === taskParameters.fileSource) {
+            if (taskParameters.s3Bucket) {
+                request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3Bucket);
+            } else {
+                request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+            }
+        } else {
+            request.TemplateURL = taskParameters.templateUrl;
         }
 
-        if (taskParameters.useChangeSet) {
-            console.log(tl.loc('UpdateStackWithChangeSet', taskParameters.templateFile, taskParameters.templateParametersFile, taskParameters.changeSetName));
-            await this.createOrUpdateWithChangeSet(taskParameters, 'UPDATE', template, templateParameters);
-        } else {
-            const request: CloudFormation.UpdateStackInput = {
-                StackName: taskParameters.stackName,
-                Parameters: templateParameters,
-                TemplateBody: template,
-                RoleARN: taskParameters.roleARN
-            };
+        if (taskParameters.templateParametersFile) {
+            request.Parameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
+        }
 
-            request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
-            request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
-            request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
+        request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
+        request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
+        request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
+        request.Tags = this.getTags(taskParameters.tags);
 
-            try {
-                const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise();
-                await this.waitForStackUpdate(request.StackName);
-            } catch (err) {
-                if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
-                    console.error(tl.loc('StackUpdateRequestFailed', err.message), err);
-                    throw err;
-                }
+        try {
+            const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise();
+            await this.waitForStackUpdate(request.StackName);
+        } catch (err) {
+            if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
+                console.error(tl.loc('StackUpdateRequestFailed', err.message), err);
+                throw err;
             }
         }
     }
 
     private static async createOrUpdateWithChangeSet(taskParameters: Parameters.TaskParameters,
-                                                     changesetType: string,
-                                                     templateBody: string,
-                                                     templateParameters: CloudFormation.Parameters) : Promise<string> {
+                                                     changesetType: string) : Promise<string> {
 
         const changeSetExists = await this.testChangeSetExists(taskParameters.changeSetName, taskParameters.stackName);
         if (changeSetExists) {
@@ -199,15 +198,28 @@ export class TaskOperations {
             ChangeSetName: taskParameters.changeSetName,
             ChangeSetType: changesetType,
             StackName: taskParameters.stackName,
-            Parameters: templateParameters,
-            TemplateBody: templateBody,
             Description: taskParameters.description,
             RoleARN: taskParameters.roleARN
         };
 
+        if (taskParameters.templateSource === taskParameters.fileSource) {
+            if (taskParameters.s3Bucket) {
+                request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3Bucket);
+            } else {
+                request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+            }
+        } else {
+            request.TemplateURL = taskParameters.templateUrl;
+        }
+
+        if (taskParameters.templateParametersFile) {
+            request.Parameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
+        }
+
         request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
         request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
         request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
+        request.Tags = this.getTags(taskParameters.tags);
 
         try {
             // note that we can create a change set with no changes, but when we wait for completion it's then
@@ -319,9 +331,36 @@ export class TaskOperations {
         if (!tl.exist(templateFile)) {
             throw new Error(tl.loc('TemplateFileDoesNotExist', templateFile));
         }
-        const template = fs.readFileSync(templateFile, 'utf8');
-        tl.debug('Successfully loaded template file');
-        return template;
+
+        try {
+            const template = fs.readFileSync(templateFile, 'utf8');
+            tl.debug('Successfully loaded template file');
+            return template;
+        } catch (err) {
+            throw new Error(tl.loc('FailedToLoadTemplateFile', err));
+        }
+    }
+
+    private static async uploadTemplateFile(templateFile: string, s3BucketName: string): Promise<string> {
+        const fileBuffer = fs.createReadStream(templateFile);
+        const objectKey = path.basename(templateFile);
+
+        console.log(tl.loc('UploadingTemplate', templateFile, objectKey, s3BucketName));
+        try {
+            const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
+                Bucket: s3BucketName,
+                Key: objectKey,
+                Body: fileBuffer
+            }).promise();
+
+            // sync call
+            return this.s3Client.getSignedUrl('getObject', {
+                Bucket: s3BucketName,
+                Key: objectKey
+            });
+        } catch (err) {
+            throw new Error(tl.loc('TemplateUploadFailed', err));
+        }
     }
 
     private static async loadParametersFromFile(parametersFile: string): Promise<CloudFormation.Parameters> {
@@ -333,9 +372,14 @@ export class TaskOperations {
         if (!tl.exist(parametersFile)) {
             throw new Error(tl.loc('ParametersFileDoesNotExist', parametersFile));
         }
-        const templateParameters = JSON.parse(fs.readFileSync(parametersFile, 'utf8'));
-        tl.debug('Successfully loaded template parameters file');
-        return templateParameters;
+
+        try {
+            const templateParameters = JSON.parse(fs.readFileSync(parametersFile, 'utf8'));
+            tl.debug('Successfully loaded template parameters file');
+            return templateParameters;
+        } catch (err) {
+            throw new Error(tl.loc('FailedToLoadParametersFile', err));
+        }
     }
 
     // If there were no changes, a validation error is thrown which we want to suppress

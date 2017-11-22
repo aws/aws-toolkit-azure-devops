@@ -69,11 +69,40 @@
             "helpMarkDown": "The name that is associated with the stack. The name must be unique in the region in which you are creating the stack.\n\nA stack name can contain only alphanumeric characters (case sensitive) and hyphens. It must start with an alphabetic character and cannot be longer than 128 characters."
         },
         {
+            "name": "templateSource",
+            "type": "radio",
+            "label": "Template Source",
+            "required": true,
+            "helpMarkDown": "The source of the template file defining your stack.",
+            "defaultValue": "file",
+            "options": {
+                "file": "Local file (max size 51,200 bytes)",
+                "url": "URL to an S3 object"
+            }
+        },
+        {
             "name": "templateFile",
             "type": "filePath",
             "label": "Template File",
-            "required": true,
-            "helpMarkDown": "Path to the template file for the stack. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
+            "required": false,
+            "helpMarkDown": "Path to the template file for the stack. This field is required if Template Source is set to use a local file. Template files smaller than 51,200 bytes can be uploaded directly to CloudFormation by the task. For templates larger than 51,200 bytes you should also supply the name of an Amazon S3 bucket to which the template file can be uploaded. The task will upload the template file and then generate a URL to the template file in the bucket which will be used when specifying the template location to CloudFormation.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "visibleRule": "templateSource = file"
+        },
+        {
+            "name": "s3Bucket",
+            "type": "string",
+            "label": "S3 Bucket",
+            "required": false,
+            "helpMarkDown": "For template files larger than 51,200 bytes, specify the name of an existing S3 bucket that the task can upload the template file to. Once uploaded the task will generate a URL to the template file in the bucket which will be used when specifying the template location to CloudFormation.",
+            "visibleRule": "templateSource = file"
+        },
+        {
+            "name": "templateUrl",
+            "type": "string",
+            "label": "Template URL",
+            "required": false,
+            "helpMarkDown": "URL reference to the template file in Amazon S3. This field is required if Template Source is set to use a URL. When stored in Amazon S3 template files are subject to a maximum size of 460,800 bytes.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "visibleRule": "templateSource = url"
         },
         {
             "name": "templateParametersFile",
@@ -236,19 +265,15 @@
         "StackDoesNotExist": "Stack does not exist, switching to create stack mode",
         "CreateStack": "Creating stack with template file %s, parameters file %s",
         "UpdateStack": "Updating stack with template file %s, parameters file %s",
-        "CreateStackWithChangeSet": "Creating stack with template file %s, parameters file %s, change set %s",
-        "UpdateStackWithChangeSet": "Updating stack with template file %s, parameters file %s, change set %s",
         "LoadingTemplateFile": "Loading template file from '%s'",
         "TemplateFileDoesNotExist": "Template file '%s' does not exist",
         "LoadingTemplateParametersFile": "Loading template parameters file '%s'",
-        "TemplateFilesLoadFailure": "Failed to load and/or parse the template or template parameters file, error: %s",
         "StackCreated": "Stack %s transitioned to create complete status",
         "StackCreationFailed": "Stack %s failed to reach completion status, error: '%s'",
         "StackCreateRequestFailed": "Stack creation request failed with error: '%s'",
         "StackUpdated": "Stack %s transitioned to update complete status",
         "StackUpdateFailed": "Stack %s failed to reach update completion status, error: '%s'",
         "StackUpdateRequestFailed": "Stack update request failed with error: '%s'",
-        "CreatedStackId": "Stack creation completed, new stack id %s",
         "WaitingForStackCreation": "Waiting for stack %s to reach create complete status",
         "WaitingForStackUpdate": "Waiting for stack %s to reach update complete status",
         "TaskCompleted": "Stack %s processed successfully, stack ID %s",
@@ -258,9 +283,7 @@
         "ChangeSetValidated": "Change set successfully validated",
         "ChangeSetValidationFailed": "Stack %s failed to create successfully from the change set %s. Error: '%s'",
         "ExecutingChangeSet": "Executing change set %s",
-        "WaitingForChangeSetExecution": "Waiting for change set to complete execution on stack %s",
         "ExecuteChangeSetFailed": "Change set execution request failed with error: '%s'",
-        "ChangeSetExecuted": "Change set executed successfully, stack transitioned to completed status",
         "SettingOutputVariable": "Setting stack ID into output variable %s",
         "CheckingForExistingChangeSet": "Testing to see if change set %s associated with stack %s exists",
         "ChangeSetExists": "Change set %s exists and is in state %s",
@@ -272,6 +295,10 @@
         "AutoExecuteChangeSetOption": "Auto execute change set option: %s",
         "CreatingChangeSet": "Creating %s type change set %s",
         "NoParametersFileSpecified": "No parameters file specified",
-        "ParametersFileDoesNotExist": "Parameters file '%s' could not be found."
+        "ParametersFileDoesNotExist": "Parameters file '%s' could not be found.",
+        "UploadingTemplate": "Uploading template file %s to object %s in bucket %s",
+        "FailedToLoadParametersFile": "Error loading or parsing parameters file: %s",
+        "FailedToLoadTemplateFile": "Error loading template file: %s",
+        "TemplateUploadFailed": "Error uploading template file: %s"
     }
 }
