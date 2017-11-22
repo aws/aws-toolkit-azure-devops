@@ -45,37 +45,23 @@ export class TaskOperations {
     }
 
     private static async configureAwsCli(taskParameters: Parameters.TaskParameters) {
-        const awsCliPath = tl.which('aws');
-
         // if assume role credentials are in play, make sure the initial generation
         // of temporary credentials has been performed
         await taskParameters.Credentials.getPromise().then(() => {
-            tl.debug('configure access key');
-            const accessKeyCliTool: tr.ToolRunner = tl.tool(awsCliPath);
-            accessKeyCliTool.line('configure set aws_access_key_id');
-            accessKeyCliTool.arg(taskParameters.Credentials.accessKeyId);
-            accessKeyCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+            // push credentials and region into environment variables rather than a
+            // stored profile, as this isolates parallel builds and avoids content left
+            // lying around on the agent when a build completes
+            const env = process.env;
 
-            tl.debug('configure secret access key');
-            const secretKeyCliTool: tr.ToolRunner = tl.tool(awsCliPath);
-            secretKeyCliTool.line('configure set aws_secret_access_key');
-            secretKeyCliTool.arg(taskParameters.Credentials.secretAccessKey);
-            secretKeyCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
-
+            tl.debug('configure credentials into environment variables');
+            env.AWS_ACCESS_KEY_ID = taskParameters.Credentials.accessKeyId;
+            env.AWS_SECRET_ACCESS_KEY = taskParameters.Credentials.secretAccessKey;
             if (taskParameters.Credentials.sessionToken) {
-                tl.debug('configure session token');
-                const sessionTokenCliTool: tr.ToolRunner = tl.tool(awsCliPath);
-                sessionTokenCliTool.line('configure set aws_session_token');
-                sessionTokenCliTool.arg(taskParameters.Credentials.sessionToken);
-                sessionTokenCliTool.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+                env.AWS_SESSION_TOKEN = taskParameters.Credentials.sessionToken;
             }
 
-            tl.debug('configure region');
-            const awsCliTool3: tr.ToolRunner = tl.tool(awsCliPath);
-            awsCliTool3.line('configure set');
-            awsCliTool3.arg('default.region');
-            awsCliTool3.arg(taskParameters.awsRegion);
-            awsCliTool3.execSync(<tr.IExecOptions>{ failOnStdErr: taskParameters.failOnStandardError });
+            tl.debug('configure region into environment variable');
+            env.AWS_DEFAULT_REGION = taskParameters.awsRegion;
         });
     }
 }

@@ -65,7 +65,6 @@ var commonBuildTasksRoot = path.join(buildTasksRoot, 'Common');
 var buildTestsRoot = path.join(buildRoot, 'Tests');
 var packageRoot = path.join(__dirname, '_package');
 var packageTasksRoot = path.join(packageRoot, 'Tasks');
-var internalContentRoot = '../aws-vsts-tools-internal';
 
 // global file names
 var masterVersionFile = '_versioninfo.json';
@@ -255,10 +254,13 @@ target.build = function() {
     versionstampExtension(manifestFile, versionInfo);
 
     // build time option to overlay content from sibling repo - for logos etc
-    if (options.overlayfolder && pathExists(internalContentRoot)) {
-        var overlayRoot = path.join(internalContentRoot, options.overlayfolder);
-        console.log(`> Overlaying content from ${overlayRoot}`);
-        matchCopy(path.join('**', '*'), overlayRoot, '.', { noRecurse: false,  matchBase: false });
+    if (options.overlayfolder) {
+        if (pathExists(options.overlayfolder)) {
+            console.log(`> Overlaying content from ${options.overlayfolder}`);
+            matchCopy(path.join('**', '*'), options.overlayfolder, '.', { noRecurse: false,  matchBase: false });
+        } else {
+            fail(`Specified --overlayfolder not found: ${options.overlayfolder}`);
+        }
     }
 
     taskList.forEach(function(taskName) {
