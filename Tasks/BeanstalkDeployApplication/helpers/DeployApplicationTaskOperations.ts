@@ -24,7 +24,12 @@ export class TaskOperations {
 
         await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.environmentName);
 
-        const versionLabel = 'v' + new Date().getTime();
+        let versionLabel: string;
+        if (taskParameters.versionLabel) {
+            versionLabel = taskParameters.versionLabel;
+        } else {
+            versionLabel = 'v' + new Date().getTime();
+        }
 
         const s3Bucket = await this.determineS3Bucket();
 

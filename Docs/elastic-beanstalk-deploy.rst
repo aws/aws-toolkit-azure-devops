@@ -86,7 +86,10 @@ Environment Name*
     An environment represents the AWS resources (e.g., load balancer, Auto Scaling group, and |EC2| instances)
     created specifically to run your application.
 
+Version Label
+-------------
 
-
+    Version label for the new application revision. If not specified the task will construct a version label
+    based on the current date and time, expressed in milliseconds (for example *v20171120222623*).
 
 

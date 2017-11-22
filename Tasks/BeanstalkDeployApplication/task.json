@@ -52,9 +52,6 @@
             "options": {
                 "aspnet": "ASP.NET (Source: Web Deploy Archive)",
                 "aspnetCoreWindows": "ASP.NET Core (Source: dotnet publish)"
-            },
-            "properties": {
-                "EditableOptions": "False"
             }
         },
         {
@@ -90,6 +87,14 @@
             "required": true,
             "defaultValue": "",
             "helpMarkDown": "The name of the Elastic Beanstalk environment that will run the application."
+        },
+        {
+            "name": "versionLabel",
+            "label": "Version Label",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Version label for the new revision. If not specified the task will construct a version label based on the current date and time expressed in milliseconds (for example *v20171120222623*)."
         },
         {
             "name": "logRequest",

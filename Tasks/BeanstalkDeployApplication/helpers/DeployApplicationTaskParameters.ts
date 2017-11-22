@@ -15,6 +15,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public webDeploymentArchive: string;
     public applicationType: string;
     public dotnetPublishPath: string;
+    public versionLabel: string;
 
     public readonly applicationTypeAspNet: string = 'aspnet';
     public readonly applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows';
@@ -32,7 +33,8 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             }
 
             this.applicationName = tl.getInput('applicationName', true);
-            this.environmentName = tl.getInput('environmentName', false);
+            this.environmentName = tl.getInput('environmentName', true);
+            this.versionLabel = tl.getInput('versionLabel', false);
         } catch (error) {
             throw new Error(error.message);
         }
