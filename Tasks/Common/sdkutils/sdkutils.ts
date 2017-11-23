@@ -98,9 +98,11 @@ export abstract class AWSTaskParametersBase {
             const options: STS.AssumeRoleRequest = {
                 RoleArn: this.AssumeRoleARN,
                 DurationSeconds: duration,
-                RoleSessionName: roleSessionName,
-                ExternalId: externalId
+                RoleSessionName: roleSessionName
             };
+            if (externalId) {
+                options.ExternalId = externalId;
+            }
 
             this.Credentials = new AWS.TemporaryCredentials(options, masterCredentials);
         }
