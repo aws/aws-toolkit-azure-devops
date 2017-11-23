@@ -76,7 +76,7 @@ export class TaskOperations {
                 return response.Stacks[0].StackId;
             }
         } catch (err) {
-            console.log(tl.loc('StackLookupFailed', stackName, err.Message));
+            console.log(tl.loc('StackLookupFailed', stackName, err));
         }
 
         return null;
@@ -116,14 +116,30 @@ export class TaskOperations {
             RoleARN: taskParameters.roleARN
         };
 
-        if (taskParameters.templateSource === taskParameters.fileSource) {
-            if (taskParameters.s3Bucket) {
-                request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3Bucket);
-            } else {
-                request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+        switch (taskParameters.templateSource) {
+            case taskParameters.fileSource: {
+                if (taskParameters.s3BucketName) {
+                    request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3BucketName);
+                } else {
+                    request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+                }
             }
-        } else {
-            request.TemplateURL = taskParameters.templateUrl;
+            break;
+
+            case taskParameters.urlSource: {
+                request.TemplateURL = taskParameters.templateUrl;
+            }
+            break;
+
+            case taskParameters.s3Source: {
+                // sync call
+                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
+                    Bucket: taskParameters.s3BucketName,
+                    Key: taskParameters.s3ObjectKey
+                });
+                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+            }
+            break;
         }
 
         if (taskParameters.templateParametersFile) {
@@ -156,14 +172,30 @@ export class TaskOperations {
             RoleARN: taskParameters.roleARN
         };
 
-        if (taskParameters.templateSource === taskParameters.fileSource) {
-            if (taskParameters.s3Bucket) {
-                request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3Bucket);
-            } else {
-                request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+        switch (taskParameters.templateSource) {
+            case taskParameters.fileSource: {
+                if (taskParameters.s3BucketName) {
+                    request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3BucketName);
+                } else {
+                    request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+                }
             }
-        } else {
-            request.TemplateURL = taskParameters.templateUrl;
+            break;
+
+            case taskParameters.urlSource: {
+                request.TemplateURL = taskParameters.templateUrl;
+            }
+            break;
+
+            case taskParameters.s3Source: {
+                // sync call
+                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
+                    Bucket: taskParameters.s3BucketName,
+                    Key: taskParameters.s3ObjectKey
+                });
+                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+            }
+            break;
         }
 
         if (taskParameters.templateParametersFile) {
@@ -202,14 +234,30 @@ export class TaskOperations {
             RoleARN: taskParameters.roleARN
         };
 
-        if (taskParameters.templateSource === taskParameters.fileSource) {
-            if (taskParameters.s3Bucket) {
-                request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3Bucket);
-            } else {
-                request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+        switch (taskParameters.templateSource) {
+            case taskParameters.fileSource: {
+                if (taskParameters.s3BucketName) {
+                    request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3BucketName);
+                } else {
+                    request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+                }
             }
-        } else {
-            request.TemplateURL = taskParameters.templateUrl;
+            break;
+
+            case taskParameters.urlSource: {
+                request.TemplateURL = taskParameters.templateUrl;
+            }
+            break;
+
+            case taskParameters.s3Source: {
+                // sync call
+                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
+                    Bucket: taskParameters.s3BucketName,
+                    Key: taskParameters.s3ObjectKey
+                });
+                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+            }
+            break;
         }
 
         if (taskParameters.templateParametersFile) {
@@ -284,26 +332,25 @@ export class TaskOperations {
         return (arr && arr.length > 0) ? arr : null;
     }
 
-    private static getTags(tagsString: string) {
+    private static getTags(tags: string[]): CloudFormation.Tags {
 
-        const arr: CloudFormation.Tags = [];
+        let arr: CloudFormation.Tags;
 
-        if (tagsString) {
-            console.log(tl.loc('AddingTags', tagsString));
-            var tags = tagsString.split(' ');
-
-            while (tags.length > 0) {
-                var keyValue = tags.shift().split(',');
-                if (keyValue.length > 1) {
-                    const Key = keyValue[0];
-                    const Value = keyValue[1];
-                    if (Key && Value)
-                        arr.push({ Key, Value });
-                }
-            }
+        if (tags && tags.length > 0) {
+            arr = [];
+            tags.forEach((t) => {
+                const kvp = t.split('=');
+                const key = kvp[0].trim();
+                const val = kvp[1].trim();
+                console.log(tl.loc('AddingTag', key, val));
+                arr.push({
+                    Key: key,
+                    Value: val
+                });
+            });
         }
 
-        return (arr && arr.length > 0) ? arr : null;
+        return arr;
     }
 
     private static getNotificationArns(notificationARNs: string[]) {
@@ -354,10 +401,14 @@ export class TaskOperations {
             }).promise();
 
             // sync call
-            return this.s3Client.getSignedUrl('getObject', {
+            const templateUrl = this.s3Client.getSignedUrl('getObject', {
                 Bucket: s3BucketName,
                 Key: objectKey
             });
+
+            console.log(tl.loc('GeneratedTemplateUrl', templateUrl));
+
+            return templateUrl;
         } catch (err) {
             throw new Error(tl.loc('TemplateUploadFailed', err));
         }

@@ -64,6 +64,21 @@ Stack Name*
     A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start
     with an alphabetic character and cannot be longer than 128 characters.
 
+Template Source*
+----------------
+
+    Specifies the location of the template to use to create or update the stack. You can specify the template
+    using either the path to a file in the local file system, a URL to the file or an object in Amazon S3,
+    for which you can specify the bucket and object name (key).
+
+    Note that CloudFormation limits the size of template files uploaded to the service to 51,200 bytes. If your
+    template is larger than the allowed size you should choose either the URL or Amazon S3 location options. You
+    can also specify a bucket name for the local file option. If a bucket name  is specified the template is
+    uploaded to the bucket by the task (the object key will be the template filename, less any path).
+
+    When the task uploads the template to a bucket, or you specify an Amazon S3 bucket name and object key,
+    the task generates a URL to the object and supplies the URL to CloudFormation.
+
 Template File*
 --------------
 
@@ -165,6 +180,11 @@ Notification ARNs
 
         The ARNs of |SNS| topics that |CFNlong| associates with
         the stack. To remove all associated notification topics, specify an empty list.
+
+Tags
+~~~~
+
+        Collection of tags to apply to the resources created by your template. Tags can be specified as *tagkey=tagvalue*, one per line.
 
 Options
 -------

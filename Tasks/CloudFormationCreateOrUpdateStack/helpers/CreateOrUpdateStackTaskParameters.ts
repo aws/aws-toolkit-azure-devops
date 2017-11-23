@@ -14,11 +14,13 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
     public readonly fileSource: string = 'file';
     public readonly urlSource: string = 'url';
+    public readonly s3Source: string = 's3';
 
     public stackName: string;
     public templateSource: string;
     public templateFile: string;
-    public s3Bucket: string;
+    public s3BucketName: string;
+    public s3ObjectKey: string;
     public templateUrl: string;
     public templateParametersFile: string;
     public useChangeSet: boolean;
@@ -30,7 +32,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public roleARN: string;
     public notificationARNs: string[];
     public resourceTypes: string[];
-    public tags: string;
+    public tags: string[];
 
     public onFailure: string;
     public outputVariable: string;
@@ -41,11 +43,26 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.stackName = tl.getInput('stackName', true);
 
             this.templateSource = tl.getInput('templateSource', true);
-            if (this.templateSource === this.fileSource) {
-                this.templateFile = tl.getPathInput('templateFile', true, true);
-                this.s3Bucket = tl.getInput('s3Bucket', false);
-            } else {
-                this.templateUrl = tl.getInput('templateUrl', true);
+            switch (this.templateSource) {
+                case this.fileSource: {
+                    this.templateFile = tl.getPathInput('templateFile', true, true);
+                    this.s3BucketName = tl.getInput('s3BucketName', false);
+                }
+                break;
+
+                case this.urlSource: {
+                    this.templateUrl = tl.getInput('templateUrl', true);
+                }
+                break;
+
+                case this.s3Source: {
+                    this.s3BucketName = tl.getInput('s3BucketName', true);
+                    this.s3ObjectKey = tl.getInput('s3ObjectKey', true);
+                }
+                break;
+
+                default:
+                    throw new Error(`Unrecognized template source: ${this.templateSource}`);
             }
 
             // For currently unknown reason, if the user does not give a value then instead of an empty/null
@@ -68,7 +85,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.capabilityNamedIAM = tl.getBoolInput('capabilityNamedIAM', false);
 
             this.roleARN = tl.getInput('roleARN', false);
-            this.tags = tl.getInput('tags', false);            
+            this.tags = tl.getDelimitedInput('tags', '\n', false);
             this.notificationARNs = tl.getDelimitedInput('notificationARNs', '\n', false);
             this.resourceTypes = tl.getDelimitedInput('resourceTypes', '\n', false);
 

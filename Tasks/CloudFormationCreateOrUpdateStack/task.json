@@ -70,14 +70,15 @@
         },
         {
             "name": "templateSource",
-            "type": "radio",
+            "type": "pickList",
             "label": "Template Source",
             "required": true,
-            "helpMarkDown": "The source of the template file defining your stack.",
+            "helpMarkDown": "Specifies the location of the template to use to create or update the stack. You can specify the template using either the path to a file in the local file system, a URL to the file or an object in Amazon S3, for which you can specify the bucket and object name (key).\n\nNote that CloudFormation limits the size of template files uploaded to the service to 51,200 bytes. If your template is larger than the allowed size you should choose either the URL or Amazon S3 location options. You can also specify a bucket name for the local file option. If a bucket name  is specified the template is uploaded to the bucket by the task (the object key will be the template filename, less any path).\n\nWhen the task uploads the template to a bucket, or you specify an Amazon S3 bucket name and object key,the task generates a URL to the object and supplies the URL to CloudFormation.",
             "defaultValue": "file",
             "options": {
-                "file": "Local file (max size 51,200 bytes)",
-                "url": "URL to an S3 object"
+                "file": "Local file",
+                "url": "URL to the template file",
+                "s3": "Amazon S3 bucket and object key"
             }
         },
         {
@@ -85,16 +86,24 @@
             "type": "filePath",
             "label": "Template File",
             "required": false,
-            "helpMarkDown": "Path to the template file for the stack. This field is required if Template Source is set to use a local file. Template files smaller than 51,200 bytes can be uploaded directly to CloudFormation by the task. For templates larger than 51,200 bytes you should also supply the name of an Amazon S3 bucket to which the template file can be uploaded. The task will upload the template file and then generate a URL to the template file in the bucket which will be used when specifying the template location to CloudFormation.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "helpMarkDown": "Path to the template file for the stack. This field is required if Template Source is set to use a local file. Template files smaller than 51,200 bytes can be uploaded directly to CloudFormation by the task. For templates larger than 51,200 bytes you should also supply the name of an Amazon S3 bucket to which the template file can be uploaded. If a bucket name is specified the task will upload the template file and then generate a URL to the template file in the bucket which will be used when specifying the template location to CloudFormation.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
             "visibleRule": "templateSource = file"
         },
         {
-            "name": "s3Bucket",
+            "name": "s3BucketName",
             "type": "string",
             "label": "S3 Bucket",
             "required": false,
-            "helpMarkDown": "For template files larger than 51,200 bytes, specify the name of an existing S3 bucket that the task can upload the template file to. Once uploaded the task will generate a URL to the template file in the bucket which will be used when specifying the template location to CloudFormation.",
-            "visibleRule": "templateSource = file"
+            "helpMarkDown": "The name of the bucket to which a local template file can be uploaded, or which contains the template to be used. If Template Source is set to *Amazon S3 bucket and object key* this parameter is required.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "visibleRule": "templateSource = file || templateSource = s3"
+        },
+        {
+            "name": "s3ObjectKey",
+            "type": "string",
+            "label": "S3 Object Key",
+            "required": false,
+            "helpMarkDown": "The name of the template file in the S3 bucket. The task will generate a URL to the file when specifying the location of the template file to CloudFormation. If Template Source is set to *Amazon S3 bucket and object key* this parameter is required.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "visibleRule": "templateSource = s3"
         },
         {
             "name": "templateUrl",
@@ -194,12 +203,12 @@
         },
         {
             "name": "tags",
-            "type": "string",
+            "type": "multiLine",
             "label": "Tags",
+            "required": false,
             "defaultValue": "",
-            "groupName": "Advanced",
-            "helpMarkDown": "The tags to add to the stack: Key=string,Value=string ...",
-            "required": false
+            "helpMarkDown": "The list of tags (key-value pairs) assigned to the new function. Enter as Key=Value, one per line.",
+            "groupName": "Advanced"
         },
         {
             "name": "onFailure",
@@ -291,7 +300,7 @@
         "DeletingExistingChangeSet": "Deleting existing change set %s associated with stack %s",
         "FailedToDeleteChangeSet": "Change set deletion request failed with error: '%s'",
         "AddingCapability": "Setting capability %s for stack",
-        "AddingTags": "Setting tags %s for stack",
+        "AddingTag": "Adding tag '%s', value '%s'",
         "AutoExecuteChangeSetOption": "Auto execute change set option: %s",
         "CreatingChangeSet": "Creating %s type change set %s",
         "NoParametersFileSpecified": "No parameters file specified",
@@ -299,6 +308,7 @@
         "UploadingTemplate": "Uploading template file %s to object %s in bucket %s",
         "FailedToLoadParametersFile": "Error loading or parsing parameters file: %s",
         "FailedToLoadTemplateFile": "Error loading template file: %s",
-        "TemplateUploadFailed": "Error uploading template file: %s"
+        "TemplateUploadFailed": "Error uploading template file: %s",
+        "GeneratedTemplateUrl": "Generated url to template: %s"
     }
 }
