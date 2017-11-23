@@ -23,6 +23,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public roleARN: string;
     public notificationARNs: string[];
     public resourceTypes: string[];
+    public tags: string;
 
     public onFailure: string;
     public outputVariable: string;
@@ -54,6 +55,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.capabilityNamedIAM = tl.getBoolInput('capabilityNamedIAM', false);
 
             this.roleARN = tl.getInput('roleARN', false);
+            this.tags = tl.getInput('tags', false);            
             this.notificationARNs = tl.getDelimitedInput('notificationARNs', '\n', false);
             this.resourceTypes = tl.getDelimitedInput('resourceTypes', '\n', false);
 
