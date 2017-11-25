@@ -34,27 +34,27 @@ export class TaskOperations {
         }
 
         switch (taskParameters.instanceSelector) {
-            case taskParameters.instancesFromInstanceIds: {
+            case taskParameters.fromInstanceIds: {
                 request.InstanceIds = taskParameters.instanceIds;
             }
             break;
 
-            case taskParameters.instancesFromTags: {
+            case taskParameters.fromTags: {
                 request.Targets = [];
                 taskParameters.instanceTags.forEach((it) => {
                 const kv = it.split('=');
                 const t: SSM.Target = {};
-                t.Key = kv[0].trim();
+                t.Key = 'tag:' + kv[0].trim();
                 t.Values = kv[1].split(',');
                 request.Targets.push(t);
            });
             }
             break;
 
-            case taskParameters.instanceBuildVariable: {
+            case taskParameters.fromBuildVariable: {
                 const instanceIds = tl.getVariable(taskParameters.instanceBuildVariable);
                 if (instanceIds) {
-                    request.InstanceIds = instanceIds.split(',');
+                    request.InstanceIds = instanceIds.trim().split(',');
                 } else {
                     throw new Error(tl.loc('InstanceIdsFromVariableFailed', taskParameters.instanceBuildVariable));
                 }
@@ -69,9 +69,13 @@ export class TaskOperations {
             };
         }
 
-        await this.ssmClient.sendCommand(request).promise();
+        const response = await this.ssmClient.sendCommand(request).promise();
+        if (taskParameters.commandIdOutputVariable) {
+            console.log(tl.loc('SettingOutputVariable', taskParameters.commandIdOutputVariable));
+            tl.setVariable(taskParameters.commandIdOutputVariable, response.Command.CommandId);
+        }
 
-        console.log(tl.loc('TaskCompleted'));
+        console.log(tl.loc('TaskCompleted', taskParameters.documentName, response.Command.CommandId));
     }
 
     private static ssmClient: SSM;

@@ -12,9 +12,9 @@
   export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
     // instance selector options
-    public readonly instancesFromInstanceIds: string = 'fromInstanceIds';
-    public readonly instancesFromTags: string = 'fromTags';
-    public readonly instancesFromBuildVariable: string = 'fromBuildVariable';
+    public readonly fromInstanceIds: string = 'fromInstanceIds';
+    public readonly fromTags: string = 'fromTags';
+    public readonly fromBuildVariable: string = 'fromBuildVariable';
 
     // task parameters
     public documentName: string;
@@ -33,6 +33,7 @@
     public notificationType: string;
     public outputS3BucketName: string;
     public outputS3KeyPrefix: string;
+    public commandIdOutputVariable: string;
 
     constructor() {
         super();
@@ -44,17 +45,17 @@
 
             this.instanceSelector = tl.getInput('instanceSelector', true);
             switch (this.instanceSelector) {
-                case this.instancesFromInstanceIds: {
+                case this.fromInstanceIds: {
                     this.instanceIds = tl.getDelimitedInput('instanceIds', '\n', true);
                 }
                 break;
 
-                case this.instancesFromTags: {
+                case this.fromTags: {
                     this.instanceTags = tl.getDelimitedInput('instanceTags', '\n', true);
                 }
                 break;
 
-                case this.instancesFromBuildVariable: {
+                case this.fromBuildVariable: {
                     this.instanceBuildVariable = tl.getInput('instanceBuildVariable', true);
                 }
                 break;
@@ -73,6 +74,7 @@
 
             this.outputS3BucketName = tl.getInput('outputS3BucketName', false);
             this.outputS3KeyPrefix = tl.getInput('outputS3KeyPrefix', false);
+            this.commandIdOutputVariable = tl.getInput('commandIdOutputVariable', false);
         } catch (error) {
             throw new Error(error.message);
         }

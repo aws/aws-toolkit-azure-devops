@@ -68,10 +68,15 @@
         {
             "name": "documentParameters",
             "label": "Parameters",
-            "type": "string",
+            "type": "multiLine",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The required and optional parameters specified in the document being executed."
+            "helpMarkDown": "The required and optional parameters for the document to be executed, specified as JSON. Refer to the specific command to be run for details.\n\nExample format: { \"param1\" : [ \"value\" ], \"param2\" : [ \"value\",\"value2\" ] }",
+            "properties": {
+                "resizable": "true",
+                "rows": "5",
+                "maxLength": "5000"
+            }
         },
         {
             "name": "comment",
@@ -95,11 +100,11 @@
             "type": "pickList",
             "required": true,
             "defaultValue": "fromInstanceIds",
-            "helpMarkDown": "Sets how the list of instances to be targeted are specified. You can supply a list of instance IDs, or tags (as key=value pairs) for search criteria or you can supply the instance IDs from a build variable. The value of the build variable should be a comma delimited list of IDs.",
+            "helpMarkDown": "Sets how the list of instances to be targeted are specified. You can supply a list of instance IDs, or tags (as key=value pairs) for search criteria or you can supply the instance IDs using the name of a build variable. The value of the build variable should be a comma delimited list of IDs.",
             "options": {
-                "fromInstanceIds": "Manually Selecting Instances",
-                "fromTags": "Specifying a Tag",
-                "fromBuildVariable": "Build Variable (command delimited list of instance IDs)"
+                "fromInstanceIds": "Manually select instances",
+                "fromTags": "From tags",
+                "fromBuildVariable": "Build variable name"
             },
             "groupName": "instanceSelection"
         },
@@ -109,7 +114,7 @@
             "type": "multiLine",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The instance IDs where the command should execute. You can specify a maximum of 50 IDs. If you prefer not to list individual instance IDs, you can instead send commands to a fleet of instances using the Targets parameter, which accepts EC2 tags. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if Instance IDs is selected above.",
+            "helpMarkDown": "The instance IDs where the command should execute. You can specify a maximum of 50 IDs. If you prefer not to list individual instance IDs, you can instead send commands to a fleet of instances using the Targets parameter, which accepts EC2 tags. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if *Manually select instances* is chosen above for instance selection.",
             "visibleRule": "instanceSelector = fromInstanceIds",
             "groupName": "instanceSelection"
         },
@@ -119,17 +124,17 @@
             "type": "multiLine",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "A list of search criteria that targets instances using a Key=Value combination that you specify, one per line. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if Tag Search Criteria is selected above.",
+            "helpMarkDown": "A list of search criteria that targets instances using a Key=Value combination that you specify, one per line. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if *From tags* is chosen above for instance selection.",
             "visibleRule": "instanceSelector = fromTags",
             "groupName": "instanceSelection"
         },
         {
             "name": "instanceBuildVariable",
-            "label": "Build Variable Name",
+            "label": "Variable Name",
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The name of the build variable containing the list of instance IDs to target, as a comma delimited list. This parameter is required if Build Variable is selected above",
+            "helpMarkDown": "The name of the build variable containing the list of instance IDs to target, as a comma delimited list. **Note:** you should specify just the variable name, do not enclose it in $() syntax.\n\nThis parameter is required if *Build variable name* is chosen above for instance selection.",
             "visibleRule": "instanceSelector = fromBuildVariable",
             "groupName": "instanceSelection"
         },
@@ -218,6 +223,15 @@
             "helpMarkDown": "The directory structure within the S3 bucket where the responses should be stored."
         },
         {
+            "name": "commandIdOutputVariable",
+            "type": "string",
+            "label": "Command ID Output Variable",
+            "defaultValue": "",
+            "groupName": "output",
+            "helpMarkDown": "The name of a variable that will contain the unique ID assigned to the command. The command ID can be used future references to the request.",
+            "required": false
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
@@ -238,12 +252,13 @@
     ],
     "execution": {
         "Node": {
-            "target": "SystemsManagerSendCommand.js",
+            "target": "SystemsManagerRunCommand.js",
             "argumentFormat": ""
         }
     },
     "messages": {
         "InstanceIdsFromVariableFailed": "Failed to retrieve list of instance IDs from build variable %s",
-        "TaskCompleted": "Successfully created variables from parameter value(s)."
+        "SettingOutputVariable": "Storing unique command ID for the invocation into variable %s",
+        "TaskCompleted": "Successfully invoked command %s, unique command ID returned by the service was %s."
     }
 }
