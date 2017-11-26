@@ -45,6 +45,11 @@ export class TaskOperations {
 
         await this.pushImageToECR(targetImageRef);
 
+        if (taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable, targetImageRef));
+            tl.setVariable(taskParameters.outputVariable, targetImageRef);
+        }
+
         console.log(tl.loc('TaskCompleted'));
     }
 

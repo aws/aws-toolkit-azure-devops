@@ -20,6 +20,11 @@
     "instanceNameFormat": "Push Image: ",
     "groups": [
         {
+            "name": "output",
+            "displayName": "Output",
+            "isExpanded": false
+        },
+        {
             "name": "diagnostic",
             "displayName": "Diagnostic",
             "isExpanded": false
@@ -109,6 +114,15 @@
             "helpMarkDown": "If selected the task will attempt to create the repository if it does not exist."
         },
         {
+            "name": "outputVariable",
+            "type": "string",
+            "label": "Image Tag Output Variable",
+            "defaultValue": "",
+            "groupName": "output",
+            "helpMarkDown": "The name of the variable that will contain the tag of the image pushed to ECR. The image tag will be of the form *aws_account_id.dkr.ecr.region.amazonaws.com/imagename*, where **imagename** is in the format *repositoryname[:tag]*",
+            "required": false
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
@@ -142,6 +156,7 @@
         "InvokingDockerCommand": "Invoking '%s' with command '%s'",
         "TestingForRepository": "Testing existence of repository '%s'",
         "CreatingRepository": "Repository not found, attempting to create",
+        "SettingOutputVariable": "Setting output variable %s with the pushed image tag %s",
         "TaskCompleted": "Successfully completed sending the message"
     }
 }
