@@ -1,6 +1,6 @@
 {
     "name": "lambdadeployfunction",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "description": "Builds and deploys an AWS Lambda function for the supported Lambda runtimes.",
     "main": "LambdaDeployFunction.js",
     "scripts": {
