@@ -54,7 +54,7 @@ try
     }
 
     Write-Host (Get-VstsLocString -Key 'InitializingAWSContext' -ArgumentList $awsRegion)
-    $env:AWS_DEFAULT_REGION = $awsRegion
+    $env:AWS_REGION = $awsRegion
     
     # Use environment variables to pass credentials, to avoid leaving any profiles
     # around when the build completes and any contention from parallel or multi-user
