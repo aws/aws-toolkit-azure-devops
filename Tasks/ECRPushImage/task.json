@@ -50,7 +50,7 @@
         {
             "name": "imageSource",
             "type": "radio",
-            "label": "Image Source",
+            "label": "Image Identity",
             "required": true,
             "defaultValue": "imagename",
             "helpMarkDown": "The identity of the image to push.",
@@ -77,7 +77,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "latest",
-            "helpMarkDown": "Required if the image is to be identified using a repository name and tag. If a tag value is not supplied, 'latest' is assumed",
+            "helpMarkDown": "Optional tag to suffix to the image name. If a tag value is not supplied, 'latest' is assumed",
             "visibleRule": "imageSource = imagename"
         },
         {

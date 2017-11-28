@@ -114,7 +114,7 @@
             "type": "multiLine",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The instance IDs where the command should execute. You can specify a maximum of 50 IDs. If you prefer not to list individual instance IDs, you can instead send commands to a fleet of instances using the Targets parameter, which accepts EC2 tags. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if *Manually select instances* is chosen above for instance selection.",
+            "helpMarkDown": "The instance IDs where the command should execute. You can specify a maximum of 50 IDs, one per line. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if *Manually select instances* is chosen above for instance selection.",
             "visibleRule": "instanceSelector = fromInstanceIds",
             "groupName": "instanceSelection"
         },
@@ -124,7 +124,7 @@
             "type": "multiLine",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "A list of search criteria that targets instances using a Key=Value combination that you specify, one per line. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if *From tags* is chosen above for instance selection.",
+            "helpMarkDown": "A list of tags that targets instances using a Key=Value combination that you specify, one per line. For more information about how to use Targets, see [Sending Commands to a Fleet](https://docs.aws.amazon.com/systems-manager/latest/userguide/send-commands-multiple.html).\n\nThis parameter is required if *From tags* is chosen above for instance selection.",
             "visibleRule": "instanceSelector = fromTags",
             "groupName": "instanceSelection"
         },

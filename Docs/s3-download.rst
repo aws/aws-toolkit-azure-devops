@@ -97,4 +97,10 @@ Force path style addressing
     behavior, when unchecked, is to use virtual host style addressing if the bucket name is DNS
     compatible and path style otherwise. For more information see `Virtual Hosting of Buckets <http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`_.
 
+Flatten folders
+~~~~~~~~~~~~~~~
 
+    If checked the task will remove the key prefix from the downloaded objects causing them to be
+    written to the selected download folder. If this option is unchecked, the key prefix of each
+    object is preserved and objects are downloaded to a subfolder hierarchy matching the key prefix
+    of the object.

@@ -44,14 +44,14 @@
         },
         {
             "name": "readMode",
-            "label": "Parameter Source",
+            "label": "Read Mode",
             "type": "radio",
             "required": true,
             "defaultValue": "single",
-            "helpMarkDown": "Whether the task reads a single named parameter or a parameter hierarchy identified by common parameter path.",
+            "helpMarkDown": "Whether the task gets the value of a single named parameter or values from a parameter hierarchy identified by common parameter path.",
             "options": {
-                "single": "Read single parameter",
-                "hierarchy": "Read parameter hierarchy"
+                "single": "Get value for single parameter",
+                "hierarchy": "Get values for parameter hierarchy"
             }
         },
         {
@@ -121,7 +121,7 @@
         },
         {
             "name": "replacementPattern",
-            "label": "Replacement Pattern",
+            "label": "Search Pattern",
             "type": "string",
             "required": false,
             "defaultValue": "",

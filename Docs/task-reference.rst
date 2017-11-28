@@ -46,18 +46,21 @@ for Microsoft Visual Studio Team Services.
    :titlesonly:
 
    aws-cli
+   awspowershell-module-script
    cloudformation-create-update
    cloudformation-delete-stack
    cloudformation-execute-changeset
    codedeploy-deployment
+   ecr-pushimage
    elastic-beanstalk-deploy
    lambda-deploy
    lambda-netcore-deploy
    lambda-invoke
    s3-download
    s3-upload
+   systemsmanager-getparameter
+   systemsmanager-runcommand
    send-message
-   awspowershell-module-script
 
 
 

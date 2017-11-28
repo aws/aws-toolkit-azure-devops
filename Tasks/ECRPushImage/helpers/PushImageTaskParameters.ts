@@ -30,6 +30,9 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             if (this.imageSource === this.imageNameSource) {
                 this.sourceImageName = tl.getInput('sourceImageName', true);
                 this.sourceImageTag = tl.getInput('sourceImageTag', false);
+                if (!this.sourceImageTag) {
+                    this.sourceImageTag = 'latest';
+                }
             } else {
                 this.sourceImageId = tl.getInput('sourceImageId', true);
             }
