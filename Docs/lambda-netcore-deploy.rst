@@ -22,12 +22,12 @@ Synopsis
 ========
 
 Builds and deploys a .NET Core |LAMlong| function or serverless application. For other languages supported
-by |LAM| please refer to the |LAMlong| Deploy Function task.
+by |LAM|, please refer to the |LAMlong| Deploy Function task.
 
 Description
 ===========
 
-Applications that are based on |LAM| (also referred to as serverless applications) are composed of functions
+Applications based on |LAM| (also referred to as serverless applications) are composed of functions
 triggered by events. A typical serverless application consists of one or more functions triggered
 by events such as object uploads to |S3|, |SNS| notifications, and API actions. Those
 functions can stand alone or use other resources such as |DDBlong| tables or |S3| buckets.
@@ -80,7 +80,7 @@ Function Name
 Function Role
 ~~~~~~~~~~~~~
 
-    The name of the |IAM| role that provides access to AWS services to the deployed |LAM| function.
+    The name of the |IAM| role providing access to AWS services for the deployed |LAM| function.
 
 Function Handler
 ~~~~~~~~~~~~~~~~

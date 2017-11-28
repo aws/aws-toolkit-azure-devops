@@ -33,8 +33,8 @@ downstream tasks in the definition. The names used for the build variables are c
 Parameters
 ==========
 
-You can set the following parameters for the task. Required
-parameters are noted by an asterisk (*). Other parameters are optional.
+You can set the following parameters for the task. Required parameters are noted by 
+an asterisk (*). Other parameters are optional.
 
 Displayname*
 ------------
@@ -92,7 +92,7 @@ Variable Name Transform
 Custom Variable Name
 --------------------
 
-    Required of Variable Name Transform is set to 'use custom name'. Specifies the desired name for the build variable.
+    Required if Variable Name Transform is set to 'use custom name'. Specifies the desired name for the build variable.
 
 Search Pattern
 --------------
@@ -107,7 +107,7 @@ Replacement Text
 Global Match
 ------------
 
-    When replacing text specifies if the replacement stops at the first match or replaces all occurrences of the
+    When replacing text, specifies if the replacement stops at the first match or replaces all occurrences of the
     search pattern.
 
 Case-insensitive Match

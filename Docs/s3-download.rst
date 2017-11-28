@@ -26,17 +26,17 @@ Downloads file and folder content from an |S3long| (S3) bucket.
 Description
 ===========
 
-This task accepts a target folder location to which to download files from an |S3| bucket. The source
-location in the bucket, or key prefix, can also be specified. If a source location is not supplied,
-the bucket root is used. Specify the files to download using a set of one or more globbing
-patterns. The default pattern is :code:`**`. This causes all files in all folders at and beneath
-the source location to be downloaded, preserving the relative folder paths.
+Downloads file and folder content from an |S3long| (S3) bucket to a folder location.
+The source location in the bucket, or key prefix, can also be specified. If a source location 
+is not supplied,the bucket root is used. You specify the files to download using a set of one 
+or more globbing patterns. The default pattern is :code:`**`, causing all files in all 
+folders at and beneath the source location to be downloaded, preserving the relative folder paths.
 
 Parameters
 ==========
 
-You can set the following parameters for the task. Required
-parameters are noted by an asterisk (*). Other parameters are optional.
+You can set the following parameters for the task. Required parameters are noted by an 
+asterisk (*). Other parameters are optional.
 
 Displayname*
 ------------
@@ -95,7 +95,8 @@ Force path style addressing
 
     If checked the task will always use path style addressing to work with the bucket. The default
     behavior, when unchecked, is to use virtual host style addressing if the bucket name is DNS
-    compatible and path style otherwise. For more information see `Virtual Hosting of Buckets <http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`_.
+    compatible and path style otherwise. For more information see 
+    `Virtual Hosting of Buckets <http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`_.
 
 Flatten folders
 ~~~~~~~~~~~~~~~

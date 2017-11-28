@@ -26,10 +26,8 @@ Creates a new |CFNlong| stack or updates the stack if it exists.
 Description
 ===========
 
-If the stack doesn't exist, this task creates a stack as specified in the parameters.
-If the stack exists, this task updates it as specified in the parameters. When you need to change
-a stack's
-settings or its resources, update the stack instead of deleting it and creating
+Creates or updates a stack based on the specified parameters. When you need to change
+a stack's settings or its resources, update the stack instead of deleting it and creating
 a new stack.
 
 Parameters
@@ -58,7 +56,7 @@ AWS Region*
 Stack Name*
 -----------
 
-    The name that is associated with the stack. The name must be unique in the region in which you
+    The name associated with the stack. The name must be unique in the region in which you
     are creating the stack.
 
     A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start
@@ -68,15 +66,15 @@ Template Source*
 ----------------
 
     Specifies the location of the template to use to create or update the stack. You can specify the template
-    using either the path to a file in the local file system, a URL to the file or an object in Amazon S3,
-    for which you can specify the bucket and object name (key).
+    using the path to a file in the local file system, a URL to the file, or an object in Amazon S3.
+    If you select an object in Amazon S3, you can specify the bucket and object name (key).
 
     Note that CloudFormation limits the size of template files uploaded to the service to 51,200 bytes. If your
     template is larger than the allowed size you should choose either the URL or Amazon S3 location options. You
-    can also specify a bucket name for the local file option. If a bucket name  is specified the template is
-    uploaded to the bucket by the task (the object key will be the template filename, less any path).
+    can also specify a bucket name for the local file option. If a bucket name is specified, the template is
+    uploaded to the bucket by the task. The object key will be the template filename, less any path.
 
-    When the task uploads the template to a bucket, or you specify an Amazon S3 bucket name and object key,
+    When the task uploads the template to a bucket or you specify an Amazon S3 bucket name and object key,
     the task generates a URL to the object and supplies the URL to CloudFormation.
 
 Template File*
@@ -93,9 +91,9 @@ Template Parameters File
 Create or Update the Stack Using a Change Set
 ---------------------------------------------
 
-    If checked, a change set that contains a list of changes to apply to a
-    stack will be created and then validated. If the changes validate successfully, the change set can be executed
-    to effect the changes. You can choose to use a change set to create a new stack or update an 
+    If checked, a change set containing a list of changes to apply to a stack will be 
+    created and then validated. If the changes validate successfully, the change set can be executed
+    to make the changes. You can choose to use a change set to create a new stack or update an 
     existing stack.
 
     Default: not checked.
@@ -104,7 +102,7 @@ Change Set Name
 ---------------
 
     This parameter is required if the option to use a change set is selected. Specifies the name of the
-    change set to create and then validate, and optionally execute to create or update the stack.
+    change set to create, validate, and (optionally) execute to create or update the stack.
 
 Description
 -----------
@@ -115,16 +113,16 @@ Automatically Execute the Change Set
 ------------------------------------
 
     If checked, the change set is automatically executed when validation succeeds. If it isn't checked
-    the change set is validated but not executed. You can execute the change set subsequently by using
-    the  :code:`|CFNlong| Execute Change Set` task.
+    the change set is validated but not executed. You can execute the change set later by using
+    the :code:`|CFNlong| Execute Change Set` task.
 
     Default: checked.
 
 Capabilities
 ------------
 
-    Capabilities that you must specify before |CFNlong| can update certain stacks. Some stack
-    templates might include resources that can affect permissions in your AWS account, for example by
+    You must specify capabilities before |CFNlong| can update certain stacks. Some stack
+    templates might include resources that can affect permissions in your AWS account by, for example, 
     creating new AWS Identity and Access Management (IAM) users. For those stacks, you must explicitly
     acknowledge their capabilities by specifying this parameter.
 
@@ -150,11 +148,12 @@ Advanced
 Role ARN
 ~~~~~~~~
 
-        The |arnlong| (ARN) of an |IAM| role that
-        |CFNlong| assumes when it executes the change set. |CFNlong| uses the role's
-        credentials to make calls on your behalf. |CFNlong| uses this role for all future
-        operations on the stack. As long as users have permission to operate on the stack,
-        |CFNlong| uses this role even if the users don't have permission to pass it.
+        The |arnlong| (ARN) of an |IAM| role that |CFNlong| assumes when it executes the 
+        change set. |CFNlong| uses the role's credentials to make calls on your behalf. 
+        |CFNlong| uses this role for all future operations on the stack. As long as users 
+        have permission to operate on the stack, |CFNlong| uses this role even if the users 
+        don't have permission to pass it. 
+        
         Ensure that the role grants least privilege.
 
         If you don't specify a value, |CFNlong| uses the role that was previously associated
@@ -169,8 +168,7 @@ Resource Types
 
         If the list of resource types doesn't include a resource type that you're updating, the stack
         update fails. By default, |CFNlong| grants permissions to all resource types.
-        |IAM| uses this parameter for condition keys in |IAM| policies
-        for |CFNlong|.
+        |IAM| uses this parameter for condition keys in |IAM| policies for |CFNlong|.
 
         For more information, see :CFN-ug:`Controlling Access with AWS Identity and Access Management <using-iam-template>` in the
         |CFN-ug|.
@@ -184,7 +182,8 @@ Notification ARNs
 Tags
 ~~~~
 
-        Collection of tags to apply to the resources created by your template. Tags can be specified as *tagkey=tagvalue*, one per line.
+        Collection of tags to apply to the resources created by your template. Tags can be 
+        specified as *tagkey=tagvalue*, one per line.
 
 Options
 -------
@@ -207,8 +206,6 @@ Disable Rollback
 Output Variable
 ~~~~~~~~~~~~~~~
 
-        The name of the variable that will contain the stack ID on task completion. You can
-        use
-        the variable as :code:`$(variableName)` to refer to the stack ID in subsequent tasks.
-
+        The name of the variable that will contain the stack ID on task completion. You can use
+        :code:`$(variableName)` to refer to the stack ID in subsequent tasks.
 

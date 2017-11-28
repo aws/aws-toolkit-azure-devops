@@ -65,26 +65,28 @@ Document Name*
 Parameters
 ----------
 
-    The required and optional parameters for the document to be executed, specified as JSON. Refer to the specific command to be run for details.
+    The required and optional parameters for the document to be executed, specified as JSON. 
+    Refer to the specific command to be run for details.
 
-    Example format: { "param1" : [ "value" ], "param2" : [ "value","value2" ] }
+    Example format: :code:`{ "param1" : [ "value" ], "param2" : [ "value","value2" ] }`
 
 Comment
 -------
 
-    User-specified information about the command, such as a brief description of what the command should do. Maximum length 100 characters.
+    User-specified information about the command, such as a brief description of what the 
+    command should do. Maximum length 100 characters.
 
 Service Role ARN
 ----------------
 
-    The Amazon Resource Name (ARN) or name of the IAM role that Systems Manager uses to send notifications. If the name of a role is supplied the
-    task will automatically determine the ARN.
+    The Amazon Resource Name (ARN) or name of the IAM role Systems Manager uses to send notifications. 
+    If the name of a role is supplied the task will automatically determine the ARN.
 
 Select Targets by*
 ------------------
 
-    How the instances to be targetted by the command are selected. You can choose from Instance IDs, Tags or the name of a build variable containing
-    a list of instance IDs.
+    How the instances to be targetted by the command are selected. You can choose from Instance IDs, 
+    Tags or the name of a build variable containing a list of instance IDs.
 
 Instance IDs
 ------------
@@ -99,33 +101,34 @@ Tags
 Variable Name
 -------------
 
-    Required if target selection is set to Build Variable Name. Specify the name of the variable. Do not enclose the variable name
-    in $() syntax. The variable should contain a comma-delimited list of instance IDs.
+    Required if target selection is set to Build Variable Name. Specify the name of the variable. 
+    Do not enclose the variable name in $() syntax. The variable should contain a comma-delimited 
+    list of instance IDs.
 
 Execution Concurrency
 ---------------------
 
-    The maximum number of instances that are allowed to execute the command at the same time. You can specify a number such as 10 or a
-    percentage such as 10%. The default value is 50.
+    The maximum number of instances that are allowed to execute the command at the same time. 
+    You can specify a number such as 10 or a percentage such as 10%. The default value is 50.
 
 Max Errors Before Stop
 ----------------------
 
-    The maximum number of errors allowed without the command failing. When the command fails one more time beyond the value specified,
-    the systems stops sending the command to additional targets. You can specify a number like 10 or a percentage like 10%. The default
-    value is 50.
+    The maximum number of errors allowed without the command failing. When the command fails one 
+    more time beyond the value specified, the systems stops sending the command to additional targets. 
+    You can specify a number like 10 or a percentage like 10%. The default value is 50.
 
 Timeout (seconds)
 -----------------
 
-    If this time is reached and the command has not already started executing, it will not execute. Minimum value of 30, maximum value
-    of 2592000. Default value: 600.
+    If this time is reached and the command has not already started executing, it will not execute. 
+    Minimum value of 30, maximum value of 2592000. Default value: 600.
 
 Notification ARN
 ----------------
 
-    An Amazon Resource Name (ARN) for a Simple Notification Service (SNS) topic. Run Command pushes notifications about command status
-    changes to this topic.
+    An Amazon Resource Name (ARN) for a Simple Notification Service (SNS) topic. 
+    Run Command pushes notifications about command status changes to this topic.
 
 Notification Events
 -------------------
@@ -135,9 +138,8 @@ Notification Events
 Notification Type
 -----------------
 
-    Select 'Command' or 'Invocation'.
-
-    Command: Receive notification when the status of a command changes. Invocation: For commands sent to multiple instances, receive
+    Select :guilabel:`Command` to receive notification when the status of a command changes. 
+    For commands sent to multiple instances, select :guilabel:`Invocation`, to receive
     notification on a per-instance basis when the status of a command changes.
 
 S3 Bucket Name
@@ -153,5 +155,5 @@ S3 Key Prefix
 Command ID Output Variable
 --------------------------
 
-    The name of a variable that will contain the unique ID assigned to the command. The command ID can be used future references
-    to the request.
+    The name of a variable that will contain the unique ID assigned to the command. 
+    The command ID can be used future references to the request.

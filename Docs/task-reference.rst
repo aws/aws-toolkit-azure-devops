@@ -18,8 +18,8 @@ Task Reference
    :description: Using the tasks in the AWS Tools for VSTS
    :keywords: extensions, tasks
 
-This reference describes the tasks that are included in the AWS Tools
-for Microsoft Visual Studio Team Services.
+This reference describes the tasks that are included in the AWS Tools for Microsoft 
+Visual Studio Team Services.
 
 .. _task_prerequisites:
 
@@ -27,16 +27,18 @@ for Microsoft Visual Studio Team Services.
 
 * You must have an AWS account. For information on setting up an account,
   see :ref:`setup-credentials`.
+
 * A required parameter for each task is :code:`AWS Credentials`. If you haven't created an AWS Connection,
-  choose the "+" to the right of the parameter. A dialog box opens asking you to enter your AWS access
-  key and secret key credentials and to give the credentials a name. We do not recommend using your root
+  choose the :guilabel:`+` to the right of the parameter. A dialog box opens asking you to enter your AWS access
+  key and secret key credentials and to provide a name. We do not recommend using your root
   credentials. Instead, use the credentials associated with an IAM user account.
+
   The secret key text is automatically masked. Choose :guilabel:`OK` to save the credentials
   into your VSTS account and return to the configuration of the new task.
+
   The name for the new credentials is entered into the :guilabel:`AWS Credentials` box.
   Once created, those credentials are available in the parameter's list whenever you
   set up a task.
-
   
        .. image:: images/AddNewAWSConnection.png
           :alt: Add an AWS connection

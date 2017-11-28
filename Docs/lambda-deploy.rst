@@ -60,7 +60,7 @@ AWS Region*
 Deployment Mode*
 ----------------
 
-    The operating mode for the task. The default setting, *Update code only*, just uploads new code for an already
+    The operating mode for the task. The default setting, *Update code only*, exclusively uploads new code for an already
     published function. The alternative setting, *Update code and configuration (or create a new function)* can be
     used to publish new functions or to deploy new code, and other configuration settings, to a pre-existing function.
     When updating code and configuration the task performs the configuration changes first, then uploads and optionally
@@ -74,7 +74,7 @@ Function Name*
 Description
 -----------
 
-    A short, user-defined function description. Lambda does not use this value. Assign a meaningful description as you see fit.
+    A short, user-defined function description. Lambda does not use this value. 
 
 Function Handler*
 -----------------
@@ -100,7 +100,7 @@ Role ARN or Name*
 -----------------
 
     Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the role
-    to be assumed when your is invoked. The role supplies credentials (if needed) to your function as well as
+    to be assumed when your function is invoked. The role supplies credentials (if needed) to your function as well as
     controlling AWS resource access. You can specify either the name of the role or the role's Amazon Resource Name (ARN).
     If the role name is specified the task will retrieve and use the role ARN for you.
 
@@ -155,13 +155,13 @@ Security Group IDs
 ~~~~~~~~~~~~~~~~~~
 
     List of security group IDs, one per line. If your Lambda function accesses resources in a VPC at least one security group and one
-    subnet ID must be specified, which must belong to the same VPC.
+    subnet ID belonging to the same VPC must be specified.
 
 Subnet IDs
 ~~~~~~~~~~
 
     List of subnet IDs, one per line. If your Lambda function accesses resources in a VPC at least one security group and one subnet
-    ID must be specified, which must belong to the same VPC.
+    ID belonging to the same VPC must be specified.
 
 Tracing configuration
 ~~~~~~~~~~~~~~~~~~~~~

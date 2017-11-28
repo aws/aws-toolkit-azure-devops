@@ -59,13 +59,14 @@ AWS Region*
 Application Type*
 -----------------
 
-    The type of application bundle to deploy. ASP.NET application deployments use Web Deploy archives. ASP.NET Core deployments are performed using the :code:`dotnet publish` command line tool.
+    The type of application bundle to deploy. ASP.NET application deployments use Web Deploy archives. 
+    ASP.NET Core deployments are performed using the :code:`dotnet publish` command line tool.
 
 Web Deploy Archive
 ------------------
 
     Required if :code:`Application Type` is set to :guilabel:`ASP.NET`. The path to the web deploy archive 
-    that contains the application to deploy to |EB|.
+    containing the application to deploy to |EB|.
 
 Published Application Path
 --------------------------
@@ -91,5 +92,4 @@ Version Label
 
     Version label for the new application revision. If not specified the task will construct a version label
     based on the current date and time, expressed in milliseconds (for example *v20171120222623*).
-
 

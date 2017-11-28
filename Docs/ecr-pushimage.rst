@@ -33,8 +33,8 @@ by ECR and also the login process to your registry prior to executing the Docker
 Parameters
 ==========
 
-You can set the following parameters for the task. Required
-parameters are noted by an asterisk (*). Other parameters are optional.
+You can set the following parameters for the task. Required parameters are noted by an asterisk (*). 
+Other parameters are optional.
 
 Displayname*
 ------------
@@ -92,5 +92,6 @@ Create repository if it does not exist
 Image Tag Output Variable
 -------------------------
 
-    The name of a build variable that will be created or updated with the pushed image reference. The image tag will be of the form *aws_account_id.dkr.ecr.region.amazonaws.com/imagename*, where **imagename** is in the format *repositoryname[:tag]*
-            
+    The name of a build variable that will be created or updated with the pushed image reference. 
+    The image tag will be of the form *aws_account_id.dkr.ecr.region.amazonaws.com/imagename*, 
+    where **imagename** is in the format *repositoryname[:tag]*

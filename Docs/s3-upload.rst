@@ -70,7 +70,7 @@ Source Folder
     The source folder that the content patterns are run against. You can browse for the folder.
     If not set, the root of the repository is assumed. Use variables if the files are not in the repo.
 
-    Example: $(agent.builddirectory)
+    Example: code:`$(agent.builddirectory)`
 
 Filename Patterns
 -----------------
@@ -125,6 +125,7 @@ Force path style addressing
 
     If checked the task will always use path style addressing to work with the bucket. The default
     behavior, when unchecked, is to use virtual host style addressing if the bucket name is DNS
-    compatible and path style otherwise. For more information see `Virtual Hosting of Buckets <http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`_.
+    compatible and path style otherwise. For more information see 
+    `Virtual Hosting of Buckets <http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`_.
 
 
