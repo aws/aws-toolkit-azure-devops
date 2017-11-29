@@ -261,6 +261,8 @@ target.build = function() {
         } else {
             fail(`Specified --overlayfolder not found: ${options.overlayfolder}`);
         }
+    } else {
+        console.log('> no content overlay folder specified');
     }
 
     taskList.forEach(function(taskName) {
