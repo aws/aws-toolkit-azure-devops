@@ -4,6 +4,8 @@ The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to eas
 
 The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
 
+**Note:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version is the same as the version in the marketplace but removes the support for *Assume Role* credentials in the AWS endpoint type while we address a compatibility issue with TFS2015.
+
 ## Highlighted Features
 
 ### Create an AWS Credentials Connection
