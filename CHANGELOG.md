@@ -1,3 +1,18 @@
+### 1.0.14 (2017-11-30)
+
+* Added new tasks:
+  * Push Docker image to Elastic Container Registry Service
+  * New general purpose AWS Lambda deployment task
+  * Read parameters from Systems Manager Parameter Store
+  * Systems Manager Run Command
+* Updated the AWS CloudFormation CreateOrUpdateStack task:
+  * Added support for specifying the template location in Amazon S3.
+  * Added support (Pull Request #39) for specifying tags for the stack resources.
+* Updated the Elastic Beanstalk task to allow specifying a custom version label for the deployment. If not specified the task auto-creates a version label based on the current date/time.
+* Updated the AWS CLI and AWS Tools for Windows PowerShell tasks to use environment variables for AWS credentials, rather than writing credential profiles to disk. This enables better handling of parallel builds from different users on the same build agent.
+* Updated the S3 Download task to add 'flatten folders' option. This option, off by default, removes the key prefix from the downloaded object so that the object is created in the target folder, not a subfolder corresponding to the key prefix.
+* Merged PR #42 to fix an issue with 'external ID' in assume role credentials being used when empty string, which caused the attempt to create temporary credentials to be rejected.
+
 ### 1.0.13 (2017-11-13)
 
 * Fixed [issue](https://github.com/aws/aws-vsts-tools/issues/37) with the Lambda .NET Core deployment task ignoring any value specified for the Function Handler variable declared on the task.
