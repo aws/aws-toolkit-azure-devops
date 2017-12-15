@@ -1,3 +1,8 @@
+### 1.0.15 (2017-12-18)
+
+* Updated the Amazon S3 Upload and Download tasks to support server-side encryption options. You can elect to encrypt data at rest using an Amazon S3 provided key, or your own key.
+* Updated the Amazon S3 Upload task to enable specifying storage class for the upload objects. Supported storage classes are *STANDARD* (the default), *STANDARD_IA* and *REDUCED_REDUNDANCY*.
+
 ### 1.0.14 (2017-11-30)
 
 * Added new tasks:

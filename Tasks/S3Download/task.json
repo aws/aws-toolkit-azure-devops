@@ -20,6 +20,11 @@
     "instanceNameFormat": "S3 Download: $(bucketName)",
     "groups": [
         {
+            "name": "serverSideEncryption",
+            "displayName": "Server-Side Encryption",
+            "isExpanded": false
+        },
+        {
             "name": "advanced",
             "displayName": "Advanced",
             "isExpanded": false
@@ -78,6 +83,29 @@
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "The target folder to contain the downloaded content. You can use [variables](https://go.microsoft.com/fwlink/?LinkID=550988)."
+        },
+        {
+            "name": "keyManagement",
+            "type": "pickList",
+            "label": "Encryption Key Management",
+            "defaultValue": "noneOrAWSManaged",
+            "required": false,
+            "helpMarkDown": "When you retrieve an object from Amazon S3 that was encrypted by using server-side encryption with customer-provided encryption keys (SSE-C), set *Use customer-provided encryption key* and provide the customer key data to enable the object(s) to be decrypted. If the object(s) were encrypted using an Amazon S3-provided key leave this option set to the default value, *Not using server-side encryption, or encrypted using an Amazon S3 managed key*.",
+            "options": {
+                "noneOrAWSManaged": "Not using server-side encryption, or encrypted using an Amazon S3 managed key",
+                "customerManaged": "Use customer-provided encryption key"
+            },
+            "groupName": "serverSideEncryption"
+        },
+        {
+            "name": "customerKey",
+            "type": "string",
+            "label": "Customer Key",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Hex-encoded string representing the encryption key for Amazon S3 to use in decrypting data. This value is used to decrypt the object and then is discarded; Amazon does not store the encryption key. This value must be appropriate for use with the AES256 encryption algorithm used for encryption when customer managed keys are selected.\n\nRequired when Encryption Key Management is set to *Use customer-provided encryption key*.",
+            "groupName": "serverSideEncryption",
+            "visibleRule": "keyManagement = customerManaged"
         },
         {
             "name": "overwrite",

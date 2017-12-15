@@ -89,10 +89,14 @@ export class TaskOperations {
                 }
 
                 console.log(tl.loc('QueueingDownload', matchedKey));
-                const params = {
+                const params: S3.GetObjectRequest = {
                     Bucket: taskParameters.bucketName,
                     Key: matchedKey
                 };
+                if (taskParameters.keyManagement === taskParameters.customerManagedKeyValue) {
+                    params.SSECustomerAlgorithm = taskParameters.aes256AlgorithmValue;
+                    params.SSECustomerKey = taskParameters.customerKey;
+                }
                 allDownloads.push(this.downloadFile(params, dest));
             }
         }

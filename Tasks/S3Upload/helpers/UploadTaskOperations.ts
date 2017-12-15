@@ -121,13 +121,32 @@ export class TaskOperations {
                         }
                     }
                     console.log(tl.loc('UploadingFile', matchedFile, contentType));
-                    const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
+
+                    const request: S3.PutObjectRequest = {
                         Bucket: taskParameters.bucketName,
                         Key: targetPath,
                         Body: fileBuffer,
                         ACL: taskParameters.filesAcl,
-                        ContentType: contentType
-                    }).promise();
+                        ContentType: contentType,
+                        StorageClass: taskParameters.storageClass
+                    };
+                    switch (taskParameters.keyManagement) {
+                        case taskParameters.noKeyManagementValue:
+                            break;
+                        case taskParameters.awsKeyManagementValue: {
+                            request.ServerSideEncryption = taskParameters.encryptionAlgorithm;
+                            request.SSEKMSKeyId = taskParameters.kmsMasterKeyId;
+                        }
+                        break;
+
+                        case taskParameters.customerKeyManagementValue: {
+                            request.SSECustomerAlgorithm = taskParameters.encryptionAlgorithm;
+                            request.SSECustomerKey = taskParameters.customerKey;
+                        }
+                        break;
+                    }
+
+                    const response: S3.ManagedUpload.SendData = await this.s3Client.upload(request).promise();
                     console.log(tl.loc('FileUploadCompleted', matchedFile, targetPath));
                 } catch (err) {
                     console.error(tl.loc('FileUploadFailed'), err);

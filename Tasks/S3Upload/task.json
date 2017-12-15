@@ -20,6 +20,11 @@
     "instanceNameFormat": "S3 Upload: $(bucketName)",
     "groups": [
         {
+            "name": "serverSideEncryption",
+            "displayName": "Server-Side Encryption",
+            "isExpanded": false
+        },
+        {
             "name": "advanced",
             "displayName": "Advanced",
             "isExpanded": false
@@ -105,6 +110,54 @@
             "helpMarkDown": "Attempts to automatically create the S3 bucket if it does not exist."
         },
         {
+            "name": "keyManagement",
+            "type": "pickList",
+            "label": "Encryption Key Management",
+            "defaultValue": "none",
+            "required": false,
+            "helpMarkDown": "You can optionally request Amazon S3 to encrypt data at rest using server-side encryption. Server-side encryption is about data encryption at rest, that is, Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts it for you when you access it.\n\nSelect *Use AWS-managed encryption keys* if you want Amazon S3 to manage keys used to encrypt data. To manage and provide your own keys select *Use customer-provided encryption keys*. Selecting *Not using server-side encryption* disables server-side encryption for the uploaded object(s).",
+            "options": {
+                "none": "Not using server-side encryption",
+                "awsManaged": "Use AWS-managed encryption keys",
+                "customerManaged": "Use customer-provided encryption key"
+            },
+            "groupName": "serverSideEncryption"
+        },
+        {
+            "name": "encryptionAlgorithm",
+            "type": "radio",
+            "label": "Encryption Algorithm",
+            "required": false,
+            "defaultValue": "AWSKMS",
+            "helpMarkDown": "Specifies a server-side encryption algorithm to use when Amazon S3 creates an object.",
+            "options": {
+                "KMS": "aws:kms",
+                "AES256": "AES256"
+            },
+            "groupName": "serverSideEncryption",
+            "visibleRule": "keyManagement = awsManaged"
+        },
+        {
+            "name": "kmsMasterKeyId",
+            "type": "string",
+            "label": "KMS Master Encryption Key ID",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The ID of the AWS Key Management Service (KMS) master encryption key to be used when encrypting the object.\n\nRequired if Encryption Algorithm is set to *KMS*.",
+            "groupName": "serverSideEncryption",
+            "visibleRule": "keyManagement = awsManaged && encryptionAlgorithm = kms"
+        },
+        {
+            "name": "customerKey",
+            "type": "string",
+            "label": "Customer Key",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Hex-encoded string representing the encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then is discarded; Amazon does not store the encryption key. This value must be appropriate for use with the AES256 encryption algorithm used for encryption when customer managed keys are selected.\n\nRequired when Encryption Key Management is set to *Use customer-provided encryption key*.",
+            "groupName": "serverSideEncryption",
+            "visibleRule": "keyManagement = customerManaged"
+        },
+        {
             "name": "overwrite",
             "type": "boolean",
             "label": "Overwrite",
@@ -130,6 +183,20 @@
             "required": false,
             "helpMarkDown": "Set a custom content type for the uploaded files.\nThe task will apply built-in defaults for common file types (html, css, js, image files). This parameter can be used to override the built-in defaults. Note that any value is applied to all files processed by the task.",
             "groupName": "advanced"
+        },
+        {
+            "name": "storageClass",
+            "type": "pickList",
+            "label": "Storage Class",
+            "defaultValue": "STANDARD",
+            "required": false,
+            "helpMarkDown": "Choose a storage class depending on your use case scenario and performance access requirements.\n\n* *STANDARD* – This storage class (the default) is ideal for performance-sensitive use cases and frequently accessed data.\n* *STANDARD_IA* – This storage class (IA, for infrequent access) is optimized for long-lived and less frequently accessed data, for example backups and older data where frequency of access has diminished, but the use case still demands high performance. **Note** There is a retrieval fee associated with STANDARD_IA objects which makes it most suitable for infrequently accessed data.\n* *REDUCED_REDUNDANCY* – The Reduced Redundancy Storage (RRS) storage class is designed for noncritical, reproducible data stored at lower levels of redundancy than the STANDARD storage class, which reduces storage costs.\n\nSee [Storage Classes](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html) in the Amazon S3 documentation for more information.",
+            "groupName": "advanced",
+            "options": {
+                "STANDARD": "Standard",
+                "STANDARD_IA": "Standard (Infrequent Access)",
+                "REDUCED_REDUNDANCY": "Reduced Redundancy"
+            }
         },
         {
             "name": "forcePathStyleAddressing",
