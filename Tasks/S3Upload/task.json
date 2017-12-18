@@ -128,7 +128,7 @@
             "type": "radio",
             "label": "Encryption Algorithm",
             "required": false,
-            "defaultValue": "AWSKMS",
+            "defaultValue": "KMS",
             "helpMarkDown": "Specifies a server-side encryption algorithm to use when Amazon S3 creates an object.",
             "options": {
                 "KMS": "aws:kms",
