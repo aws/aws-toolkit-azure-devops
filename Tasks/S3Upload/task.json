@@ -145,7 +145,7 @@
             "defaultValue": "",
             "helpMarkDown": "The ID of the AWS Key Management Service (KMS) master encryption key to be used when encrypting the object.\n\nRequired if Encryption Algorithm is set to *aws:kms*.",
             "groupName": "serverSideEncryption",
-            "visibleRule": "keyManagement = awsManaged && encryptionAlgorithm = kms"
+            "visibleRule": "keyManagement = awsManaged && encryptionAlgorithm = KMS"
         },
         {
             "name": "customerKey",
