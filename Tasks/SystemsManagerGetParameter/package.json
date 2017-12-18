@@ -1,6 +1,6 @@
 {
     "name": "systemsmanagergetparameter",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "description": "Gets the value of one or more parameters from the Systems Manager Parameter Store and adds them as variables to the current build or release definition.",
     "main": "SystemsManagerGetParameter.js",
     "scripts": {
