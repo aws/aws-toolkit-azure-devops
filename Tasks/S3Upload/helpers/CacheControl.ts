@@ -11,14 +11,14 @@ import im = require('vsts-task-lib/internal');
 
 export class CacheControl {
     private glob: string;
-    private regex: RegExp;
-    private config: string;
+    public regexp: RegExp;
+    public config: string;
 
     constructor(c: string) {
         const kvp = c.split('=');
         this.glob = kvp[0].trim();
         this.config = kvp[1].trim();
-        this.regex = im._legacyFindFiles_convertPatternToRegExp(this.glob);
+        this.regexp = im._legacyFindFiles_convertPatternToRegExp(this.glob);
         console.log(tl.loc('AddingCacheControl', this.glob, this.config));
     }
 }
