@@ -15,6 +15,8 @@ import Parameters = require('./UploadTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
 import sdkutils = require('sdkutils/sdkutils');
 
+import { CacheControl } from './CacheControl';
+
 export class TaskOperations {
 
     public static async uploadArtifacts(taskParameters: Parameters.TaskParameters): Promise<void> {
@@ -81,7 +83,9 @@ export class TaskOperations {
         }
         console.log(tl.loc('UploadingFiles', taskParameters.sourceFolder, msgTarget, taskParameters.bucketName));
 
+        const cacheControlConfig  = this.getCacheControlConfig(taskParameters);
         const matchedFiles = this.findFiles(taskParameters);
+
         for (let i = 0; i < matchedFiles.length; i++) {
             const matchedFile = matchedFiles[i];
             let relativePath = matchedFile.substring(taskParameters.sourceFolder.length);
@@ -130,6 +134,12 @@ export class TaskOperations {
                         ContentType: contentType,
                         StorageClass: taskParameters.storageClass
                     };
+
+                    const cacheControl = this.findCacheControl(targetPath, cacheControlConfig);
+                    if (cacheControl) {
+                        request.CacheControl = cacheControl;
+                    }
+
                     switch (taskParameters.keyManagement) {
                         case taskParameters.noKeyManagementValue:
                             break;
@@ -345,4 +355,27 @@ export class TaskOperations {
         return matchedFiles;
     }
 
+    private static getCacheControlConfig(taskParameters: Parameters.TaskParameters): CacheControl[] {
+        const cacheControl = taskParameters.cacheControl;
+        tl.debug(tl.loc('CacheControl', cacheControl));
+        let arr: CacheControl[];
+
+        if (cacheControl && cacheControl.length > 0) {
+            arr = [];
+            cacheControl.forEach((c) => {
+                arr.push(new CacheControl(c));
+            });
+        }
+
+        return arr;
+    }
+
+    private static findCacheControl(file: string, cacheControl: CacheControl[]): string {
+        cacheControl.forEach((c) => {
+            if (file.match(c.regexp)) {
+                return c.config;
+            }
+        });
+        return '';
+    }
 }
