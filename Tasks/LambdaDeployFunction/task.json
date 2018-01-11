@@ -99,14 +99,16 @@
             "required": true,
             "helpMarkDown": "The runtime environment for the Lambda function you are uploading.",
             "options": {
+                "dotnetcore1.0": "dotnetcore1.0",
+                "dotnetcore2.0": "dotnetcore2.0",
+                "go1.x": "go1.x",
+                "java8": "java8",
                 "nodejs": "nodejs",
                 "nodejs4.3": "nodejs4.3",
                 "nodejs6.10": "nodejs6.10",
-                "java8": "java8",
+                "nodejs4.3-edge": "nodejs4.3-edge",
                 "python2.7": "python2.7",
-                "python3.6": "python3.6",
-                "dotnetcore1.0": "dotnetcore1.0",
-                "nodejs4.3-edge": "nodejs4.3-edge"
+                "python3.6": "python3.6"
             },
             "visibleRule": "deploymentMode = codeandconfiguration"
         },
