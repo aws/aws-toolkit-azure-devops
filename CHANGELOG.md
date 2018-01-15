@@ -1,3 +1,7 @@
+### 1.0.16 (2018-01-15)
+
+* Updated the general-purpose Lambda deployment task for the newly supported 'dotnetcore2.0' and 'go1.x' runtimes.
+
 ### 1.0.15 (2017-12-18)
 
 * Updated the Amazon S3 Upload and Download tasks to support server-side encryption options. You can elect to encrypt data at rest using an Amazon S3 provided key, or your own key.
