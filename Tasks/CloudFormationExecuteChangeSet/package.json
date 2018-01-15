@@ -1,6 +1,6 @@
 {
     "name": "cloudformationexecutechangeset",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "description": "Executes an AWS CloudFormation change set",
     "main": "CloudFormationExecuteChangeSet.js",
     "scripts": {

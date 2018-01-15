@@ -1,6 +1,6 @@
 {
     "name": "codedeploy.deploy",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
     "main": "CodeDeployDeployApplication.js",
     "scripts": {
