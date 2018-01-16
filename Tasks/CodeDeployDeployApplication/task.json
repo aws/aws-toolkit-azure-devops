@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "16"
+        "Patch": "17"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy with CodeDeploy: $(applicationName)",
@@ -69,11 +69,24 @@
             "helpMarkDown": "The name of the deployment group to deploy to."
         },
         {
+            "name": "deploymentRevisionSource",
+            "label": "Deployment Revision Source",
+            "type": "pickList",
+            "defaultValue": "workspace",
+            "helpMarkDown": "Specifies the source of the revision to be deployed. You can select from:\n\n**Folder or archive file in the workspace**: the task will create or use an existing zip archive in the location specified to *Revision Bundle*, upload the archive to Amazon S3 and supply the key of the S3 object to CodeDeploy as the revision source.\n\n**Archive file in Amazon S3**: select to specify the key of an archive previously uploaded to Amazon S3 as the deployment revision source.",
+            "required": true,
+            "options": {
+                "workspace": "Folder or archive file in the workspace",
+                "s3": "Archive file in Amazon S3"
+            }
+        },
+        {
             "name": "revisionBundle",
             "label": "Revision Bundle",
             "type": "filePath",
             "defaultValue": "",
             "required": true,
+            "visibleRule": "deploymentRevisionSource = workspace",
             "helpMarkDown": "The artifacts to be deployed.\n\nYou can supply a folder or a filename to this parameter. If a folder is supplied the task will zip the contents of the folder recursively into an archive file before uploading the archive to Amazon S3. If a filename is supplied the task uploads it, unmodified, to Amazon S3. Note that CodeDeploy requires the appspec.yml file describing the application to exist at the root of the specified folder or archive file."
         },
         {
@@ -90,7 +103,17 @@
             "label": "Target Folder",
             "defaultValue": "",
             "required": false,
+            "visibleRule": "deploymentRevisionSource = workspace",
             "helpMarkDown": "Optional folder (key prefix) for the uploaded revision bundle in the bucket. If not specified the bundle will be uploaded to the root of the bucket."
+        },
+        {
+            "name": "bundleKey",
+            "type": "string",
+            "label": "Revision Bundle Key",
+            "defaultValue": "",
+            "required": false,
+            "visibleRule": "deploymentRevisionSource = s3",
+            "helpMarkDown": "The Amazon S3 object key of the previously uploaded archive file containing the deployment revision artifacts."
         },
         {
             "name": "description",
@@ -179,6 +202,7 @@
         "CreatedBundleArchive": "Created deployment bundle %s",
         "ArchiveSize": "Archive size: %s total bytes",
         "ZipError": "Zip Error: %s",
+        "RevisionBundleDoesNotExist": "Archive with key %s does not exist in the Amazon S3 bucket %s",
         "DeletingUploadedBundle": "Deleting uploaded bundle %s created by task",
         "TaskCompleted": "Deployment to application %s completed"
     }

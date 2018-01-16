@@ -16,6 +16,7 @@ import S3 = require('aws-sdk/clients/s3');
 import Parameters = require('./DeployApplicationTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
 import sdkutils = require('sdkutils/sdkutils');
+import { TaskParameters } from './DeployApplicationTaskParameters';
 
 export class TaskOperations {
 
@@ -23,9 +24,14 @@ export class TaskOperations {
 
         await this.createServiceClients(taskParameters);
 
-        await this.verifyResourcesExist(taskParameters.applicationName, taskParameters.deploymentGroupName);
+        await this.verifyResourcesExist(taskParameters);
 
-        const bundleKey = await this.uploadBundle(taskParameters);
+        let bundleKey: string;
+        if (taskParameters.deploymentRevisionSource === taskParameters.revisionSourceFromWorkspace) {
+            bundleKey = await this.uploadBundle(taskParameters);
+        } else {
+            bundleKey = taskParameters.bundleKey;
+        }
         const deploymentId: string = await this.deployRevision(taskParameters, bundleKey);
 
         if (taskParameters.outputVariable) {
@@ -58,18 +64,32 @@ export class TaskOperations {
         this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
     }
 
-    private static async verifyResourcesExist(appName: string, groupName: string): Promise<void> {
+    private static async verifyResourcesExist(taskParameters: TaskParameters): Promise<void> {
 
         try {
-            await this.codeDeployClient.getApplication({ applicationName: appName }).promise();
+            await this.codeDeployClient.getApplication({ applicationName: taskParameters.applicationName }).promise();
         } catch (err) {
-            throw new Error(tl.loc('ApplicationDoesNotExist', appName));
+            throw new Error(tl.loc('ApplicationDoesNotExist', taskParameters.applicationName));
         }
 
         try {
-            await this.codeDeployClient.getDeploymentGroup({applicationName: appName, deploymentGroupName: groupName}).promise();
+            await this.codeDeployClient.getDeploymentGroup({
+                applicationName: taskParameters.applicationName,
+                deploymentGroupName: taskParameters.deploymentGroupName
+            }).promise();
         } catch (err) {
-            throw new Error(tl.loc('DeploymentGroupDoesNotExist', groupName, appName));
+            throw new Error(tl.loc('DeploymentGroupDoesNotExist', taskParameters.deploymentGroupName, taskParameters.applicationName));
+        }
+
+        if (taskParameters.deploymentRevisionSource === taskParameters.revisionSourceFromS3) {
+            try {
+                await this.s3Client.headObject({
+                    Bucket: taskParameters.bucketName,
+                    Key: taskParameters.bundleKey
+                }).promise();
+            } catch (err) {
+                throw new Error(tl.loc('RevisionBundleDoesNotExist', taskParameters.bundleKey, taskParameters.bucketName));
+            }
         }
     }
 
@@ -160,7 +180,7 @@ export class TaskOperations {
             tl.debug(`Setting archive type to ${archiveType} based on bundle file extension`);
         } else {
             tl.debug('Unable to determine archive type, assuming zip');
-             archiveType = 'zip';
+            archiveType = 'zip';
         }
 
         try {

@@ -63,25 +63,44 @@ Deployment Group Name*
 
     The name of the deployment group the revision is deployed to.
 
+Deployment Revision Source*
+---------------------------
+
+    Specifies the source of the revision to be deployed. You can select from:
+
+    * *Folder or archive file in the workspace*: the task will create or use an existing zip archive in the location specified to *Revision Bundle*, upload the archive to Amazon S3 and supply the key of the S3 object to CodeDeploy as the revision source.
+    * *Archive file in Amazon S3*: select to specify the key of an archive previously uploaded to Amazon S3 as the deployment revision source.
+
 Revision Bundle*
 ----------------
 
-    The location of the application revision artifacts to deploy. You can supply a filename or folder. 
-    If a folder is supplied the task will recursively zip the folder contents into an archive file 
-    before uploading the archive to |S3|. If a filename is supplied the task uploads it unmodified 
-    to |S3|. CodeDeploy requires the appspec.yml file describing the application to exist at the root 
+    The location of the application revision artifacts to deploy. You can supply a filename or folder.
+    If a folder is supplied the task will recursively zip the folder contents into an archive file
+    before uploading the archive to |S3|. If a filename is supplied the task uploads it unmodified
+    to |S3|. CodeDeploy requires the appspec.yml file describing the application to exist at the root
     of the specified folder or archive file.
+
+    Required if *Deployment Revision Source* is set to *Folder or archive file in the workspace*.
 
 Bucket Name*
 ------------
 
-    The name of the bucket to which the revision bundle is uploaded.
+    The name of the bucket to which the revision bundle is uploaded or can be found, if *Archive file in Amazon S3* was selected for *Deployment Revision Source*.
 
 Target Folder
 -------------
 
     Optional folder (key prefix) for the uploaded revision bundle in the bucket. If not specified the,
     bundle is uploaded to the root of the bucket.
+
+    Available when *Folder or archive file in the workspace* is selected for *Deployment Revision Source*.
+
+Revision Bundle Key
+-------------------
+
+    The Amazon S3 object key of the previously uploaded archive file containing the deployment revision artifacts.
+
+    Required if *Deployment Revision Source* is set to *Archive file in Amazon S3*.
 
 Description
 -----------

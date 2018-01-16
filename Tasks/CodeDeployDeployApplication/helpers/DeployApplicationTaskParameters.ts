@@ -10,11 +10,18 @@ import tl = require('vsts-task-lib/task');
 import sdkutils = require('sdkutils/sdkutils');
 
 export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+
+    // deploymentRevisionSource options
+    public readonly revisionSourceFromWorkspace: string = 'workspace';
+    public readonly revisionSourceFromS3: string = 's3';
+
     public applicationName: string;
     public deploymentGroupName: string;
+    public deploymentRevisionSource: string;
     public revisionBundle: string;
     public bucketName: string;
     public bundlePrefix: string;
+    public bundleKey: string;
     public description: string;
     public fileExistsBehavior: string;
     public updateOutdatedInstancesOnly: boolean;
@@ -26,9 +33,20 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
         try {
             this.applicationName = tl.getInput('applicationName', true);
             this.deploymentGroupName = tl.getInput('deploymentGroupName', true);
-            this.revisionBundle = tl.getPathInput('revisionBundle', true, true);
+            this.deploymentRevisionSource = tl.getInput('deploymentRevisionSource', true);
+            switch (this.deploymentRevisionSource) {
+                case this.revisionSourceFromWorkspace: {
+                    this.revisionBundle = tl.getPathInput('revisionBundle', true, true);
+                    this.bundlePrefix = tl.getInput('bundlePrefix', false);
+                }
+                break;
+
+                case this.revisionSourceFromS3: {
+                    this.bundleKey = tl.getInput('bundleKey', true);
+                }
+                break;
+            }
             this.bucketName = tl.getInput('bucketName', true);
-            this.bundlePrefix = tl.getInput('bundlePrefix', false);
             this.description = tl.getInput('description', false);
             this.fileExistsBehavior = tl.getInput('fileExistsBehavior', false);
             this.updateOutdatedInstancesOnly = tl.getBoolInput('updateOutdatedInstancesOnly', false);

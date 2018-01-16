@@ -1,6 +1,11 @@
-### 1.0.16 (2018-01-15)
+### 1.0.17 (2018-01-15)
 
 * Updated the general-purpose Lambda deployment task for the newly supported 'dotnetcore2.0' and 'go1.x' runtimes.
+* Extended the CodeDeploy task to allow the deployment bundle archive to be specified as a file previously uploaded to Amazon S3, in addition to the existing support for pointing at a file or folder location in the build workspace (https://github.com/aws/aws-vsts-tools/issues/55).
+
+### 1.0.16
+
+* This version was only released internally for testing.
 
 ### 1.0.15 (2017-12-18)
 
