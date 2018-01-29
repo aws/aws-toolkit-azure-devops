@@ -16,6 +16,9 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public readonly urlSource: string = 'url';
     public readonly s3Source: string = 's3';
 
+    public readonly maxRollbackTriggers: number = 5;
+    public readonly maxTriggerMonitoringTime: number = 180;
+
     public stackName: string;
     public templateSource: string;
     public templateFile: string;
@@ -33,6 +36,9 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public notificationARNs: string[];
     public resourceTypes: string[];
     public tags: string[];
+    public monitorRollbackTriggers: boolean;
+    public monitoringTimeInMinutes: number = 0;
+    public rollbackTriggerARNs: string[];
 
     public onFailure: string;
     public outputVariable: string;
@@ -88,6 +94,21 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.tags = tl.getDelimitedInput('tags', '\n', false);
             this.notificationARNs = tl.getDelimitedInput('notificationARNs', '\n', false);
             this.resourceTypes = tl.getDelimitedInput('resourceTypes', '\n', false);
+
+            this.monitorRollbackTriggers = tl.getBoolInput('monitorRollbackTriggers', false);
+            if (this.monitorRollbackTriggers) {
+                const t = tl.getInput('monitoringTimeInMinutes', false);
+                if (t) {
+                    this.monitoringTimeInMinutes = parseInt(t, 10);
+                    if (this.monitoringTimeInMinutes < 0 || this.monitoringTimeInMinutes > this.maxTriggerMonitoringTime) {
+                        throw new Error(tl.loc('InvalidTriggerMonitoringTime', this.monitoringTimeInMinutes, this.maxTriggerMonitoringTime));
+                    }
+                }
+                this.rollbackTriggerARNs = tl.getDelimitedInput('rollbackTriggerARNs', '\n', false);
+                if (this.rollbackTriggerARNs && this.rollbackTriggerARNs.length > this.maxRollbackTriggers) {
+                    throw new Error(tl.loc('ExceededMaxRollbackTriggers', this.rollbackTriggerARNs.length, this.maxRollbackTriggers));
+                }
+            }
 
             this.onFailure = tl.getInput('onFailure');
             this.outputVariable = tl.getInput('outputVariable', false);

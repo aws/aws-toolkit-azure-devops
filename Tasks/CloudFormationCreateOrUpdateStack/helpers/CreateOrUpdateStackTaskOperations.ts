@@ -153,6 +153,13 @@ export class TaskOperations {
         request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
         request.Tags = this.getTags(taskParameters.tags);
 
+        if (taskParameters.monitorRollbackTriggers) {
+            request.RollbackConfiguration = {
+                MonitoringTimeInMinutes: taskParameters.monitoringTimeInMinutes,
+                RollbackTriggers: this.constructRollbackTriggerCollection(taskParameters.rollbackTriggerARNs)
+            };
+        }
+
         try {
             const response: CloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise();
             tl.debug(`Stack id ${response.StackId}`);
@@ -206,6 +213,13 @@ export class TaskOperations {
         request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
         request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
         request.Tags = this.getTags(taskParameters.tags);
+
+        if (taskParameters.monitorRollbackTriggers) {
+            request.RollbackConfiguration = {
+                MonitoringTimeInMinutes: taskParameters.monitoringTimeInMinutes,
+                RollbackTriggers: this.constructRollbackTriggerCollection(taskParameters.rollbackTriggerARNs)
+            };
+        }
 
         try {
             const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise();
@@ -269,6 +283,13 @@ export class TaskOperations {
         request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
         request.Tags = this.getTags(taskParameters.tags);
 
+        if (taskParameters.monitorRollbackTriggers) {
+            request.RollbackConfiguration = {
+                MonitoringTimeInMinutes: taskParameters.monitoringTimeInMinutes,
+                RollbackTriggers: this.constructRollbackTriggerCollection(taskParameters.rollbackTriggerARNs)
+            };
+        }
+
         try {
             // note that we can create a change set with no changes, but when we wait for completion it's then
             // that we get a validation failure, which we check for inside waitForChangeSetCreation
@@ -285,6 +306,23 @@ export class TaskOperations {
             console.error(tl.loc('ChangeSetCreationFailed', err.message), err);
             throw err;
         }
+    }
+
+    private static constructRollbackTriggerCollection(rollbackTriggerArns: string[]): CloudFormation.RollbackTrigger[] {
+        const triggers: CloudFormation.RollbackTrigger[] = [];
+
+        rollbackTriggerArns.forEach((rta) => {
+            console.log(tl.loc('AddingRollbackTrigger', rta));
+
+            // currently AWS::CloudWatch::Alarm is the only supported type; in future if this is
+            // extended we can parse the trigger arn and set the type appropriately
+            triggers.push({
+                Arn: rta,
+                Type: 'AWS::CloudWatch::Alarm'
+            });
+        });
+
+        return triggers;
     }
 
     private static async executeChangeSet(changeSetName: string, stackName: string) : Promise<void> {
