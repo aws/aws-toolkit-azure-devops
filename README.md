@@ -1,6 +1,6 @@
 # Overview
 
-The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI. The tools include a new service endpoint type, *AWS*, to supply AWS credentials to the tasks at runtime.
+The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI. The tools include a new service endpoint type, *AWS*, to supply AWS credentials to the tasks when they are executed by build agents.
 
 The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
 
@@ -8,19 +8,21 @@ The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https:/
 
 ## Highlighted Features
 
-### Create an AWS Credentials Connection
+### Create an AWS Credentials Connection for a Project
 
-To work with AWS services an AWS subscription has to be linked to Team Foundation Server or to Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use in the Build or Release Management definition by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab.
+To work with AWS services an AWS subscription has to be linked to each project in Team Foundation Server or Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. **Each VSTS/TFS project is associated with its own set of credentials. The credentials are used by the VSTS/TFS build agents when running builds and/or releases for a project containing tasks from the AWS tools.**
 
-Select the *AWS* endpoint type and provide the following parameters
+Select the *AWS* endpoint type and provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
 
-- A name used to refer to the credentials when configuring tasks that require AWS credentials
+- A name used to refer to the credentials when configuring the AWS tasks
 - AWS Access Key ID
 - AWS Secret Access Key
 
-Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/). Note that we strongly suggest the use of access and secret keys generated for an Identity and Access Management (IAM) user account.
+The credentials associated with the project are used by VSTS or TFS build agents that execute the AWS tasks you configure in your build and/or release pipelines. You can associate a single set of credentials to be used in all AWS tasks in a project or you can associate multiple sets of credentials. Project team members reference the associated credentials when configuring tasks for a project's build and/or release definitions.
 
-You can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the task(s) to use. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
+**Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
+
+Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
 
 ![aws endpoint](images/AWSEndpoint.png)
 
