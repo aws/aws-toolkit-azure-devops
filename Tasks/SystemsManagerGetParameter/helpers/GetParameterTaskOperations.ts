@@ -50,13 +50,17 @@ export class TaskOperations {
     private static async readSingleParameterValue(taskParameters: Parameters.TaskParameters): Promise<void> {
         const outputVariableName = this.transformParameterToVariableName(taskParameters, null);
 
+        let parameterName = taskParameters.parameterName;
+        if (taskParameters.parameterVersion) {
+            parameterName += ':' + taskParameters.parameterVersion;
+        }
         const response = await this.ssmClient.getParameter({
-            Name: taskParameters.parameterName,
+            Name: parameterName,
             WithDecryption: true
         }).promise();
 
         const isSecret = response.Parameter.Type === 'SecureString';
-        console.log(tl.loc('SettingVariable', outputVariableName, taskParameters.parameterName, isSecret));
+        console.log(tl.loc('SettingVariable', outputVariableName, parameterName, isSecret));
         tl.setVariable(outputVariableName, response.Parameter.Value, isSecret);
     }
 

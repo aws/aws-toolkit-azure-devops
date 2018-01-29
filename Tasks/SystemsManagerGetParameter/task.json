@@ -64,6 +64,15 @@
             "visibleRule": "readMode = single"
         },
         {
+            "name": "parameterVersion",
+            "label": "Parameter Version",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "If left blank the value associated with the latest version of the parameter is read. If set, the task requests the value associated with the specified version of the parameter. Parameter versions start at at 1 and increment each time a new value is stored for the parameter.",
+            "visibleRule": "readMode = single"
+        },
+        {
             "name": "parameterPath",
             "label": "Parameter Path",
             "type": "string",
@@ -185,6 +194,7 @@
         "SettingVariable": "Setting variable %s from parameter %s, is secret = %s",
         "TransformedParameterName": "Transformed input parameter name %s to build variable name %s",
         "UsingParameterNameForVariable": "Using original parameter name %s for build variable",
-        "TaskCompleted": "Successfully created variables from parameter value(s)."
+        "TaskCompleted": "Successfully created variables from parameter value(s).",
+        "InvalidParameterVersion": "%s is not a valid parameter version number. Version numbers should be >= 1"
     }
 }

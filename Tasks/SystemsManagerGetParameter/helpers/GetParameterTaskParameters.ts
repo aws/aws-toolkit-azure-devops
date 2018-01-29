@@ -13,6 +13,7 @@
 
     public readMode: string;
     public parameterName: string;
+    public parameterVersion: number;
     public parameterPath: string;
     public recursive: boolean;
     public variableNameTransform: string;
@@ -28,6 +29,15 @@
             this.readMode = tl.getInput('readMode', true);
             if (this.readMode === 'single') {
                   this.parameterName = tl.getInput('parameterName', true);
+                  const versionstring = tl.getInput('parameterVersion', false);
+                  if (versionstring) {
+                    const pv = parseInt(versionstring, 10);
+                    if (pv > 0) {
+                        this.parameterVersion = pv;
+                    } else {
+                        throw new Error(tl.loc('InvalidParameterVersion', pv));
+                    }
+                  }
                   this.variableNameTransform = tl.getInput('singleNameTransform', false);
             } else {
                   this.parameterPath = tl.getInput('parameterPath', true);
