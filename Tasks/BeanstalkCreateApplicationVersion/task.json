@@ -1,8 +1,8 @@
 {
-    "id": "1399d161-270d-4ee9-b913-78b177165406",
-    "name": "BeanstalkDeployApplication",
-    "friendlyName": "AWS Elastic Beanstalk Deploy Application",
-    "description": "Deploys an application to Amazon EC2 instance(s) using AWS Elastic Beanstalk",
+    "id": "d531ff03-d75a-41e5-92e8-7b4680e02eb4",
+    "name": "BeanstalkCreateApplicationVersion",
+    "friendlyName": "AWS Elastic Beanstalk Create Version",
+    "description": "Create an application revision for deployment to an environment.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS Elastic Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html) for more details on deploying applications with AWS Elastic Beanstalk.",
     "category": "Deploy",
@@ -17,7 +17,7 @@
         "Patch": "17"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "Deploy to Elastic Beanstalk: $(applicationName)",
+    "instanceNameFormat": "Create Elastic Beanstalk Revision: $(applicationName)",
     "groups": [
         {
             "name": "diagnostic",
@@ -48,28 +48,19 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The name of the Elastic Beanstalk application to update."
-        },
-        {
-            "name": "environmentName",
-            "label": "Environment Name",
-            "type": "string",
-            "required": true,
-            "defaultValue": "",
-            "helpMarkDown": "The name of the Elastic Beanstalk environment that will run the application."
+            "helpMarkDown": "The name of the Elastic Beanstalk application."
         },
         {
             "name": "applicationType",
             "type": "pickList",
-            "label": "Deployment Type",
+            "label": "Deployment Bundle Type",
             "defaultValue": "aspnet",
             "required": true,
-            "helpMarkDown": "Select the type of .NET web application to deploy, or a previously uploaded bundle in S3, or an application version previously registered with Elastic Beanstalk.",
+            "helpMarkDown": "The type of artifact bundle to use for the new application version.",
             "options": {
-                "aspnet": "ASP.NET (Source: Web Deploy Archive)",
-                "aspnetCoreWindows": "ASP.NET Core (Source: dotnet publish)",
-                "s3": "Existing deployment bundle in Amazon S3",
-                "version": "Existing application version"
+                "aspnet": "ASP.NET using a Web Deploy (msdeploy) archive file",
+                "aspnetCoreWindows": "ASP.NET Core using 'dotnet publish'",
+                "s3": "Pre-existing application bundle in Amazon S3"
             }
         },
         {
@@ -78,7 +69,7 @@
             "type": "filePath",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The path to the Web Deploy (msdeploy) archive that contains the application to deploy to Elastic Beanstalk. Required if *Application Type* is set to _ASP.NET_.",
+            "helpMarkDown": "The path to the Web Deploy (msdeploy) archive that contains the application that will be deployed to Elastic Beanstalk. Required if *Version Bundle Type* is set to _ASP.NET_.",
             "visibleRule": "applicationType = aspnet"
         },
         {
@@ -87,7 +78,7 @@
             "type": "filePath",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The path to the directory where the command 'dotnet publish' outputted the published application. Required if *Application Type* is set to _ASP.NET Core_.",
+            "helpMarkDown": "The path to the directory where the command 'dotnet publish' outputted the application code to be deployed. Required if *Version Bundle Type* is set to _ASP.NET Core_.",
             "visibleRule": "applicationType = aspnetCoreWindows"
         },
         {
@@ -96,7 +87,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The name of the bucket containing the previously uploaded application version bundle. Required if *Application Type* is set to _Existing deployment bundle in Amazon S3_.",
+            "helpMarkDown": "The name of the bucket containing the previously uploaded application version bundle. Required if *Version Bundle Type* is set to _Pre-existing application bundle in Amazon S3_.",
             "visibleRule": "applicationType = s3"
         },
         {
@@ -105,7 +96,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The Amazon S3 object key of the deployment bundle to be registered with Elastic Beanstalk. Required if *Application Type* is set to _Existing deployment bundle in Amazon S3_.",
+            "helpMarkDown": "The Amazon S3 object key of the version bundle to be registered with Elastic Beanstalk. Required if *Application Version Bundle Type* is set to _Pre-existing application bundle in Amazon S3_.",
             "visibleRule": "applicationType = s3"
         },
         {
@@ -114,7 +105,15 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "Version label for the revision. Optional when deploying an ASP.NET or ASP.NET Core application, or an existing artifact bundle in Amazon S3. Required when deploying an existing version. When optional and not specified the task will construct a version label based on the current date and time expressed in milliseconds (for example *v20171120222623*)."
+            "helpMarkDown": "Version label for the new revision. If not specified the task will construct a version label based on the current date and time expressed in milliseconds (for example *v20171120222623*)."
+        },
+        {
+            "name": "description",
+            "label": "Description",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Optional description of the version"
         },
         {
             "name": "outputVariable",
@@ -145,23 +144,19 @@
     ],
     "execution": {
         "Node": {
-            "target": "BeanstalkDeployApplication.js",
+            "target": "BeanstalkCreateApplicationVersion.js",
             "argumentFormat": ""
         }
     },
     "messages": {
         "DisplayApplicationType": "Deployment type set to %s",
-        "CreatedApplicationVersion": "Created application version: %s",
-        "DeployingExistingVersion": "Deploying existing application version: %s",
-        "StartingApplicationDeployment": "Started updating environment to version: %s",
+        "CreatedApplicationVersion": "Created version %s for application %s",
         "DeterminedBucket": "Determine S3 bucket %s to store application bundle",
         "UploadingBundle": "Uploading application bundle %s to object %s in bucket %s",
         "BundleUploadCompleted": "Application upload completed successfully",
         "BundleUploadFailed": "Upload of application bundle failed with error: %s",
         "WaitingForDeployment": "Waiting for deployment to complete",
-        "EventsComing": "Events from Elastic Beanstalk:",
         "FailedToFindEnvironment": "Failed to find environment when waiting for deployment completion",
-        "FailedToDeploy": "Error deploy application version to Elastic Beanstalk",
         "CreatingBeanstalkBundle": "Creating Elastic Beanstalk deploymnent bundle at %s",
         "ArchiveSize": "Archive size: %s total bytes",
         "ZipError": "Zip Error: %s",
@@ -171,8 +166,7 @@
         "AddingManifest": "Adding Elastic Beanstalk manifest to bundle",
         "BundleComplete": "ASP.NET Core Beanstalk bundle complete",
         "ApplicationDoesNotExist": "Application %s does not exist",
-        "EnvironmentDoesNotExist": "Environment %s does not exist for the application %s",
         "SettingOutputVariable": "Setting output variable %s with the version label %s",
-        "TaskCompleted": "Deployment to application %s completed"
+        "TaskCompleted": "Creation of new revision completed successfully"
     }
 }

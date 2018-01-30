@@ -2,6 +2,7 @@
     "tasks": [
         "AWSCLI",
         "AWSPowerShellModuleScript",
+        "BeanstalkCreateApplicationVersion",
         "BeanstalkDeployApplication",
         "CloudFormationCreateOrUpdateStack",
         "CloudFormationDeleteStack",

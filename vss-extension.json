@@ -82,6 +82,9 @@
             "path": "Tasks/AWSPowerShellModuleScript"
         },
         {
+            "path": "Tasks/BeanstalkCreateApplicationVersion"
+        },
+        {
             "path": "Tasks/BeanstalkDeployApplication"
         },
         {
@@ -236,6 +239,17 @@
             ],
             "properties": {
                 "name": "Tasks/AWSPowerShellModuleScript"
+            }
+        },
+        {
+            "id": "BeanstalkCreateApplicationVersion",
+            "description": "Create a new application version for later deployment to AWS Elastic Beanstalk",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/BeanstalkCreateApplicationVersion"
             }
         },
         {

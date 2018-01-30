@@ -1,0 +1,16 @@
+{
+    "name": "beanstalk.createversion",
+    "version": "1.0.17",
+    "description": "Create an application revision for deployment to an environment",
+    "main": "BeanstalkCreateApplicationVersion.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "archiver": "^2.0.0",
+        "aws-sdk": "2.188.0",
+        "vsts-task-lib": "^2.0.6"
+    }
+}

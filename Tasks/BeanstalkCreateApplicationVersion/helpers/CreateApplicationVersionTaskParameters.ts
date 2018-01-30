@@ -15,21 +15,22 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public readonly applicationTypeAspNet: string = 'aspnet';
     public readonly applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows';
     public readonly applicationTypeS3Archive: string = 's3';
-    public readonly applicationTypeExistingVersion: string = 'version';
 
     public applicationName: string;
-    public environmentName: string;
     public applicationType: string;
     public webDeploymentArchive: string;
     public dotnetPublishPath: string;
-    public versionLabel: string;
     public deploymentBundleBucket: string;
     public deploymentBundleKey: string;
+    public versionLabel: string;
+    public description: string;
     public outputVariable: string;
 
     constructor() {
         super();
         try {
+            this.applicationName = tl.getInput('applicationName', true);
+
             this.applicationType = tl.getInput('applicationType', true);
             console.log(tl.loc('DisplayApplicationType', this.applicationType));
 
@@ -49,15 +50,9 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
                     this.deploymentBundleBucket = tl.getInput('deploymentBundleBucket', true);
                     this.deploymentBundleKey = tl.getInput('deploymentBundleKey', true);
                 }
-                break;
-
-                default: // version label read below
-                break;
             }
 
-            this.applicationName = tl.getInput('applicationName', true);
-            this.environmentName = tl.getInput('environmentName', true);
-            this.versionLabel = tl.getInput('versionLabel', this.applicationType === this.applicationTypeExistingVersion);
+            this.versionLabel = tl.getInput('versionLabel', false);
             this.outputVariable = tl.getInput('outputVariable', false);
         } catch (error) {
             throw new Error(error.message);
