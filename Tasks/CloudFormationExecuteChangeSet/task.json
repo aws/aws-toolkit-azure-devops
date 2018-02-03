@@ -40,7 +40,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "Select the AWS credentials to use. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+            "helpMarkDown": "Select the AWS credentials to use when it executes on a build host. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
         },
         {
             "name": "regionName",
@@ -48,7 +48,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "AWS region name, please check https://docs.aws.amazon.com/general/latest/gr/rande.html."
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html)."
         },
         {
             "name": "changeSetName",

@@ -51,8 +51,8 @@ Name*
 AWS Credentials*
 ----------------
 
-    The AWS credentials used by the cmdlets in the module. If needed, choose :guilabel:`+`,
-    and then add a new AWS connection.
+    The AWS credentials to be used by the task when it executes on a build host. If needed, choose :guilabel:`+`, and then add a new
+    AWS service endpoint connection.
 
 AWS Region*
 -----------

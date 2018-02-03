@@ -8,11 +8,11 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
-.. _elastic-beanstalk-deploy:
+.. _elastic-beanstalk-createversion:
 
-########################
-|EBlong| Deployment Task
-########################
+############################
+|EBlong| Create Version Task
+############################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
@@ -21,7 +21,8 @@
 Synopsis
 ========
 
-    This task deploys a new version of an application to an |EB| environment associated with the application.
+    This task creates a new version of an application that can be deployed subsequently to an |EB| environment
+    associated with the application.
 
 Description
 ===========
@@ -31,8 +32,9 @@ Description
     choice or control. You simply upload your application, and |EB| automatically handles the details of
     capacity provisioning, load balancing, scaling, and application health monitoring.
 
-    This task can deploy ASP.NET applications (as Web Deploy archives), ASP.NET Core applications, an existing built
-    application or a previously registered application version using the |EB| Create Version task.
+    This task can upload and register new versions of ASP.NET applications (as Web Deploy archives), ASP.NET Core applications
+    or an existing application bundle previously uploaded to Amazon S3. The application version can then be deployed separately
+    to an |EB| environment associated with the application using the |EB| Deployment task.
 
 Parameters
 ==========
@@ -44,7 +46,7 @@ parameters are noted by an asterisk (*). Other parameters are optional.
 Displayname*
 ------------
 
-    The default name of the task, |EBlong| Deployment. You can rename it.
+    The default name of the task, |EBlong| Create Version. You can rename it.
 
 AWS Credentials*
 ----------------
@@ -63,54 +65,49 @@ Application Name*
 
     The name of the |EB| application.
 
-Environment Name*
------------------
+Deployment Bundle Type*
+-----------------------
 
-    The name of the |EB| environment that will run the application.
-
-    An environment represents the AWS resources (e.g., load balancer, Auto Scaling group, and |EC2| instances)
-    created specifically to run your application.
-
-Deployment Type*
-----------------
-
-    The type of application bundle to deploy. You can select from
+    The type of application bundle for which a new revision will be created in {EB}. You can select from
 
     * ASP.NET: the deployment bundle is expected to be a Web Deploy archive, built previously, which the task will upload.
     * ASP.NET Core: the deployment bundle will be created by the task (using the :code:`dotnet publish` command line tool) and uploaded.
     * Existing deployment bundle: choose to deploy a bundle that has been built and uploaded previously to Amazon S3.
-    * Existing application version: choose to deploy a revision previously registered with Elastic Beanstalk.
 
 Web Deploy Archive
 ------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`ASP.NET`. The path to the web deploy archive
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`ASP.NET`. The path to the web deploy archive
     containing the application to deploy to |EB|.
 
 Published Application Path
 --------------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`ASP.NET Core`. The path to the directory where the
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`ASP.NET Core`. The path to the directory where the
     command :code:`dotnet publish` outputs the published application.
 
 Deployment Bundle Bucket
 ------------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`Existing deployment bundle`. The name of the Amazon S3 bucket containing
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`Existing deployment bundle`. The name of the Amazon S3 bucket containing
     the revision bundle to deploy.
 
 Deployment Bundle Object Key
 ----------------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`Existing deployment bundle`. The Amazon S3 object key of the revision bundle file
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`Existing deployment bundle`. The Amazon S3 object key of the revision bundle file
     to be deployed.
+
+Description
+-----------
+
+    Optional description for the new revision.
 
 Version Label
 -------------
 
     Version label for the new application revision. If not specified the task will construct a version label
     based on the current date and time, expressed in milliseconds (for example *v20171120222623*).
-
 
 Version Label Output Variable
 -----------------------------

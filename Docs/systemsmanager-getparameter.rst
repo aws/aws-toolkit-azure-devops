@@ -45,13 +45,14 @@ Displayname*
 AWS Credentials*
 ----------------
 
-    The AWS credentials to use. If needed, choose :guilabel:`+`, and then add a new AWS connection.
+    The AWS credentials to be used by the task when it executes on a build host. If needed, choose :guilabel:`+`, and then add a new
+    AWS service endpoint connection.
 
 AWS Region*
 -----------
 
-    The AWS Region name to use. For more information, see :aws-gr:`Regions and Endpoints <rande>` in the
-    |AWS-gr|.
+    The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more
+    information, see :aws-gr:`Regions and Endpoints <rande>` in the |AWS-gr|.
 
 Read Mode*
 ----------
@@ -63,6 +64,14 @@ Parameter Name
 --------------
 
     Required if Read Mode is set to get a single parameter value. Identifies the name of the parameter to read.
+
+Parameter Version
+-----------------
+
+    Optional version number of the parameter value to be read. Parameter versions start at 1 and increase as each new value is
+    stored. If not specified the task reads the value of latest available version for the parameter.
+
+    This field is only available when Read Mode is set to get a single parameter value.
 
 Parameter Path
 --------------

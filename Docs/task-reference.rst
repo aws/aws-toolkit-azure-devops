@@ -54,6 +54,7 @@ Visual Studio Team Services.
    cloudformation-execute-changeset
    codedeploy-deployment
    ecr-pushimage
+   elastic-beanstalk-createversion
    elastic-beanstalk-deploy
    lambda-deploy
    lambda-netcore-deploy
