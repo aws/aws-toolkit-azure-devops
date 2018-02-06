@@ -83,8 +83,10 @@ Web Deploy Archive
 Published Application Path
 --------------------------
 
-    Required if :code:`Deployment Bundle Type` is set to :guilabel:`ASP.NET Core`. The path to the directory where the
-    command :code:`dotnet publish` outputs the published application.
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`ASP.NET Core`. The output location where the _dotnet publish_ command in your previous build steps placed the deployment artifact(s) to be published. Configure using either:
+
+    * The path to the output folder containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to not create a zip file of the published application.
+    * The path and filename of the zip file containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to create a zip file of the application artifacts.
 
 Deployment Bundle Bucket
 ------------------------

@@ -71,8 +71,8 @@ Environment Name*
     An environment represents the AWS resources (e.g., load balancer, Auto Scaling group, and |EC2| instances)
     created specifically to run your application.
 
-Deployment Type*
-----------------
+Deployment Bundle Type*
+-----------------------
 
     The type of application bundle to deploy. You can select from
 
@@ -84,25 +84,27 @@ Deployment Type*
 Web Deploy Archive
 ------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`ASP.NET`. The path to the web deploy archive
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`ASP.NET`. The path to the web deploy archive
     containing the application to deploy to |EB|.
 
 Published Application Path
 --------------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`ASP.NET Core`. The path to the directory where the
-    command :code:`dotnet publish` outputs the published application.
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`ASP.NET Core`. The output location where the _dotnet publish_ command in your previous build steps placed the deployment artifact(s) to be published. Configure using either:
+
+    * The path to the output folder containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to not create a zip file of the published application.
+    * The path and filename of the zip file containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to create a zip file of the application artifacts.
 
 Deployment Bundle Bucket
 ------------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`Existing deployment bundle`. The name of the Amazon S3 bucket containing
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`Existing deployment bundle`. The name of the Amazon S3 bucket containing
     the revision bundle to deploy.
 
 Deployment Bundle Object Key
 ----------------------------
 
-    Required if :code:`Deployment Type` is set to :guilabel:`Existing deployment bundle`. The Amazon S3 object key of the revision bundle file
+    Required if :code:`Deployment Bundle Type` is set to :guilabel:`Existing deployment bundle`. The Amazon S3 object key of the revision bundle file
     to be deployed.
 
 Version Label

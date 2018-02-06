@@ -61,7 +61,7 @@
         {
             "name": "applicationType",
             "type": "pickList",
-            "label": "Deployment Type",
+            "label": "Deployment Bundle Type",
             "defaultValue": "aspnet",
             "required": true,
             "helpMarkDown": "Select the type of .NET web application to deploy, or a previously uploaded bundle in S3, or an application version previously registered with Elastic Beanstalk.",
@@ -78,7 +78,7 @@
             "type": "filePath",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The path to the Web Deploy (msdeploy) archive that contains the application to deploy to Elastic Beanstalk. Required if *Application Type* is set to _ASP.NET_.",
+            "helpMarkDown": "The path to the Web Deploy (msdeploy) archive that contains the application to deploy to Elastic Beanstalk. Required if *Deployment Bundle Type* is set to _ASP.NET_.",
             "visibleRule": "applicationType = aspnet"
         },
         {
@@ -87,7 +87,7 @@
             "type": "filePath",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The path to the directory where the command 'dotnet publish' outputted the published application. Required if *Application Type* is set to _ASP.NET Core_.",
+            "helpMarkDown": "The output location where the _dotnet publish_ command in your previous build steps placed the deployment artifact(s) to be published. Configure using either:\n\n* The path to the output folder containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to not create a zip file of the published application.\n* The path and filename of the zip file containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to create a zip file of the application artifacts.\n\nRequired if *Deployment Bundle Type* is set to _ASP.NET Core_.",
             "visibleRule": "applicationType = aspnetCoreWindows"
         },
         {
@@ -96,7 +96,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The name of the bucket containing the previously uploaded application version bundle. Required if *Application Type* is set to _Existing deployment bundle in Amazon S3_.",
+            "helpMarkDown": "The name of the bucket containing the previously uploaded application version bundle. Required if *Deployment Bundle Type* is set to _Existing deployment bundle in Amazon S3_.",
             "visibleRule": "applicationType = s3"
         },
         {
@@ -105,7 +105,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The Amazon S3 object key of the deployment bundle to be registered with Elastic Beanstalk. Required if *Application Type* is set to _Existing deployment bundle in Amazon S3_.",
+            "helpMarkDown": "The Amazon S3 object key of the deployment bundle to be registered with Elastic Beanstalk. Required if *Deployment Bundle Type* is set to _Existing deployment bundle in Amazon S3_.",
             "visibleRule": "applicationType = s3"
         },
         {
