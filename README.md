@@ -10,7 +10,7 @@ The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https:/
 
 ### Create an AWS Credentials Connection for a Project
 
-To work with AWS services an AWS subscription has to be linked to each project in Team Foundation Server or Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. **Each VSTS/TFS project is associated with its own set of credentials. The credentials are used by the VSTS/TFS build agents when running builds and/or releases for a project containing tasks from the AWS tools.**
+To work with AWS services an AWS subscription has to be linked to each project in Team Foundation Server or Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Each VSTS/TFS project is associated with its own set of credentials. **The credentials are used by the VSTS/TFS build agents when running builds and/or releases for a project containing tasks from the AWS tools.**
 
 Select the *AWS* endpoint type and provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
 
