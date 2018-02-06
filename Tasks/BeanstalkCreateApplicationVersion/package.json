@@ -1,6 +1,6 @@
 {
     "name": "beanstalk.createversion",
-    "version": "1.0.18",
+    "version": "1.0.19",
     "description": "Create an application revision for deployment to an environment",
     "main": "BeanstalkCreateApplicationVersion.js",
     "scripts": {
