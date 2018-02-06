@@ -1,3 +1,10 @@
+### 1.0.18 (2018-02-06)
+
+* Added new Create Application Version task for AWS Elastic Beanstalk to enable creation of a new revision for an application without deploying the revision to an environment. This task is designed to support usage scenarios requiring a single revision be deployed to multiple environments for the application, where the existing deployment task would error out due to the revision already existing during deployment to environments updated subsequent to the first. The new revision can be associated with the build artifacts of an ASP.NET or ASP.NET Core web application in the build workspace or an existing application bundle uploaded previously to Amazon S3. When using an automatically created version label for the new revision the version label can also be captured into a build variable for use in downstream tasks.
+* Updated the existing Elastic Beanstalk deployment task to allow a revision previously created with the new Create Application Revision task to be specified, or a bundle previously uploaded to Amazon S3, as the source of the deployment artifacts to an environment.  When using an automatically created version label for the new revision the version label can also be captured into a build variable for use in downstream tasks.
+* Updated the Systems Manager Get Parameter task to enable specific parameter versions to be specified (when reading a single parameter value). By default the task reads the latest version of a parameter value.
+* Updated the CloudFormation CreateOrUpdateStack task to support rollback triggers.
+
 ### 1.0.17 (2018-01-15)
 
 * Updated the general-purpose Lambda deployment task for the newly supported 'dotnetcore2.0' and 'go1.x' runtimes.

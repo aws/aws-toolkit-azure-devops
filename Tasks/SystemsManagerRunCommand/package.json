@@ -1,6 +1,6 @@
 {
     "name": "systemsmanagerruncommand",
-    "version": "1.0.17",
+    "version": "1.0.18",
     "description": "Run a command remotely on a fleet of EC2 instances and/or on-premise machines.",
     "main": "SystemsManagerRunCommand.js",
     "scripts": {
