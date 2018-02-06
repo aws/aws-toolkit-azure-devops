@@ -1,6 +1,6 @@
 {
     "name": "ecrpushimage",
-    "version": "1.0.18",
+    "version": "1.0.19",
     "description": "Pushes a local Docker image to Elastic Container Registry",
     "main": "ECRPushImage.js",
     "scripts": {
