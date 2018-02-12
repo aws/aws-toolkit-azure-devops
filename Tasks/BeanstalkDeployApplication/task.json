@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "19"
+        "Patch": "20"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Elastic Beanstalk: $(applicationName)",
@@ -173,6 +173,8 @@
         "ApplicationDoesNotExist": "Application %s does not exist",
         "EnvironmentDoesNotExist": "Environment %s does not exist for the application %s",
         "SettingOutputVariable": "Setting output variable %s with the version label %s",
+        "ApplicationExistsQueryError": "DescribeApplications: error %s returned querying for existence of application %s",
+        "EnvironmentExistsQueryError": "DescribeEnvironments: error %s thrown querying for existence of environment %s for application %s",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }

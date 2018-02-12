@@ -1,4 +1,8 @@
-### 1.0.18 (2018-02-06)
+### 1.0.20 (2018-02-12)
+
+* Added extra diagnostic logging to the tests for application and environment existence in the Elastic Beanstalk Create Application Version and Deploy Application tasks.
+
+### 1.0.19 (2018-02-06)
 
 * Corrected missing task icon for the new Beanstalk Create Application Version task.
 

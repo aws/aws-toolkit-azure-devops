@@ -128,9 +128,10 @@ export class BeanstalkUtils {
                 ApplicationNames: [ applicationName ]
             }).promise();
 
+            tl.debug(`Query for application ${applicationName} yield ${response.Applications.length} items`);
             appExists = response.Applications.length === 1;
-        // tslint:disable-next-line:no-empty
         } catch (err) {
+            console.log(tl.loc('ApplicationExistsQueryError', applicationName, err));
         }
 
         if (!appExists) {
@@ -151,9 +152,10 @@ export class BeanstalkUtils {
                 IncludeDeleted: false
             }).promise();
 
+            tl.debug(`Query for environment ${environmentName} yielded ${response.Environments.length} items`);
             envExists = response.Environments.length === 1;
-        // tslint:disable-next-line:no-empty
         } catch (err) {
+            console.log(tl.loc('EnvironmentExistsQueryError', applicationName, environmentName, err));
         }
 
         if (!envExists) {

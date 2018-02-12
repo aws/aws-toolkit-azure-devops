@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "19"
+        "Patch": "20"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Create Elastic Beanstalk Revision: $(applicationName)",
@@ -167,6 +167,7 @@
         "BundleComplete": "ASP.NET Core Beanstalk bundle complete",
         "ApplicationDoesNotExist": "Application %s does not exist",
         "SettingOutputVariable": "Setting output variable %s with the version label %s",
+        "ApplicationExistsQueryError": "DescribeApplications: error %s returned querying for existence of application %s",
         "TaskCompleted": "Creation of new revision completed successfully"
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "lambdanetcoredeploy",
-    "version": "1.0.19",
+    "version": "1.0.20",
     "description": "Builds and deploys an AWS Lambda function.",
     "main": "LambdaNETCoreDeploy.js",
     "scripts": {
