@@ -9,6 +9,7 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
+import yaml = require('js-yaml');
 import CloudFormation = require('aws-sdk/clients/cloudformation');
 import S3 = require('aws-sdk/clients/s3');
 import Parameters = require('./CreateOrUpdateStackTaskParameters');
@@ -463,7 +464,16 @@ export class TaskOperations {
         }
 
         try {
-            const templateParameters = JSON.parse(fs.readFileSync(parametersFile, 'utf8'));
+            let templateParameters;
+            try {
+                templateParameters = JSON.parse(fs.readFileSync(parametersFile, 'utf8'));
+            } catch (err) {
+                try {
+                    templateParameters = yaml.safeLoad(fs.readFileSync(parametersFile, 'utf8'));
+                } catch (errorYamlLoad) {
+                    throw err;
+                }
+            }
             tl.debug('Successfully loaded template parameters file');
             return templateParameters;
         } catch (err) {
