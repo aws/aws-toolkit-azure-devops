@@ -62,6 +62,7 @@ export class TaskOperations {
                                      taskParameters.applicationName,
                                      taskParameters.environmentName,
                                      versionLabel,
+                                     taskParameters.description,
                                      taskParameters.applicationType === taskParameters.applicationTypeExistingVersion);
 
         await this.waitForDeploymentCompletion(taskParameters.applicationName, taskParameters.environmentName, startingEventDate);
@@ -99,6 +100,7 @@ export class TaskOperations {
                                             application: string,
                                             environment: string,
                                             versionLabel: string,
+                                            description: string,
                                             isExistingVersion: boolean): Promise<void> {
 
         if (!isExistingVersion) {
@@ -108,21 +110,26 @@ export class TaskOperations {
             };
 
             const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
-                'ApplicationName': application,
-                'VersionLabel': versionLabel,
-                'SourceBundle': sourceBundle
+                ApplicationName: application,
+                VersionLabel: versionLabel,
+                SourceBundle: sourceBundle,
+                Description: description
             };
 
             await this.beanstalkClient.createApplicationVersion(versionRequest).promise();
-            console.log(tl.loc('CreatedApplicationVersion', versionLabel));
+            if (description) {
+                console.log(tl.loc('CreatedApplicationVersionWithDescription', versionRequest.VersionLabel, description, application));
+            } else {
+                console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel, application));
+            }
         } else {
             console.log(tl.loc('DeployingExistingVersion', versionLabel));
         }
 
         const request: Beanstalk.UpdateEnvironmentMessage = {
-            'ApplicationName': application,
-            'EnvironmentName': environment,
-            'VersionLabel': versionLabel
+            ApplicationName: application,
+            EnvironmentName: environment,
+            VersionLabel: versionLabel
         };
         await this.beanstalkClient.updateEnvironment(request).promise();
         console.log(tl.loc('StartingApplicationDeployment', request.VersionLabel));
@@ -133,14 +140,14 @@ export class TaskOperations {
                                                      startingEventDate: Date): Promise<void> {
 
         const requestEnvironment: Beanstalk.DescribeEnvironmentsMessage = {
-            'ApplicationName': applicationName,
-            'EnvironmentNames': [environmentName]
+            ApplicationName: applicationName,
+            EnvironmentNames: [environmentName]
         };
 
         const requestEvents: Beanstalk.DescribeEventsMessage = {
-            'ApplicationName': applicationName,
-            'EnvironmentName': environmentName,
-            'StartTime': startingEventDate
+            ApplicationName: applicationName,
+            EnvironmentName: environmentName,
+            StartTime: startingEventDate
         };
 
         let lastPrintedEventDate = startingEventDate;
@@ -189,8 +196,8 @@ export class TaskOperations {
     private static async getLatestEventDate(applicationName: string, environmentName: string): Promise<Date> {
 
         const requestEvents: Beanstalk.DescribeEventsMessage = {
-            'ApplicationName': applicationName,
-            'EnvironmentName': environmentName
+            ApplicationName: applicationName,
+            EnvironmentName: environmentName
         };
 
         const response = await this.beanstalkClient.describeEvents(requestEvents).promise();

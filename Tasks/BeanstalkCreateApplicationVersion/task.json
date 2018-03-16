@@ -151,6 +151,7 @@
     "messages": {
         "DisplayApplicationType": "Deployment type set to %s",
         "CreatedApplicationVersion": "Created version %s for application %s",
+        "CreatedApplicationVersionWithDescription": "Created version %s, '%s', for application %s",
         "DeterminedBucket": "Determine S3 bucket %s to store application bundle",
         "UploadingBundle": "Uploading application bundle %s to object %s in bucket %s",
         "BundleUploadCompleted": "Application upload completed successfully",

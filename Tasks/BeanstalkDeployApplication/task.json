@@ -117,6 +117,14 @@
             "helpMarkDown": "Version label for the revision. Optional when deploying an ASP.NET or ASP.NET Core application, or an existing artifact bundle in Amazon S3. Required when deploying an existing version. When optional and not specified the task will construct a version label based on the current date and time expressed in milliseconds (for example *v20171120222623*)."
         },
         {
+            "name": "description",
+            "label": "Description",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Optional description of the version"
+        },
+        {
             "name": "outputVariable",
             "type": "string",
             "label": "Version Label Output Variable",
@@ -151,7 +159,8 @@
     },
     "messages": {
         "DisplayApplicationType": "Deployment type set to %s",
-        "CreatedApplicationVersion": "Created application version: %s",
+        "CreatedApplicationVersion": "Created version %s for application %s",
+        "CreatedApplicationVersionWithDescription": "Created version %s, '%s', for application %s",
         "DeployingExistingVersion": "Deploying existing application version: %s",
         "StartingApplicationDeployment": "Started updating environment to version: %s",
         "DeterminedBucket": "Determine S3 bucket %s to store application bundle",

@@ -55,13 +55,18 @@ export class TaskOperations {
         };
 
         const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
-            'ApplicationName': taskParameters.applicationName,
-            'VersionLabel': versionLabel,
-            'SourceBundle': sourceBundle
+            ApplicationName: taskParameters.applicationName,
+            VersionLabel: versionLabel,
+            SourceBundle: sourceBundle,
+            Description: taskParameters.description
         };
 
         await this.beanstalkClient.createApplicationVersion(versionRequest).promise();
-        console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel, taskParameters.applicationName));
+        if (taskParameters.description) {
+            console.log(tl.loc('CreatedApplicationVersionWithDescription', versionRequest.VersionLabel, taskParameters.description, taskParameters.applicationName));
+        } else {
+            console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel, taskParameters.applicationName));
+        }
 
         if (taskParameters.outputVariable) {
             console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable, versionLabel));

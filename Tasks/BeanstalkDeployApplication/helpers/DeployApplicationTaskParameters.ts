@@ -25,6 +25,8 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public versionLabel: string;
     public deploymentBundleBucket: string;
     public deploymentBundleKey: string;
+    public description: string;
+
     public outputVariable: string;
 
     constructor() {
@@ -58,6 +60,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.applicationName = tl.getInput('applicationName', true);
             this.environmentName = tl.getInput('environmentName', true);
             this.versionLabel = tl.getInput('versionLabel', this.applicationType === this.applicationTypeExistingVersion);
+            this.description = tl.getInput('description', false);
             this.outputVariable = tl.getInput('outputVariable', false);
         } catch (error) {
             throw new Error(error.message);

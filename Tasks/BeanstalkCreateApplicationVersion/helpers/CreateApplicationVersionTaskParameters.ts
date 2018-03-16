@@ -53,6 +53,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             }
 
             this.versionLabel = tl.getInput('versionLabel', false);
+            this.description = tl.getInput('description', false);
             this.outputVariable = tl.getInput('outputVariable', false);
         } catch (error) {
             throw new Error(error.message);
