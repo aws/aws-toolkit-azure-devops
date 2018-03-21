@@ -1,3 +1,8 @@
+### 1.0.21 (2018-03-22)
+
+* Issue #71: Extended the CloudFormation CreateorUpdateStack task to enable parameters to be specified inline in the task definition in addition to an external file.
+* Pull request #70: Enable parameters to the CloudFormation CreateOrUpdateStack task to be specified as JSON or YAML formatted content.
+
 ### 1.0.20 (2018-02-12)
 
 * Added extra diagnostic logging to the tests for application and environment existence in the Elastic Beanstalk Create Application Version and Deploy Application tasks.
