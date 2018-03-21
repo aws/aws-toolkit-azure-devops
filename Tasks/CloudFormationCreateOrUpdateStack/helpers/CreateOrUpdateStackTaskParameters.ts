@@ -19,13 +19,18 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public readonly maxRollbackTriggers: number = 5;
     public readonly maxTriggerMonitoringTime: number = 180;
 
+    public readonly loadTemplateParametersFromFile: string = 'file';
+    public readonly loadTemplateParametersInline: string = 'inline';
+
     public stackName: string;
     public templateSource: string;
     public templateFile: string;
     public s3BucketName: string;
     public s3ObjectKey: string;
     public templateUrl: string;
+    public templateParametersSource: string;
     public templateParametersFile: string;
+    public templateParameters: string;
     public useChangeSet: boolean;
     public changeSetName: string;
     public description: string;
@@ -71,15 +76,32 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
                     throw new Error(`Unrecognized template source: ${this.templateSource}`);
             }
 
-            // For currently unknown reason, if the user does not give a value then instead of an empty/null
-            // path (per default value for the field), we get what appears to be the root of the repository
-            // path. To solve this without needing to add a task parameter to indicate we should use a parameter
-            // file (a breaking change) we do a simple directory vs file test
-            this.templateParametersFile = tl.getPathInput('templateParametersFile', false, true);
-            if (this.templateParametersFile) {
-                if (fs.statSync(this.templateParametersFile).isDirectory()) {
-                    this.templateParametersFile = null;
+            this.templateParametersSource = tl.getInput('templateParametersSource', true);
+            switch (this.templateParametersSource) {
+                case this.loadTemplateParametersFromFile: {
+                    // Value set optional for backwards compatibilty, to enable continued operation of
+                    // tasks configured before 'inline' mode was added.
+                    // Note that if the user does not give a value then instead of an empty/null
+                    // path (per default value for the field), we get what appears to be the root
+                    // of the repository path. To solve this without needing to add a task parameter
+                    // to indicate we should use a parameter file (a breaking change) we do a simple
+                    // directory vs file test
+                    this.templateParametersFile = tl.getPathInput('templateParametersFile', false, true);
+                    if (this.templateParametersFile) {
+                        if (fs.statSync(this.templateParametersFile).isDirectory()) {
+                            this.templateParametersFile = null;
+                        }
+                    }
                 }
+                break;
+
+                case this.loadTemplateParametersInline: {
+                    this.templateParameters = tl.getInput('templateParameters', true);
+                }
+                break;
+
+                default:
+                    throw new Error(`Unrecognized template parameters source: ${this.templateParametersSource}`);
             }
 
             this.useChangeSet = tl.getBoolInput('useChangeSet', false);

@@ -143,11 +143,9 @@ export class TaskOperations {
             break;
         }
 
-        if (taskParameters.templateParametersFile) {
-            request.Parameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
-        }
+        request.Parameters = await this.loadTemplateParameters(taskParameters);
 
-        console.log(tl.loc('CreateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
+        console.log(tl.loc('CreateStack', taskParameters.templateFile));
 
         request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
         request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
@@ -173,7 +171,7 @@ export class TaskOperations {
     }
 
     private static async updateStack(taskParameters: Parameters.TaskParameters) : Promise<void> {
-        console.log(tl.loc('UpdateStack', taskParameters.templateFile, taskParameters.templateParametersFile));
+        console.log(tl.loc('UpdateStack', taskParameters.templateFile));
 
         const request: CloudFormation.UpdateStackInput = {
             StackName: taskParameters.stackName,
@@ -206,9 +204,7 @@ export class TaskOperations {
             break;
         }
 
-        if (taskParameters.templateParametersFile) {
-            request.Parameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
-        }
+        request.Parameters = await this.loadTemplateParameters(taskParameters);
 
         request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
         request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
@@ -275,9 +271,7 @@ export class TaskOperations {
             break;
         }
 
-        if (taskParameters.templateParametersFile) {
-            request.Parameters = await this.loadParametersFromFile(taskParameters.templateParametersFile);
-        }
+        request.Parameters = await this.loadTemplateParameters(taskParameters);
 
         request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
         request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
@@ -453,32 +447,63 @@ export class TaskOperations {
         }
     }
 
-    private static async loadParametersFromFile(parametersFile: string): Promise<CloudFormation.Parameters> {
+    private static loadTemplateParameters(taskParameters: Parameters.TaskParameters): CloudFormation.Parameters {
+
+        let parsedParameters: CloudFormation.Parameters;
+
+        switch (taskParameters.templateParametersSource) {
+            case taskParameters.loadTemplateParametersFromFile: {
+                parsedParameters = this.loadParametersFromFile(taskParameters.templateParametersFile);
+            }
+            break;
+
+            case taskParameters.loadTemplateParametersInline: {
+                console.log(tl.loc('LoadingTemplateParameters'));
+                parsedParameters = this.parseParameters(taskParameters.templateParameters);
+            }
+            break;
+        }
+
+        if (parsedParameters) {
+            console.log(tl.loc('ParametersLoadSucceeded'));
+        }
+        return parsedParameters;
+    }
+
+    private static loadParametersFromFile(parametersFile: string): CloudFormation.Parameters {
         if (!parametersFile) {
             console.log(tl.loc('NoParametersFileSpecified'));
             return null;
         }
+
         console.log(tl.loc('LoadingTemplateParametersFile', parametersFile));
         if (!tl.exist(parametersFile)) {
             throw new Error(tl.loc('ParametersFileDoesNotExist', parametersFile));
         }
 
+        const parameterContent = fs.readFileSync(parametersFile, 'utf8');
+        const templateParameters = this.parseParameters(parameterContent);
+        return templateParameters;
+    }
+
+    private static parseParameters(parameters: string): CloudFormation.Parameters {
+
+        let templateParameters;
         try {
-            let templateParameters;
-            try {
-                templateParameters = JSON.parse(fs.readFileSync(parametersFile, 'utf8'));
-            } catch (err) {
-                try {
-                    templateParameters = yaml.safeLoad(fs.readFileSync(parametersFile, 'utf8'));
-                } catch (errorYamlLoad) {
-                    throw err;
-                }
-            }
-            tl.debug('Successfully loaded template parameters file');
-            return templateParameters;
+            tl.debug('Attempting parse as json content');
+            templateParameters = JSON.parse(parameters);
         } catch (err) {
-            throw new Error(tl.loc('FailedToLoadParametersFile', err));
+            try {
+                tl.debug('Json parse failed, attempting yaml.');
+                templateParameters = yaml.safeLoad(parameters);
+            } catch (errorYamlLoad) {
+                tl.debug('Yaml parse failed, cannot determine file content format.');
+                throw new Error(tl.loc('ParametersLoadFailed'));
+            }
         }
+
+        tl.debug('Successfully parsed template parameters');
+        return templateParameters;
     }
 
     // If there were no changes, a validation error is thrown which we want to suppress

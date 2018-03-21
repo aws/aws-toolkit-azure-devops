@@ -114,12 +114,39 @@
             "visibleRule": "templateSource = url"
         },
         {
+            "name": "templateParametersSource",
+            "type": "radio",
+            "label": "Template Parameters",
+            "required": false,
+            "helpMarkDown": "Specifies the source of parameter values to supply with the template. If your template uses parameters you can supply their values in JSON or YAML content, from a file in the build area or inline in the task.\n\nIf your template does not need parameter value to be supplied leave the 'Local file' option field empty. Note that a value is required if the field is set to *Inline*.",
+            "defaultValue": "file",
+            "options": {
+                "file": "Local file",
+                "inline": "Inline"
+            }
+        },
+        {
             "name": "templateParametersFile",
             "type": "filePath",
-            "label": "Template Parameters File",
+            "label": "Parameters File",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Path to the file containing the template parameters. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide."
+            "helpMarkDown": "Optional path to the file containing the template parameters, in JSON or YAML format. To not use parameters, leave the field empty.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "visibleRule": "templateParametersSource = file"
+        },
+        {
+            "name": "templateParameters",
+            "type": "multiLine",
+            "label": "Parameters",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Parameter values for the template, in JSON or YAML format. A value must be provided if Template Parameters above is set to *Inline*.\n\n For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "visibleRule": "templateParametersSource = inline",
+            "properties": {
+                "resizable": "true",
+                "rows": "5",
+                "maxLength": "5000"
+            }
         },
         {
             "name": "useChangeSet",
@@ -305,11 +332,14 @@
         "StackLookupFailed": "Test for existence of stack %s returned error: '%s'.",
         "StackExists": "Stack exists, switching to update stack mode",
         "StackDoesNotExist": "Stack does not exist, switching to create stack mode",
-        "CreateStack": "Creating stack with template file %s, parameters file %s",
-        "UpdateStack": "Updating stack with template file %s, parameters file %s",
+        "CreateStack": "Creating stack with template file %s",
+        "UpdateStack": "Updating stack with template file %s",
         "LoadingTemplateFile": "Loading template file from '%s'",
         "TemplateFileDoesNotExist": "Template file '%s' does not exist",
         "LoadingTemplateParametersFile": "Loading template parameters file '%s'",
+        "LoadingTemplateParameters": "Loading template parameters from task definition",
+        "ParametersLoadSucceeded": "Successfully loaded template parameters",
+        "ParametersLoadFailed": "Unable to process parameters as either JSON or YAML as required by AWS CloudFormation",
         "StackCreated": "Stack %s transitioned to create complete status",
         "StackCreationFailed": "Stack %s failed to reach completion status, error: '%s'",
         "StackCreateRequestFailed": "Stack creation request failed with error: '%s'",
@@ -339,7 +369,6 @@
         "NoParametersFileSpecified": "No parameters file specified",
         "ParametersFileDoesNotExist": "Parameters file '%s' could not be found.",
         "UploadingTemplate": "Uploading template file %s to object %s in bucket %s",
-        "FailedToLoadParametersFile": "Error loading or parsing parameters file: %s",
         "FailedToLoadTemplateFile": "Error loading template file: %s",
         "TemplateUploadFailed": "Error uploading template file: %s",
         "GeneratedTemplateUrl": "Generated url to template: %s",
