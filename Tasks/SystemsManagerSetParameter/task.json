@@ -1,0 +1,116 @@
+{
+    "id": "3C47544D-0C9B-49E1-89A4-3C94D0586C89",
+    "name": "SystemsManagerSetParameter",
+    "friendlyName": "AWS Systems Manager Set Parameter",
+    "description": "Creates or updates a parameter in Systems Manager Parameter Store",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) for more information.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "21"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "Systems Manager Set Parameter: $(parameterName)",
+    "groups": [
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use when it executes on a build host. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html)."
+        },
+        {
+            "name": "parameterName",
+            "label": "Parameter Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name identifying the parameter to be created or updated."
+        },
+        {
+            "name": "parameterType",
+            "label": "Parameter Type",
+            "type": "pickList",
+            "defaultValue": "string",
+            "required": true,
+            "helpMarkDown": "The type of the parameter. _Note:_ If the parameter exists and is a secure string, this field is ignored and the secure string status of the parameter is retained.\n\nString - the parameter is assigned a single string value\nString list - the parameter value is a comma-separated list of strings\nSecure string - the parameter value is encrypted at rest using either a service- or customer-provided KMS key.",
+            "options": {
+                "String": "String",
+                "StringList": "String list",
+                "SecureString": "Secure string"
+            }
+        },
+        {
+            "name": "parameterValue",
+            "label": "Parameter Value",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The value to assign to the parameter."
+        },
+        {
+            "name": "encryptionKeyId",
+            "label": "KMS Key ID",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "If the parameter type is set to *secure string*, identifies the customer-provided KMS key used to encrypt the parameter value at rest. If a secure string type is specified but no key provided a service-provided KMS key is used to encrypt the parameter value.",
+            "visibleRule": "parameterType = securestring"
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
+            "groupName": "diagnostic"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "SystemsManagerSetParameter.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "ParameterExistsAndIsSecureString": "Parameter %s exists and is secure string type, secure mode will be retained after update.",
+        "ParameterExistsAndIsNotSecureString": "Parameter %s exists and is not secure string type.",
+        "ParameterDoesNotExist": "Parameter %s does not exist; a new parameter will be created of the specified type.",
+        "CreateOrUpdateFailed": "Create or update of parameter failed with error %s",
+        "ErrorTestingParameter": "An error occurred while accessing the parameter to validate SecureString requirement, error message: %s",
+        "TaskCompleted": "Successfully created or updated parameter value."
+    }
+}

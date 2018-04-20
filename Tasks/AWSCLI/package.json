@@ -9,6 +9,7 @@
     "author": "",
     "license": "MIT",
     "dependencies": {
+        "sdkutils": "file:../../_build/Tasks/Common/sdkutils",
         "vsts-task-lib": "^2.0.6"
     }
 }

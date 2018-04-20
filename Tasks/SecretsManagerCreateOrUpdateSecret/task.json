@@ -1,0 +1,190 @@
+{
+    "id": "3D6CB0C8-D1F9-465F-957A-A02C776646A0",
+    "name": "SecretsManagerCreateOrUpdateSecret",
+    "friendlyName": "AWS Secrets Manager Create/Update Secret",
+    "description": "Updates a secret, optionally creating a secret if it does not exist",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/) for more information.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "21"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "Secrets Manager Create/Update Secret: $(secretName)",
+    "groups": [
+        {
+            "name": "outputs",
+            "displayName": "Outputs",
+            "isExpanded": false
+        },
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use when it executes on a build host. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html)."
+        },
+        {
+            "name": "secretNameOrId",
+            "label": "Secret Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "Speciﬁes the friendly name of the secret. The secret name can consist of uppercase letters, lowercase letters, digits, and any of the following characters: /_+=.@-\n\nSpaces are not permitted.\n\nIf updating an existing secret you can specify either the Amazon Resource Name (ARN) or the friendly name of the secret."
+        },
+        {
+            "name": "description",
+            "label": "Description",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Optional description of the secret."
+        },
+        {
+            "name": "secretValueSource",
+            "label": "Secret Value Location",
+            "type": "radio",
+            "defaultValue": "inline",
+            "required": true,
+            "helpMarkDown": "Specifies the source of the value to be stored in the secret. You can enter text values for secrets inline in the task configuration or in a file loaded when the task runs. Binary secret values must be loaded from a file.",
+            "options": {
+                "inline": "Inline",
+                "file": "From File"
+            }
+        },
+        {
+            "name": "secretValue",
+            "label": "Secret Value",
+            "type": "multiLine",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Specifies the text value that you want to store in this secret.\n\nFor storing multiple values, we recommend that you use a JSON text string argument and specify key/value pairs.\n\nRequired if *Secret Value Location* is set to _Inline_.",
+            "visibleRule": "secretValueSource = inline"
+        },
+        {
+            "name": "secretValueType",
+            "label": "Secret Value Type",
+            "type": "radio",
+            "defaultValue": "string",
+            "required": true,
+            "helpMarkDown": "Specifies whether the file contents being stored in the secret text or binary data. *Note:* to satisfy the service's API requirements the task will automatically base-64 encode secrets specified as binary type; you do not need to perform the base-64 encoding prior to specifying the secret value in the task.",
+            "options": {
+                "string": "String",
+                "binary": "Binary"
+            },
+            "visibleRule": "secretValueSource = file"
+        },
+        {
+            "name": "secretValueFile",
+            "label": "Path to File Containing Secret Value",
+            "type": "filePath",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Specifies the file containing the value (text or binary) that you want to store in this secret.\n\nRequired if *Secret Value Location* is set to _From File_.",
+            "visibleRule": "secretValueSource = file"
+        },
+        {
+            "name": "kmsKeyId",
+            "label": "KMS Key ID",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Speciﬁes the ARN or alias of the AWS KMS customer master key (CMK) to be used to encrypt the secret.\n\nIf you don't specify this value, then Secrets Manager defaults to using the AWS account's default CMK (the one named aws/secretsmanager). If a KMS CMK with that name doesn't yet exist, then Secrets Manager creates it for you automatically the ﬁrst time it needs to encrypt a secret.\n\n*Important* You can use the account's default CMK to encrypt and decrypt only if you call this operation using credentials from the same account that owns the secret. If the secret is in a diﬀerent account, then you must create a custom CMK and specify the ARN in this ﬁeld."
+        },
+        {
+            "name": "autoCreateSecret",
+            "label": "Create secret if it does not exist",
+            "type": "boolean",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If the specified secret does not exist, attempt to create a new secret. Secrets Manager automatically attaches the staging label AWSCURRENT to the new version. If this option is not selected, the task will return an error if the secret cannot be found."
+        },
+        {
+            "name": "tags",
+            "type": "multiLine",
+            "label": "Tags for New Secret",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Optional list of tags (key-value pairs) that can be assigned to the new secret. Enter as Key=Value, one per line. Up to 50 tags can be applied to a secret.",
+            "visibleRule": "autoCreateSecret = true"
+        },
+        {
+            "name": "arnOutputVariable",
+            "type": "string",
+            "label": "Output variable name to contain the secret's ARN",
+            "defaultValue": "",
+            "groupName": "outputs",
+            "helpMarkDown": "Optional name of a variable to store the ARN of the new or updated secret on task completion.",
+            "required": false
+        },
+        {
+            "name": "versionIdOutputVariable",
+            "type": "string",
+            "label": "Output variable name to contain the secret's version ID",
+            "defaultValue": "",
+            "groupName": "outputs",
+            "helpMarkDown": "Optional name of a variable to store the version ID of the new or updated secret on task completion.",
+            "required": false
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
+            "groupName": "diagnostic"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "SecretsManagerCreateOrUpdateSecret.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "UpdatingSecret": "Updating secret %s.",
+        "SecretNotFound": "Specified secret does not exist, cannot proceed with update.",
+        "SecretNotFoundAutoCreating": "Specified secret does not exist. 'Create secret if it does not exist' was set true for task - attempting to create a new secret.",
+        "SecretCreated": "Successfully created new secret named %s, ARN '%s'.",
+        "SecretCreationFailed": "Error creating secret: %s",
+        "SecretUpdateFailed": "Error updading secret: %s",
+        "AddingTag": "Adding tag key '%s', value '%s'",
+        "SettingVersionIdOutputVariable": "Setting version ID for secret into task output variable %s",
+        "SettingArnOutputVariable": "Setting ARN for new secret into task output variable %s",
+        "TooManyTags": "%s tags were specified for the task. The service permits a maximum of %s.",
+        "TaskCompleted": "Successfully created the new secret."
+    }
+}

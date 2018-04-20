@@ -1,0 +1,106 @@
+{
+    "id": "B6D19A53-DC5F-4B71-A49C-63E87F49E9AB",
+    "name": "SecretsManagerGetSecret",
+    "friendlyName": "AWS Secrets Manager Get Secret",
+    "description": "Stores the value of a secret in AWS Secrets Manager into a secret build variable.",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Please refer to [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/) for more information.",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "21"
+    },
+    "minimumAgentVersion": "1.91.0",
+    "instanceNameFormat": "Secrets Manager Get Secret: $(secretId)",
+    "groups": [
+        {
+            "name": "diagnostic",
+            "displayName": "Diagnostic",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Select the AWS credentials to use when it executes on a build host. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html)."
+        },
+        {
+            "name": "secretIdOrName",
+            "label": "Secret ID/Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "Specifies the secret containing the version that you want to retrieve. You can specify either the Amazon Resource Name (ARN) or the friendly name of the secret."
+        },
+        {
+            "name": "variableName",
+            "label": "Variable Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the build variable to hold the value of the secret. *Note*: The variable will automatically be set to 'secret' mode."
+        },
+        {
+            "name": "versionId",
+            "label": "Version ID",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Specifies the unique identifier of the version of the secret that you want to retrieve. If you specify this parameter then don't specify VersionStage. If you don't specify either a VersionStage or SecretVersionId then the default is to perform the operation on the version with the VersionStage value of AWSCURRENT."
+        },
+        {
+            "name": "versionStage",
+            "label": "Version Stage",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "Specifies the secret version that you want to retrieve by the staging label attached to the version.\n\nStaging labels are used to keep track of different versions during the rotation process. If you use this parameter then don't specify SecretVersionId. If you don't specify either a VersionStage or SecretVersionId, then the default is to perform the operation on the version with the version stage value of AWSCURRENT."
+        },
+        {
+            "name": "logRequest",
+            "type": "boolean",
+            "label": "Log Request",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
+            "groupName": "diagnostic"
+        },
+        {
+            "name": "logResponse",
+            "type": "boolean",
+            "label": "Log Response",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
+            "groupName": "diagnostic"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "SecretsManagerGetSecret.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "RetrievingSecret": "Reading value for secret '%s'.",
+        "TaskCompleted": "Successfully read the secret into the build variable '%s'."
+    }
+}

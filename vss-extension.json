@@ -40,7 +40,8 @@
         "SQS",
         "AWSPowerShell",
         "Elastic Container Registry",
-        "EC2 Systems Manager"
+        "Systems Manager",
+        "Secrets Manager"
     ],
     "links": {
         "getstarted": {
@@ -118,6 +119,12 @@
             "path": "Tasks/S3Upload"
         },
         {
+            "path": "Tasks/SecretsManagerCreateOrUpdateSecret"
+        },
+        {
+            "path": "Tasks/SecretsManagerGetSecret"
+        },
+        {
             "path": "Tasks/SendMessage"
         },
         {
@@ -125,6 +132,9 @@
         },
         {
             "path": "Tasks/SystemsManagerRunCommand"
+        },
+        {
+            "path": "Tasks/SystemsManagerSetParameter"
         }
     ],
     "categories": [
@@ -374,6 +384,28 @@
             }
         },
         {
+            "id": "SecretsManagerCreateOrUpdateSecret",
+            "description": "Updates a secret, optionally creating a secret if it does not exist",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/SecretsManagerCreateOrUpdateSecret"
+            }
+        },
+        {
+            "id": "SecretsManagerGetSecret",
+            "description": "Stores the value of a secret in AWS Secrets Manager into a secret build variable",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/SecretsManagerGetSecret"
+            }
+        },
+        {
             "id": "SendMessage",
             "description": "Sends a message to an SNS topic or SQS queue",
             "type": "ms.vss-distributed-task.task",
@@ -404,6 +436,17 @@
             ],
             "properties": {
                 "name": "Tasks/SystemsManagerRunCommand"
+            }
+        },
+        {
+            "id": "SystemsManagerSetParameter",
+            "description": "Creates or updates a parameter value in the Systems Manager Parameter Store.",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/SystemsManagerSetParameter"
             }
         }
     ]

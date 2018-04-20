@@ -10,5 +10,4 @@
 **/*.taskkey
 **/*/*.loc.json
 **/*/resources.resjson
-
-
+**/package-lock.json
