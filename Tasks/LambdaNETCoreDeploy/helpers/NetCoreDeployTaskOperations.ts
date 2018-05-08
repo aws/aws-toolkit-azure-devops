@@ -83,7 +83,13 @@ export class TaskOperations {
 
     private static determineProjectDirectory(specifedLambdaProject : string) : string {
 
-        if (path.extname(specifedLambdaProject) === '') {
+        // should have already verified existence when reading parameters, but defense in
+        // depth
+        if (!fs.existsSync(specifedLambdaProject)) {
+            throw new Error(tl.loc('ProjectPathOrFileDoesNotExist', specifedLambdaProject));
+        }
+
+        if (fs.statSync(specifedLambdaProject).isDirectory()) {
             return specifedLambdaProject;
         }
 
