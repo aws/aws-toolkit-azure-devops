@@ -13,110 +13,114 @@ import Q = require('q');
 import archiver = require('archiver');
 import CodeDeploy = require('aws-sdk/clients/codedeploy');
 import S3 = require('aws-sdk/clients/s3');
-import Parameters = require('./DeployApplicationTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './DeployApplicationTaskParameters';
 
 export class TaskOperations {
 
-    public static async deploy(taskParameters: Parameters.TaskParameters): Promise<void> {
-
-        await this.createServiceClients(taskParameters);
-
-        await this.verifyResourcesExist(taskParameters);
-
-        let bundleKey: string;
-        if (taskParameters.deploymentRevisionSource === taskParameters.revisionSourceFromWorkspace) {
-            bundleKey = await this.uploadBundle(taskParameters);
-        } else {
-            bundleKey = taskParameters.bundleKey;
-        }
-        const deploymentId: string = await this.deployRevision(taskParameters, bundleKey);
-
-        if (taskParameters.outputVariable) {
-            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
-            tl.setVariable(taskParameters.outputVariable, deploymentId);
-        }
-
-        await this.waitForDeploymentCompletion(taskParameters.applicationName, deploymentId);
-
-        console.log(tl.loc('TaskCompleted', taskParameters.applicationName));
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
     }
 
-    private static codeDeployClient: CodeDeploy;
-    private static s3Client: S3;
+    public async execute(): Promise<void> {
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+        await this.createServiceClients();
+
+        await this.verifyResourcesExist();
+
+        let bundleKey: string;
+        if (this.taskParameters.deploymentRevisionSource === TaskParameters.revisionSourceFromWorkspace) {
+            bundleKey = await this.uploadBundle();
+        } else {
+            bundleKey = this.taskParameters.bundleKey;
+        }
+        const deploymentId: string = await this.deployRevision(bundleKey);
+
+        if (this.taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable));
+            tl.setVariable(this.taskParameters.outputVariable, deploymentId);
+        }
+
+        await this.waitForDeploymentCompletion(this.taskParameters.applicationName, deploymentId);
+
+        console.log(tl.loc('TaskCompleted', this.taskParameters.applicationName));
+    }
+
+    private codeDeployClient: CodeDeploy;
+    private s3Client: S3;
+
+    private async createServiceClients(): Promise<void> {
 
         const codeDeployOpts: CodeDeploy.ClientConfiguration = {
             apiVersion: '2014-10-06',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
-        this.codeDeployClient = sdkutils.createAndConfigureSdkClient(CodeDeploy, codeDeployOpts, taskParameters, tl.debug);
+        this.codeDeployClient = SdkUtils.createAndConfigureSdkClient(CodeDeploy, codeDeployOpts, this.taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
-        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
+        this.s3Client = SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
-    private static async verifyResourcesExist(taskParameters: TaskParameters): Promise<void> {
+    private async verifyResourcesExist(): Promise<void> {
 
         try {
-            await this.codeDeployClient.getApplication({ applicationName: taskParameters.applicationName }).promise();
+            await this.codeDeployClient.getApplication({ applicationName: this.taskParameters.applicationName }).promise();
         } catch (err) {
-            throw new Error(tl.loc('ApplicationDoesNotExist', taskParameters.applicationName));
+            throw new Error(tl.loc('ApplicationDoesNotExist', this.taskParameters.applicationName));
         }
 
         try {
             await this.codeDeployClient.getDeploymentGroup({
-                applicationName: taskParameters.applicationName,
-                deploymentGroupName: taskParameters.deploymentGroupName
+                applicationName: this.taskParameters.applicationName,
+                deploymentGroupName: this.taskParameters.deploymentGroupName
             }).promise();
         } catch (err) {
-            throw new Error(tl.loc('DeploymentGroupDoesNotExist', taskParameters.deploymentGroupName, taskParameters.applicationName));
+            throw new Error(tl.loc('DeploymentGroupDoesNotExist', this.taskParameters.deploymentGroupName, this.taskParameters.applicationName));
         }
 
-        if (taskParameters.deploymentRevisionSource === taskParameters.revisionSourceFromS3) {
+        if (this.taskParameters.deploymentRevisionSource === TaskParameters.revisionSourceFromS3) {
             try {
                 await this.s3Client.headObject({
-                    Bucket: taskParameters.bucketName,
-                    Key: taskParameters.bundleKey
+                    Bucket: this.taskParameters.bucketName,
+                    Key: this.taskParameters.bundleKey
                 }).promise();
             } catch (err) {
-                throw new Error(tl.loc('RevisionBundleDoesNotExist', taskParameters.bundleKey, taskParameters.bucketName));
+                throw new Error(tl.loc('RevisionBundleDoesNotExist', this.taskParameters.bundleKey, this.taskParameters.bucketName));
             }
         }
     }
 
-    private static async uploadBundle(taskParameters: Parameters.TaskParameters): Promise<string> {
+    private async uploadBundle(): Promise<string> {
 
         let archiveName: string;
         let autoCreatedArchive: boolean = false;
-        if (tl.stats(taskParameters.revisionBundle).isDirectory()) {
+        if (tl.stats(this.taskParameters.revisionBundle).isDirectory()) {
             autoCreatedArchive = true;
-            archiveName = await this.createDeploymentArchive(taskParameters.revisionBundle, taskParameters.applicationName);
+            archiveName = await this.createDeploymentArchive(this.taskParameters.revisionBundle, this.taskParameters.applicationName);
         } else {
-            archiveName = taskParameters.revisionBundle;
+            archiveName = this.taskParameters.revisionBundle;
         }
 
         let key: string;
         const bundleFilename = path.basename(archiveName);
-        if (taskParameters.bundlePrefix) {
-            key = taskParameters.bundlePrefix + '/' + bundleFilename;
+        if (this.taskParameters.bundlePrefix) {
+            key = this.taskParameters.bundlePrefix + '/' + bundleFilename;
         } else {
             key = bundleFilename;
         }
 
-        console.log(tl.loc('UploadingBundle', archiveName, key, taskParameters.bucketName));
+        console.log(tl.loc('UploadingBundle', archiveName, key, this.taskParameters.bucketName));
         const fileBuffer = fs.createReadStream(archiveName);
         try {
             const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
-                Bucket: taskParameters.bucketName,
+                Bucket: this.taskParameters.bucketName,
                 Key: key,
                 Body: fileBuffer
             }).promise();
@@ -135,14 +139,14 @@ export class TaskOperations {
         }
     }
 
-    private static async createDeploymentArchive(bundleFolder: string, applicationName: string): Promise<string> {
+    private async createDeploymentArchive(bundleFolder: string, applicationName: string): Promise<string> {
 
         console.log(tl.loc('CreatingDeploymentBundleArchiveFromFolder', bundleFolder));
 
         // echo what we do with Elastic Beanstalk deployments and use time as a version suffix,
         // creating the zip file inside the supplied folder
         const versionSuffix = '.v' + new Date().getTime();
-        const tempDir = sdkutils.getTempLocation();
+        const tempDir = SdkUtils.getTempLocation();
         const archiveName = path.join(tempDir, applicationName + versionSuffix +  '.zip');
 
         const output = fs.createWriteStream(archiveName);
@@ -169,7 +173,7 @@ export class TaskOperations {
         return archiveName;
     }
 
-    private static async deployRevision(taskParameters: Parameters.TaskParameters, bundleKey: string): Promise<string> {
+    private async deployRevision(bundleKey: string): Promise<string> {
         console.log(tl.loc('DeployingRevision'));
 
         // use bundle key as taskParameters.revisionBundle might be pointing at a folder
@@ -185,23 +189,23 @@ export class TaskOperations {
 
         try {
             const request: CodeDeploy.CreateDeploymentInput = {
-                applicationName: taskParameters.applicationName,
-                deploymentGroupName: taskParameters.deploymentGroupName,
-                description: taskParameters.description,
-                fileExistsBehavior: taskParameters.fileExistsBehavior,
-                ignoreApplicationStopFailures: taskParameters.ignoreApplicationStopFailures,
-                updateOutdatedInstancesOnly: taskParameters.updateOutdatedInstancesOnly,
+                applicationName: this.taskParameters.applicationName,
+                deploymentGroupName: this.taskParameters.deploymentGroupName,
+                description: this.taskParameters.description,
+                fileExistsBehavior: this.taskParameters.fileExistsBehavior,
+                ignoreApplicationStopFailures: this.taskParameters.ignoreApplicationStopFailures,
+                updateOutdatedInstancesOnly: this.taskParameters.updateOutdatedInstancesOnly,
                 revision: {
                     revisionType: 'S3',
                     s3Location: {
-                        bucket: taskParameters.bucketName,
+                        bucket: this.taskParameters.bucketName,
                         key: bundleKey,
                         bundleType: archiveType
                     }
                 }
             };
             const response: CodeDeploy.CreateDeploymentOutput = await this.codeDeployClient.createDeployment(request).promise();
-            console.log(tl.loc('DeploymentStarted', taskParameters.deploymentGroupName, taskParameters.applicationName, response.deploymentId));
+            console.log(tl.loc('DeploymentStarted', this.taskParameters.deploymentGroupName, this.taskParameters.applicationName, response.deploymentId));
             return response.deploymentId;
         } catch (err) {
             console.error(tl.loc('DeploymentError', err.message), err);
@@ -209,7 +213,7 @@ export class TaskOperations {
         }
     }
 
-    private static async waitForDeploymentCompletion(applicationName: string, deploymentId: string) : Promise<void> {
+    private async waitForDeploymentCompletion(applicationName: string, deploymentId: string) : Promise<void> {
 
          return new Promise<void>((resolve, reject) => {
             console.log(tl.loc('WaitingForDeployment'));

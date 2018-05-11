@@ -7,13 +7,13 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
     // deploymentRevisionSource options
-    public readonly revisionSourceFromWorkspace: string = 'workspace';
-    public readonly revisionSourceFromS3: string = 's3';
+    public static readonly revisionSourceFromWorkspace: string = 'workspace';
+    public static readonly revisionSourceFromS3: string = 's3';
 
     public applicationName: string;
     public deploymentGroupName: string;
@@ -35,13 +35,13 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.deploymentGroupName = tl.getInput('deploymentGroupName', true);
             this.deploymentRevisionSource = tl.getInput('deploymentRevisionSource', true);
             switch (this.deploymentRevisionSource) {
-                case this.revisionSourceFromWorkspace: {
+                case TaskParameters.revisionSourceFromWorkspace: {
                     this.revisionBundle = tl.getPathInput('revisionBundle', true, true);
                     this.bundlePrefix = tl.getInput('bundlePrefix', false);
                 }
                 break;
 
-                case this.revisionSourceFromS3: {
+                case TaskParameters.revisionSourceFromS3: {
                     this.bundleKey = tl.getInput('bundleKey', true);
                 }
                 break;

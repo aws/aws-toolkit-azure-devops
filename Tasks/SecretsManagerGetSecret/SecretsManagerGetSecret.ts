@@ -9,19 +9,19 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
 
-import Parameters = require('./helpers/GetSecretTaskParameters');
-import Operations = require('./helpers/GetSecretTaskOperations');
+import { TaskParameters } from './helpers/GetSecretTaskParameters';
+import { TaskOperations } from './helpers/GetSecretTaskOperations';
 
 function run(): Promise<void> {
 
     const taskManifestFile = path.join(__dirname, 'task.json');
     tl.setResourcePath(taskManifestFile);
-    sdkutils.setSdkUserAgentFromManifest(taskManifestFile);
+    SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
 
-    const taskParameters = new Parameters.TaskParameters();
-    return Operations.TaskOperations.getSecret(taskParameters);
+    const taskParameters = new TaskParameters();
+    return new TaskOperations(taskParameters).execute();
 }
 
 // run

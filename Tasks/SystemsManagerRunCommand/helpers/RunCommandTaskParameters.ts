@@ -7,14 +7,14 @@
   */
 
   import tl = require('vsts-task-lib/task');
-  import sdkutils = require('sdkutils/sdkutils');
+  import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-  export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+  export class TaskParameters extends AWSTaskParametersBase {
 
     // instance selector options
-    public readonly fromInstanceIds: string = 'fromInstanceIds';
-    public readonly fromTags: string = 'fromTags';
-    public readonly fromBuildVariable: string = 'fromBuildVariable';
+    public static readonly fromInstanceIds: string = 'fromInstanceIds';
+    public static readonly fromTags: string = 'fromTags';
+    public static readonly fromBuildVariable: string = 'fromBuildVariable';
 
     // task parameters
     public documentName: string;
@@ -45,17 +45,17 @@
 
             this.instanceSelector = tl.getInput('instanceSelector', true);
             switch (this.instanceSelector) {
-                case this.fromInstanceIds: {
+                case TaskParameters.fromInstanceIds: {
                     this.instanceIds = tl.getDelimitedInput('instanceIds', '\n', true);
                 }
                 break;
 
-                case this.fromTags: {
+                case TaskParameters.fromTags: {
                     this.instanceTags = tl.getDelimitedInput('instanceTags', '\n', true);
                 }
                 break;
 
-                case this.fromBuildVariable: {
+                case TaskParameters.fromBuildVariable: {
                     this.instanceBuildVariable = tl.getInput('instanceBuildVariable', true);
                 }
                 break;

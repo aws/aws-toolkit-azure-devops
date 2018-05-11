@@ -9,61 +9,66 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import Lambda = require('aws-sdk/clients/lambda');
-import Parameters = require('./InvokeFunctionTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './InvokeFunctionTaskParameters';
 
 export class TaskOperations {
 
-    public static async invokeFunction(taskParameters: Parameters.TaskParameters): Promise<void> {
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        await this.createServiceClients(taskParameters);
+    public async execute(): Promise<void> {
 
-        await this.verifyResourcesExist(taskParameters.functionName);
+        await this.createServiceClients();
 
-        console.log(tl.loc('InvokingFunction', taskParameters.functionName));
+        await this.verifyResourcesExist(this.taskParameters.functionName);
+
+        console.log(tl.loc('InvokingFunction', this.taskParameters.functionName));
 
         const params: Lambda.InvocationRequest = {
-            FunctionName: taskParameters.functionName,
-            InvocationType: taskParameters.invocationType,
-            LogType: taskParameters.logType,
-            Payload: JSON.stringify(taskParameters.payload)
+            FunctionName: this.taskParameters.functionName,
+            InvocationType: this.taskParameters.invocationType,
+            LogType: this.taskParameters.logType,
+            Payload: JSON.stringify(this.taskParameters.payload)
         };
         try {
             const data: Lambda.InvocationResponse = await this.lambdaClient.invoke(params).promise();
-            if (taskParameters.outputVariable) {
+            if (this.taskParameters.outputVariable) {
                 const outValue: string = data.Payload.toString();
 
                 // don't echo the value into the normal logs in case it contains sensitive data
                 tl.debug(tl.loc('ReceivedOutput', outValue));
 
-                if (taskParameters.outputVariable) {
-                    console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
-                    tl.setVariable(taskParameters.outputVariable, outValue);
+                if (this.taskParameters.outputVariable) {
+                    console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable));
+                    tl.setVariable(this.taskParameters.outputVariable, outValue);
                 }
             }
 
-            console.log(tl.loc('TaskCompleted', taskParameters.functionName));
+            console.log(tl.loc('TaskCompleted', this.taskParameters.functionName));
         } catch (err) {
             console.error(tl.loc('FunctionInvokeFailed'), err);
             throw err;
         }
     }
 
-    private static lambdaClient: Lambda;
+    private lambdaClient: Lambda;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const lambdaOpts: Lambda.ClientConfiguration = {
             apiVersion: '2015-03-31',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
 
-       this.lambdaClient = sdkutils.createAndConfigureSdkClient(Lambda, lambdaOpts, taskParameters, tl.debug);
+       this.lambdaClient = SdkUtils.createAndConfigureSdkClient(Lambda, lambdaOpts, this.taskParameters, tl.debug);
     }
 
-    private static async verifyResourcesExist(functionName: string): Promise<void> {
+    private async verifyResourcesExist(functionName: string): Promise<void> {
 
         try {
             await this.lambdaClient.getFunctionConfiguration({ FunctionName: functionName}).promise();

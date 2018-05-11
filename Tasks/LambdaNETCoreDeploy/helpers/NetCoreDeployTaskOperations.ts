@@ -11,13 +11,18 @@ import path = require('path');
 import fs = require('fs');
 import proc = require('child_process');
 import { DotNetCliWrapper } from './dotNetCliWrapper';
-import Parameters = require('./NetCoreDeployTaskParameters');
+import { TaskParameters } from './NetCoreDeployTaskParameters';
 
 export class TaskOperations {
 
-    public static async deployFunction(taskParameters: Parameters.TaskParameters): Promise<void> {
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        const cwd = this.determineProjectDirectory(taskParameters.lambdaProjectPath);
+    public async execute(): Promise<void> {
+
+        const cwd = this.determineProjectDirectory(this.taskParameters.lambdaProjectPath);
         console.log(tl.loc('DeployingProjectAt', cwd));
 
         const defaultsFilePath: string = path.join(cwd, 'aws-lambda-tools-defaults.json');
@@ -37,51 +42,51 @@ export class TaskOperations {
         const env = process.env;
         // if assume role credentials are in play, make sure the initial generation
         // of temporary credentials has been performed
-        await taskParameters.Credentials.getPromise().then(() => {
-            env.AWS_ACCESS_KEY_ID = taskParameters.Credentials.accessKeyId;
-            env.AWS_SECRET_ACCESS_KEY = taskParameters.Credentials.secretAccessKey;
-            if (taskParameters.Credentials.sessionToken) {
-                env.AWS_SESSION_TOKEN = taskParameters.Credentials.sessionToken;
+        await this.taskParameters.Credentials.getPromise().then(() => {
+            env.AWS_ACCESS_KEY_ID = this.taskParameters.Credentials.accessKeyId;
+            env.AWS_SECRET_ACCESS_KEY = this.taskParameters.Credentials.secretAccessKey;
+            if (this.taskParameters.Credentials.sessionToken) {
+                env.AWS_SESSION_TOKEN = this.taskParameters.Credentials.sessionToken;
             }
         });
 
-        await taskParameters.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy');
+        await this.taskParameters.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy');
 
         const wrapper = new DotNetCliWrapper(cwd, env);
 
         console.log(tl.loc('StartingDotNetRestore'));
         await wrapper.restoreAsync();
 
-        switch (taskParameters.command) {
+        switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'));
                 await wrapper.lambdaDeployAsync(
-                    taskParameters.awsRegion,
-                    taskParameters.functionName,
-                    taskParameters.functionHandler,
-                    taskParameters.functionRole,
-                    taskParameters.functionMemory,
-                    taskParameters.functionTimeout,
-                    taskParameters.additionalArgs);
+                    this.taskParameters.awsRegion,
+                    this.taskParameters.functionName,
+                    this.taskParameters.functionHandler,
+                    this.taskParameters.functionRole,
+                    this.taskParameters.functionMemory,
+                    this.taskParameters.functionTimeout,
+                    this.taskParameters.additionalArgs);
                 break;
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'));
                 await wrapper.serverlessDeployAsync(
-                    taskParameters.awsRegion,
-                    taskParameters.stackName,
-                    taskParameters.s3Bucket,
-                    taskParameters.s3Prefix,
-                    taskParameters.additionalArgs);
+                    this.taskParameters.awsRegion,
+                    this.taskParameters.stackName,
+                    this.taskParameters.s3Bucket,
+                    this.taskParameters.s3Prefix,
+                    this.taskParameters.additionalArgs);
                 break;
 
             default:
-            throw new Error(tl.loc('UnknownCommandError', taskParameters.command));
+            throw new Error(tl.loc('UnknownCommandError', this.taskParameters.command));
         }
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static determineProjectDirectory(specifedLambdaProject : string) : string {
+    private determineProjectDirectory(specifedLambdaProject : string) : string {
 
         // should have already verified existence when reading parameters, but defense in
         // depth

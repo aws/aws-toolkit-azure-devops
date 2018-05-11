@@ -7,15 +7,15 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
     // options for Server-side encryption Key Management
-    public readonly noneOrAWSManagedKeyValue: string = 'noneOrAWSManaged';
-    public readonly customerManagedKeyValue: string = 'customerManaged';
+    public static readonly noneOrAWSManagedKeyValue: string = 'noneOrAWSManaged';
+    public static readonly customerManagedKeyValue: string = 'customerManaged';
 
-    public readonly aes256AlgorithmValue: string = 'AES256';
+    public static readonly aes256AlgorithmValue: string = 'AES256';
 
     public bucketName: string;
     public sourceFolder: string;
@@ -39,7 +39,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.flattenFolders = tl.getBoolInput('flattenFolders', false);
 
             this.keyManagement = tl.getInput('keyManagement', false);
-            if (this.keyManagement === this.customerManagedKeyValue) {
+            if (this.keyManagement === TaskParameters.customerManagedKeyValue) {
                 const customerKey = tl.getInput('customerKey', true);
                 this.customerKey = Buffer.from(customerKey, 'hex');
             }

@@ -10,49 +10,54 @@ import tl = require('vsts-task-lib/task');
 import path = require('path');
 import base64 = require('base-64');
 import SecretsManager = require('aws-sdk/clients/secretsmanager');
-import Parameters = require('./GetSecretTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './GetSecretTaskParameters';
 
 export class TaskOperations {
 
-    public static async getSecret(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+     ) {
+     }
 
-        console.log(tl.loc('RetrievingSecret', taskParameters.secretIdOrName));
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
+
+        console.log(tl.loc('RetrievingSecret', this.taskParameters.secretIdOrName));
 
         const request: SecretsManager.GetSecretValueRequest = {
-            SecretId: taskParameters.secretIdOrName
+            SecretId: this.taskParameters.secretIdOrName
         };
 
-        if (taskParameters.versionId) {
-            request.VersionId = taskParameters.versionId;
-        } else if (taskParameters.versionStage) {
-            request.VersionStage = taskParameters.versionStage;
+        if (this.taskParameters.versionId) {
+            request.VersionId = this.taskParameters.versionId;
+        } else if (this.taskParameters.versionStage) {
+            request.VersionStage = this.taskParameters.versionStage;
         }
 
         const response = await this.secretsManagerClient.getSecretValue(request).promise();
         if (response.SecretString) {
-            tl.setVariable(taskParameters.variableName, response.SecretString, true);
+            tl.setVariable(this.taskParameters.variableName, response.SecretString, true);
         } else {
             const v = base64.decode(response.SecretBinary);
-            tl.setVariable(taskParameters.variableName, v, true);
+            tl.setVariable(this.taskParameters.variableName, v, true);
         }
 
-        console.log(tl.loc('TaskCompleted', taskParameters.variableName));
+        console.log(tl.loc('TaskCompleted', this.taskParameters.variableName));
     }
 
-    private static secretsManagerClient: SecretsManager;
+    private secretsManagerClient: SecretsManager;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const opts: SecretsManager.ClientConfiguration = {
             apiVersion: '2017-10-17',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
 
-        this.secretsManagerClient = sdkutils.createAndConfigureSdkClient(SecretsManager, opts, taskParameters, tl.debug);
+        this.secretsManagerClient = SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug);
     }
 
 }

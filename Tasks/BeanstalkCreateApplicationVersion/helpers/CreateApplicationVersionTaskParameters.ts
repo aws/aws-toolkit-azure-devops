@@ -7,14 +7,14 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
     // options for applicationType
-    public readonly applicationTypeAspNet: string = 'aspnet';
-    public readonly applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows';
-    public readonly applicationTypeS3Archive: string = 's3';
+    public static readonly applicationTypeAspNet: string = 'aspnet';
+    public static readonly applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows';
+    public static readonly applicationTypeS3Archive: string = 's3';
 
     public applicationName: string;
     public applicationType: string;
@@ -36,17 +36,17 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
             switch (this.applicationType) {
 
-                case this.applicationTypeAspNet: {
+                case TaskParameters.applicationTypeAspNet: {
                     this.webDeploymentArchive = tl.getPathInput('webDeploymentArchive', true);
                 }
                 break;
 
-                case this.applicationTypeAspNetCoreForWindows: {
+                case TaskParameters.applicationTypeAspNetCoreForWindows: {
                     this.dotnetPublishPath = tl.getPathInput('dotnetPublishPath', true);
                 }
                 break;
 
-                case this.applicationTypeS3Archive: {
+                case TaskParameters.applicationTypeS3Archive: {
                     this.deploymentBundleBucket = tl.getInput('deploymentBundleBucket', true);
                     this.deploymentBundleKey = tl.getInput('deploymentBundleKey', true);
                 }

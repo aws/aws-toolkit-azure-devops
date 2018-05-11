@@ -7,17 +7,17 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
     // possible values for the deploymentMode parameter
-    public readonly deployCodeOnly: string = 'codeonly';
-    public readonly deployCodeAndConfig: string = 'codeandconfiguration';
+    public static readonly deployCodeOnly: string = 'codeonly';
+    public static readonly deployCodeAndConfig: string = 'codeandconfiguration';
 
     // possible values for the codeLocation parameter
-    public readonly updateFromLocalFile: string = 'localfile';
-    public readonly updateFromS3Object: string = 's3object';
+    public static readonly updateFromLocalFile: string = 'localfile';
+    public static readonly updateFromS3Object: string = 's3object';
 
     public deploymentMode: string;
     public functionName: string;
@@ -46,7 +46,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
         super();
         try {
             this.deploymentMode = tl.getInput('deploymentMode', true);
-            const requireBasicConfigFields = this.deploymentMode === this.deployCodeAndConfig;
+            const requireBasicConfigFields = this.deploymentMode === TaskParameters.deployCodeAndConfig;
 
             this.functionName = tl.getInput('functionName', true);
             this.functionHandler = tl.getInput('functionHandler', requireBasicConfigFields);
@@ -54,7 +54,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             this.roleARN = tl.getInput('roleARN', requireBasicConfigFields);
 
             this.codeLocation = tl.getInput('codeLocation', true);
-            if (this.codeLocation === this.updateFromLocalFile) {
+            if (this.codeLocation === TaskParameters.updateFromLocalFile) {
                 this.localZipFile = tl.getPathInput('localZipFile', true, true);
             } else {
                 this.s3Bucket = tl.getInput('s3Bucket', true);

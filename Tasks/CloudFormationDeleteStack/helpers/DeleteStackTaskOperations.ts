@@ -10,40 +10,44 @@ import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
 import CloudFormation = require('aws-sdk/clients/cloudformation');
-import Parameters = require('./DeleteStackTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './DeleteStackTaskParameters';
 
 export class TaskOperations {
 
-    public static async deleteStack(taskParameters: Parameters.TaskParameters): Promise<void> {
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
+    public async execute(): Promise<void> {
 
-        await this.createServiceClients(taskParameters);
+        await this.createServiceClients();
 
-        await this.verifyResourcesExist(taskParameters.stackName);
+        await this.verifyResourcesExist(this.taskParameters.stackName);
 
-        console.log(tl.loc('RequestingStackDeletion', taskParameters.stackName));
+        console.log(tl.loc('RequestingStackDeletion', this.taskParameters.stackName));
         await this.cloudFormationClient.deleteStack({
-            StackName: taskParameters.stackName
+            StackName: this.taskParameters.stackName
         }).promise();
-        await this.waitForStackDeletion(taskParameters.stackName);
+        await this.waitForStackDeletion(this.taskParameters.stackName);
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static cloudFormationClient: CloudFormation;
+    private cloudFormationClient: CloudFormation;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
-        this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);
+        this.cloudFormationClient = SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug);
     }
 
-    private static async verifyResourcesExist(stackName: string): Promise<void> {
+    private async verifyResourcesExist(stackName: string): Promise<void> {
 
         try {
             await this.cloudFormationClient.describeStacks({ StackName: stackName}).promise();
@@ -53,7 +57,7 @@ export class TaskOperations {
     }
 
     // wait for stack deletetion
-    private static async waitForStackDeletion(stackName: string): Promise<void> {
+    private async waitForStackDeletion(stackName: string): Promise<void> {
         console.log(tl.loc('WaitingForStackDeletion', stackName));
         try {
             await this.cloudFormationClient.waitFor('stackDeleteComplete', { StackName: stackName }).promise();

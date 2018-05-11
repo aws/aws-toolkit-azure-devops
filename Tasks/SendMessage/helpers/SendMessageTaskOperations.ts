@@ -10,47 +10,52 @@ import tl = require('vsts-task-lib/task');
 import path = require('path');
 import SQS = require('aws-sdk/clients/sqs');
 import SNS = require('aws-sdk/clients/sns');
-import Parameters = require('./SendMessageTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './SendMessageTaskParameters';
 
 export class TaskOperations {
 
-    public static async sendMessage(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        if (taskParameters.messageTarget === 'topic') {
-            await this.verifyTopicExists(taskParameters.topicArn);
-            await this.sendMessageToTopic(taskParameters);
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
+
+        if (this.taskParameters.messageTarget === 'topic') {
+            await this.verifyTopicExists(this.taskParameters.topicArn);
+            await this.sendMessageToTopic();
         } else {
-            await this.verifyQueueExists(taskParameters.queueUrl);
-            await this.sendMessageToQueue(taskParameters);
+            await this.verifyQueueExists(this.taskParameters.queueUrl);
+            await this.sendMessageToQueue();
         }
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static sqsClient : SQS;
-    private static snsClient : SNS;
+    private sqsClient : SQS;
+    private snsClient : SNS;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
        const sqsOpts: SQS.ClientConfiguration = {
             apiVersion: '2012-11-05',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
-       this.sqsClient = sdkutils.createAndConfigureSdkClient(SQS, sqsOpts, taskParameters, tl.debug);
+       this.sqsClient = SdkUtils.createAndConfigureSdkClient(SQS, sqsOpts, this.taskParameters, tl.debug);
 
        const snsOpts: SNS.ClientConfiguration = {
             apiVersion: '2010-03-31',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
-       this.snsClient = sdkutils.createAndConfigureSdkClient(SNS, snsOpts, taskParameters, tl.debug);
+       this.snsClient = SdkUtils.createAndConfigureSdkClient(SNS, snsOpts, this.taskParameters, tl.debug);
     }
 
-    private static async verifyTopicExists(topicArn: string): Promise<void> {
+    private async verifyTopicExists(topicArn: string): Promise<void> {
         try {
             await this.snsClient.getTopicAttributes({TopicArn: topicArn}).promise();
         } catch (err) {
@@ -58,7 +63,7 @@ export class TaskOperations {
         }
     }
 
-    private static async verifyQueueExists(queueUrl: string): Promise<void> {
+    private async verifyQueueExists(queueUrl: string): Promise<void> {
         try {
             await this.sqsClient.getQueueAttributes({QueueUrl: queueUrl, AttributeNames: ['QueueArn']}).promise();
         } catch (err) {
@@ -66,30 +71,30 @@ export class TaskOperations {
         }
     }
 
-    private static async sendMessageToTopic(taskParameters: Parameters.TaskParameters): Promise<void> {
-        console.log(tl.loc('SendingToTopic', taskParameters.topicArn));
+    private async sendMessageToTopic(): Promise<void> {
+        console.log(tl.loc('SendingToTopic', this.taskParameters.topicArn));
 
         try {
             await this.snsClient.publish({
-                TopicArn: taskParameters.topicArn,
-                Message: taskParameters.message
+                TopicArn: this.taskParameters.topicArn,
+                Message: this.taskParameters.message
             }).promise();
         } catch (err) {
             throw new Error(tl.loc('SendError', err.message));
         }
     }
 
-    private static async sendMessageToQueue(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async sendMessageToQueue(): Promise<void> {
         try {
             const request: SQS.SendMessageRequest = {
-                QueueUrl: taskParameters.queueUrl,
-                MessageBody: taskParameters.message
+                QueueUrl: this.taskParameters.queueUrl,
+                MessageBody: this.taskParameters.message
             };
-            if (taskParameters.delaySeconds) {
-                request.DelaySeconds = taskParameters.delaySeconds;
-                console.log(tl.loc('SendingToQueueWithDelay', taskParameters.delaySeconds, taskParameters.queueUrl));
+            if (this.taskParameters.delaySeconds) {
+                request.DelaySeconds = this.taskParameters.delaySeconds;
+                console.log(tl.loc('SendingToQueueWithDelay', this.taskParameters.delaySeconds, this.taskParameters.queueUrl));
             } else {
-                console.log(tl.loc('SendingToQueue', taskParameters.queueUrl));
+                console.log(tl.loc('SendingToQueue', this.taskParameters.queueUrl));
             }
             await this.sqsClient.sendMessage(request).promise();
         } catch (err) {

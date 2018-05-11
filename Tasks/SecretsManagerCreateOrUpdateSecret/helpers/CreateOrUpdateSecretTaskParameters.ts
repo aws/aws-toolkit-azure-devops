@@ -7,9 +7,9 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
     public static readonly stringSecretType: string = 'string';
     public static readonly binarySecretType: string = 'binary';

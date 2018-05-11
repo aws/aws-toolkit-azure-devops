@@ -10,34 +10,39 @@ import path = require('path');
 import { parse, Url } from 'url';
 import base64 = require('base-64');
 import tl = require('vsts-task-lib/task');
-import Parameters = require('./PushImageTaskParameters');
 import ECR = require('aws-sdk/clients/ecr');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './PushImageTaskParameters';
 
 export class TaskOperations {
 
-    public static async pushImage(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
+
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
         this.dockerPath = await this.locateDockerExecutable();
 
         let sourceImageRef: string;
-        if (taskParameters.imageSource === taskParameters.imageNameSource) {
-            sourceImageRef = this.constructTaggedImageName(taskParameters.sourceImageName, taskParameters.sourceImageTag);
+        if (this.taskParameters.imageSource === TaskParameters.imageNameSource) {
+            sourceImageRef = this.constructTaggedImageName(this.taskParameters.sourceImageName, this.taskParameters.sourceImageTag);
             console.log(tl.loc('PushImageWithName', sourceImageRef));
         } else {
-            sourceImageRef = taskParameters.sourceImageId;
-            console.log(tl.loc('PushImageWithId', taskParameters.imageIdSource));
+            sourceImageRef = this.taskParameters.sourceImageId;
+            console.log(tl.loc('PushImageWithId', this.taskParameters.sourceImageId));
         }
 
         const authData = await this.getEcrAuthorizationData();
         const endpoint = parse(authData.proxyEndpoint).host;
 
-        if (taskParameters.autoCreateRepository) {
-            await this.createRepositoryIfNeeded(taskParameters.repositoryName);
+        if (this.taskParameters.autoCreateRepository) {
+            await this.createRepositoryIfNeeded(this.taskParameters.repositoryName);
         }
 
-        const targetImageName = this.constructTaggedImageName(taskParameters.repositoryName, taskParameters.pushTag);
+        const targetImageName = this.constructTaggedImageName(this.taskParameters.repositoryName, this.taskParameters.pushTag);
         const targetImageRef = `${endpoint}/${targetImageName}`;
         await this.tagImage(sourceImageRef, targetImageRef);
 
@@ -45,27 +50,27 @@ export class TaskOperations {
 
         await this.pushImageToECR(targetImageRef);
 
-        if (taskParameters.outputVariable) {
-            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable, targetImageRef));
-            tl.setVariable(taskParameters.outputVariable, targetImageRef);
+        if (this.taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, targetImageRef));
+            tl.setVariable(this.taskParameters.outputVariable, targetImageRef);
         }
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static ecrClient: ECR;
-    private static dockerPath: string;
+    private ecrClient: ECR;
+    private dockerPath: string;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
         const ecrOpts: ECR.ClientConfiguration = {
             apiVersion: '2015-09-21',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            credentials: this.taskParameters.Credentials,
+            region: this.taskParameters.awsRegion
         };
-        this.ecrClient = sdkutils.createAndConfigureSdkClient(ECR, ecrOpts, taskParameters, tl.debug);
+        this.ecrClient = SdkUtils.createAndConfigureSdkClient(ECR, ecrOpts, this.taskParameters, tl.debug);
     }
 
-    private static constructTaggedImageName(imageName: string, tag: string): string {
+    private constructTaggedImageName(imageName: string, tag: string): string {
         if (tag) {
             return `${imageName}:${tag}`;
         }
@@ -73,7 +78,7 @@ export class TaskOperations {
         return imageName;
     }
 
-    private static async createRepositoryIfNeeded(repository: string): Promise<void> {
+    private async createRepositoryIfNeeded(repository: string): Promise<void> {
         console.log(tl.loc('TestingForRepository', repository));
 
         try {
@@ -92,22 +97,22 @@ export class TaskOperations {
         }
     }
 
-    private static async loginToRegistry(encodedAuthToken: string, endpoint: string): Promise<void> {
+    private async loginToRegistry(encodedAuthToken: string, endpoint: string): Promise<void> {
         const tokens = (base64.decode(encodedAuthToken)).split(':');
         await this.runDockerCommand('login', ['-u', tokens[0], '-p', tokens[1], endpoint]);
     }
 
-    private static async tagImage(sourceImageRef: string, imageTag: string): Promise<void> {
+    private async tagImage(sourceImageRef: string, imageTag: string): Promise<void> {
         console.log(tl.loc('AddingTag', imageTag, sourceImageRef));
         await this.runDockerCommand('tag', [ sourceImageRef, imageTag]);
     }
 
-    private static async pushImageToECR(imageRef: string): Promise<void> {
+    private async pushImageToECR(imageRef: string): Promise<void> {
         console.log(tl.loc('PushingImage', imageRef));
         await this.runDockerCommand('push', [ imageRef ]);
     }
 
-    private static async getEcrAuthorizationData(): Promise<ECR.AuthorizationData> {
+    private async getEcrAuthorizationData(): Promise<ECR.AuthorizationData> {
         try {
             console.log(tl.loc('RequestingAuthToken'));
             const response = await this.ecrClient.getAuthorizationToken().promise();
@@ -117,7 +122,7 @@ export class TaskOperations {
         }
     }
 
-    private static async runDockerCommand(command: string, args: string[]): Promise<void> {
+    private async runDockerCommand(command: string, args: string[]): Promise<void> {
         console.log(tl.loc('InvokingDockerCommand', this.dockerPath, command));
 
         const docker = tl.tool(this.dockerPath);
@@ -130,7 +135,7 @@ export class TaskOperations {
         await docker.exec();
     }
 
-    private static async locateDockerExecutable(): Promise<string> {
+    private async locateDockerExecutable(): Promise<string> {
         const dockerExecutables: string[] = [
             'docker',
             'docker.exe'
