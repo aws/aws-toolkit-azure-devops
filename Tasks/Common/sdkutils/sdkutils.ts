@@ -51,10 +51,10 @@ export abstract class SdkUtils {
     // to enable tracing of request/response data if the task is so configured. The
     // default behavior for all clients is to simply emit the service request ID
     // to the task log.
-    public static createAndConfigureSdkClient(awsService: any,
-                                              awsServiceOpts: any,
-                                              taskParams: AWSTaskParametersBase,
-                                              logger: (msg: string) => void): any {
+    public static async createAndConfigureSdkClient(awsService: any,
+                                                    awsServiceOpts: any,
+                                                    taskParams: AWSTaskParametersBase,
+                                                    logger: (msg: string) => void): Promise<any> {
 
         awsService.prototype.customizeRequests((request) => {
 
@@ -98,10 +98,28 @@ export abstract class SdkUtils {
             });
         });
 
-        return new awsService(awsServiceOpts);
+        // If not already set for the service, poke any obtained credentials and/or
+        // region into the service options. If credentials remain undefined, the sdk
+        // will attempt to auto-infer from the host environment variables or, if EC2,
+        // instance metadata
+        if (awsServiceOpts) {
+            if (!awsServiceOpts.credentials) {
+                awsServiceOpts.credentials = await taskParams.getCredentials();
+            }
+            if (!awsServiceOpts.region) {
+                awsServiceOpts.region = await taskParams.getRegion();
+            }
+
+            return new awsService(awsServiceOpts);
+        }
+
+        return new awsService({
+            credentials: await taskParams.getCredentials(),
+            region: await taskParams.getRegion()
+        });
     }
 
-    public static async  roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {
+    public static async roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {
         if (roleName.startsWith('arn:')) {
             return roleName;
         }

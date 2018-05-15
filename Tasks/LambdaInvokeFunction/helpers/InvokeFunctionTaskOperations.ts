@@ -60,12 +60,10 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
         const lambdaOpts: Lambda.ClientConfiguration = {
-            apiVersion: '2015-03-31',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2015-03-31'
         };
 
-       this.lambdaClient = SdkUtils.createAndConfigureSdkClient(Lambda, lambdaOpts, this.taskParameters, tl.debug);
+       this.lambdaClient = await SdkUtils.createAndConfigureSdkClient(Lambda, lambdaOpts, this.taskParameters, tl.debug);
     }
 
     private async verifyResourcesExist(functionName: string): Promise<void> {

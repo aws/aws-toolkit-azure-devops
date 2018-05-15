@@ -31,16 +31,16 @@
             "type": "connectedService:AWS",
             "label": "AWS Credentials",
             "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "Select the AWS credentials to use when it executes on a build host. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+            "required": false,
+            "helpMarkDown": "Specifies he credentials (a service endpoint type of 'AWS') for the task to use when it executes on a build host. New credentials can be created using the Services tab for your project.\n\nIf not supplied calls to AWS services made from the task will attempt to obtain credentials to be used in the following order:\n\n* using Team Services variables associated with the build or release\n* standard AWS environment variables in the build host's environment\n* (if the build host is an EC2 instance) from an instance profile associated with the EC2 instance in its instance metadata."
         },
         {
             "name": "regionName",
             "label": "AWS Region",
             "type": "string",
-            "required": true,
+            "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html)."
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html). If not specified the task will attempt to obtain the region using the following order:\n\n* from a Team Services variable associated with the build or release\n* from the standard AWS_REGION environment variable in the build host environment\n* (if the build host is an EC2 instance) from instance metadata associated with the EC2 instance."
         },
         {
             "name": "messageTarget",

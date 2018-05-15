@@ -40,15 +40,18 @@ export class TaskOperations {
         }
 
         const env = process.env;
-        // if assume role credentials are in play, make sure the initial generation
-        // of temporary credentials has been performed
-        await this.taskParameters.Credentials.getPromise().then(() => {
-            env.AWS_ACCESS_KEY_ID = this.taskParameters.Credentials.accessKeyId;
-            env.AWS_SECRET_ACCESS_KEY = this.taskParameters.Credentials.secretAccessKey;
-            if (this.taskParameters.Credentials.sessionToken) {
-                env.AWS_SESSION_TOKEN = this.taskParameters.Credentials.sessionToken;
+
+        // If assume role credentials are in play, make sure the initial generation
+        // of temporary credentials has been performed. If no credentials were defined
+        // for the task, we assume they are already set in the host environment.
+        const credentials = await this.taskParameters.getCredentials();
+        if (credentials) {
+            env.AWS_ACCESS_KEY_ID = credentials.accessKeyId;
+            env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey;
+            if (credentials.sessionToken) {
+                env.AWS_SESSION_TOKEN = credentials.sessionToken;
             }
-        });
+        }
 
         await this.taskParameters.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy');
 
@@ -57,11 +60,12 @@ export class TaskOperations {
         console.log(tl.loc('StartingDotNetRestore'));
         await wrapper.restoreAsync();
 
+        const region = await this.taskParameters.getRegion();
         switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'));
                 await wrapper.lambdaDeployAsync(
-                    this.taskParameters.awsRegion,
+                    region,
                     this.taskParameters.functionName,
                     this.taskParameters.functionHandler,
                     this.taskParameters.functionRole,
@@ -72,7 +76,7 @@ export class TaskOperations {
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'));
                 await wrapper.serverlessDeployAsync(
-                    this.taskParameters.awsRegion,
+                    region,
                     this.taskParameters.stackName,
                     this.taskParameters.s3Bucket,
                     this.taskParameters.s3Prefix,

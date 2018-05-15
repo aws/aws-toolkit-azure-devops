@@ -63,11 +63,9 @@ export class TaskOperations {
 
     private async createServiceClients(): Promise<void> {
         const ecrOpts: ECR.ClientConfiguration = {
-            apiVersion: '2015-09-21',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2015-09-21'
         };
-        this.ecrClient = SdkUtils.createAndConfigureSdkClient(ECR, ecrOpts, this.taskParameters, tl.debug);
+        this.ecrClient = await SdkUtils.createAndConfigureSdkClient(ECR, ecrOpts, this.taskParameters, tl.debug);
     }
 
     private constructTaggedImageName(imageName: string, tag: string): string {

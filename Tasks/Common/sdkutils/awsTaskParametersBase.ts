@@ -14,8 +14,9 @@ import HttpsProxyAgent = require('https-proxy-agent');
 
 export abstract class AWSTaskParametersBase {
 
-    public readonly awsRegion: string;
-    public readonly Credentials: AWS.Credentials;
+    // Task variable name that can be used to supply the region setting to
+    // a task.
+    private static readonly awsRegionVariable: string = 'AWS.Region';
 
     // pre-formatted url string, or vsts-task-lib/ProxyConfiguration
     public readonly proxyConfiguration: string | tl.ProxyConfiguration;
@@ -45,94 +46,197 @@ export abstract class AWSTaskParametersBase {
     protected readonly roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration';
 
     protected constructor() {
-        // credentials will be obtained or generated from the endpoint authorization
-        // when we actually need them
-        const awsEndpoint = tl.getInput('awsCredentials', true);
-        this.awsEndpointAuth = tl.getEndpointAuthorization(awsEndpoint, false);
-
-        this.awsRegion = tl.getInput('regionName', true);
 
         this.logRequestData = tl.getBoolInput('logRequest', false);
         this.logResponseData = tl.getBoolInput('logResponse', false);
 
+        this.proxyConfiguration = tl.getHttpProxyConfiguration()
+                                    || process.env.HTTPS_PROXY
+                                    || process.env.HTTP_PROXY;
+        this.completeProxySetup();
+    }
+
+    private configuredCredentials: AWS.Credentials;
+
+    // Probes for credentials to be used by the executing task. Credentials
+    // can be configured as a service endpoint (of type 'AWS'), or specified
+    // using task variables. If we don't discover credentials inside the
+    // Team Services environment we will assume they are set as either
+    // environment variables on the build host (or, if the build host is
+    // an EC2 instance, in instance metadata).
+    public async getCredentials() : Promise<AWS.Credentials> {
+        if (this.configuredCredentials) {
+            return this.configuredCredentials;
+        }
+
+        console.log('Configuring credentials for task');
+
+        this.configuredCredentials = this.attemptEndpointCredentialConfiguration(tl.getInput('awsCredentials', false));
+        if (this.configuredCredentials) {
+            return this.configuredCredentials;
+        }
+
+        // at this point user either has to have credentials in environment vars or
+        // ec2 instance metadata
+        console.log('No credentials configured. The task will attempt to use credentials found in the build host environment.');
+
+        return undefined;
+    }
+
+    // Unpacks credentials from the specified endpoint configuration, if defined
+    private attemptEndpointCredentialConfiguration(endpointName: string) : AWS.Credentials {
+        if (!endpointName) {
+            return undefined;
+        }
+
+        this.awsEndpointAuth = tl.getEndpointAuthorization(endpointName, false);
+        console.log(`...retrieving task credentials from service endpoint '${endpointName}'`);
+
         const accessKey = this.awsEndpointAuth.parameters.username;
         const secretKey = this.awsEndpointAuth.parameters.password;
+
         this.AssumeRoleARN = this.awsEndpointAuth.parameters.assumeRoleArn;
         if (!this.AssumeRoleARN) {
-            this.Credentials = new AWS.Credentials(
-                {
-                    accessKeyId: accessKey,
-                    secretAccessKey: secretKey
-                });
-        } else {
-            console.log(`Configuring task to use role-based credentials.`);
-
-            const externalId: string = this.awsEndpointAuth.parameters.externalId;
-            let roleSessionName: string = this.awsEndpointAuth.parameters.roleSessionName;
-            if (!roleSessionName) {
-                roleSessionName = this.defaultRoleSessionName;
-            }
-            let duration: number = this.defaultRoleDuration;
-
-            const customDurationVariable = tl.getVariable(this.roleCredentialMaxDurationVariableName);
-            if (customDurationVariable) {
-                try {
-                    const customDuration = parseInt(customDurationVariable, 10);
-                    if (customDuration >= this.minDuration && customDuration <= this.maxduration) {
-                        throw new RangeError(`Invalid credential duration '${customDurationVariable}', minimum is ${this.minDuration}seconds, max ${this.maxduration}seconds`);
-                    } else {
-                        duration = customDuration;
-                    }
-                } catch (err) {
-                    console.warn(`Ignoring invalid custom ${this.roleCredentialMaxDurationVariableName} setting due to error: ${err}`);
-                }
-            }
-
-            const masterCredentials = new AWS.Credentials({
+            console.log(`...endpoint defines standard access/secret key credentials`);
+            return new AWS.Credentials({
                 accessKeyId: accessKey,
                 secretAccessKey: secretKey
             });
-            const options: STS.AssumeRoleRequest = {
-                RoleArn: this.AssumeRoleARN,
-                DurationSeconds: duration,
-                RoleSessionName: roleSessionName
-            };
-            if (externalId) {
-                options.ExternalId = externalId;
-            }
-
-            this.Credentials = new AWS.TemporaryCredentials(options, masterCredentials);
         }
 
-        // Discover any configured proxy setup, first using the Agent.ProxyUrl and related variables.
-        // If those are not set, fall back to checking HTTP(s)_PROXY that some customers are using
-        // instead. If HTTP(s)_PROXY is in use we deconstruct the url to make up a ProxyConfiguration
-        // instance, and then reform to configure the SDK. This allows us to work with either approach.
-        this.proxyConfiguration = tl.getHttpProxyConfiguration()
-            || process.env.HTTPS_PROXY
-            || process.env.HTTP_PROXY;
+        console.log(`...endpoint defines role-based credentials for role ${this.AssumeRoleARN}.`);
 
-        if (this.proxyConfiguration) {
-            let proxy: Url;
+        const externalId: string = this.awsEndpointAuth.parameters.externalId;
+        let roleSessionName: string = this.awsEndpointAuth.parameters.roleSessionName;
+        if (!roleSessionName) {
+            roleSessionName = this.defaultRoleSessionName;
+        }
+        let duration: number = this.defaultRoleDuration;
+
+        const customDurationVariable = tl.getVariable(this.roleCredentialMaxDurationVariableName);
+        if (customDurationVariable) {
             try {
-                if (typeof this.proxyConfiguration === 'string') {
-                    proxy = parse(this.proxyConfiguration);
+                const customDuration = parseInt(customDurationVariable, 10);
+                if (customDuration >= this.minDuration && customDuration <= this.maxduration) {
+                    throw new RangeError(`Invalid credential duration '${customDurationVariable}', minimum is ${this.minDuration}seconds, max ${this.maxduration}seconds`);
                 } else {
-                    const config = this.proxyConfiguration as tl.ProxyConfiguration;
-                    proxy = parse(config.proxyUrl);
-                    if (config.proxyUsername || config.proxyPassword) {
-                        proxy.auth = `${config.proxyUsername}:${config.proxyPassword}`;
+                    duration = customDuration;
+                }
+            } catch (err) {
+                console.warn(`...ignoring invalid custom ${this.roleCredentialMaxDurationVariableName} setting due to error: ${err}`);
+            }
+        }
+
+        const masterCredentials = new AWS.Credentials({
+            accessKeyId: accessKey,
+            secretAccessKey: secretKey
+        });
+        const options: STS.AssumeRoleRequest = {
+            RoleArn: this.AssumeRoleARN,
+            DurationSeconds: duration,
+            RoleSessionName: roleSessionName
+        };
+        if (externalId) {
+            options.ExternalId = externalId;
+        }
+
+        return new AWS.TemporaryCredentials(options, masterCredentials);
+    }
+
+    private configuredRegion: string;
+
+    public async getRegion() : Promise<string> {
+        if (this.configuredRegion) {
+            return this.configuredRegion;
+        }
+
+        console.log('Configuring region for task');
+
+        this.configuredRegion = tl.getInput('regionName', false);
+        if (this.configuredRegion) {
+            console.log(`...configured to use region ${this.configuredRegion}, defined in task.`);
+            return this.configuredRegion;
+        }
+
+        this.configuredRegion = tl.getVariable(AWSTaskParametersBase.awsRegionVariable);
+        if (this.configuredRegion) {
+            console.log(`...configured to use region ${this.configuredRegion}, defined in task variable ${AWSTaskParametersBase.awsRegionVariable}.`);
+            return this.configuredRegion;
+        }
+
+        if (process.env.AWS_REGION) {
+            console.log(`...configured to use region ${process.env.AWS_REGION}, defined in environment variable.`);
+            return this.configuredRegion;
+        }
+
+        try {
+            this.configuredRegion = await this.queryRegionFromMetadata();
+            console.log(`...configured to use region ${this.configuredRegion}, from EC2 instance metadata.`);
+            return this.configuredRegion;
+        } catch (err) {
+            console.log(`...error: failed to query EC2 instance metadata for region - ${err}`);
+        }
+
+        console.log('No region specified in the task configuration or environment');
+
+        return undefined;
+    }
+
+    private async queryRegionFromMetadata(): Promise<string> {
+        // SDK doesn't support discovery of region from EC2 instance metadata, so do it manually. We set
+        // a timeout so that if the build host isn't EC2, we don't hang forever
+        return new Promise<string>((resolve, reject) => {
+            const metadataService = new AWS.MetadataService();
+            metadataService.httpOptions.timeout = 5000;
+                metadataService.request('/latest/dynamic/instance-identity/document', (err, data) => {
+                    try {
+                        if (err) {
+                            throw err;
+                        }
+
+                        console.log('...received instance identity document from metadata');
+                        const identity = JSON.parse(data);
+                        if (identity.region) {
+                            resolve(identity.region);
+                        } else {
+                            throw new Error('...region value not found in instance identity metadata');
+                        }
+                    } catch (err) {
+                        reject(err);
                     }
                 }
+            );
+        });
+    }
 
-                // do not want any auth in the logged url
-                tl.debug(`Configuring task for proxy host ${proxy.host}, protocol ${proxy.protocol}`);
-                AWS.config.update({
-                    httpOptions: { agent: new HttpsProxyAgent(format(proxy)) }
-                });
-            } catch (err) {
-                console.error(`Failed to process proxy configuration, error ${err}`);
+    // Discover any configured proxy setup, first using the Agent.ProxyUrl and related variables.
+    // If those are not set, fall back to checking HTTP(s)_PROXY that some customers are using
+    // instead. If HTTP(s)_PROXY is in use we deconstruct the url to make up a ProxyConfiguration
+    // instance, and then reform to configure the SDK. This allows us to work with either approach.
+    private completeProxySetup() : void {
+        if (!this.proxyConfiguration) {
+            return;
+        }
+
+        let proxy: Url;
+        try {
+            if (typeof this.proxyConfiguration === 'string') {
+                proxy = parse(this.proxyConfiguration);
+            } else {
+                const config = this.proxyConfiguration as tl.ProxyConfiguration;
+                proxy = parse(config.proxyUrl);
+                if (config.proxyUsername || config.proxyPassword) {
+                    proxy.auth = `${config.proxyUsername}:${config.proxyPassword}`;
+                }
             }
+
+            // do not want any auth in the logged url
+            tl.debug(`Configuring task for proxy host ${proxy.host}, protocol ${proxy.protocol}`);
+            AWS.config.update({
+                httpOptions: { agent: new HttpsProxyAgent(format(proxy)) }
+            });
+        } catch (err) {
+            console.error(`Failed to process proxy configuration, error ${err}`);
         }
     }
 

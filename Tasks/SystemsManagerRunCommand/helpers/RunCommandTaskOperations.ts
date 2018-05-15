@@ -88,10 +88,8 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
         const ssmOpts: SSM.ClientConfiguration = {
-            apiVersion: '2014-11-06',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2014-11-06'
         };
-        this.ssmClient = SdkUtils.createAndConfigureSdkClient(SSM, ssmOpts, this.taskParameters, tl.debug);
+        this.ssmClient = await SdkUtils.createAndConfigureSdkClient(SSM, ssmOpts, this.taskParameters, tl.debug);
     }
 }

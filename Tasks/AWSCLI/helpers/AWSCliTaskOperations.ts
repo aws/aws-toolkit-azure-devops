@@ -50,24 +50,29 @@ export class TaskOperations {
         }
     }
 
+    // If assume role credentials are in play, make sure the initial generation
+    // of temporary credentials has been performed. If no credentials and/or
+    // region were defined then we assume they are already set in the host
+    // environment. Environment variables are preferred over stored profiles
+    // as this isolates parallel builds and avoids content left lying around on
+    // the agent when a build completes
     private async configureAwsCli() {
-        // if assume role credentials are in play, make sure the initial generation
-        // of temporary credentials has been performed
-        await this.taskParameters.Credentials.getPromise().then(() => {
-            // push credentials and region into environment variables rather than a
-            // stored profile, as this isolates parallel builds and avoids content left
-            // lying around on the agent when a build completes
-            const env = process.env;
+        const env = process.env;
 
+        const credentials = await this.taskParameters.getCredentials();
+        if (credentials) {
             tl.debug('configure credentials into environment variables');
-            env.AWS_ACCESS_KEY_ID = this.taskParameters.Credentials.accessKeyId;
-            env.AWS_SECRET_ACCESS_KEY = this.taskParameters.Credentials.secretAccessKey;
-            if (this.taskParameters.Credentials.sessionToken) {
-                env.AWS_SESSION_TOKEN = this.taskParameters.Credentials.sessionToken;
+            env.AWS_ACCESS_KEY_ID = credentials.accessKeyId;
+            env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey;
+            if (credentials.sessionToken) {
+                env.AWS_SESSION_TOKEN = credentials.sessionToken;
             }
+        }
 
+        const region = await this.taskParameters.getRegion();
+        if (region) {
             tl.debug('configure region into environment variable');
-            env.AWS_DEFAULT_REGION = this.taskParameters.awsRegion;
-        });
+            env.AWS_DEFAULT_REGION = region;
+        }
     }
 }

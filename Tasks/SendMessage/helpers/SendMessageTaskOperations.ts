@@ -41,18 +41,14 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
        const sqsOpts: SQS.ClientConfiguration = {
-            apiVersion: '2012-11-05',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2012-11-05'
         };
-       this.sqsClient = SdkUtils.createAndConfigureSdkClient(SQS, sqsOpts, this.taskParameters, tl.debug);
+       this.sqsClient = await SdkUtils.createAndConfigureSdkClient(SQS, sqsOpts, this.taskParameters, tl.debug);
 
        const snsOpts: SNS.ClientConfiguration = {
-            apiVersion: '2010-03-31',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2010-03-31'
         };
-       this.snsClient = SdkUtils.createAndConfigureSdkClient(SNS, snsOpts, this.taskParameters, tl.debug);
+       this.snsClient = await SdkUtils.createAndConfigureSdkClient(SNS, snsOpts, this.taskParameters, tl.debug);
     }
 
     private async verifyTopicExists(topicArn: string): Promise<void> {

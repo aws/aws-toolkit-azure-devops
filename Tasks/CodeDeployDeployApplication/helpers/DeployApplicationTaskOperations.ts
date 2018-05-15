@@ -54,18 +54,14 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
         const codeDeployOpts: CodeDeploy.ClientConfiguration = {
-            apiVersion: '2014-10-06',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2014-10-06'
         };
-        this.codeDeployClient = SdkUtils.createAndConfigureSdkClient(CodeDeploy, codeDeployOpts, this.taskParameters, tl.debug);
+        this.codeDeployClient = await SdkUtils.createAndConfigureSdkClient(CodeDeploy, codeDeployOpts, this.taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2006-03-01'
         };
-        this.s3Client = SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
     private async verifyResourcesExist(): Promise<void> {

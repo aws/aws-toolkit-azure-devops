@@ -85,18 +85,14 @@ export class TaskOperations {
     private async constructServiceClients(): Promise<void> {
 
         const beanstalkOpts: Beanstalk.ClientConfiguration = {
-            apiVersion: '2010-12-01',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2010-12-01'
         };
-        this.beanstalkClient = SdkUtils.createAndConfigureSdkClient(Beanstalk, beanstalkOpts, this.taskParameters, tl.debug);
+        this.beanstalkClient = await SdkUtils.createAndConfigureSdkClient(Beanstalk, beanstalkOpts, this.taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2006-03-01'
         };
-        this.s3Client = SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
     private async updateEnvironment(bucketName: string,

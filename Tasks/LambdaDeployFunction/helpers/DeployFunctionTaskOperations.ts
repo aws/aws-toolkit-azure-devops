@@ -65,20 +65,16 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
         const lambdaOpts: Lambda.ClientConfiguration = {
-            apiVersion: '2015-03-31',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2015-03-31'
         };
 
-        this.lambdaClient = SdkUtils.createAndConfigureSdkClient(Lambda, lambdaOpts, this.taskParameters, tl.debug);
+        this.lambdaClient = await SdkUtils.createAndConfigureSdkClient(Lambda, lambdaOpts, this.taskParameters, tl.debug);
 
         const iamOpts: IAM.ClientConfiguration = {
-            apiVersion: '2010-05-08',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2010-05-08'
         };
 
-        this.iamClient = SdkUtils.createAndConfigureSdkClient(IAM, iamOpts, this.taskParameters, tl.debug);
+        this.iamClient = await SdkUtils.createAndConfigureSdkClient(IAM, iamOpts, this.taskParameters, tl.debug);
     }
 
     private async updateFunctionCode(): Promise<string> {

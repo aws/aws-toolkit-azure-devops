@@ -40,11 +40,9 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
-            apiVersion: '2010-05-15',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2010-05-15'
         };
-        this.cloudFormationClient = SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug);
+        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug);
     }
 
     private async verifyResourcesExist(stackName: string): Promise<void> {

@@ -26,7 +26,7 @@ export class TaskOperations {
         await this.createServiceClients();
 
         if (this.taskParameters.createBucket) {
-            await this.createBucketIfNotExist(this.taskParameters.bucketName, this.taskParameters.awsRegion);
+            await this.createBucketIfNotExist(this.taskParameters.bucketName, await this.taskParameters.getRegion());
         } else {
             const exists = await this.testBucketExists(this.taskParameters.bucketName);
             if (!exists) {
@@ -44,11 +44,9 @@ export class TaskOperations {
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion,
             s3ForcePathStyle: this.taskParameters.forcePathStyleAddressing
         };
-        this.s3Client = SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
     private async createBucketIfNotExist(bucketName: string, region: string) : Promise<void> {

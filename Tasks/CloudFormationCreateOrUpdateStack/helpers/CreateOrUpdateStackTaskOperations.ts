@@ -57,18 +57,14 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
-            apiVersion: '2010-05-15',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2010-05-15'
         };
-        this.cloudFormationClient = SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug);
+        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2006-03-01'
         };
-        this.s3Client = SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
     private async createStack() : Promise<string> {

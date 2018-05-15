@@ -25,8 +25,8 @@
     ],
     "author": "Amazon Web Services LLC",
     "license": "Apache",
-    "bugs": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions/issues",
-    "homepage": "https://github.com/awslabs/PRIVATE-aws-vsts-extensions",
+    "bugs": "https://github.com/aws/aws-vsts-tools/issues",
+    "homepage": "https://github.com/aws/aws-vsts-tools",
     "devDependencies": {
         "@types/node": "^8.0.34",
         "adm-zip": "0.4.7",

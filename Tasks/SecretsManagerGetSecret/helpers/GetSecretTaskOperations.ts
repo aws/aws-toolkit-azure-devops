@@ -52,12 +52,10 @@ export class TaskOperations {
     private async createServiceClients(): Promise<void> {
 
         const opts: SecretsManager.ClientConfiguration = {
-            apiVersion: '2017-10-17',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion
+            apiVersion: '2017-10-17'
         };
 
-        this.secretsManagerClient = SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug);
+        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug);
     }
 
 }

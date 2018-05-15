@@ -42,11 +42,9 @@ export class TaskOperations {
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            credentials: this.taskParameters.Credentials,
-            region: this.taskParameters.awsRegion,
             s3ForcePathStyle: this.taskParameters.forcePathStyleAddressing
         };
-        this.s3Client = SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
     private async testBucketExists(bucketName: string): Promise<boolean> {

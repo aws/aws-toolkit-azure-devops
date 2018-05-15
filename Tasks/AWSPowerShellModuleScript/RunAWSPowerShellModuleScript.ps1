@@ -32,10 +32,6 @@ try
 
     Assert-VstsPath -LiteralPath $tempDirectory -PathType 'Container'
 
-    $awsEndpoint = Get-VstsInput -Name 'awsCredentials' -Require
-    $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
-    $awsRegion = Get-VstsInput -Name 'regionName' -Require
-
     # install the module if not present
     Write-Host (Get-VstsLocString -Key 'TestingModuleInstalled')
     if (!(Get-Module -Name AWSPowerShell -ListAvailable))
@@ -53,44 +49,55 @@ try
         }
     }
 
-    Write-Host (Get-VstsLocString -Key 'InitializingAWSContext' -ArgumentList $awsRegion)
-    $env:AWS_REGION = $awsRegion
-    
-    # Use environment variables to pass credentials, to avoid leaving any profiles
-    # around when the build completes and any contention from parallel or multi-user
-    # build setups
-    if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn)
+    # If credentials and/or region are not defined on the task we assume them to be
+    # already set in the host environment or, if on EC2, to be in instance metadata.
+    # We prefer to use environment variables to pass credentials, to avoid leaving
+    # any profiles around when the build completes and any contention from parallel
+    # or multi-user build setups.
+    $awsEndpoint = Get-VstsInput -Name 'awsCredentials'
+    if ($awsEndpoint)
     {
-        Write-Host "Configuring task to use role-scoped credentials"
-        Import-Module -Name AWSPowerShell
-        $assumeRoleParameters = @{
-            'AccessKey' = $awsEndpointAuth.Auth.Parameters.UserName
-            'SecretKey' = $awsEndpointAuth.Auth.Parameters.Password
-            'RoleArn' = $awsEndpointAuth.Auth.Parameters.AssumeRoleArn
-        }
-        if ($awsEndpointAuth.Auth.Parameters.RoleSessionName)
+        $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
+        if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn)
         {
-            $assumeRoleParameters.Add('RoleSessionName', $awsEndpointAuth.Auth.Parameters.RoleSessionName)
+            Write-Host "Configuring task to use role-scoped credentials"
+            Import-Module -Name AWSPowerShell
+            $assumeRoleParameters = @{
+                'AccessKey' = $awsEndpointAuth.Auth.Parameters.UserName
+                'SecretKey' = $awsEndpointAuth.Auth.Parameters.Password
+                'RoleArn' = $awsEndpointAuth.Auth.Parameters.AssumeRoleArn
+            }
+            if ($awsEndpointAuth.Auth.Parameters.RoleSessionName)
+            {
+                $assumeRoleParameters.Add('RoleSessionName', $awsEndpointAuth.Auth.Parameters.RoleSessionName)
+            }
+            else
+            {
+                $assumeRoleParameters.Add('RoleSessionName', 'aws-vsts-tools')
+            }
+            if ($awsEndpointAuth.Auth.Parameters.ExternalId)
+            {
+                $assumeRoleParameters.Add('ExternalId', $awsEndpointAuth.Auth.Parameters.ExternalId)
+            }
+
+            $assumeRoleResponse = Use-STSRole @assumeRoleParameters
+
+            $env:AWS_ACCESS_KEY_ID = $assumeRoleResponse.Credentials.AccessKeyId
+            $env:AWS_SECRET_ACCESS_KEY = $assumeRoleResponse.Credentials.SecretAccessKey
+            $env:AWS_SESSION_TOKEN = $assumeRoleResponse.Credentials.SessionToken
         }
         else
         {
-            $assumeRoleParameters.Add('RoleSessionName', 'aws-vsts-tools')
+            $env:AWS_ACCESS_KEY_ID = $awsEndpointAuth.Auth.Parameters.UserName
+            $env:AWS_SECRET_ACCESS_KEY = $awsEndpointAuth.Auth.Parameters.Password
         }
-        if ($awsEndpointAuth.Auth.Parameters.ExternalId)
-        {
-            $assumeRoleParameters.Add('ExternalId', $awsEndpointAuth.Auth.Parameters.ExternalId)
-        }
-
-        $assumeRoleResponse = Use-STSRole @assumeRoleParameters
-
-        $env:AWS_ACCESS_KEY_ID = $assumeRoleResponse.Credentials.AccessKeyId
-        $env:AWS_SECRET_ACCESS_KEY = $assumeRoleResponse.Credentials.SecretAccessKey
-        $env:AWS_SESSION_TOKEN = $assumeRoleResponse.Credentials.SessionToken
     }
-    else
+
+    $awsRegion = Get-VstsInput -Name 'regionName'
+    if ($awsRegion)
     {
-        $env:AWS_ACCESS_KEY_ID = $awsEndpointAuth.Auth.Parameters.UserName
-        $env:AWS_SECRET_ACCESS_KEY = $awsEndpointAuth.Auth.Parameters.Password
+        Write-Host (Get-VstsLocString -Key 'InitializingAWSContext' -ArgumentList $awsRegion)
+        $env:AWS_REGION = $awsRegion
     }
 
     # Was not able to get the Get-VstsWebProxy helper to work, plus it has a
