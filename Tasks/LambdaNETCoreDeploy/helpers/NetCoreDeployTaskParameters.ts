@@ -10,9 +10,20 @@ import tl = require('vsts-task-lib/task');
 import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
 export class TaskParameters extends AWSTaskParametersBase {
-    public lambdaProjectPath: string;
+
+    // option values for the 'deploymentType' property
+    public static readonly deployFunction: string = 'deployFunction';
+    public static readonly deployServerless: string = 'deployServerless';
 
     public command: string;
+    public packageOnly: boolean;
+
+    public lambdaProjectPath: string;
+
+    // Used in package-only mode, contains either the filename and path of the
+    // output package for a Lambda function, or the template output path when
+    // packaging a serverless app
+    public packageOutputFile: string;
 
     public functionHandler: string;
     public functionName: string;
@@ -29,9 +40,14 @@ export class TaskParameters extends AWSTaskParametersBase {
     constructor() {
         super();
         try {
+            this.command = tl.getInput('command', true);
+            this.packageOnly = tl.getBoolInput('packageOnly', true);
+
             this.lambdaProjectPath = tl.getPathInput('lambdaProjectPath', true, true);
 
-            this.command = tl.getInput('command', true);
+            if (this.packageOnly) {
+                this.packageOutputFile = tl.getPathInput('packageOutputFile', true, false);
+            }
 
             this.functionName = tl.getInput('functionName', false);
             this.functionRole = tl.getInput('functionRole', false);

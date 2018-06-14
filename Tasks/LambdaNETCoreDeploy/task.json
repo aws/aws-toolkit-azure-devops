@@ -2,7 +2,7 @@
     "id": "0c632a66-60d4-498a-88c8-1c69cc057ef1",
     "name": "LambdaNETCoreDeploy",
     "friendlyName": "AWS Lambda .NET Core Deployment",
-    "description": "Build and deploy a Serverless .NET Core application or AWS Lambda function",
+    "description": "Build, package and deploy, or build and package only, a Serverless .NET Core application or AWS Lambda function",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.",
     "category": "Deploy",
@@ -17,7 +17,7 @@
         "Patch": "21"
     },
     "minimumAgentVersion": "1.91.0",
-    "instanceNameFormat": "Deploy to Lambda: $(functionName) $(stackName)",
+    "instanceNameFormat": "Deploy .NET Core to Lambda: $(functionName) $(stackName)",
     "groups": [
         {
             "name": "deployFunction",
@@ -55,27 +55,44 @@
             "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html). If not specified the task will attempt to obtain the region using the following order:\n\n* from a Team Services variable associated with the build or release\n* from the standard AWS_REGION environment variable in the build host environment\n* (if the build host is an EC2 instance) from instance metadata associated with the EC2 instance."
         },
         {
-            "name": "lambdaProjectPath",
-            "label": "Path to Lambda Project",
-            "type": "filePath",
-            "required": true,
-            "defaultValue": "",
-            "helpMarkDown": "The relative path to the location of the Lambda project to deploy."
-        },
-        {
             "name": "command",
             "type": "radio",
             "label": "Deployment Type",
             "defaultValue": "deployFunction",
             "required": true,
-            "helpMarkDown": "The type of deployment to perform. \"Function\" deploys a single function to AWS Lambda. \"Serverless application\" performs a deployment using AWS CloudFormation, allowing multiple function deployment.",
+            "helpMarkDown": "The type of deployment to perform, or package to build or deploy.\n\n* _Function_ deploys a single function to AWS Lambda, or creates a package zip file for subsequent deployment.\n* _Serverless Application_ performs a deployment using AWS CloudFormation (allowing multiple functions to be deployed at the same time) or builds the application and uploads it to Amazon S3, outputting the serverless template file for subsequent deployment of the updated code using AWS CloudFormation.\n\n__Note:__ both options will perform the relevant NuGet package restore and build operations to create the resulting deployment package.",
             "options": {
                 "deployFunction": "Function",
-                "deployServerless": "Serverless application"
+                "deployServerless": "Serverless Application"
             },
             "properties": {
                 "EditableOptions": "False"
             }
+        },
+        {
+            "name": "packageOnly",
+            "type": "boolean",
+            "label": "Create deployment package only",
+            "required": true,
+            "defaultValue": "false",
+            "helpMarkDown": "If selected the task creates the outputs for the selected deployment type but does not perform the deployment to AWS lambda or AWS CloudFormation."
+        },
+        {
+            "name": "packageOutputFile",
+            "type": "filePath",
+            "label": "Package-only output file",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "* For a package-only build of a Lambda function project: the output folder and filename of the packaged zip file. This zip file can then be used with the _AWS Lambda Deploy Function_ task to perform the deployment at a later stage.\n\n* For a package-only build of a Serverless Application project: the output folder and filename where the serverless template file, updated to contain the Amazon S3 location of the built project code and artifacts, will be placed. This updated template can then be used with the _AWS CloudFormation Create/Update Stack_ task, or AWS CloudFormation change set tasks, to perform the deployment at a later stage.",
+            "visibleRule": "packageOnly = true"
+        },
+        {
+            "name": "lambdaProjectPath",
+            "label": "Path to Lambda Project",
+            "type": "filePath",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The relative path to the location of the Lambda function or serverless application project to package and/or deploy."
         },
         {
             "name": "functionName",
@@ -129,7 +146,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "deployServerless",
-            "helpMarkDown": "The name of the AWS CloudFormation stack."
+            "helpMarkDown": "The name of the AWS CloudFormation stack to deploy to. This field is required when performing a serverless application deployment, but can be omitted when performing a package-only build of the application."
         },
         {
             "name": "s3Bucket",
@@ -138,7 +155,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "deployServerless",
-            "helpMarkDown": "The name of the S3 bucket used to store the built project."
+            "helpMarkDown": "The name of the S3 bucket used to store the built project code. This field is required when performing a serverless application deployment or package-only build."
         },
         {
             "name": "s3Prefix",
@@ -156,7 +173,7 @@
             "required": false,
             "defaultValue": "",
             "groupName": "advanced",
-            "helpMarkDown": "Additional arguments when executing the 'dotnet lambda' command."
+            "helpMarkDown": "Additional arguments to use when executing the 'dotnet lambda' command to build and package your project."
         }
     ],
     "execution": {
@@ -166,15 +183,18 @@
         }
     },
     "messages": {
-        "DeployingProjectAt": "Deploying Lambda project at %s",
+        "DeployingProjectAt": "Processing Lambda project at %s",
         "ReadingDefaultSettingsFile": "Reading existing aws-lambda-tools-defaults.json",
         "ClearingProfileCredentials": "Clearing out profile %s so task credentials will be used.",
         "StartingDotNetRestore": "Beginning dotnet restore",
         "StartingFunctionDeployment": "Beginning Lambda Deployment",
         "StartingServerlessDeployment": "Beginning Serverless Deployment",
-        "UnknownCommandError": "Unknown command: %s",
+        "UnknownDeploymentTypeError": "Unknown deployment type: %s",
         "DotNetCommandFailure": "'dotnet %s' exited with code %d",
         "ProjectPathOrFileDoesNotExist": "Project file or path %s does not exist",
-        "TaskCompleted": "Completed deployment of the project"
+        "CreatingServerlessPackageOnly": "Performing package-only build of serverless application, output template will be placed in %s",
+        "CreatingFunctionPackageOnly": "Performing package-only build of function, output package will be placed in %s",
+        "PackageAndDeployTaskCompleted": "Completed packaging and deployment of the project",
+        "PackageOnlyTaskCompleted": "Completed packaging of the project"
     }
 }

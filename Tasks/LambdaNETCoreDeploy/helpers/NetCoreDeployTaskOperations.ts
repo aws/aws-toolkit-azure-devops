@@ -21,7 +21,6 @@ export class TaskOperations {
     }
 
     public async execute(): Promise<void> {
-
         const cwd = this.determineProjectDirectory(this.taskParameters.lambdaProjectPath);
         console.log(tl.loc('DeployingProjectAt', cwd));
 
@@ -53,6 +52,8 @@ export class TaskOperations {
             }
         }
 
+        const region = await this.taskParameters.getRegion();
+
         await this.taskParameters.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy');
 
         const wrapper = new DotNetCliWrapper(cwd, env);
@@ -60,7 +61,6 @@ export class TaskOperations {
         console.log(tl.loc('StartingDotNetRestore'));
         await wrapper.restoreAsync();
 
-        const region = await this.taskParameters.getRegion();
         switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'));
@@ -71,6 +71,8 @@ export class TaskOperations {
                     this.taskParameters.functionRole,
                     this.taskParameters.functionMemory,
                     this.taskParameters.functionTimeout,
+                    this.taskParameters.packageOnly,
+                    this.taskParameters.packageOutputFile,
                     this.taskParameters.additionalArgs);
                 break;
             case 'deployServerless':
@@ -80,14 +82,22 @@ export class TaskOperations {
                     this.taskParameters.stackName,
                     this.taskParameters.s3Bucket,
                     this.taskParameters.s3Prefix,
+                    this.taskParameters.packageOnly,
+                    this.taskParameters.packageOutputFile,
                     this.taskParameters.additionalArgs);
                 break;
 
             default:
-            throw new Error(tl.loc('UnknownCommandError', this.taskParameters.command));
+            throw new Error(tl.loc('UnknownDeploymentTypeError', this.taskParameters.command));
         }
 
-        console.log(tl.loc('TaskCompleted'));
+        if (this.taskParameters.packageOnly) {
+            console.log(tl.loc('PackageOnlyTaskCompleted'));
+
+        } else {
+            console.log(tl.loc('PackageAndDeployTaskCompleted'));
+
+        }
     }
 
     private determineProjectDirectory(specifedLambdaProject : string) : string {
