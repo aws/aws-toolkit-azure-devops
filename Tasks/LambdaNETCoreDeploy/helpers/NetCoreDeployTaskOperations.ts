@@ -9,7 +9,6 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
-import proc = require('child_process');
 import { DotNetCliWrapper } from './dotNetCliWrapper';
 import { TaskParameters } from './NetCoreDeployTaskParameters';
 

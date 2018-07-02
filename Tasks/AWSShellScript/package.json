@@ -1,0 +1,15 @@
+{
+    "name": "awsshellscript",
+    "version": "1.0.21",
+    "description": "Run a shell script using bash with AWS credentials",
+    "main": "AWSShellScript.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "sdkutils": "file:../../_build/Tasks/Common/sdkutils",
+        "vsts-task-lib": "^2.0.6"
+    }
+}

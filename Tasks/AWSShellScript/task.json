@@ -1,0 +1,128 @@
+{
+    "id": "3aea39d2-803c-43c7-b8d6-8e71b670f816",
+    "name": "AWSShellScript",
+    "friendlyName": "AWS Shell Script",
+    "description": "Run a shell script using Bash with AWS credentials",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Runs a shell script in Bash, setting AWS credentials and region information into the shell environment using the standard environment keys AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN AND AWS_REGION.",
+    "category": "Utility",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [
+        "sh"
+    ],
+    "version": {
+        "Major": "1",
+        "Minor": "0",
+        "Patch": "21"
+    },
+    "instanceNameFormat": "AWS Shell Script",
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "awsCredentials",
+            "type": "connectedService:AWS",
+            "label": "AWS Credentials",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Specifies the credentials (a service endpoint type of 'AWS') for the task to use when it executes on a build host. New credentials can be created using the Services tab for your project.\n\nIf not supplied calls to AWS services made from the task will attempt to obtain credentials to be used in the following order:\n\n* using Team Services variables associated with the build or release\n* standard AWS environment variables in the build host's environment\n* (if the build host is an EC2 instance) from an instance profile associated with the EC2 instance in its instance metadata."
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html). If not specified the task will attempt to obtain the region using the following order:\n\n* from a Team Services variable associated with the build or release\n* from the standard AWS_REGION environment variable in the build host environment\n* (if the build host is an EC2 instance) from instance metadata associated with the EC2 instance."
+        },
+        {
+            "name": "arguments",
+            "type": "string",
+            "label": "Arguments",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Arguments passed to the shell script"
+        },
+        {
+            "name": "scriptType",
+            "type": "radio",
+            "label": "Script Source",
+            "defaultValue": "filePath",
+            "required": false,
+            "helpMarkDown": "The source of the script to run. You can choose a file containing the script or enter the script in the task's configuration.",
+            "options": {
+                "filePath": "Script file",
+                "inline": "Inline Script"
+            }
+        },
+        {
+            "name": "filePath",
+            "type": "filePath",
+            "label": "Script Path",
+            "defaultValue": "",
+            "required": true,
+            "visibleRule": "scriptType = filePath",
+            "helpMarkDown": "The path of the script file to execute. Must be a fully qualified path or relative to $(System.DefaultWorkingDirectory)."
+        },
+        {
+            "name": "inlineScript",
+            "type": "multiLine",
+            "label": "Inline Script",
+            "defaultValue": "# You can write your script inline here",
+            "required": true,
+            "helpMarkDown": "The script to execute.",
+            "visibleRule": "scriptType = inline",
+            "properties": {
+                "resizable": "true",
+                "rows": "10",
+                "maxLength": "5000"
+            }
+        },
+        {
+            "name": "disableAutoCwd",
+            "type": "boolean",
+            "label": "Specify Working Directory",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "The default behavior is to set the working directory to the script location. This enables you to optionally specify a different working directory.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "cwd",
+            "type": "filePath",
+            "label": "Working Directory",
+            "defaultValue": "",
+            "required": false,
+            "visibleRule": "disableAutoCwd = true",
+            "helpMarkDown": "Current working directory where the script is run.  Empty is the root of the repo (build) or artifacts (release), which is $(System.DefaultWorkingDirectory). _Required_ if __Specify Working Directory__ is selected.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "failOnStandardError",
+            "type": "boolean",
+            "label": "Fail on Standard Error",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "If this is true, this task will fail if any errors are written to the StandardError stream.",
+            "groupName": "advanced"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "AWSShellScript.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "BashReturnCode": "Bash exited with return code: %d",
+        "BashFailed": "Bash failed with error: %s"
+    }
+}
