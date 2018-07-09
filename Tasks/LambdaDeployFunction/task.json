@@ -14,7 +14,7 @@
     "version": {
         "Major": "1",
         "Minor": "0",
-        "Patch": "21"
+        "Patch": "22"
     },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy Lambda Function: $(functionName)",
@@ -101,6 +101,7 @@
             "options": {
                 "dotnetcore1.0": "dotnetcore1.0",
                 "dotnetcore2.0": "dotnetcore2.0",
+                "dotnetcore2.1": "dotnetcore2.1",
                 "go1.x": "go1.x",
                 "java8": "java8",
                 "nodejs": "nodejs",

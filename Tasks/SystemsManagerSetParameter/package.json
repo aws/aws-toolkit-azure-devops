@@ -1,6 +1,6 @@
 {
     "name": "systemsmanagersetparameter",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "description": "Creates or updates a parameter in the Systems Manager Parameter Store.",
     "main": "SystemsManagerSetParameter.js",
     "scripts": {

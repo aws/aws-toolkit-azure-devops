@@ -1,6 +1,6 @@
 {
     "name": "secretsmanagercreateorupdatesecret",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "description": "Updates a secret, optionally creating a secret if it does not exist.",
     "main": "SecretsManagerCreateOrUpdateSecret.js",
     "scripts": {
