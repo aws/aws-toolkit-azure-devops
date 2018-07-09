@@ -38,7 +38,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Specifies he credentials (a service endpoint type of 'AWS') for the task to use when it executes on a build host. New credentials can be created using the Services tab for your project.\n\nIf not supplied calls to AWS services made from the task will attempt to obtain credentials to be used in the following order:\n\n* using Team Services variables associated with the build or release\n* standard AWS environment variables in the build host's environment\n* (if the build host is an EC2 instance) from an instance profile associated with the EC2 instance in its instance metadata."
+            "helpMarkDown": "Specifies the AWS credentials (a service endpoint type of 'AWS') to be used by the task in the build agent environment.\n\nIf credentials are not explicitly configured via a service endpoint the task will attempt to obtain the credentials to be used from the environment hosting the build agent using standard AWS environment variables - _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_.\n\nFor tasks running in build agents hosted on Amazon EC2 instances (Windows or Linux) an attempt will be made to obtain credentials using the instance metadata associated with the EC2 instance if no credentials are configured on the task with a service endpoint or set in environment variables."
         },
         {
             "name": "regionName",
@@ -46,7 +46,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html). If not specified the task will attempt to obtain the region using the following order:\n\n* from a Team Services variable associated with the build or release\n* from the standard AWS_REGION environment variable in the build host environment\n* (if the build host is an EC2 instance) from instance metadata associated with the EC2 instance."
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used using the standard AWS environment variable _AWS_REGION_ in the build agent's environment. Tasks running in build agents hosted on Amazon EC2 instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance if no region is configured on the task or set in the environment variable."
         },
         {
             "name": "functionName",
