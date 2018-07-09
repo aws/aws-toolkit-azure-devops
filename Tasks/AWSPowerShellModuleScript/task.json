@@ -150,6 +150,8 @@
         "ConfiguringProxy": "Configuring proxy for AWSPowerShell module. Host {0}, port {1}",
         "ProxyConfigError": "Failed to configure proxy, error {0}",
         "SkippingProxyConfigDueToAgentVersion": "Agent version {0} does not meet minumum {1} for proxy configuration; skipping auto-detection of proxy settings.",
-        "CheckingForProxyConfiguration": "Attempting to detect proxy settings to configure tool"
+        "CheckingForProxyConfiguration": "Attempting to detect proxy settings to configure tool",
+        "ImportingModuleFrom": "Importing downloaded module from {0}",
+        "ConfiguringForRoleCredentials": "Configuring task to use role-scoped credentials"
     }
 }

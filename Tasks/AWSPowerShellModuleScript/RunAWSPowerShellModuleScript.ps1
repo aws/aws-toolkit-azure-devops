@@ -32,21 +32,45 @@ try
 
     Assert-VstsPath -LiteralPath $tempDirectory -PathType 'Container'
 
-    # install the module if not present
+    # install the module if not present (we assume if present it is an an autoload-capable
+    # location)
     Write-Host (Get-VstsLocString -Key 'TestingModuleInstalled')
+    $manualImportPath = $null
     if (!(Get-Module -Name AWSPowerShell -ListAvailable))
     {
         Write-Host (Get-VstsLocString -Key 'InstallingModule')
+        # Use Save-Module, to a temp folder, over Install-Module which currently has a
+        # long output-less lag once the module has downloaded.
+        # See https://github.com/aws/aws-vsts-tools/issues/51
         try
         {
-            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            # Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            Save-Module -Name AWSPowerShell -Path $tempDirectory -Verbose
         }
         catch
         {
             Write-Host (Get-VstsLocString -Key 'UsingNugetProvider')
             Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force
-            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            # Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            Save-Module -Name AWSPowerShell -Path $tempDirectory -Verbose
         }
+
+        # figure out the actual path to import from, allowing for the possibility of multiple versions
+        # being left around due to a prior accident
+        $moduleVersionFolder = Get-ChildItem -Path (Join-Path $tempDirectory 'AWSPowerShell') |
+            Sort-Object -Property Name -Descending |
+            Select-Object -First 1
+        $manualImportPath = [IO.Path]::Combine($tempDirectory, 'AWSPowerShell', $moduleVersionFolder, 'AWSPowerShell.psd1')
+    }
+
+    if ($manualImportPath)
+    {
+        Write-Host (Get-VstsLocString -Key 'ImportingModuleFrom' -ArgumentList $manualImportPath)
+        Import-Module $manualImportPath
+    }
+    else
+    {
+        Import-Module -Name AWSPowerShell
     }
 
     # If credentials and/or region are not defined on the task we assume them to be
@@ -60,8 +84,7 @@ try
         $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
         if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn)
         {
-            Write-Host "Configuring task to use role-scoped credentials"
-            Import-Module -Name AWSPowerShell
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentials')
             $assumeRoleParameters = @{
                 'AccessKey' = $awsEndpointAuth.Auth.Parameters.UserName
                 'SecretKey' = $awsEndpointAuth.Auth.Parameters.Password
