@@ -101,6 +101,7 @@
             "options": {
                 "dotnetcore1.0": "dotnetcore1.0",
                 "dotnetcore2.0": "dotnetcore2.0",
+                "dotnetcore2.1": "dotnetcore2.1",
                 "go1.x": "go1.x",
                 "java8": "java8",
                 "nodejs": "nodejs",
