@@ -1,3 +1,7 @@
+### 1.0.22 (2018-07-09)
+
+* Added support for the .NET Core 2.1 runtime in the AWS Lambda Deploy Function task.
+
 ### 1.0.21 (2018-03-22)
 
 * Issue #71: Extended the CloudFormation CreateorUpdateStack task to enable parameters to be specified inline in the task definition in addition to an external file.

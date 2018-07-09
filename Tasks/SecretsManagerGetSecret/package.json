@@ -1,6 +1,6 @@
 {
     "name": "secretsmanagergetsecret",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "description": "Retrieves the value of a secret from the Secrets Manager store and sets it into a build variable.",
     "main": "SecretsManagerGetSecret.js",
     "scripts": {
