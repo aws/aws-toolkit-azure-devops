@@ -92,6 +92,9 @@ export class TaskOperations {
         const region = await this.taskParameters.getRegion();
         if (region) {
             tl.debug('configure region into environment variable');
+            env.AWS_REGION = region;
+            // set for the benefit of any aws cli commands the user might
+            // exec as part of the script
             env.AWS_DEFAULT_REGION = region;
         }
     }
