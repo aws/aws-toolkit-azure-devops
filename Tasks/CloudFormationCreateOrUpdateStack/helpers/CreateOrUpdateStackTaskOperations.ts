@@ -12,7 +12,6 @@ import fs = require('fs');
 import yaml = require('js-yaml');
 import CloudFormation = require('aws-sdk/clients/cloudformation');
 import S3 = require('aws-sdk/clients/s3');
-import { AWSError } from 'aws-sdk/lib/error';
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './CreateOrUpdateStackTaskParameters';
 
@@ -92,11 +91,7 @@ export class TaskOperations {
 
             case TaskParameters.s3Source: {
                 // sync call
-                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
-                    Bucket: this.taskParameters.s3BucketName,
-                    Key: this.taskParameters.s3ObjectKey
-                });
-                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
         }
@@ -153,11 +148,7 @@ export class TaskOperations {
 
             case TaskParameters.s3Source: {
                 // sync call
-                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
-                    Bucket: this.taskParameters.s3BucketName,
-                    Key: this.taskParameters.s3ObjectKey
-                });
-                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
         }
@@ -219,11 +210,7 @@ export class TaskOperations {
 
             case TaskParameters.s3Source: {
                 // sync call
-                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
-                    Bucket: this.taskParameters.s3BucketName,
-                    Key: this.taskParameters.s3ObjectKey
-                });
-                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
         }
@@ -384,20 +371,13 @@ export class TaskOperations {
 
         console.log(tl.loc('UploadingTemplate', templateFile, objectKey, s3BucketName));
         try {
-            const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
+            await this.s3Client.upload({
                 Bucket: s3BucketName,
                 Key: objectKey,
                 Body: fileBuffer
             }).promise();
 
-            // sync call
-            const templateUrl = this.s3Client.getSignedUrl('getObject', {
-                Bucket: s3BucketName,
-                Key: objectKey
-            });
-
-            console.log(tl.loc('GeneratedTemplateUrl', templateUrl));
-
+            const templateUrl = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', s3BucketName, objectKey);
             return templateUrl;
         } catch (err) {
             throw new Error(tl.loc('TemplateUploadFailed', err));

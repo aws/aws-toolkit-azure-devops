@@ -371,7 +371,6 @@
         "UploadingTemplate": "Uploading template file %s to object %s in bucket %s",
         "FailedToLoadTemplateFile": "Error loading template file: %s",
         "TemplateUploadFailed": "Error uploading template file: %s",
-        "GeneratedTemplateUrl": "Generated url to template: %s",
         "AddingRollbackTrigger": "Adding AWS::CloudWatch::Alarm rollback trigger for ARN %s",
         "InvalidTriggerMonitoringTime": "%s is not a valid entry for rollback trigger monitoring time. The value must lie between 0 and %s minutes.",
         "ExceededMaxRollbackTriggers": "%s rollback triggers were specified; the service allows a maximum of %s."

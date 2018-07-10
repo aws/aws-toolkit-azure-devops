@@ -7,10 +7,9 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import path = require('path');
 import fs = require('fs');
-import STS = require('aws-sdk/clients/sts');
 import IAM = require('aws-sdk/clients/iam');
+import S3 = require('aws-sdk/clients/s3');
 import AWS = require('aws-sdk/global');
 import { AWSTaskParametersBase } from './awsTaskParametersBase';
 
@@ -134,5 +133,23 @@ export abstract class SdkUtils {
         } catch (err) {
             throw new Error(`Error while obtaining ARN: ${err}`);
         }
+    }
+
+    public static async getPresignedUrl(s3Client: S3, operation: string, bucketName: string, objectKey: string): Promise<string> {
+        // use async call so we handle static vs instance credentials correctly
+        return new Promise<string>((resolve, reject) => {
+            const templateUrl = s3Client.getSignedUrl(operation, {
+                Bucket: bucketName,
+                Key: objectKey
+            }, function(err: any, url: string) {
+                if (err) {
+                    console.log(`Failed to generate presigned url to template, error: ${err}`);
+                    reject(err);
+                } else {
+                    console.log(`Generated url to template: ${templateUrl}`);
+                    resolve(url);
+                }
+            });
+        });
     }
 }
