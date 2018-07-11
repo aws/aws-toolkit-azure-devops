@@ -17,6 +17,9 @@ Import-VstsLocStrings "$PSScriptRoot\task.json"
 # off to PowerShell for execution
 try
 {
+    # suppress any progress bars to attempt to speed things up
+    $ProgressPreference = 'SilentlyContinue'
+
     # Agent.TempDirectory was added in agent version 2.115.0, which may not
     # be available in 2015 installs of TFS, so probe for and fallback to
     # another temp location variable if necessary. This allows us to set
