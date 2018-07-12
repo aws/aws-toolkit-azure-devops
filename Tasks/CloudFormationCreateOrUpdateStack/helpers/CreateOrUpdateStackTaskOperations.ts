@@ -470,7 +470,8 @@ export class TaskOperations {
     private async waitForStackCreation(stackName: string) : Promise<void> {
         console.log(tl.loc('WaitingForStackCreation', stackName));
         try {
-            await this.cloudFormationClient.waitFor('stackCreateComplete', { StackName: stackName }).promise();
+            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins);
+            await this.cloudFormationClient.waitFor('stackCreateComplete', parms).promise();
             console.log(tl.loc('StackCreated', stackName));
         } catch (err) {
             throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
@@ -480,7 +481,8 @@ export class TaskOperations {
     private async waitForStackUpdate(stackName: string) : Promise<void> {
         console.log(tl.loc('WaitingForStackUpdate', stackName));
         try {
-            await this.cloudFormationClient.waitFor('stackUpdateComplete', { StackName: stackName }).promise();
+            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins);
+            await this.cloudFormationClient.waitFor('stackUpdateComplete', parms).promise();
             console.log(tl.loc('StackUpdated', stackName));
         } catch (err) {
             throw new Error(tl.loc('StackUpdateFailed', stackName, err.message));
@@ -490,8 +492,8 @@ export class TaskOperations {
     private async waitForChangeSetCreation(changeSetName: string, stackName: string) : Promise<boolean> {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName));
         try {
-            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete',
-                                                    { ChangeSetName: changeSetName, StackName: stackName }).promise();
+            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName);
+            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms).promise();
             console.log(tl.loc('ChangeSetValidated'));
         } catch (err) {
             // Inspect to see if the error was down to the service reporting (as an exception trapped
@@ -508,6 +510,26 @@ export class TaskOperations {
         }
 
         return true;
+    }
+
+    private setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
+
+        if (timeout !== TaskParameters.defaultTimeoutInMins) {
+            console.log(tl.loc('SettingCustomTimeout', timeout));
+        }
+
+        const p: any = {
+            StackName: stackName,
+            $waiter: {
+                maxAttempts: Math.round(timeout * 60 / 30)
+            }
+        };
+
+        if (changeSetName) {
+            p.ChangeSetName = changeSetName;
+        }
+
+        return p;
     }
 
     private async testStackExists(stackName: string): Promise<string> {

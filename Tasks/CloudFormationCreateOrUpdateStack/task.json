@@ -303,6 +303,15 @@
             "required": false
         },
         {
+            "name": "timeoutInMins",
+            "type": "string",
+            "label": "Max Timout (minutes)",
+            "defaultValue": "60",
+            "groupName": "Options",
+            "helpMarkDown": "Maximum time, specified in minutes, that the task should wait for the stack creation or update to complete. By default a maximum of 60 minutes is used.",
+            "required": false
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
@@ -373,6 +382,7 @@
         "TemplateUploadFailed": "Error uploading template file: %s",
         "AddingRollbackTrigger": "Adding AWS::CloudWatch::Alarm rollback trigger for ARN %s",
         "InvalidTriggerMonitoringTime": "%s is not a valid entry for rollback trigger monitoring time. The value must lie between 0 and %s minutes.",
-        "ExceededMaxRollbackTriggers": "%s rollback triggers were specified; the service allows a maximum of %s."
+        "ExceededMaxRollbackTriggers": "%s rollback triggers were specified; the service allows a maximum of %s.",
+        "SettingCustomTimeout": "Setting maximum wait period for stack creation/update to %s minutes"
     }
 }

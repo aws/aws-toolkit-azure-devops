@@ -22,6 +22,8 @@ export class TaskParameters extends AWSTaskParametersBase {
     public static readonly loadTemplateParametersFromFile: string = 'file';
     public static readonly loadTemplateParametersInline: string = 'inline';
 
+    public static readonly defaultTimeoutInMins: number = 60;
+
     public stackName: string;
     public templateSource: string;
     public templateFile: string;
@@ -47,6 +49,8 @@ export class TaskParameters extends AWSTaskParametersBase {
 
     public onFailure: string;
     public outputVariable: string;
+
+    public timeoutInMins: number = TaskParameters.defaultTimeoutInMins;
 
     constructor() {
         super();
@@ -134,6 +138,16 @@ export class TaskParameters extends AWSTaskParametersBase {
 
             this.onFailure = tl.getInput('onFailure');
             this.outputVariable = tl.getInput('outputVariable', false);
+
+            const t = tl.getInput('timeoutInMins', false);
+            if (t) {
+                const tval = parseInt(t, 10);
+                // allow for shorter periods if user wants, but filter out -ve/0 silliness
+                if (tval > 0) {
+                    this.timeoutInMins = tval;
+                }
+            }
+
         } catch (error) {
             throw new Error(error.message);
         }
