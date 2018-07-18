@@ -303,6 +303,15 @@
             "required": false
         },
         {
+            "name": "stackCreateWaitTimout",
+            "type": "string",
+            "label": "Stack Create Wait Timeout (in hours)",
+            "defaultValue": "1",
+            "groupName": "Options",
+            "helpMarkDown": "Wait timeout (in hours) until stack status is CREATE_COMPLETE.",
+            "required": false
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
