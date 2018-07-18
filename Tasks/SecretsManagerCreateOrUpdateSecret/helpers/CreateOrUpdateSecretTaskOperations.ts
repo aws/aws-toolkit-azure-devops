@@ -26,10 +26,12 @@ export class TaskOperations {
 
         try {
             await this.updateSecret();
+            console.log(tl.loc('UpdateSecretCompleted'));
         } catch (err) {
             if (err.code === 'ResourceNotFoundException') {
                 if (this.taskParameters.autoCreateSecret) {
                     await this.createSecret();
+                    console.log(tl.loc('CreateSecretCompleted'));
                 } else {
                     throw new Error(tl.loc('SecretNotFound'));
                 }
@@ -37,8 +39,6 @@ export class TaskOperations {
                 throw new Error(tl.loc('SecretUpdateFailed', err));
             }
         }
-
-        console.log(tl.loc('TaskCompleted'));
     }
 
     private secretsManagerClient: SecretsManager;

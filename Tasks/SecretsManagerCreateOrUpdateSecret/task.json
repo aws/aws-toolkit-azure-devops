@@ -185,6 +185,7 @@
         "SettingVersionIdOutputVariable": "Setting version ID for secret into task output variable %s",
         "SettingArnOutputVariable": "Setting ARN for new secret into task output variable %s",
         "TooManyTags": "%s tags were specified for the task. The service permits a maximum of %s.",
-        "TaskCompleted": "Successfully created the new secret."
+        "CreateSecretCompleted": "Successfully created the new secret.",
+        "UpdateSecretCompleted": "Successfully updated the secret."
     }
 }
