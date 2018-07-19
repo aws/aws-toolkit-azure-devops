@@ -1,4 +1,4 @@
-.. Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+.. Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0
    International License (the "License"). You may not use this file except in compliance with the
@@ -12,7 +12,7 @@
 Document History
 ################
 
-This topic describes important changes to the AWS Tools for Microsoft Visual Studio Team Services 
+This topic describes important changes to the AWS Tools for Microsoft Visual Studio Team Services
 over the course of its history.
 
 **This documentation was built on:** |today|

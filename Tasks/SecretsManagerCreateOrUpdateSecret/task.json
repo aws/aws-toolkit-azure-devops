@@ -4,7 +4,7 @@
     "friendlyName": "AWS Secrets Manager Create/Update Secret",
     "description": "Updates a secret, optionally creating a secret if it does not exist",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/) for more information.",
+    "helpMarkDown": "Please refer to [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/secretsmanager-create-update.html).",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -37,7 +37,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Specifies the AWS credentials (a service endpoint type of 'AWS') to be used by the task in the build agent environment.\n\nIf credentials are not explicitly configured via a service endpoint the task will attempt to obtain the credentials to be used from the environment hosting the build agent using standard AWS environment variables - _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_.\n\nFor tasks running in build agents hosted on Amazon EC2 instances (Windows or Linux) an attempt will be made to obtain credentials using the instance metadata associated with the EC2 instance if no credentials are configured on the task with a service endpoint or set in environment variables."
+            "helpMarkDown": "Specifies the AWS credentials to be used by the task in the build agent environment.\n\nYou can specify credentials using a service endpoint (of type _AWS_) in the task configuration or you can leave unspecified. If unspecified the task will attempt to use credentials set in environment variables in the build agent process or, if the build agent is running on an Amazon EC2 instance, the task can obtain and use credentials from the instance metadata associated with the EC2 instance. For credentials to be available from EC2 instance metadata the instance must have been started with an instance profile referencing a role granting permissions to the task to make calls to AWS on your behalf. See [Using an IAM Role to Grant Permissions to Applications Running on Amazon EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html) for more information.\n\nWhen using environment variables in the build agent process you may use the standard AWS environment variables - _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_."
         },
         {
             "name": "regionName",
@@ -53,7 +53,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "Speciﬁes the friendly name of the secret. The secret name can consist of uppercase letters, lowercase letters, digits, and any of the following characters: /_+=.@-\n\nSpaces are not permitted.\n\nIf updating an existing secret you can specify either the Amazon Resource Name (ARN) or the friendly name of the secret."
+            "helpMarkDown": "Specifies the friendly name of the new secret. The secret name must be ASCII letters, digits, or the following characters: /_+=.@- (spaces are not permitted).\n\nLength Constraints: Minimum length of 1. Maximum length of 512.\n\nIf updating an existing secret you can specify either the Amazon Resource Name (ARN) or the friendly name of the secret."
         },
         {
             "name": "description",
@@ -81,7 +81,7 @@
             "type": "multiLine",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Specifies the text value that you want to store in this secret.\n\nFor storing multiple values, we recommend that you use a JSON text string argument and specify key/value pairs.\n\nRequired if *Secret Value Location* is set to _Inline_.",
+            "helpMarkDown": "Specifies the text value that you want to store in this secret. For storing multiple values, we recommend that you use a JSON text string argument and specify key/value pairs.\n\nRequired if _Secret Value Location_ is set to _Inline_.",
             "visibleRule": "secretValueSource = inline"
         },
         {
@@ -90,7 +90,7 @@
             "type": "radio",
             "defaultValue": "string",
             "required": true,
-            "helpMarkDown": "Specifies whether the file contents being stored in the secret text or binary data. *Note:* to satisfy the service's API requirements the task will automatically base-64 encode secrets specified as binary type; you do not need to perform the base-64 encoding prior to specifying the secret value in the task.",
+            "helpMarkDown": "Specifies whether the file contents being stored in the secret text or binary data.\n\n*Note:* to satisfy the service's API requirements the task will automatically base-64 encode secrets specified as binary type; you do not need to perform the base-64 encoding prior to specifying the secret value in the task.",
             "options": {
                 "string": "String",
                 "binary": "Binary"
@@ -103,7 +103,7 @@
             "type": "filePath",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Specifies the file containing the value (text or binary) that you want to store in this secret.\n\nRequired if *Secret Value Location* is set to _From File_.",
+            "helpMarkDown": "Specifies the file containing the value (text or binary) that you want to store in this secret.\n\nRequired if _Secret Value Location_ is set to _From File_.",
             "visibleRule": "secretValueSource = file"
         },
         {
@@ -120,7 +120,7 @@
             "type": "boolean",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "If the specified secret does not exist, attempt to create a new secret. Secrets Manager automatically attaches the staging label AWSCURRENT to the new version. If this option is not selected, the task will return an error if the secret cannot be found."
+            "helpMarkDown": "If the specified secret does not exist, attempt to create a new secret. Secrets Manager automatically attaches the staging label _AWSCURRENT_ to the new version. If this option is not selected, the task will return an error if the secret cannot be found."
         },
         {
             "name": "tags",

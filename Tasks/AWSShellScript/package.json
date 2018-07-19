@@ -1,6 +1,6 @@
 {
     "name": "awsshellscript",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "description": "Run a shell script using bash with AWS credentials",
     "main": "AWSShellScript.js",
     "scripts": {

@@ -4,7 +4,7 @@
     "friendlyName": "AWS CloudFormation Create/Update Stack",
     "description": "Creates a new AWS CloudFormation stack or updates the stack if it exists.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more details on working with AWS CloudFormation.",
+    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more details on working with AWS CloudFormation.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/cloudformation-create-update.html).",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -50,7 +50,7 @@
             "label": "AWS Credentials",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Specifies the AWS credentials (a service endpoint type of 'AWS') to be used by the task in the build agent environment.\n\nIf credentials are not explicitly configured via a service endpoint the task will attempt to obtain the credentials to be used from the environment hosting the build agent using standard AWS environment variables - _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_.\n\nFor tasks running in build agents hosted on Amazon EC2 instances (Windows or Linux) an attempt will be made to obtain credentials using the instance metadata associated with the EC2 instance if no credentials are configured on the task with a service endpoint or set in environment variables."
+            "helpMarkDown": "Specifies the AWS credentials to be used by the task in the build agent environment.\n\nYou can specify credentials using a service endpoint (of type _AWS_) in the task configuration or you can leave unspecified. If unspecified the task will attempt to use credentials set in environment variables in the build agent process or, if the build agent is running on an Amazon EC2 instance, the task can obtain and use credentials from the instance metadata associated with the EC2 instance. For credentials to be available from EC2 instance metadata the instance must have been started with an instance profile referencing a role granting permissions to the task to make calls to AWS on your behalf. See [Using an IAM Role to Grant Permissions to Applications Running on Amazon EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html) for more information.\n\nWhen using environment variables in the build agent process you may use the standard AWS environment variables - _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_."
         },
         {
             "name": "regionName",
@@ -86,7 +86,7 @@
             "type": "filePath",
             "label": "Template File",
             "required": false,
-            "helpMarkDown": "Path to the template file for the stack. This field is required if Template Source is set to use a local file. Template files smaller than 51,200 bytes can be uploaded directly to CloudFormation by the task. For templates larger than 51,200 bytes you should also supply the name of an Amazon S3 bucket to which the template file can be uploaded. If a bucket name is specified the task will upload the template file and then generate a URL to the template file in the bucket which will be used when specifying the template location to CloudFormation.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "helpMarkDown": "Path to the template file for the stack. This field is required if Template Source is set to use a local file. Template files smaller than 51,200 bytes can be uploaded directly to CloudFormation by the task. For templates larger than 51,200 bytes you should also supply the name of an Amazon S3 bucket to which the template file can be uploaded. If a bucket name is specified the task will upload the template file and then generate a URL to the template file in the bucket which will be used when specifying the template location to CloudFormation.\n\nFor more information see [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
             "visibleRule": "templateSource = file"
         },
         {
@@ -94,7 +94,7 @@
             "type": "string",
             "label": "S3 Bucket",
             "required": false,
-            "helpMarkDown": "The name of the bucket to which a local template file can be uploaded, or which contains the template to be used. If Template Source is set to *Amazon S3 bucket and object key* this parameter is required.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "helpMarkDown": "The name of the bucket to which a local template file can be uploaded, or which contains the template to be used. If Template Source is set to *Amazon S3 bucket and object key* this parameter is required.\n\nFor more information see [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
             "visibleRule": "templateSource = file || templateSource = s3"
         },
         {
@@ -102,7 +102,7 @@
             "type": "string",
             "label": "S3 Object Key",
             "required": false,
-            "helpMarkDown": "The name of the template file in the S3 bucket. The task will generate a URL to the file when specifying the location of the template file to CloudFormation. If Template Source is set to *Amazon S3 bucket and object key* this parameter is required.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "helpMarkDown": "The name of the template file in the S3 bucket. The task will generate a URL to the file when specifying the location of the template file to CloudFormation. If Template Source is set to *Amazon S3 bucket and object key* this parameter is required.\n\nFor more information see [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
             "visibleRule": "templateSource = s3"
         },
         {
@@ -110,13 +110,13 @@
             "type": "string",
             "label": "Template URL",
             "required": false,
-            "helpMarkDown": "URL reference to the template file in Amazon S3. This field is required if Template Source is set to use a URL. When stored in Amazon S3 template files are subject to a maximum size of 460,800 bytes.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "helpMarkDown": "URL reference to the template file in Amazon S3. This field is required if Template Source is set to use a URL. When stored in Amazon S3 template files are subject to a maximum size of 460,800 bytes.\n\nFor more information see [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
             "visibleRule": "templateSource = url"
         },
         {
             "name": "templateParametersSource",
             "type": "radio",
-            "label": "Template Parameters",
+            "label": "Template Parameters Source",
             "required": false,
             "helpMarkDown": "Specifies the source of parameter values to supply with the template. If your template uses parameters you can supply their values in JSON or YAML content, from a file in the build area or inline in the task.\n\nIf your template does not need parameter value to be supplied leave the 'Local file' option field empty. Note that a value is required if the field is set to *Inline*.",
             "defaultValue": "file",
@@ -128,19 +128,19 @@
         {
             "name": "templateParametersFile",
             "type": "filePath",
-            "label": "Parameters File",
+            "label": "Template Parameters File",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Optional path to the file containing the template parameters, in JSON or YAML format. To not use parameters, leave the field empty.\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "helpMarkDown": "Optional path to an existing file containing the template parameters in JSON or YAML format. If your template does not require parameters leave the field empty.\n\nCloudFormation expects the file to contain an array of one or more parameter objects. Each object specifies the name of the parameter as *ParameterKey* and the corresponding value in *ParameterValue*. For example (in JSON format):\n\n```json\n[\n\t{\n\t\t\"ParameterKey\":\"parameter1\",\n\t\t\"ParameterValue\":\"parameter1value\"},\n\t{\n\t\t\"ParameterKey\":\"parameter2\",\n\t\t\"ParameterValue\":\"parameter2value\"}\n]```\n\nFor more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
             "visibleRule": "templateParametersSource = file"
         },
         {
             "name": "templateParameters",
             "type": "multiLine",
-            "label": "Parameters",
+            "label": "Template Parameters",
             "defaultValue": "",
             "required": false,
-            "helpMarkDown": "Parameter values for the template, in JSON or YAML format. A value must be provided if Template Parameters above is set to *Inline*.\n\n For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
+            "helpMarkDown": "Parameter values for the template, in JSON or YAML format. A value must be provided if *Template Parameters Source* is set to *Inline*. Each object specifies the name of the parameter as *ParameterKey* and the corresponding value in *ParameterValue*. For example (in JSON format):\n\n```json\n[\n\t{\n\t\t\"ParameterKey\":\"parameter1\",\n\t\t\"ParameterValue\":\"parameter1value\"},\n\t{\n\t\t\"ParameterKey\":\"parameter2\",\n\t\t\"ParameterValue\":\"parameter2value\"}\n]```\n\n For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the AWS CloudFormation User Guide.",
             "visibleRule": "templateParametersSource = inline",
             "properties": {
                 "resizable": "true",
@@ -154,7 +154,7 @@
             "label": "Create or update the stack using a change set",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "If selected a change set will be created that contains a list of changes that will be applied to a stack and then validated. If the changes validate successfully the change set can then be executed to effect the changes. You can elect to use a change set to both create a new stack or update an existing stack."
+            "helpMarkDown": "If selected a change set will be created that contains a list of changes that will be applied to a stack and then validated. If the changes validate successfully the change set can then be executed to effect the changes. You can elect to use a change set to both create a new stack or update an existing stack.\n\n__Note:__ when using this task to deploy a serverless application template you must select to use a change set."
         },
         {
             "name": "changeSetName",
@@ -208,7 +208,7 @@
             "defaultValue": "",
             "required": false,
             "groupName": "Advanced",
-            "helpMarkDown": "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that AWS CloudFormation assumes when executing the change set. AWS CloudFormation uses the role's credentials to make calls on your behalf. AWS CloudFormation uses this role for all future operations on the stack. As long as users have permission to operate on the stack, AWS CloudFormation uses this role even if the users don't have permission to pass it. Ensure that the role grants least privilege.\n\nIf you don't specify a value, AWS CloudFormation uses the role that was previously associated with the stack. If no role is available, AWS CloudFormation uses a temporary session that is generated from your user credentials."
+            "helpMarkDown": "The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that AWS CloudFormation assumes when executing the change set. AWS CloudFormation uses the role's credentials to make calls on your behalf. AWS CloudFormation uses this role for all future operations on the stack. As long as users have permission to operate on the stack, AWS CloudFormation uses this role even if the users don't have permission to pass it. It is recommended as a general principle that the role grants least privilege.\n\nIf you don't specify a value, AWS CloudFormation uses the role that was previously associated with the stack. If no role is available, AWS CloudFormation uses a temporary session that is generated from your user credentials."
         },
         {
             "name": "resourceTypes",
@@ -243,7 +243,7 @@
             "label": "Rollback Triggers",
             "required": false,
             "defaultValue": "false",
-            "helpMarkDown": "Rollback triggers enable you to have AWS CloudFormation monitor the state of your application during stack creation and updating, and to rollback that operation if the application breaches the threshold of any of the alarms you've specified. [Learn more](http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_RollbackConfiguration.html)",
+            "helpMarkDown": "Rollback triggers enable you to have AWS CloudFormation monitor the state of your application during stack creation and updating, and to rollback that operation if the application breaches the threshold of any of the alarms you've specified. [Learn more](http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_RollbackConfiguration.html).",
             "groupName": "Advanced"
         },
         {
@@ -262,7 +262,7 @@
             "label": "Rollback Trigger ARNs",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The Amazon Resource Names (ARNs) of the triggers to monitor during stack creation or update actions.\n\nBy default, AWS CloudFormation saves the rollback triggers specified for a stack and applies them to any subsequent update operations for the stack, unless you specify otherwise. If you do specify rollback triggers for this parameter, those triggers replace any list of triggers previously specified for the stack. This means:\n\n* To use the rollback triggers previously specified for this stack, if any, don't specify this parameter.\n\n* To specify new or updated rollback triggers, you must specify all the triggers that you want used for this stack, even triggers you've specifed before (for example, when creating the stack or during a previous stack update). Any triggers that you don't include in the updated list of triggers are no longer applied to the stack.\n\nIf a specified trigger is missing, the entire stack operation fails and is rolled back.\n\nA maximum of five triggers can be supplied.",
+            "helpMarkDown": "The Amazon Resource Names (ARNs) of the triggers to monitor during stack creation or update actions.\n\nBy default AWS CloudFormation saves the rollback triggers specified for a stack and applies them to any subsequent update operations for the stack, unless you specify otherwise. If you do specify rollback triggers for this parameter, those triggers replace any list of triggers previously specified for the stack. This means:\n\n* To use the rollback triggers previously specified for this stack, if any, don't specify this parameter.\n\n* To specify new or updated rollback triggers, you must specify all the triggers that you want used for this stack, even triggers you've specifed before (for example, when creating the stack or during a previous stack update). Any triggers that you don't include in the updated list of triggers are no longer applied to the stack.\n\nIf a specified trigger is missing, the entire stack operation fails and is rolled back.\n\nA maximum of five triggers can be supplied.",
             "groupName": "Advanced",
             "visibleRule": "monitorRollbackTriggers = true",
             "options": {

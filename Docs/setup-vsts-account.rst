@@ -1,4 +1,4 @@
-.. Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+.. Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0
    International License (the "License"). You may not use this file except in compliance with the
@@ -13,10 +13,12 @@ Set up a Visual Studio Team Services Account
 ############################################
 
 .. meta::
-   :description: Set up default AWS credentials and region for development with the AWS SDK for
-                 Java.
-   :keywords: AWS region, AWS credentials, shared credentials file, shared config file
+   :description: Set up a Visual Studio Team Services account.
+   :keywords:
 
-To use `Visual Studio Team Services <https://www.visualstudio.com/team-services/>`_ 
-you will need you will to 
-`sign up for Visual Studio Team Services <https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services>`_. 
+To use `Visual Studio Team Services <https://www.visualstudio.com/team-services/>`_
+you will need you will to
+`sign up for Visual Studio Team Services <https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services>`_.
+
+Alternatively you can use Microsoft Team Foundation Server (TFS). For more information see
+`Team Foundation Server <https://visualstudio.microsoft.com/tfs/>`_. We recommend using Team Foundation Server 2017 or higher.

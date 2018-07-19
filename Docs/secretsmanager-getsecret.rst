@@ -8,49 +8,41 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
-.. _aws-cli:
+.. _secretsmanager-getsecret:
 .. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
-#####
-|CLI|
-#####
+##############################
+AWS Secrets Manager Get Secret
+##############################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
    :keywords: extensions, tasks
 
+
 Synopsis
 ========
 
-Runs a command using the |CLI|. Note that you must have the |CLI| installed to use this task. See `Installing the AWS Command Line Interface
-<https://docs.aws.amazon.com/cli/latest/userguide/installing.html>`_ for more details.
+Stores the value of a secret in AWS Secrets Manager into a secret build variable.
 
 Description
 ===========
 
-The |CLI| uses a multipart structure on the command line. It starts with the base call to AWS.
-The next part specifies a top-level command, which often represents an AWS service that the |CLI| supports. Each AWS service has
-additional subcommands that specify the operation to perform. You can specify the general |CLI| options, or the specific parameters
-for an operation, in any order on the command line. If you specify an exclusive parameter multiple times, only the last value
-applies.
-
-.. code-block:: sh
-
-        <command> <subcommand> [options and parameters]
-
-Parameters can take various types of input values such as numbers, strings, lists, maps, and JSON
-structures.
+Use this task to retrieve the value of a secret stored in AWS Secrets Manager and store it locally in a Team Services build variable. The
+build variable will be automatically set to 'secret' mode to automatically mask the value when logged or otherwise displayed.
 
 Parameters
 ==========
 
-You can set the following parameters for the task. Required parameters are noted by an asterisk (*). Other parameters are optional.
+You can set the following parameters for the task. Required
+parameters
+are noted by an asterisk (*). Other parameters are optional.
 
 
 Display name*
 -------------
 
-    The default name of the task instance, which can be modified: |CLI|
+    The default name of the task instance, which can be modified: Secrets Manager Get Secret
 
 AWS Credentials
 ---------------
@@ -78,34 +70,20 @@ AWS Region
     instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance
     if no region is configured on the task or set in the environment variable.
 
-Command*
---------
+Secret ID/Name
+--------------
 
-    The |CLI| command to run. Run :code:`aws help` in the |CLIlong| to get a complete list of commands,
-    or see
-    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
+    Specifies the secret containing the version that you want to retrieve. You can specify either the |ARNLong| (ARN) or the friendly name of the secret.
 
-Subcommand
+Version ID
 ----------
 
-    The |CLI| subcommand to run. Run :code:`aws help` in the |CLIlong| to get a complete list of commands,
-    or see
-    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
+    Specifies the unique identifier of the version of the secret that you want to retrieve. If you specify this parameter then don't specify *Version Stage*. If you don't specify either a *Version Stage* or *Version ID* then the default is to perform the operation on the version with the version stage value of *AWSCURRENT*.
 
+Version Stage
+-------------
 
-Options and Parameters
-----------------------
+    Specifies the version of the secret that you want to retrieve using the staging label attached to the version.
 
-    The arguments to pass to the |CLI| command. Run :code:`aws <command> --help` in the |CLIlong| to
-    get the complete list of arguments supported by the command.
-
-Advanced
---------
-
-Fail on Standard Error
-~~~~~~~~~~~~~~~~~~~~~~
-
-    If true, this task fails if any errors are written to the StandardError stream.
-
-
+    Staging labels are used to keep track of different versions during the rotation process. If you use this parameter then don't specify *Version ID*. If you don't specify either a *Version Stage* or *Version ID*, then the default is to perform the operation on the version with the version stage value of *AWSCURRENT*.
 

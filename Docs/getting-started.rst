@@ -1,4 +1,4 @@
-.. Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+.. Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0
    International License (the "License"). You may not use this file except in compliance with the
@@ -14,14 +14,14 @@
 Getting Started
 ###############
 
-This section provides information about how to install, set up, and use the 
+This section provides information about how to install, set up, and use the
 AWS Tools for Microsoft Visual Studio Team Services.
 
 Set up a VSTS Account
 =====================
 
 To use `Visual Studio Team Services (VSTS) <https://www.visualstudio.com/team-services/>`_,
-you need to sign up for a 
+you need to sign up for a
 `Visual Studio Team Services Account <https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services>`_.
 
 Install the AWS Tools for VSTS Extension
@@ -92,10 +92,10 @@ Create an AWS Connection
 ========================
 
 To use the tasks contained in the tools, you must link an AWS subscription to VSTS or Team Foundation
-Server. You can link your subscription from the :guilabel:`Services` tab 
-in the Account Administration section. Add the AWS subscription to use in the 
+Server. You can link your subscription from the :guilabel:`Services` tab
+in the Account Administration section. Add the AWS subscription to use in the
 Build or Release Management definition by opening the Account Administration page (choose the gear icon
-on the top right of the page), and then choose :guilabel:`Services`. Choose :guilabel:`+ New Service Endpoint`. 
+on the top right of the page), and then choose :guilabel:`Services`. Choose :guilabel:`+ New Service Endpoint`.
 Select the :guilabel:`AWS` endpoint type. This opens the :guilabel:`Add new AWS Connection` form.
 
    .. image:: images/AddNewAWSConnection.png
@@ -107,7 +107,7 @@ Provide the following parameters, and then click :guilabel:`OK`:
 * Access key ID
 * Secret access key
 
-The connection name is used to refer to these credentials when you are configuring tasks that access 
+The connection name is used to refer to these credentials when you are configuring tasks that access
 AWS in your build and release definitions.
 
 For more information, see `About Access Keys <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console>`_.

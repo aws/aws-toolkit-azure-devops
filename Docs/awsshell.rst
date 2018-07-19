@@ -8,12 +8,12 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
-.. _aws-cli:
+.. _awsshell:
 .. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
-#####
-|CLI|
-#####
+#################################
+AWS Shell
+#################################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
@@ -22,24 +22,12 @@
 Synopsis
 ========
 
-Runs a command using the |CLI|. Note that you must have the |CLI| installed to use this task. See `Installing the AWS Command Line Interface
-<https://docs.aws.amazon.com/cli/latest/userguide/installing.html>`_ for more details.
+Run a shell script using Bash with AWS credentials.
 
 Description
 ===========
 
-The |CLI| uses a multipart structure on the command line. It starts with the base call to AWS.
-The next part specifies a top-level command, which often represents an AWS service that the |CLI| supports. Each AWS service has
-additional subcommands that specify the operation to perform. You can specify the general |CLI| options, or the specific parameters
-for an operation, in any order on the command line. If you specify an exclusive parameter multiple times, only the last value
-applies.
-
-.. code-block:: sh
-
-        <command> <subcommand> [options and parameters]
-
-Parameters can take various types of input values such as numbers, strings, lists, maps, and JSON
-structures.
+Runs a shell script in Bash, setting AWS credentials and region information into the shell environment using the standard environment keys *AWS_ACCESS_KEY_ID*, *AWS_SECRET_ACCESS_KEY*, *AWS_SESSION_TOKEN* and *AWS_REGION*.
 
 Parameters
 ==========
@@ -50,7 +38,7 @@ You can set the following parameters for the task. Required parameters are noted
 Display name*
 -------------
 
-    The default name of the task instance, which can be modified: |CLI|
+The default name of the task instance, which can be modified: AWS Shell Script
 
 AWS Credentials
 ---------------
@@ -78,34 +66,41 @@ AWS Region
     instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance
     if no region is configured on the task or set in the environment variable.
 
-Command*
---------
+Arguments
+---------
 
-    The |CLI| command to run. Run :code:`aws help` in the |CLIlong| to get a complete list of commands,
-    or see
-    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
+    The arguments to be passed to the shell script.
 
-Subcommand
-----------
+Script Source
+-------------
 
-    The |CLI| subcommand to run. Run :code:`aws help` in the |CLIlong| to get a complete list of commands,
-    or see
-    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
+    The source of the script to run in the shell. Choose *Script file* to enter the file path to the script to be run or *Inline script*
+    to specify the source code for the script in the task configuration.
 
+Script Path
+-----------
 
-Options and Parameters
-----------------------
+    When *Script Source* is set to *Script file*, specifies the file path to the script to execute. This must be a fully qualified path
+    or a path relative to the $(System.DefaultWorkingDirectory) location. The script file must exist.
 
-    The arguments to pass to the |CLI| command. Run :code:`aws <command> --help` in the |CLIlong| to
-    get the complete list of arguments supported by the command.
+Inline Script
+-------------
 
-Advanced
---------
+    The source code of the script to run when *Script Source* is set to *Inline script*. A maximum of 5000 characters is allowed.
+
+Specify Working Directory
+-------------------------
+
+    If selected a custom working directory, which must exist, can be specified for the script. The default behavior when unchecked is
+    to set the working directory for the shell to be the script file location.
+
+Working Directory
+-----------------
+
+    If *Specify Working Directory* is checked, contains the custom working directory for the script.
 
 Fail on Standard Error
 ~~~~~~~~~~~~~~~~~~~~~~
 
-    If true, this task fails if any errors are written to the StandardError stream.
-
-
+    If this option is selected, the task will fail if any errors are written to the standard error stream.
 

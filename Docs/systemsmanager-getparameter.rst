@@ -1,4 +1,4 @@
-.. Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+.. Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0
    International License (the "License"). You may not use this file except in compliance with the
@@ -9,6 +9,7 @@
    limitations under the License.
 
 .. _systemsmanager-getparameter:
+.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 #################################
 AWS Systems Manager Get Parameter
@@ -33,93 +34,103 @@ downstream tasks in the definition. The names used for the build variables are c
 Parameters
 ==========
 
-You can set the following parameters for the task. Required parameters are noted by 
+You can set the following parameters for the task. Required parameters are noted by
 an asterisk (*). Other parameters are optional.
 
-Displayname*
-------------
+Display name*
+-------------
 
-    The default name of the task, AWS Systems Manager Get Parameter. You can rename it or append the name of the
-    associated Parameter Store parameter or parameter path to it.
+    The default name of the task instance, which can be modified: Systems Manager Get Parameter
 
-AWS Credentials*
-----------------
+AWS Credentials
+---------------
 
-    The AWS credentials to be used by the task when it executes on a build host. If needed, choose :guilabel:`+`, and then add a new
-    AWS service endpoint connection.
+    Specifies the AWS credentials to be used by the task in the build agent environment.
 
-AWS Region*
------------
+    You can specify credentials using a service endpoint (of type AWS) in the task configuration or you can leave unspecified. If
+    unspecified the task will attempt to use credentials set in environment variables in the build agent process or, if the build agent
+    is running on an Amazon EC2 instance, the task can obtain and use credentials from the instance metadata associated with the EC2
+    instance. For credentials to be available from EC2 instance metadata the instance must have been started with an instance profile
+    referencing a role granting permissions to the task to make calls to AWS on your behalf. See
+    IAMRolesForEC2_ for more information.
+
+    When using environment variables in the build agent process you may use the standard AWS environment variables - *AWS_ACCESS_KEY_ID*,
+    *AWS_SECRET_ACCESS_KEY* and optionally *AWS_SESSION_TOKEN*.
+
+AWS Region
+----------
 
     The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more
     information, see :aws-gr:`Regions and Endpoints <rande>` in the |AWS-gr|.
 
+    If a region is not specified in the task configuration the task will attempt to obtain the region to be used using the standard
+    AWS environment variable *AWS_REGION* in the build agent process's environment. Tasks running in build agents hosted on Amazon EC2
+    instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance
+    if no region is configured on the task or set in the environment variable.
+
 Read Mode*
 ----------
 
-    Sets the mode of operation. Choose from reading a single parameter value identified by name, or a hierarchy of
-    parameter values identified by common path.
+    Whether the task gets the value of a single named parameter or values from a parameter hierarchy identified by common parameter path.
 
 Parameter Name
 --------------
 
-    Required if Read Mode is set to get a single parameter value. Identifies the name of the parameter to read.
+    The name identifying a single parameter to be read from the store. Required if *Read Mode* is set to *Get value for single parameter*.
 
 Parameter Version
 -----------------
 
-    Optional version number of the parameter value to be read. Parameter versions start at 1 and increase as each new value is
-    stored. If not specified the task reads the value of latest available version for the parameter.
+    If unspecified the value associated with the latest version of the parameter is read. If specified the task requests the value associated with the supplied version. Parameter versions start at at 1 and increment each time a new value is stored for the parameter.
 
     This field is only available when Read Mode is set to get a single parameter value.
 
 Parameter Path
 --------------
 
-    Required if Read Mode is set to parameter hierarchy. Identifies the path of the parameter(s) to be read.
+    The path hierarchy for the parameter(s) to be read. Hierarchies start with, and are separated by, a forward slash (/) and may contain up to five levels. The path hierarchy can identify a specific parameter in the hierarchy by appending the parameter name, or can identify a group of parameters sharing the hierarchy path. If the supplied hierarchy contains multiple parameters, all parameter values in the hierachy are downloaded.
+
+    **Note:** *SecureString* parameters found in a hierachy will be automatically set as secret variables.
+
+    Required if *Read Mode* is set to *Get values for parameter hierarchy*.
 
 Recursive
 ---------
 
-    Available when reading a parameter hierarchy. If checked, values for the specified Parameter Path and all
-    sub-paths are read. If unchecked only the values for parameters matching the supplied path are read, values
-    in sub-paths are ignored.
+    Available when reading a parameter hierarchy. If selected then parameter values for the specified *Parameter Path* and all sub-paths are read. If not selected only the values for parameters matching the supplied path are read, values in sub-paths are ignored.
 
 Variable Name Transform
 -----------------------
 
     Specifies how the build variable name(s) to hold the parameter value(s) are created. You can choose from
 
-    - Use parameter names (including any paths) as variable names. The full parameter name is used to set the build
-      variable name.
-    - Use leaf of parameter names as variable names. The path is removed and the resulting leaf text used as the
+    * Use parameter names (including any paths) as variable names. The full parameter name is used to set the build variable name.
+    * Use leaf of parameter names as variable names. The path is removed and the resulting leaf text is used as the build variable name.
+    * Replace text in the parameter name using a regular expression to form the
       build variable name.
-    - Replace text in the parameter name using a regular expression. Replace text in the parameter name to form the
-      build variable name.
-    - Use custom name. Available for single parameter read mode only, enables entry of a custom name for the build variable.
+    * Use custom name. Available for single parameter read mode only, enables entry of a custom name for the build variable.
 
 Custom Variable Name
 --------------------
 
-    Required if Variable Name Transform is set to 'use custom name'. Specifies the desired name for the build variable.
+    The name of the build variable to hold the parameter value. This value is required if *Variable Name Transform* is set to *Use custom name*.
 
 Search Pattern
 --------------
 
-    Required if Variable Name Transform is set to 'replace text'. Specifies the search pattern as a regular expression.
+    A regular expression defining the text in the parameter name that is to be replaced to form the variable name. This field is required if *Variable Name Transform* is set to *Replace text in the parameter name using a regular expression*.
 
 Replacement Text
 ----------------
 
-    Specifies the replacement text pattern when Variable Name Transform is set to 'replace text'.
+    The text to use to replace the matched pattern defined in the *Search Pattern* option. If an empty string is supplied the text identified by the pattern is simply removed from the parameter name.
 
 Global Match
 ------------
 
-    When replacing text, specifies if the replacement stops at the first match or replaces all occurrences of the
-    search pattern.
+    If selected then a global match is performed with the specified pattern. If not selected the replacement stops after the first match.
 
 Case-insensitive Match
 ----------------------
 
-    When replacing text specifies if the search should be done in a case-insensitive manner.
+    If selected a case-insensitive match is performed with the specified pattern.

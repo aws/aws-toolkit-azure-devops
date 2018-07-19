@@ -8,49 +8,40 @@
    either express or implied. See the License for the specific language governing permissions and
    limitations under the License.
 
-.. _aws-cli:
+.. _systemsmanager-setparameter:
 .. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
-#####
-|CLI|
-#####
+#################################
+AWS Systems Manager Set Parameter
+#################################
 
 .. meta::
    :description: AWS Tools for Visual Studio Team Services (VSTS) Task Reference
    :keywords: extensions, tasks
 
+
 Synopsis
 ========
 
-Runs a command using the |CLI|. Note that you must have the |CLI| installed to use this task. See `Installing the AWS Command Line Interface
-<https://docs.aws.amazon.com/cli/latest/userguide/installing.html>`_ for more details.
+TBD
 
 Description
 ===========
 
-The |CLI| uses a multipart structure on the command line. It starts with the base call to AWS.
-The next part specifies a top-level command, which often represents an AWS service that the |CLI| supports. Each AWS service has
-additional subcommands that specify the operation to perform. You can specify the general |CLI| options, or the specific parameters
-for an operation, in any order on the command line. If you specify an exclusive parameter multiple times, only the last value
-applies.
-
-.. code-block:: sh
-
-        <command> <subcommand> [options and parameters]
-
-Parameters can take various types of input values such as numbers, strings, lists, maps, and JSON
-structures.
+TBD
 
 Parameters
 ==========
 
-You can set the following parameters for the task. Required parameters are noted by an asterisk (*). Other parameters are optional.
+You can set the following parameters for the task. Required
+parameters
+are noted by an asterisk (*). Other parameters are optional.
 
 
 Display name*
 -------------
 
-    The default name of the task instance, which can be modified: |CLI|
+    The default name of the task instance, which can be modified: Systems Manager Set Parameter
 
 AWS Credentials
 ---------------
@@ -77,35 +68,4 @@ AWS Region
     AWS environment variable *AWS_REGION* in the build agent process's environment. Tasks running in build agents hosted on Amazon EC2
     instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance
     if no region is configured on the task or set in the environment variable.
-
-Command*
---------
-
-    The |CLI| command to run. Run :code:`aws help` in the |CLIlong| to get a complete list of commands,
-    or see
-    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
-
-Subcommand
-----------
-
-    The |CLI| subcommand to run. Run :code:`aws help` in the |CLIlong| to get a complete list of commands,
-    or see
-    :cli-ug:`CommandStructure <command-structure>` in the |CLIlong|.
-
-
-Options and Parameters
-----------------------
-
-    The arguments to pass to the |CLI| command. Run :code:`aws <command> --help` in the |CLIlong| to
-    get the complete list of arguments supported by the command.
-
-Advanced
---------
-
-Fail on Standard Error
-~~~~~~~~~~~~~~~~~~~~~~
-
-    If true, this task fails if any errors are written to the StandardError stream.
-
-
 

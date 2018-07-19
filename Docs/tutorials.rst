@@ -1,4 +1,4 @@
-.. Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+.. Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0
    International License (the "License"). You may not use this file except in compliance with the
@@ -9,7 +9,7 @@
    limitations under the License.
 
 .. _tutorials:
-   
+
 ############################
 Using the AWS Tools for VSTS
 ############################
@@ -18,7 +18,7 @@ Using the AWS Tools for VSTS
    :description: Programming information for the AWS Tools for Microsoft Visual Studio Team Services
    :keywords:  AWS, S3, Visual Studio Team Services Marketplace
 
-The following tutorials demonstrate how to use tasks from the AWS Tools for Microsoft Visual Studio Team 
+The following tutorials demonstrate how to use tasks from the AWS Tools for Microsoft Visual Studio Team
 Services in your VSTS projects.
 
 **Prerequisites**
@@ -38,4 +38,3 @@ See :ref:`getting-started` for instructions to install the AWS Tools for VSTS an
    tutorial-s3
    tutorial-eb
 
-          
