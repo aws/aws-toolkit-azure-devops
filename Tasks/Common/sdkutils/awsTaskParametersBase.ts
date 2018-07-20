@@ -152,20 +152,23 @@ export abstract class AWSTaskParametersBase {
 
         console.log('Configuring region for task');
 
-        this.configuredRegion = tl.getInput('regionName', false);
-        if (this.configuredRegion) {
+        let region = tl.getInput('regionName', false);
+        if (region) {
+            this.configuredRegion = region.toLowerCase();
             console.log(`...configured to use region ${this.configuredRegion}, defined in task.`);
             return this.configuredRegion;
         }
 
-        this.configuredRegion = tl.getVariable(AWSTaskParametersBase.awsRegionVariable);
-        if (this.configuredRegion) {
+        region = tl.getVariable(AWSTaskParametersBase.awsRegionVariable);
+        if (region) {
+            this.configuredRegion = region.toLowerCase();
             console.log(`...configured to use region ${this.configuredRegion}, defined in task variable ${AWSTaskParametersBase.awsRegionVariable}.`);
             return this.configuredRegion;
         }
 
         if (process.env.AWS_REGION) {
-            console.log(`...configured to use region ${process.env.AWS_REGION}, defined in environment variable.`);
+            this.configuredRegion = process.env.AWS_REGION;
+            console.log(`...configured to use region ${this.configuredRegion}, defined in environment variable.`);
             return this.configuredRegion;
         }
 
