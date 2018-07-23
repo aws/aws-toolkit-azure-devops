@@ -66,8 +66,11 @@ The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
 * One or more service endpoints, of type *AWS*, can be created and populated with AWS access and secret keys, and optionally data for *Assumed Role* credentials.
   * Tasks reference the configured service endpoint instances by name as part of their configuration and pull the required credentials from the endpoint when run.
+* Variables defined on the task or build.
+  * If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
+    variables are named *AWS.AccessKeyID*, *AWS.SecretAccessKey* and optionally *AWS.SessionToken*. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the variable *AWS.Region*.
 * Environment variables in the build agent's environment.
-  * If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from standard environment variables in the build process environment. These variables are *AWS_ACCESS_KEY_ID*, *AWS_SECRET_ACCESS_KEY* and optionally *AWS_SESSION_TOKEN*. (To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the environment variable *AWS_REGION*.)
+  * If tasks are not configured with the name of a service endpoint, and credentials or region are not available from task variables, the tasks will attempt to obtain credentials, and optionally region, from standard environment variables in the build process environment. These variables are *AWS_ACCESS_KEY_ID*, *AWS_SECRET_ACCESS_KEY* and optionally *AWS_SESSION_TOKEN*. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the environment variable *AWS_REGION*.
 * EC2 instance metadata, for build hosts running on EC2 instances.
   * Both credential and region information can be automatically obtained from the instance metadata in this scenario.
 

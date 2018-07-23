@@ -14,6 +14,13 @@ import HttpsProxyAgent = require('https-proxy-agent');
 
 export abstract class AWSTaskParametersBase {
 
+    // Task variable names that can be used to supply the AWS credentials
+    // to a task (in addition to using a service endpoint, or environment
+    // variables, or EC2 instance metadata)
+    private static readonly awsAccessKeyIdVariable: string = 'AWS.AccessKeyID';
+    private static readonly awsSecretAccessKeyVariable: string = 'AWS.SecretAccessKey';
+    private static readonly awsSessionTokenVariable: string = 'AWS.SessionToken';
+
     // Task variable name that can be used to supply the region setting to
     // a task.
     private static readonly awsRegionVariable: string = 'AWS.Region';
@@ -71,7 +78,9 @@ export abstract class AWSTaskParametersBase {
 
         console.log('Configuring credentials for task');
 
-        this.configuredCredentials = this.attemptEndpointCredentialConfiguration(tl.getInput('awsCredentials', false));
+        this.configuredCredentials =
+            this.attemptEndpointCredentialConfiguration(tl.getInput('awsCredentials', false))
+                || this.attemptCredentialConfigurationFromVariables();
         if (this.configuredCredentials) {
             return this.configuredCredentials;
         }
@@ -90,7 +99,7 @@ export abstract class AWSTaskParametersBase {
         }
 
         this.awsEndpointAuth = tl.getEndpointAuthorization(endpointName, false);
-        console.log(`...retrieving task credentials from service endpoint '${endpointName}'`);
+        console.log(`...configuring AWS credentials from service endpoint '${endpointName}'`);
 
         const accessKey = this.awsEndpointAuth.parameters.username;
         const secretKey = this.awsEndpointAuth.parameters.password;
@@ -141,6 +150,34 @@ export abstract class AWSTaskParametersBase {
         }
 
         return new AWS.TemporaryCredentials(options, masterCredentials);
+    }
+
+    // credentials can also be set, using their environment variable names,
+    // as variables set on the task or build - these do not appear to be
+    // visible as environment vars for the AWS Node.js sdk to auto-recover
+    // so treat as if a service endpoint had been set and return a credentials
+    // instance.
+    private attemptCredentialConfigurationFromVariables() : AWS.Credentials {
+        const accessKey = tl.getVariable(AWSTaskParametersBase.awsAccessKeyIdVariable);
+        if (!accessKey) {
+            return undefined;
+        }
+
+        const secretKey = tl.getVariable(AWSTaskParametersBase.awsSecretAccessKeyVariable);
+        if (!secretKey) {
+            throw new Error ('AWS access key ID present in task variables but secret key value is missing; cannot configure task credentials.');
+        }
+
+        const token = tl.getVariable(AWSTaskParametersBase.awsSessionTokenVariable);
+
+        console.log('...configuring AWS credentials from task variables');
+        this.configuredCredentials = new AWS.Credentials({
+            accessKeyId: accessKey,
+            secretAccessKey: secretKey,
+            sessionToken: token
+        });
+
+        return this.configuredCredentials;
     }
 
     private configuredRegion: string;

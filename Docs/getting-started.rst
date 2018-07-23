@@ -37,13 +37,15 @@ choose :guilabel:`Download` to install into an on-premises Team Foundation Serve
           :alt: Download Team Services Extension
 
 .. _setup-credentials:
+.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 Set up AWS Credentials for the AWS Tools for VSTS
 =================================================
 
-To use the AWS Tools for VSTS to access AWS, you need an AWS account and AWS credentials. To increase the
-security of your AWS account, we recommend that you use an *IAM user* to provide access credentials
-instead of using your root account credentials.
+To use the AWS Tools for VSTS to access AWS, you need an AWS account and AWS credentials. When build agents run the tasks
+contained in the tools the tasks must be configured with, or have access to, those AWS credentials to enable them to call
+AWS service APIs. To increase the security of your AWS account, we recommend that you use an *IAM user* to provide access
+credentials to the tasks running in the build agent processes instead of using your root account credentials.
 
 .. note:: For an overview of |IAM| users and why they are important for the security of your
          account, see
@@ -88,14 +90,34 @@ and use those credentials.
         .. important:: There is no way to obtain the secret access key once you close the dialog box.
            You can, however, delete its associated access key ID and create a new one.
 
-Create an AWS Connection
-========================
+Once an AWS account has been created, and preferably an IAM user for that account as detailed above, you can supply
+credentials to the tasks in a number of ways:
 
-To use the tasks contained in the tools, you must link an AWS subscription to VSTS or Team Foundation
-Server. You can link your subscription from the :guilabel:`Services` tab
-in the Account Administration section. Add the AWS subscription to use in the
-Build or Release Management definition by opening the Account Administration page (choose the gear icon
-on the top right of the page), and then choose :guilabel:`Services`. Choose :guilabel:`+ New Service Endpoint`.
+* By configuring a service endpoint, of type *AWS*, and referencing that endpoint when configuring tasks.
+* By creating specific named variables in your build. The variable names for supplying credentials are *AWS.AccessKeyID*,
+  *AWS.SecretAccessKey* and optionally *AWS.SessionToken*. To pass the region in which the AWS service API calls should
+  be made you can also specify *AWS.Region* with the region code (eg *us-west-2*) of the region.
+* By using standard AWS environment variables in the build agent process. These variables are *AWS_ACCESS_KEY_ID*,
+  *AWS_SECRET_ACCESS_KEY* and optionally *AWS_SESSION_TOKEN*. To pass the region in which the AWS service API calls should
+  be made you can also specify *AWS_REGION* with the region code (eg *us-west-2*) of the region.
+* For build agents running on Amazon EC2 instances the tasks can automatically obtain credential and region information from
+  instance metadata associated with the EC2 instance. For credentials to be available from EC2 instance metadata the instance
+  must have been started with an instance profile referencing a role granting permissions to the task to make calls to AWS on
+  your behalf. See IAMRolesForEC2_ for more information.
+
+
+Supplying Task Credentials using a Service Endpoint
+===================================================
+
+If you choose to use service endpoints, of type *AWS*, to convey credentials to the AWS tasks in the tools you can link your
+AWS subscription from the :guilabel:`Services` tab in the Account Administration section for a project. Note that a service
+endpoint expects long-lived AWS credentials consisting of an access and secret key pair, to be provided. Alternatively you
+can define *Assume Role* credentials. Service endpoints do not support the use of a session token variable. To use these forms
+of temporary AWS credentials use the build or environment variable approaches as defined earlier, or run your build agents on
+Amazon EC2 instances.
+
+To link the AWS subscription to use in Build or Release Management definitions, open the Account Administration page (choose
+the gear icon on the top right of the page), and then choose :guilabel:`Services`. Choose :guilabel:`+ New Service Endpoint`.
 Select the :guilabel:`AWS` endpoint type. This opens the :guilabel:`Add new AWS Connection` form.
 
    .. image:: images/AddNewAWSConnection.png
@@ -107,12 +129,7 @@ Provide the following parameters, and then click :guilabel:`OK`:
 * Access key ID
 * Secret access key
 
-The connection name is used to refer to these credentials when you are configuring tasks that access
-AWS in your build and release definitions.
+The connection name is used to refer to these credentials when you are configuring tasks that access this set of AWS credentials
+in your build and release definitions.
 
 For more information, see `About Access Keys <https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html?icmpid=docs_iam_console>`_.
-
-
-
-
-

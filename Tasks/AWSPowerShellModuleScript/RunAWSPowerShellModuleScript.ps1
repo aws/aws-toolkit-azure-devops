@@ -114,15 +114,54 @@ try
         }
         else
         {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForStandardCredentials')
             $env:AWS_ACCESS_KEY_ID = $awsEndpointAuth.Auth.Parameters.UserName
             $env:AWS_SECRET_ACCESS_KEY = $awsEndpointAuth.Auth.Parameters.Password
+        }
+    }
+    else
+    {
+        # credentials may also be set in task variables, so try there before
+        # assuming they are set in the process environment
+        $accessKey = Get-VstsTaskVariable -Name 'AWS.AccessKeyID'
+        if ($accessKey)
+        {
+            $secretKey = Get-VstsTaskVariable -Name 'AWS.SecretAccessKey'
+            if (!($secretKey))
+            {
+                throw (Get-VstsLocString -Key 'MissingSecretKeyVariable')
+            }
+
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForTaskVariableCredentials')
+            $env:AWS_ACCESS_KEY_ID = $accessKey
+            $env:AWS_SECRET_ACCESS_KEY = $secretKey
+
+            $token = Get-VstsTaskVariable -Name 'AWS.SessionToken'
+            if ($token)
+            {
+                $env:AWS_SESSION_TOKEN = $token
+            }
         }
     }
 
     $awsRegion = Get-VstsInput -Name 'regionName'
     if ($awsRegion)
     {
-        Write-Host (Get-VstsLocString -Key 'InitializingAWSContext' -ArgumentList $awsRegion)
+        Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskConfiguration')
+    }
+    else
+    {
+        # as for credentials, region can also be set from a task variable
+        $awsRegion = Get-VstsTaskVariable -Name 'AWS.Region'
+        if ($awsRegion)
+        {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskVariable')
+        }
+    }
+
+    if ($awsRegion)
+    {
+        Write-Host (Get-VstsLocString -Key 'RegionConfiguredTo' -ArgumentList $awsRegion)
         $env:AWS_REGION = $awsRegion
     }
 

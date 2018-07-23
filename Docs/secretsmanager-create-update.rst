@@ -47,14 +47,15 @@ AWS Credentials
     Specifies the AWS credentials to be used by the task in the build agent environment.
 
     You can specify credentials using a service endpoint (of type AWS) in the task configuration or you can leave unspecified. If
-    unspecified the task will attempt to use credentials set in environment variables in the build agent process or, if the build agent
-    is running on an Amazon EC2 instance, the task can obtain and use credentials from the instance metadata associated with the EC2
-    instance. For credentials to be available from EC2 instance metadata the instance must have been started with an instance profile
-    referencing a role granting permissions to the task to make calls to AWS on your behalf. See
-    IAMRolesForEC2_ for more information.
+    unspecified the task will attempt to obtain credentials from the following sources in order:
 
-    When using environment variables in the build agent process you may use the standard AWS environment variables - *AWS_ACCESS_KEY_ID*,
-    *AWS_SECRET_ACCESS_KEY* and optionally *AWS_SESSION_TOKEN*.
+    * From task variables named *AWS.AccessKeyID*, *AWS.SecretAccessKey* and optionally *AWS.SessionToken*.
+    * From credentials set in environment variables in the build agent process. When using environment variables in the
+      build agent process you may use the standard AWS environment variables: *AWS_ACCESS_KEY_ID*, *AWS_SECRET_ACCESS_KEY* and
+      optionally *AWS_SESSION_TOKEN*.
+    * If the build agent is running on an Amazon EC2 instance, from the instance metadata associated with the EC2 instance. For
+      credentials to be available from EC2 instance metadata the instance must have been started with an instance profile referencing
+      a role granting permissions to the task to make calls to AWS on your behalf. See IAMRolesForEC2_ for more information.
 
 AWS Region
 ----------
@@ -66,6 +67,9 @@ AWS Region
     AWS environment variable *AWS_REGION* in the build agent process's environment. Tasks running in build agents hosted on Amazon EC2
     instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance
     if no region is configured on the task or set in the environment variable.
+
+    **Note:** The regions listed in the picker are those known at the time this software was released. New regions that are not listed
+    may still be used by entering the *region code* of the region (for example *us_west_2*).
 
 Secret Name
 -----------
