@@ -134,19 +134,19 @@ target.updateversion = function() {
                 banner('> Updating patch version only');
             }
             break;
-    
+
             case 'minor': {
                 banner('> Updating minor version data, patch level reset to 0');
                 updateMinor = true;
             }
             break;
-    
+
             case 'major': {
                 banner('> Updating major version data, minor and patch levels forced to 0');
                 updateMajor = true;
             }
             break;
-    
+
             default:
                 throw new Error('Unknown version update option - ' + options.versionfield + ', expected "major", "minor" or "patch"');
         }
@@ -475,7 +475,11 @@ target.package = function() {
 
             console.log('> packing node-based task');
             var webpackConfig = path.join(__dirname, 'webpack.config.js');
-            var webpackCmd = 'webpack --config ' + webpackConfig + ' ' + taskName + '.js ' + path.join(taskPackageFolder, taskName + '.js');
+            var webpackCmd = 'webpack --config '
+                                + webpackConfig
+                                + ' ' // (options.release ? ' --optimize-minimize ' : ' ')
+                                + taskName + '.js '
+                                + path.join(taskPackageFolder, taskName + '.js');
             run(webpackCmd);
 
             // safely re-populate the unpacked vsts-task-lib
