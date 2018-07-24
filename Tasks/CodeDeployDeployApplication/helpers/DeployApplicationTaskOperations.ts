@@ -43,7 +43,7 @@ export class TaskOperations {
             tl.setVariable(this.taskParameters.outputVariable, deploymentId);
         }
 
-        await this.waitForDeploymentCompletion(this.taskParameters.applicationName, deploymentId);
+        await this.waitForDeploymentCompletion(this.taskParameters.applicationName, deploymentId, this.taskParameters.timeoutInMins);
 
         console.log(tl.loc('TaskCompleted', this.taskParameters.applicationName));
     }
@@ -209,13 +209,14 @@ export class TaskOperations {
         }
     }
 
-    private async waitForDeploymentCompletion(applicationName: string, deploymentId: string) : Promise<void> {
+    private async waitForDeploymentCompletion(applicationName: string, deploymentId: string, timeout: number) : Promise<void> {
 
          return new Promise<void>((resolve, reject) => {
             console.log(tl.loc('WaitingForDeployment'));
 
+            const params: any = this.setWaiterParams(deploymentId, timeout);
             this.codeDeployClient.waitFor('deploymentSuccessful',
-                                          { deploymentId },
+                                          params,
                                           function(err: AWSError, data: CodeDeploy.GetDeploymentOutput) {
                 if (err) {
                     throw new Error(tl.loc('DeploymentFailed', applicationName, err.message));
@@ -224,5 +225,21 @@ export class TaskOperations {
                 }
             });
          });
+    }
+
+    private setWaiterParams(deploymentId: string, timeout: number): any {
+
+        if (timeout !== TaskParameters.defaultTimeoutInMins) {
+            console.log(tl.loc('SettingCustomTimeout', timeout));
+        }
+
+        const p: any = {
+            deploymentId,
+            $waiter: {
+                maxAttempts: Math.round(timeout * 60 / 15)
+            }
+        };
+
+        return p;
     }
 }

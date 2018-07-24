@@ -27,6 +27,8 @@ export class TaskParameters extends AWSTaskParametersBase {
     public updateOutdatedInstancesOnly: boolean;
     public ignoreApplicationStopFailures: boolean;
     public outputVariable: string;
+    public timeoutInMins: number;
+    public static defaultTimeoutInMins: number = 30;
 
     constructor() {
         super();
@@ -52,6 +54,7 @@ export class TaskParameters extends AWSTaskParametersBase {
             this.updateOutdatedInstancesOnly = tl.getBoolInput('updateOutdatedInstancesOnly', false);
             this.ignoreApplicationStopFailures = tl.getBoolInput('ignoreApplicationStopFailures', false);
             this.outputVariable = tl.getInput('outputVariable', false);
+            this.timeoutInMins = Number(tl.getInput('timeoutInMins', false)) || 30;
         } catch (error) {
             throw new Error(error.message);
         }
