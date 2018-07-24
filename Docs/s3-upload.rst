@@ -9,7 +9,6 @@
    limitations under the License.
 
 .. _s3-upload:
-.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 ##################
 AWS S3 Upload Task

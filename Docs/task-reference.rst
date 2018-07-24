@@ -25,10 +25,10 @@ Visual Studio Team Services.
 
 **Prerequisites**
 
-You must have an AWS account. For information on setting up an account, see :ref:`setup-credentials`.
+You must have an AWS account. For information on setting up an account, see AWSSignUp_.
 
-Each task requires AWS credentials for your account be available to the build agent running your task, and the region
-  in which the API calls to AWS services should be made.
+Each task requires AWS credentials for your account be available to the build agent running your task, and the region 
+in which the API calls to AWS services should be made.
 
   You can either:
 

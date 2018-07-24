@@ -9,7 +9,6 @@
    limitations under the License.
 
 .. _cloudformation-execute-changeset:
-.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 #################################
 |CFNlong| Execute Change Set Task

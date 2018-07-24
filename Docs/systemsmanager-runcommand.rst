@@ -9,7 +9,6 @@
    limitations under the License.
 
 .. _systemsmanager-runcommand:
-.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 ###############################
 AWS Systems Manager Run Command

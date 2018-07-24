@@ -9,7 +9,6 @@
    limitations under the License.
 
 .. _awspowershell-module-script:
-.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 #####################
 |TWPlong| Script Task

@@ -9,7 +9,6 @@
    limitations under the License.
 
 .. _lambda-invoke:
-.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 ##############################
 |LAMlong| Invoke Function Task

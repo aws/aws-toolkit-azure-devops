@@ -9,7 +9,6 @@
    limitations under the License.
 
 .. _elastic-beanstalk-deploy:
-.. _IAMRolesForEC2: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html
 
 ########################
 |EBlong| Deployment Task
@@ -42,7 +41,7 @@ You can set the following parameters for the task. Required
 parameters are noted by an asterisk (*). Other parameters are optional.
 
 
-Displayname*
+Display name*
 ------------
 
     The default name of the task instance, which can be modified: Deploy to Elastic Beanstalk
