@@ -152,6 +152,15 @@
             "groupName": "advanced"
         },
         {
+            "name": "timeoutInMins",
+            "type": "string",
+            "label": "Max Timout (minutes)",
+            "defaultValue": "30",
+            "groupName": "advanced",
+            "helpMarkDown": "Maximum time, specified in minutes, that the task should wait for the deployment to complete. By default a maximum of 30 minutes is used.",
+            "required": false
+        },
+        {
             "name": "outputVariable",
             "type": "string",
             "label": "Output Variable",
@@ -204,6 +213,7 @@
         "ZipError": "Zip Error: %s",
         "RevisionBundleDoesNotExist": "Archive with key %s does not exist in the Amazon S3 bucket %s",
         "DeletingUploadedBundle": "Deleting uploaded bundle %s created by task",
-        "TaskCompleted": "Deployment to application %s completed"
+        "TaskCompleted": "Deployment to application %s completed",
+        "SettingCustomTimeout": "Setting the custom timout to %s minute(s)"
     }
 }
