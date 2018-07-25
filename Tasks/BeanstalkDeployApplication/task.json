@@ -41,26 +41,7 @@
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
-            "options": {
-                "ap-northeast-1": "Asia Pacific (Tokyo) - ap-northeast-1",
-                "ap-northeast-2": "Asia Pacific (Seoul) - ap-northeast-2",
-                "ap-south-1": "Asia Pacific (Mumbai) - ap-south-1",
-                "ap-southeast-1": "Asia Pacific (Singapore) - ap-southeast-1",
-                "ap-southeast-2": "Asia Pacific (Sydney) - ap-southeast-2",
-                "ca-central-1": "Canada (Central) - ca-central-1",
-                "cn-north-1": "China (Beijing) - cn-north-1",
-                "cn-northwest-1": "China (Ningxia) - cn-northwest-1",
-                "eu-central-1": "EU (Frankfurt) - eu-central-1",
-                "eu-west-1": "EU (Ireland) - eu-west-1",
-                "eu-west-2": "EU (London) - eu-west-2",
-                "eu-west-3": "EU (Paris) - eu-west-3",
-                "sa-east-1": "South America (Sao Paulo) - sa-east-1",
-                "us-east-1": "US East (N. Virginia) - us-east-1",
-                "us-east-2": "US East (Ohio) - us-east-2",
-                "us-gov-west-1": "AWS GovCloud (US) - us-gov-west-1",
-                "us-west-1": "US West (N. California) - us-west-1",
-                "us-west-2": "US West (Oregon) - us-west-2"
-            },
+            "options": {},
             "properties": {
                 "EditableOptions": "True"
             }

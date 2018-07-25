@@ -14,24 +14,20 @@ var mopts = {
     ],
     boolean: [
         'release',
-        'stamptasks',
         'dryrun'
     ]
 };
 var options = minimist(process.argv, mopts);
 
-// remove well-known parameters from argv before loading make,
 // otherwise each arg will be interpreted as a make target
 process.argv = options._;
 
 // modules
 var make = require('shelljs/make');
 var fs = require('fs');
-var os = require('os');
 var path = require('path');
 var semver = require('semver');
 var util = require('./make-util');
-var filenormalize = require('file-normalize');
 
 // util functions
 var cd = util.cd;
@@ -41,7 +37,6 @@ var rm = util.rm;
 var test = util.test;
 var run = util.run;
 var banner = util.banner;
-var rp = util.rp;
 var fail = util.fail;
 var ensureExists = util.ensureExists;
 var pathExists = util.pathExists;
@@ -51,24 +46,39 @@ var copyTaskResources = util.copyTaskResources;
 var matchFind = util.matchFind;
 var matchCopy = util.matchCopy;
 var ensureTool = util.ensureTool;
-var assert = util.assert;
 var getExternals = util.getExternals;
 var createResjson = util.createResjson;
 var createTaskLocJson = util.createTaskLocJson;
 var validateTask = util.validateTask;
+var serializeToFile = util.serializeToFile;
+var versionstampExtension = util.versionstampExtension;
+var versionstampTask = util.versionstampTask;
+var injectKnownRegionsIntoPicker = util.injectKnownRegionsIntoPicker;
+var copyOverlayContent = util.copyOverlayContent;
+var fetchLatestRegions = util.fetchLatestRegions;
 
 // global path roots
-var sourceTasksRoot = path.join(__dirname, 'Tasks');
-var buildRoot = path.join(__dirname, '_build');
+var sourceRoot = __dirname;
+var sourceTasksRoot = path.join(sourceRoot, 'Tasks');
+var buildRoot = path.join(sourceRoot, '_build');
 var buildTasksRoot = path.join(buildRoot, 'Tasks');
 var commonBuildTasksRoot = path.join(buildTasksRoot, 'Common');
 var buildTestsRoot = path.join(buildRoot, 'Tests');
-var packageRoot = path.join(__dirname, '_package');
+var packageRoot = path.join(sourceRoot, '_package');
 var packageTasksRoot = path.join(packageRoot, 'Tasks');
 
 // global file names
 var masterVersionFile = '_versioninfo.json';
 var manifestFile = 'vss-extension.json';
+
+// build stage names for content overlays
+var prebuild = 'prebuild';
+var postbuild = 'postbuild';
+
+// validate arguments
+if (options.overlayfolder && !pathExists(options.overlayfolder)) {
+    fail(`Specified --overlayfolder not found: ${options.overlayfolder}`);
+}
 
 // node min version
 var minNodeVer = '4.0.0';
@@ -77,7 +87,7 @@ if (semver.lt(process.versions.node, minNodeVer)) {
 }
 
 // add node modules .bin to the path so we can dictate version of tsc etc...
-var binPath = path.join(__dirname, 'node_modules', '.bin');
+var binPath = path.join(sourceRoot, 'node_modules', '.bin');
 if (!test('-d', binPath)) {
     fail('node modules bin not found.  ensure npm install has been run.');
 }
@@ -87,7 +97,7 @@ addPath(binPath);
 var taskList;
 if (options.task) {
     // find using --task parameter
-    taskList = matchFind(options.task, path.join(__dirname, 'Tasks'), { noRecurse: true, matchBase: true })
+    taskList = matchFind(options.task, path.join(sourceRoot, 'Tasks'), { noRecurse: true, matchBase: true })
         .map(function (item) {
             return path.basename(item);
         });
@@ -97,7 +107,7 @@ if (options.task) {
 }
 else {
     // load the default list
-    taskList = JSON.parse(fs.readFileSync(path.join(__dirname, 'make-options.json'))).tasks;
+    taskList = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'make-options.json'))).tasks;
 }
 
 // set the runner options. should either be empty or a comma delimited list of test runners.
@@ -152,7 +162,7 @@ target.updateversion = function() {
         }
     }
 
-    var versionInfoFile = path.join(__dirname, masterVersionFile);
+    var versionInfoFile = path.join(sourceRoot, masterVersionFile);
     var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
     console.log(`> ${masterVersionFile} previous version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
     if (updateMajor) {
@@ -167,68 +177,6 @@ target.updateversion = function() {
     }
     console.log(`> ${masterVersionFile} new version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
     serializeToFile(versionInfo, versionInfoFile);
-
-    // if option set, stamps the version into the extension and task
-    // manifests (this saves having to do a build to update versions
-    // in the source repo)
-    if (options.stamptasks) {
-        versionstampExtension(manifestFile, versionInfo);
-        taskList.forEach(function(taskName) {
-            versionstampTask(taskName, versionInfo);
-        });
-    }
-}
-
-// Updates the vss-extension manifest version based on data contained in the root
-// _versioninfo.json control file.
-function versionstampExtension(extensionManifest, versionInfo) {
-    console.log(`> Updating version data for extension from master version file ${masterVersionFile}`);
-
-    var extensionManifestPath = path.join(__dirname, extensionManifest);
-    var oldContent = fs.readFileSync(extensionManifestPath);
-    var extensionJson = JSON.parse(oldContent);
-    extensionJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
-    console.log(`> ...extension manifest updated to version ${extensionJson.version}`);
-    serializeToFile(extensionJson, extensionManifestPath);
-
-    var packageJsonPath = path.join(__dirname, 'package.json');
-    updatePackageJsonVersion(packageJsonPath, versionInfo);
-}
-
-// Updates the task manifest and related package.json file based on data contained
-// in the root _versioninfo.json control file.
-function versionstampTask(taskName, versionInfo) {
-    console.log(`> Updating version data for task ${taskName} from master version file ${masterVersionFile}`)
-
-    var taskManifestPath = path.join(__dirname, 'Tasks', taskName, 'task.json');
-    var oldContent = fs.readFileSync(taskManifestPath);
-    var taskManifest = JSON.parse(oldContent);
-    taskManifest.version.Major = versionInfo.Major;
-    taskManifest.version.Minor = versionInfo.Minor;
-    taskManifest.version.Patch = versionInfo.Patch;
-    console.log(`> ...stamped version ${taskManifest.version.Major}.${taskManifest.version.Minor}.${taskManifest.version.Patch} into task manifest`);
-    serializeToFile(taskManifest, taskManifestPath);
-
-    var packageJsonPath = path.join(__dirname, 'Tasks', taskName, 'package.json');
-    if (fs.existsSync(packageJsonPath)) {
-        updatePackageJsonVersion(packageJsonPath, versionInfo);
-    }
-}
-
-// Update version info in the specified package.json file
-function updatePackageJsonVersion(packageJsonPath, versionInfo) {
-    var oldContent = fs.readFileSync(packageJsonPath);
-    var packageJson = JSON.parse(oldContent);
-    packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
-    console.log(`> ...stamped version ${packageJson.version} into package.json`);
-    serializeToFile(packageJson, packageJsonPath);
-}
-
-// Common handler to serialize json manifests to file, ensuring we get normalized
-// line terminators and blank line at end of file.
-function serializeToFile(jsonObj, filePath) {
-    var content = filenormalize.normalizeEOL(JSON.stringify(jsonObj, null, 4) + '\n');
-    fs.writeFileSync(filePath, content);
 }
 
 // Builds the extension into a _build folder. If the --release switch is specified
@@ -247,31 +195,20 @@ target.build = function() {
 
     // load the master version info ready for stamping into the extension
     // and task manifests
-    var versionInfoFile = path.join(__dirname, '_versioninfo.json');
+    var versionInfoFile = path.join(sourceRoot, masterVersionFile);
     var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
 
-    // stamp the master version into the extension manifest
-    versionstampExtension(manifestFile, versionInfo);
+    copyOverlayContent(options.overlayfolder, prebuild, buildRoot);
 
-    // build time option to overlay content from sibling repo - for logos etc
-    if (options.overlayfolder) {
-        if (pathExists(options.overlayfolder)) {
-            console.log(`> Overlaying content from ${options.overlayfolder}`);
-            matchCopy(path.join('**', '*'), options.overlayfolder, '.', { noRecurse: false,  matchBase: false });
-        } else {
-            fail(`Specified --overlayfolder not found: ${options.overlayfolder}`);
-        }
-    } else {
-        console.log('> no content overlay folder specified');
-    }
+    // fetch the latest region data we'll inject into each task's regionName
+    // picker during the build; if an error occurs, we'll just inject an
+    // empty set
+    var awsRegions = fetchLatestRegions();
 
     taskList.forEach(function(taskName) {
         banner('> Building: ' + taskName);
         var taskPath = path.join(sourceTasksRoot, taskName);
         ensureExists(taskPath);
-
-        // stamp the master version into the task manifest and package.json files
-        versionstampTask(taskName, versionInfo);
 
         // load the task.json
         var outDir;
@@ -384,7 +321,13 @@ target.build = function() {
         console.log('> copying task resources');
         copyTaskResources(taskMake, taskPath, outDir);
 
+        // stamp the master version into the task manifest and package.json files
+        versionstampTask(outDir, versionInfo);
+
+        injectKnownRegionsIntoPicker(outDir, awsRegions);
     });
+
+    copyOverlayContent(options.overlayfolder, postbuild, buildRoot);
 
     banner('Build successful', true);
 }
@@ -399,7 +342,7 @@ target.build = function() {
 // node make.js test
 // node make.js test --task taskName --suite L0
 target.test = function() {
-    var testsPath = path.join(__dirname, 'Tests');
+    var testsPath = path.join(sourceRoot, 'Tests');
     if (!pathExists(testsPath))
     {
         console.log('> !! no tests found at project root, skipping "test" target');
@@ -413,11 +356,11 @@ target.test = function() {
     rm('-Rf', buildTestsRoot);
     mkdir('-p', path.join(buildTestsRoot));
     cd(testsPath);
-    run(`tsc --rootDir ${path.join(__dirname, 'Tests')} --outDir ${buildTestsRoot}`);
+    run(`tsc --rootDir ${path.join(sourceRoot, 'Tests')} --outDir ${buildTestsRoot}`);
     console.log();
     console.log('> copying ps test lib resources');
     mkdir('-p', path.join(buildTestsRoot, 'lib'));
-    matchCopy(path.join('**', '@(*.ps1|*.psm1)'), path.join(__dirname, 'Tests', 'lib'), path.join(buildTestsRoot, 'lib'));
+    matchCopy(path.join('**', '@(*.ps1|*.psm1)'), path.join(sourceRoot, 'Tests', 'lib'), path.join(buildTestsRoot, 'lib'));
 
     // find the tests
     var suiteType = options.suite || 'L0';
@@ -446,16 +389,23 @@ target.package = function() {
     // stage license, readme and the extension manifest file
     var packageRootFiles =  [ manifestFile, 'LICENSE', 'README.md' ];
     packageRootFiles.forEach(function(item) {
-        cp(path.join(__dirname, item), packageRoot);
+        cp(path.join(sourceRoot, item), packageRoot);
     });
 
-    var tasksPackageFolder = path.join(packageRoot, 'Tasks');
-    var imagesPackageFolder = path.join(packageRoot, 'images');
+    // load the master version info ready for stamping into the extension
+    // and task manifests
+    var versionInfoFile = path.join(sourceRoot, masterVersionFile);
+    var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
+
+    // stamp the master version into the extension manifest
+    versionstampExtension(packageRoot, manifestFile, versionInfo);
 
     // stage manifest images
-    cp('-R', path.join(__dirname, 'images'), packageRoot);
+    cp('-R', path.join(sourceRoot, 'images'), packageRoot);
 
     mkdir(packageTasksRoot);
+
+    copyOverlayContent(options.overlayfolder, prebuild, buildRoot);
 
     // clean, dedupe and pack each task as needed
     taskList.forEach(function(taskName) {
@@ -474,10 +424,10 @@ target.package = function() {
             cp('-R', path.join(taskBuildFolder, 'Strings'), taskPackageFolder);
 
             console.log('> packing node-based task');
-            var webpackConfig = path.join(__dirname, 'webpack.config.js');
+            var webpackConfig = path.join(sourceRoot, 'webpack.config.js');
             var webpackCmd = 'webpack --config '
                                 + webpackConfig
-                                + ' ' // (options.release ? ' --optimize-minimize ' : ' ')
+                                + ' '
                                 + taskName + '.js '
                                 + path.join(taskPackageFolder, taskName + '.js');
             run(webpackCmd);
@@ -487,7 +437,7 @@ target.package = function() {
             var cmd = 'npm install vsts-task-lib' + (options.release ? ' --only=production' : '');
             run(cmd);
 
-            cd(__dirname);
+            cd(sourceRoot); // go back to consistent start location
         } else {
             console.log('> copying non-node task');
 
@@ -495,7 +445,8 @@ target.package = function() {
         }
     });
 
-    // build the vsix package from the staged materials
+    copyOverlayContent(options.overlayfolder, postbuild, packageRoot);
+
     console.log('> creating deployment vsix');
     var tfxcmd = 'tfx extension create --root ' + packageRoot + ' --output-path ' + packageRoot + ' --manifests ' + path.join(packageRoot, manifestFile);
     if (options.publisher)
