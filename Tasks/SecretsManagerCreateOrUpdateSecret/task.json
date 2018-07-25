@@ -4,7 +4,7 @@
     "friendlyName": "AWS Secrets Manager Create/Update Secret",
     "description": "Updates a secret, optionally creating a secret if it does not exist",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/secretsmanager-create-update.html).",
+    "helpMarkDown": "Please refer to [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/secretsmanager-create-update.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* secretsmanager:CreateSecret\n* secretsmanager:PutSecretValue\n* secretsmanager:UpdateSecret",
     "category": "Deploy",
     "visibility": [
         "Build",

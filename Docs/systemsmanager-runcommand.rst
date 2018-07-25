@@ -179,3 +179,10 @@ Command ID Output Variable
 
     The name of a variable that will contain the unique ID assigned to the command.
     The command ID can be used future references to the request.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * ssm:SendCommand

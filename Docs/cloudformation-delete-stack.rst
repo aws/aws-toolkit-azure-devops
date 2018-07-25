@@ -73,3 +73,11 @@ Stack Name*
 -----------
 
     The name or unique ID of the stack to be deleted.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * cloudformation:DeleteStack
+  * cloudformation:DescribeStacks

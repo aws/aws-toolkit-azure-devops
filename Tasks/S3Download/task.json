@@ -4,7 +4,7 @@
     "friendlyName": "AWS S3 Download",
     "description": "Download file and folder content from an Amazon Simple Storage Service (S3) Bucket",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html) for more information on working with Amazon S3.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/s3-download.html).",
+    "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html) for more information on working with Amazon S3.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/s3-download.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* s3:GetObject\n* s3:HeadBucket\n* s3:ListObjects",
     "category": "Deploy",
     "visibility": [
         "Build",

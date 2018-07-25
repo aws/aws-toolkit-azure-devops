@@ -4,7 +4,7 @@
     "friendlyName": "AWS Lambda Invoke Function",
     "description": "Invokes an AWS Lambda function with a JSON payload.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/lambda-invoke.html).",
+    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/lambda-invoke.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* lambda:GetFunctionConfiguration\n* lambda:InvokeFunction",
     "category": "Deploy",
     "visibility": [
         "Build",

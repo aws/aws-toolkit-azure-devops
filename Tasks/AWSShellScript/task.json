@@ -4,7 +4,7 @@
     "friendlyName": "AWS Shell Script",
     "description": "Run a shell script using Bash with AWS credentials",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Runs a shell script in Bash, setting AWS credentials and region information into the shell environment using the standard environment keys _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_, _AWS_SESSION_TOKEN_ and _AWS_REGION_.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/awsshell.html).",
+    "helpMarkDown": "Runs a shell script in Bash, setting AWS credentials and region information into the shell environment using the standard environment keys _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_, _AWS_SESSION_TOKEN_ and _AWS_REGION_.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/awsshell.html).\n\n####Task Permissions\nPermissions for this task to call AWS service APIs depend on the activities in the supplied script.",
     "category": "Utility",
     "visibility": [
         "Build",

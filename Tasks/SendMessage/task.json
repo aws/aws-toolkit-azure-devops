@@ -4,7 +4,7 @@
     "friendlyName": "AWS Send Message",
     "description": "Sends a message to an SNS topic or SQS queue",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Amazon Simple Queue Service](https://aws.amazon.com/documentation/sqs/) and [Amazon Simple Notification Service](https://aws.amazon.com/documentation/sns/) documentation for working with these services.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/send-message.html).",
+    "helpMarkDown": "Please refer to [Amazon Simple Queue Service](https://aws.amazon.com/documentation/sqs/) and [Amazon Simple Notification Service](https://aws.amazon.com/documentation/sns/) documentation for working with these services.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/send-message.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* sns:GetTopicAttributes\n* sns:Publish\n* sqs:GetQueueAttributes\n* sqs:SendMessage",
     "category": "Deploy",
     "visibility": [
         "Build",

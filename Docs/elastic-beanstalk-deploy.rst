@@ -138,3 +138,17 @@ Version Label Output Variable
     Optional variable name to which the version label for the revision will be stored on conclusion of the task. This is useful when
     :code:`Version Label` is not specified and the task generates a version label for the revision.  You can refer to this variable
     in subsequent build steps to obtain the deployed version label.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * elasticbeanstalk:CreateApplicationVersion
+  * elasticbeanstalk:CreateStorageLocation
+  * elasticbeanstalk:DescribeApplications
+  * elasticbeanstalk:DescribeEnvironments
+  * elasticbeanstalk:DescribeEvents
+  * elasticbeanstalk:UpdateEnvironment
+
+The task also requires permissions to upload your application content to the specified Amazon S3 bucket. Depending on the size of the application bundle, either putObject or the S3 multi-part upload APIs may be used.

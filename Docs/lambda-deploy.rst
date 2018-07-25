@@ -199,3 +199,13 @@ Output Variable
 ~~~~~~~~~~~~~~~
 
     The name of the variable that will contain the Amazon Resource Name (ARN) of the created or updated function on task completion. The variable can be used as $(variableName) to refer to the function result in subsequent tasks.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * lambda:CreateFunction
+  * lambda:GetFunction
+  * lambda:UpdateFunctionCode
+  * lambda:UpdateFunctionConfiguration

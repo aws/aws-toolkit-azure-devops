@@ -132,3 +132,13 @@ Flatten folders
     If this option is unchecked, the key prefix of each object is preserved and objects are downloaded to a subfolder hierarchy matching the key prefix of the object.
 
     **Note:** if folder flattening is selected and multiple objects, with the same name but different key prefixes, exist in the download set an error will be thrown by the task if the *Overwrite* option is not selected.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * s3:GetObject
+  * s3:HeadBucket
+  * s3:ListObjects
+

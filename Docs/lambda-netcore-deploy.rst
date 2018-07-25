@@ -166,4 +166,23 @@ Additional Command Line Arguments for |LAM| Tools
 
     Additional arguments that can be passed to the :code:`dotnet lambda` CLI extension command that is used to build, package and deploy your function or serverless application using this task.
 
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * lambda:CreateFunction
+  * lamda:UpdateFunctionCode
+  * lambda:GetFunctionConfiguration
+  * cloudformation:CreateChangeSet
+  * cloudformation:ExecuteChangeSet
+  * cloudformation:DescribeStackEvents
+  * cloudformation:DeleteStack
+  * cloudformation:DescribeChangeSet
+  * cloudformation:DescribeStacks
+  * s3:CreateBucket
+  * s3:GetBucketLocation
+
+The task also requires permissions to upload your Lambda function or serverless application content to the specified Amazon S3 bucket. Depending on the size of the application bundle, either putObject or the S3 multi-part upload APIs may be used.
+
 

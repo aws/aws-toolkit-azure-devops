@@ -101,3 +101,13 @@ Delay (seconds)
     Available for |SQS| queues only.
 
     The length of time, in seconds, for which to delay a specific message. Valid values: 0 to 900. Maximum: 15 minutes. Messages with a positive DelaySeconds value become available for processing after the delay period is finished. If you don't specify a value, the default value for the queue applies.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * sns:GetTopicAttributes
+  * sns:Publish
+  * sqs:GetQueueAttributes
+  * sqs:SendMessage

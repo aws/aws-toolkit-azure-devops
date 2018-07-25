@@ -110,5 +110,7 @@ Fail on Standard Error
 
     If true, this task fails if any errors are written to the StandardError stream.
 
+Task Permissions
+================
 
-
+Permissions for this task to call AWS service APIs depend on the configured command.

@@ -4,7 +4,7 @@
     "friendlyName": "AWS CloudFormation Execute Change Set",
     "description": "Executes an AWS CloudFormation change set to create or update a stack.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more information on working with AWS CloudFormation.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/cloudformation-execute-changeset.html).",
+    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more information on working with AWS CloudFormation.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/cloudformation-execute-changeset.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* cloudformation:DescribeStacks\n* cloudformation:DescribeChangeSet\n* cloudformation:DescribeStackResources\n* cloudformation:ExecuteChangeSet",
     "category": "Deploy",
     "visibility": [
         "Build",

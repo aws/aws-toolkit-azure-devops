@@ -4,7 +4,7 @@
     "friendlyName": "AWS CLI",
     "description": "Run an AWS CLI command",
     "author": "Amazon Web Services",
-    "helpMarkDown": "The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts. __Note__: the AWS CLI must be already installed on the build host in order to use this task. See [Installing the AWS Command Line Interface](https://docs.aws.amazon.com/cli/latest/userguide/installing.html) for more details.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/aws-cli.html).",
+    "helpMarkDown": "The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts. __Note__: the AWS CLI must be already installed on the build host in order to use this task. See [Installing the AWS Command Line Interface](https://docs.aws.amazon.com/cli/latest/userguide/installing.html) for more details.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/aws-cli.html).\n\n####Task Permissions\nPermissions for this task to call AWS service APIs depend on the configured command.",
     "category": "Deploy",
     "visibility": [
         "Build",

@@ -4,7 +4,7 @@
     "friendlyName": "AWS CloudFormation Create/Update Stack",
     "description": "Creates a new AWS CloudFormation stack or updates the stack if it exists.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more details on working with AWS CloudFormation.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/cloudformation-create-update.html).",
+    "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more details on working with AWS CloudFormation.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/cloudformation-create-update.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* cloudformation:CreateChangeSet\n* cloudformation:CreateStack\n* cloudformation:DeleteChangeSet\n* cloudformation:DescribeChangeSet\n* cloudformation:DescribeStacks\n* cloudformation:DescribeStackResources\n* cloudformation:ExecuteChangeSet\n* cloudformation:UpdateStack\n\nThe task may also require permissions to upload your application template to the specified Amazon S3 bucket.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -328,7 +328,7 @@
         {
             "name": "timeoutInMins",
             "type": "string",
-            "label": "Max Timout (minutes)",
+            "label": "Max Timeout (minutes)",
             "defaultValue": "60",
             "groupName": "Options",
             "helpMarkDown": "Maximum time, specified in minutes, that the task should wait for the stack creation or update to complete. By default a maximum of 60 minutes is used.",

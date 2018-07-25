@@ -125,3 +125,7 @@ Working Directory
 
     The working directory where the script runs.
 
+Task Permissions
+================
+
+Permissions for this task to call AWS service APIs depend on the activities in the supplied script.

@@ -107,3 +107,7 @@ Fail on Standard Error
 
     If this option is selected, the task will fail if any errors are written to the standard error stream.
 
+Task Permissions
+================
+
+Permissions for this task to call AWS service APIs depend on the activities in the supplied script.

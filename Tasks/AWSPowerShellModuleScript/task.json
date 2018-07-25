@@ -4,7 +4,7 @@
     "friendlyName": "AWS Tools for Windows PowerShell Script",
     "description": "Run a PowerShell script that uses the AWS Tools for Windows PowerShell module.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell module (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module. The module will be automatically installed if needed.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/awspowershell-module-script.html).",
+    "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell module (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module. The module will be automatically installed if needed.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/awspowershell-module-script.html).\n\n####Task Permissions\nPermissions for this task to call AWS service APIs depend on the activities in the supplied script.",
     "category": "Deploy",
     "visibility": [
         "Build",

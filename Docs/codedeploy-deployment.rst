@@ -147,6 +147,11 @@ Ignore Application Stop Failures
     instance to fail, the deployment to that instance is not considered failed at that
     point. It continues on to the BeforeInstall deployment lifecycle event.
 
+Max Timeout
+~~~~~~~~~~~
+
+    Maximum time, specified in minutes, that the task should wait for the stack creation or update to complete. By default a maximum of 60 minutes is used.
+
 Output
 ------
 
@@ -156,4 +161,17 @@ Output Variable
         The name of the variable that will contain the deployment ID on task completion. You can use the
         variable $(variableName) to refer to the function result in subsequent tasks.
 
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * codedeploy:GetApplication
+  * codedeploy:GetDeploymentGroup
+  * codedeploy:CreateDeployment
+  * codedeploy:GetDeployment
+
+Depending on selected parameters the task may also require permissions to verify your deployment bundle exists in S3 or upload your
+application bundle to the specified Amazon S3 bucket. Depending on the size of the application bundle, either PutObject or the S3
+multi-part upload APIs may be used.
 

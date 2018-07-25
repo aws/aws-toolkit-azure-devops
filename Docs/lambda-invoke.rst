@@ -99,4 +99,11 @@ Log Type
     For synchronous execution, returns the base64-encoded last 4 KB of log data produced by your |LAM|
     function in the :code:`x-amz-log-result` header.
 
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * lambda:GetFunctionConfiguration
+  * lambda:InvokeFunction
 

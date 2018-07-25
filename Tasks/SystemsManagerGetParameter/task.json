@@ -4,7 +4,7 @@
     "friendlyName": "AWS Systems Manager Get Parameter",
     "description": "Reads the value of one or more parameters from the Parameter Store and adds them as variables to the current build or release definition",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/systemsmanager-getparameter.html).",
+    "helpMarkDown": "Please refer to [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/systemsmanager-getparameter.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* ssm:GetParameter\n* ssm:GetParametersByPath",
     "category": "Deploy",
     "visibility": [
         "Build",

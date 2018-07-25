@@ -138,3 +138,12 @@ Output variable name to contain the secret's version ID
 -------------------------------------------------------
 
     Optional name of a variable to store the version ID of the new or updated secret on task completion.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * secretsmanager:CreateSecret
+  * secretsmanager:PutSecretValue
+  * secretsmanager:UpdateSecret

@@ -137,3 +137,11 @@ Case-insensitive Match
 ----------------------
 
     If selected a case-insensitive match is performed with the specified pattern.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * ssm:GetParameter
+  * ssm:GetParametersByPath

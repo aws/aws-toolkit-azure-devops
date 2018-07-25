@@ -113,3 +113,12 @@ Image Tag Output Variable
     The name of a build variable that will be created or updated with the pushed image reference.
     The image tag will be of the form *aws_account_id.dkr.ecr.region.amazonaws.com/imagename*,
     where **imagename** is in the format *repositoryname[:tag]*
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * ecr:DescribeRepositories
+  * ecr:CreateRepository
+  * ecr:GetAuthorizationToken

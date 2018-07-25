@@ -98,3 +98,11 @@ KMS Key ID
 
     If the parameter type is set to *Secure string*, identifies the customer-provided KMS key used to encrypt the parameter value at
     rest. If a secure string type is specified but no key provided a service-provided KMS key is used to encrypt the parameter value.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * ssm:GetParameter
+  * ssm:PutParameter

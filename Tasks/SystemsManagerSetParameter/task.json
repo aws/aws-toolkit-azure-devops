@@ -4,7 +4,7 @@
     "friendlyName": "AWS Systems Manager Set Parameter",
     "description": "Creates or updates a parameter in Systems Manager Parameter Store",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/systemsmanager-setparameter.html).",
+    "helpMarkDown": "Please refer to [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/systemsmanager-setparameter.html).\n\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* ssm:GetParameter\n* ssm:PutParameter",
     "category": "Deploy",
     "visibility": [
         "Build",

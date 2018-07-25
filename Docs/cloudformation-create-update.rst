@@ -296,7 +296,23 @@ Output Variable
 
     The name of the variable that will contain the ID of the stack on task completion. You can use :code:`$(variableName)` to refer to the stack ID in subsequent tasks.
 
-Max Tmeout
-~~~~~~~~~~
+Max Timeout
+~~~~~~~~~~~
 
     Maximum time, specified in minutes, that the task should wait for the stack creation or update to complete. By default a maximum of 60 minutes is used.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * cloudformation:CreateChangeSet
+  * cloudformation:CreateStack
+  * cloudformation:DeleteChangeSet
+  * cloudformation:DescribeChangeSet
+  * cloudformation:DescribeStacks
+  * cloudformation:DescribeStackResources
+  * cloudformation:ExecuteChangeSet
+  * cloudformation:UpdateStack
+
+The task may also require permissions to upload your application template to the specified Amazon S3 bucket.

@@ -182,4 +182,13 @@ Force path style addressing
 
     For more information see `Virtual Hosting of Buckets <http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html>`_.
 
+Task Permissions
+================
 
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * s3:CreateBucket
+  * s3:HeadBucket
+
+Content uploads are performed using S3's PutObject API and/or the multi-part upload APIs. The specific APIs used depend on the size of
+the individual files being uploaded.

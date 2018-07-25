@@ -94,3 +94,13 @@ Output Variable
 ---------------
 
     The name of the variable that will contain the ID of the stack on task completion. The variable can be used as $(variableName) to refer to the stack ID in subsequent tasks.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * cloudformation:DescribeStacks
+  * cloudformation:DescribeChangeSet
+  * cloudformation:DescribeStackResources
+  * cloudformation:ExecuteChangeSet

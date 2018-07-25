@@ -90,3 +90,9 @@ Version Stage
 
     Staging labels are used to keep track of different versions during the rotation process. If you use this parameter then don't specify *Version ID*. If you don't specify either a *Version Stage* or *Version ID*, then the default is to perform the operation on the version with the version stage value of *AWSCURRENT*.
 
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * secretsmanager:GetSecretValue
