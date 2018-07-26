@@ -291,6 +291,13 @@ Disable Rollback
     If checked, disables rollback of the stack if stack creation failed. You can specify
     :code:`DisableRollback` or :code:`OnFailure`, but not both.
 
+Log warning during stack update if AWS CloudFormation reports no work to be done
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If selected and an update stack operation, with or without a change set, results in no changes being reported by the service
+    then a warning message is emitted into the task logs. When not selected the message from the service is ignored and no warning
+    emitted.
+
 Output Variable
 ~~~~~~~~~~~~~~~
 

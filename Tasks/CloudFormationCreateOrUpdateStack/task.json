@@ -298,6 +298,15 @@
             "helpMarkDown": "Set to true to disable rollback of the stack if stack creation failed.\n\n Default: false"
         },
         {
+            "name": "warnWhenNoWorkNeeded",
+            "type": "boolean",
+            "label": "Log warning during stack update if AWS CloudFormation reports no work to be done",
+            "defaultValue": "true",
+            "groupName": "Options",
+            "required": false,
+            "helpMarkDown": "When this option is selected and the task is updating a stack, with or without a change set, if AWS CloudFormation detects that no work was required a warning message is emitted into the task log. When this option is not selected the task will ignore the message from the service and emit no warning into the logs."
+        },
+        {
             "name": "outputVariable",
             "type": "string",
             "label": "Output Variable",

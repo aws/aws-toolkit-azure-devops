@@ -457,7 +457,9 @@ export class TaskOperations {
             }
 
             if (noWorkToDo) {
-                tl.warning(tl.loc('NoWorkToDo'));
+                if (this.taskParameters.warnWhenNoWorkNeeded) {
+                    tl.warning(tl.loc('NoWorkToDo'));
+                }
                 return true;
             }
         // tslint:disable-next-line:no-empty
@@ -566,7 +568,7 @@ export class TaskOperations {
         try {
             console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName));
             const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
-            console.log(tl.loc('ChangeSetExists ', changeSetName, response.Status));
+            console.log(tl.loc('ChangeSetExists', changeSetName, response.Status));
             return true;
         } catch (err) {
             console.log(tl.loc('ChangeSetLookupFailed', changeSetName, err.message));

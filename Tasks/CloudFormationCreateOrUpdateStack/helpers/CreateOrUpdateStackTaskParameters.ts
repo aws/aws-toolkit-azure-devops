@@ -48,6 +48,7 @@ export class TaskParameters extends AWSTaskParametersBase {
     public rollbackTriggerARNs: string[];
 
     public onFailure: string;
+    public warnWhenNoWorkNeeded: boolean;
     public outputVariable: string;
 
     public timeoutInMins: number = TaskParameters.defaultTimeoutInMins;
@@ -137,6 +138,7 @@ export class TaskParameters extends AWSTaskParametersBase {
             }
 
             this.onFailure = tl.getInput('onFailure');
+            this.warnWhenNoWorkNeeded = tl.getBoolInput('warnWhenNoWorkNeeded');
             this.outputVariable = tl.getInput('outputVariable', false);
 
             const t = tl.getInput('timeoutInMins', false);
