@@ -29,7 +29,7 @@
     "homepage": "https://github.com/aws/aws-vsts-tools",
     "devDependencies": {
         "@types/node": "^8.0.34",
-        "adm-zip": "0.4.7",
+        "adm-zip": "0.4.11",
         "babel-loader": "^7.1.5",
         "babel-preset-env": "^1.7.0",
         "clean-webpack-plugin": "^0.1.16",
@@ -62,7 +62,7 @@
     "dependencies": {
         "aws-sdk": "2.279.1",
         "base-64": "0.1.0",
-        "https-proxy-agent": "2.1.0",
+        "https-proxy-agent": "2.2.1",
         "js-yaml": "3.10.0",
         "npm": "^6.0.1",
         "shelljs": "0.7.8",
