@@ -47,6 +47,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
     public onFailure: string;
     public outputVariable: string;
+    public stackCreateWaitTimout: number;
 
     constructor() {
         super();
@@ -134,6 +135,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
             this.onFailure = tl.getInput('onFailure');
             this.outputVariable = tl.getInput('outputVariable', false);
+            this.stackCreateWaitTimout = Number(tl.getInput('stackCreateWaitTimout', false)) || 1;
         } catch (error) {
             throw new Error(error.message);
         }

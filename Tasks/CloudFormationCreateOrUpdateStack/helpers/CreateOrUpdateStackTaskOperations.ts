@@ -162,7 +162,7 @@ export class TaskOperations {
         try {
             const response: CloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise();
             tl.debug(`Stack id ${response.StackId}`);
-            await this.waitForStackCreation(request.StackName);
+            await this.waitForStackCreationWithAttempts(request.StackName, taskParameters.stackCreateWaitTimout);
             return response.StackId;
         } catch (err) {
             console.error(tl.loc('StackCreateRequestFailed', err.message), err);
@@ -528,6 +528,28 @@ export class TaskOperations {
         }
 
         return false;
+    }
+
+    private static async waitForStackCreationWithAttempts(stackName: string, attempts: number) : Promise<void> {
+        let index: number = 1;
+        console.log(tl.loc('WaitingForStackCreation', stackName));
+        console.log('Attempting %d times', attempts);
+        while (index <= attempts) {
+            console.log('Attempt: %d', index);
+            try {
+                await this.cloudFormationClient.waitFor('stackCreateComplete', { StackName: stackName }).promise();
+                console.log(tl.loc('StackCreated', stackName));
+                break;
+            } catch (err) {
+                if (index == attempts) {
+                    throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
+                }
+                else {
+                    console.log('Attempt %d completed. %s', index, err.message);
+                }
+            }
+            index++;
+        }
     }
 
     private static async waitForStackCreation(stackName: string) : Promise<void> {
