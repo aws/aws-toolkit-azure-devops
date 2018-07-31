@@ -1,3 +1,32 @@
+### 1.1.0 (2018-08-02)
+
+* The AWS Credentials property for referencing a service endpoint when configuring tasks is now optional (Issue #34).
+
+  If the name of a service endpoint is not specified in the task configuration the task will attempt to recover credentials at run time from the following additional sources, in order:
+
+  * From Team Services variables named _AWS.AccessKeyId_, _AWS.SecretAccessKey_ and _AWS.SessionToken_.
+  * From standard AWS environment variables in the build agent process (_AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and _AWS_SESSION_TOKEN_).
+  * (If the build agent is running on Amazon EC2 instances) From EC2 instance metadata. For credentials to be available from EC2 instance
+      metadata the instance must have been started with an instance profile referencing a role granting permissions to the task to make calls to
+      AWS on your behalf. See [Using an IAM Role to Grant Permissions to Applications Running on Amazon EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html) for more information.
+
+* The AWS Region property for configuring the region in which tasks will operate is now optional. If a region is not configured on a task the task will attempt to obtain region information at run time from the following sources, in order:
+
+  * From a Team Services variable named _AWS.Region_.
+  * From the standard AWS environment variable in the build agent process (_AWS_REGION_)
+  * (If the build agent is running on Amazon EC2 instances) From EC2 instance metadata.
+
+* Updated the AWS Region task configuration property to be a drop-down picker of known regions at the time of release. You can also type in the region name (_us-west-2_ etc) in the field to allow for use of regions released in the future without needing to update the tools first.
+* Added new task: _AWS Shell_. This task can be used to execute a Bash script in a shell with the standard AWS environment variables for credentials and region set. (Issue #54)
+* Added new task: _AWS Systems Manager Set Parameter_. This task can be used to create and update parameters in the Systems Manager Parameter Store from within your builds.
+* Added new tasks: _AWS Secrets Manager Create/Update Secret_ and _AWS Secrets Manager Get Secret_. These tasks can be used to manage secrets in the Secrets Manager store and also fetch the value of a secret into a Team Services build variable.
+* Added the ability to set a custom timeout (in minutes) to the _AWS CodeDeploy Deploy Application_ task (Pull request #90/Issue #87)
+* Updated the _AWS CloudFormation Create/Update Stack_ task to enable setting a custom timeout in minutes. (Issue #85)
+* Updated the _AWS CloudFormation Create/Update Stack_ task with an option to allow suppression of the warning message when the service detects a stack update yielded no work to be done. (Issue #91)
+* Updated the _AWS Lambda Deploy Function_ task to support the new .NET Core 2.1 runtime in the runtime selection picker. This field has also now been made editable so that as new runtimes are added in future they can be used without needing the tools to be updated. (Issue #86)
+* Updated the _AWS Lambda .NET Core Deployment_ task to support package-only build mode. In conjunction with the _AWS Lambda Deploy Function_ and _AWS CloudFormation Create/Update Stack_ tasks it is now possible to create your Lambda function or serverless application package in a build pipeline and perform the actual deployment to AWS Lambda or AWS CloudFormation in a release pipeline.
+* Updated the _AWS Tools for Windows PowerShell_ task to use Save-Module instead of Install-Module when downloading and installing the module during a build. This was found to significanly improve the execution time of the install phase. (Issue #51)
+
 ### 1.0.22 (2018-07-09)
 
 * Added support for the .NET Core 2.1 runtime in the AWS Lambda Deploy Function task.
