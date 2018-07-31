@@ -64,7 +64,7 @@
         "base-64": "0.1.0",
         "https-proxy-agent": "2.2.1",
         "js-yaml": "3.10.0",
-        "npm": "^6.0.1",
+        "npm": "^6.2.0",
         "shelljs": "0.7.8",
         "vsts-task-lib": "2.0.6"
     }
