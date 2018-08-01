@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -11,61 +11,63 @@ import path = require('path');
 import fs = require('fs');
 import CloudFormation = require('aws-sdk/clients/cloudformation');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
-
-import Parameters = require('./ExecuteChangeSetTaskParameters');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './ExecuteChangeSetTaskParameters';
 
 export class TaskOperations {
 
-    public static async executeChangeSet(taskParameters: Parameters.TaskParameters): Promise<void> {
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        await this.createServiceClients(taskParameters);
+    public async execute(): Promise<void> {
 
-        const stackId = await this.verifyResourcesExist(taskParameters.changeSetName, taskParameters.stackName);
+        await this.createServiceClients();
+
+        const stackId = await this.verifyResourcesExist(this.taskParameters.changeSetName, this.taskParameters.stackName);
         let waitForStackUpdate: boolean = false;
         if (stackId) {
-            waitForStackUpdate = await this.testStackHasResources(taskParameters.stackName);
+            waitForStackUpdate = await this.testStackHasResources(this.taskParameters.stackName);
         }
 
-        console.log(tl.loc('ExecutingChangeSet', taskParameters.changeSetName, taskParameters.stackName));
+        console.log(tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName));
 
         try {
             await this.cloudFormationClient.executeChangeSet({
-                ChangeSetName: taskParameters.changeSetName,
-                StackName: taskParameters.stackName
+                ChangeSetName: this.taskParameters.changeSetName,
+                StackName: this.taskParameters.stackName
             }).promise();
 
             if (waitForStackUpdate) {
-                await this.waitForStackUpdate(taskParameters.stackName);
+                await this.waitForStackUpdate(this.taskParameters.stackName);
             } else {
-                await this.waitForStackCreation(taskParameters.stackName);
+                await this.waitForStackCreation(this.taskParameters.stackName);
             }
 
-            if (taskParameters.outputVariable) {
-                console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
-                tl.setVariable(taskParameters.outputVariable, stackId);
+            if (this.taskParameters.outputVariable) {
+                console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable));
+                tl.setVariable(this.taskParameters.outputVariable, stackId);
             }
 
-            console.log(tl.loc('TaskCompleted', taskParameters.changeSetName));
+            console.log(tl.loc('TaskCompleted', this.taskParameters.changeSetName));
         } catch (err) {
             console.error(tl.loc('ExecuteChangeSetFailed', err.message), err);
             throw err;
         }
     }
 
-    private static cloudFormationClient: CloudFormation;
+    private cloudFormationClient: CloudFormation;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
-            apiVersion: '2010-05-15',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2010-05-15'
         };
-        this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);
+        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug);
     }
 
-    private static async verifyResourcesExist(changeSetName: string, stackName: string): Promise<string> {
+    private async verifyResourcesExist(changeSetName: string, stackName: string): Promise<string> {
 
         try {
             const request: CloudFormation.DescribeChangeSetInput = {
@@ -86,7 +88,7 @@ export class TaskOperations {
     // executes, so we inspect whether resources exist in order to know which kind
     // of 'waiter' to use (create complete, update complete) when running a stack update.
     // It's not enough to know that the stack exists.
-    private static async testStackHasResources(stackName: string): Promise<boolean> {
+    private async testStackHasResources(stackName: string): Promise<boolean> {
         try {
             const response = await this.cloudFormationClient.describeStackResources({ StackName: stackName }).promise();
             return (response.StackResources && response.StackResources.length > 0);
@@ -95,7 +97,7 @@ export class TaskOperations {
         }
     }
 
-    private static async waitForStackCreation(stackName: string) : Promise<void> {
+    private async waitForStackCreation(stackName: string) : Promise<void> {
         console.log(tl.loc('WaitingForStackCreation', stackName));
         try {
             await this.cloudFormationClient.waitFor('stackCreateComplete', { StackName: stackName }).promise();
@@ -105,7 +107,7 @@ export class TaskOperations {
         }
     }
 
-    private static async waitForStackUpdate(stackName: string) : Promise<void> {
+    private async waitForStackUpdate(stackName: string) : Promise<void> {
         console.log(tl.loc('WaitingForStackUpdate', stackName));
         try {
             await this.cloudFormationClient.waitFor('stackUpdateComplete', { StackName: stackName }).promise();

@@ -83,6 +83,9 @@
             "path": "Tasks/AWSPowerShellModuleScript"
         },
         {
+            "path": "Tasks/AWSShellScript"
+        },
+        {
             "path": "Tasks/BeanstalkCreateApplicationVersion"
         },
         {
@@ -249,6 +252,17 @@
             ],
             "properties": {
                 "name": "Tasks/AWSPowerShellModuleScript"
+            }
+        },
+        {
+            "id": "AWSShellScript",
+            "description": "Run a shell script using Bash with AWS credentials.",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/AWSShellScript"
             }
         },
         {

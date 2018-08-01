@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -9,15 +9,18 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import fs = require('fs');
-import proc = require('child_process');
 import { DotNetCliWrapper } from './dotNetCliWrapper';
-import Parameters = require('./NetCoreDeployTaskParameters');
+import { TaskParameters } from './NetCoreDeployTaskParameters';
 
 export class TaskOperations {
 
-    public static async deployFunction(taskParameters: Parameters.TaskParameters): Promise<void> {
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        const cwd = this.determineProjectDirectory(taskParameters.lambdaProjectPath);
+    public async execute(): Promise<void> {
+        const cwd = this.determineProjectDirectory(this.taskParameters.lambdaProjectPath);
         console.log(tl.loc('DeployingProjectAt', cwd));
 
         const defaultsFilePath: string = path.join(cwd, 'aws-lambda-tools-defaults.json');
@@ -35,53 +38,68 @@ export class TaskOperations {
         }
 
         const env = process.env;
-        // if assume role credentials are in play, make sure the initial generation
-        // of temporary credentials has been performed
-        await taskParameters.Credentials.getPromise().then(() => {
-            env.AWS_ACCESS_KEY_ID = taskParameters.Credentials.accessKeyId;
-            env.AWS_SECRET_ACCESS_KEY = taskParameters.Credentials.secretAccessKey;
-            if (taskParameters.Credentials.sessionToken) {
-                env.AWS_SESSION_TOKEN = taskParameters.Credentials.sessionToken;
-            }
-        });
 
-        await taskParameters.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy');
+        // If assume role credentials are in play, make sure the initial generation
+        // of temporary credentials has been performed. If no credentials were defined
+        // for the task, we assume they are already set in the host environment.
+        const credentials = await this.taskParameters.getCredentials();
+        if (credentials) {
+            env.AWS_ACCESS_KEY_ID = credentials.accessKeyId;
+            env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey;
+            if (credentials.sessionToken) {
+                env.AWS_SESSION_TOKEN = credentials.sessionToken;
+            }
+        }
+
+        const region = await this.taskParameters.getRegion();
+
+        await this.taskParameters.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy');
 
         const wrapper = new DotNetCliWrapper(cwd, env);
 
         console.log(tl.loc('StartingDotNetRestore'));
         await wrapper.restoreAsync();
 
-        switch (taskParameters.command) {
+        switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'));
                 await wrapper.lambdaDeployAsync(
-                    taskParameters.awsRegion,
-                    taskParameters.functionName,
-                    taskParameters.functionHandler,
-                    taskParameters.functionRole,
-                    taskParameters.functionMemory,
-                    taskParameters.functionTimeout,
-                    taskParameters.additionalArgs);
+                    region,
+                    this.taskParameters.functionName,
+                    this.taskParameters.functionHandler,
+                    this.taskParameters.functionRole,
+                    this.taskParameters.functionMemory,
+                    this.taskParameters.functionTimeout,
+                    this.taskParameters.packageOnly,
+                    this.taskParameters.packageOutputFile,
+                    this.taskParameters.additionalArgs);
                 break;
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'));
                 await wrapper.serverlessDeployAsync(
-                    taskParameters.awsRegion,
-                    taskParameters.stackName,
-                    taskParameters.s3Bucket,
-                    taskParameters.s3Prefix,
-                    taskParameters.additionalArgs);
+                    region,
+                    this.taskParameters.stackName,
+                    this.taskParameters.s3Bucket,
+                    this.taskParameters.s3Prefix,
+                    this.taskParameters.packageOnly,
+                    this.taskParameters.packageOutputFile,
+                    this.taskParameters.additionalArgs);
                 break;
 
             default:
-            throw new Error(tl.loc('UnknownCommandError', taskParameters.command));
+            throw new Error(tl.loc('UnknownDeploymentTypeError', this.taskParameters.command));
         }
 
-        console.log(tl.loc('TaskCompleted'));
+        if (this.taskParameters.packageOnly) {
+            console.log(tl.loc('PackageOnlyTaskCompleted'));
+
+        } else {
+            console.log(tl.loc('PackageAndDeployTaskCompleted'));
+
+        }
     }
 
-    private static determineProjectDirectory(specifedLambdaProject : string) : string {
+    private determineProjectDirectory(specifedLambdaProject : string) : string {
 
         // should have already verified existence when reading parameters, but defense in
         // depth

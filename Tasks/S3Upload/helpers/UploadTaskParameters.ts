@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -7,19 +7,19 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
     // options for Server-side encryption Key Management; 'none' disables SSE
-    public readonly noKeyManagementValue: string = 'none';
-    public readonly awsKeyManagementValue: string = 'awsManaged';
-    public readonly customerKeyManagementValue: string = 'customerManaged';
+    public static readonly noKeyManagementValue: string = 'none';
+    public static readonly awsKeyManagementValue: string = 'awsManaged';
+    public static readonly customerKeyManagementValue: string = 'customerManaged';
 
     // options for encryption algorithm when key management is set to 'aws';
     // customer managed keys always use AES256
-    public readonly awskmsAlgorithmValue: string = 'KMS'; // translated to aws:kms when used in api call
-    public readonly aes256AlgorithmValue: string = 'AES256';
+    public static readonly awskmsAlgorithmValue: string = 'KMS'; // translated to aws:kms when used in api call
+    public static readonly aes256AlgorithmValue: string = 'AES256';
 
     public bucketName: string;
     public sourceFolder: string;
@@ -56,21 +56,21 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
             }
 
             this.keyManagement = tl.getInput('keyManagement', false);
-            if (this.keyManagement && this.keyManagement !== this.noKeyManagementValue) {
+            if (this.keyManagement && this.keyManagement !== TaskParameters.noKeyManagementValue) {
                 switch (this.keyManagement) {
-                    case this.awsKeyManagementValue: {
+                    case TaskParameters.awsKeyManagementValue: {
                         const algorithm = tl.getInput('encryptionAlgorithm', true);
-                        if (algorithm === this.awskmsAlgorithmValue) {
+                        if (algorithm === TaskParameters.awskmsAlgorithmValue) {
                             this.encryptionAlgorithm = 'aws:kms';
                         } else {
-                            this.encryptionAlgorithm = this.aes256AlgorithmValue;
+                            this.encryptionAlgorithm = TaskParameters.aes256AlgorithmValue;
                         }
-                        this.kmsMasterKeyId = tl.getInput('kmsMasterKeyId', algorithm === this.awskmsAlgorithmValue);
+                        this.kmsMasterKeyId = tl.getInput('kmsMasterKeyId', algorithm === TaskParameters.awskmsAlgorithmValue);
                     }
                     break;
 
-                    case this.customerKeyManagementValue: {
-                        this.encryptionAlgorithm = this.aes256AlgorithmValue;
+                    case TaskParameters.customerKeyManagementValue: {
+                        this.encryptionAlgorithm = TaskParameters.aes256AlgorithmValue;
                         const customerKey = tl.getInput('customerKey', true);
                         this.customerKey = Buffer.from(customerKey, 'hex');
                     }

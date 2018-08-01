@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -8,19 +8,21 @@
 
 import tl = require('vsts-task-lib/task');
 import fs = require('fs');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
-    public readonly fileSource: string = 'file';
-    public readonly urlSource: string = 'url';
-    public readonly s3Source: string = 's3';
+    public static readonly fileSource: string = 'file';
+    public static readonly urlSource: string = 'url';
+    public static readonly s3Source: string = 's3';
 
-    public readonly maxRollbackTriggers: number = 5;
-    public readonly maxTriggerMonitoringTime: number = 180;
+    public static readonly maxRollbackTriggers: number = 5;
+    public static readonly maxTriggerMonitoringTime: number = 180;
 
-    public readonly loadTemplateParametersFromFile: string = 'file';
-    public readonly loadTemplateParametersInline: string = 'inline';
+    public static readonly loadTemplateParametersFromFile: string = 'file';
+    public static readonly loadTemplateParametersInline: string = 'inline';
+
+    public static readonly defaultTimeoutInMins: number = 60;
 
     public stackName: string;
     public templateSource: string;
@@ -46,7 +48,10 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
     public rollbackTriggerARNs: string[];
 
     public onFailure: string;
+    public warnWhenNoWorkNeeded: boolean;
     public outputVariable: string;
+
+    public timeoutInMins: number = TaskParameters.defaultTimeoutInMins;
 
     constructor() {
         super();
@@ -55,18 +60,18 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
             this.templateSource = tl.getInput('templateSource', true);
             switch (this.templateSource) {
-                case this.fileSource: {
+                case TaskParameters.fileSource: {
                     this.templateFile = tl.getPathInput('templateFile', true, true);
                     this.s3BucketName = tl.getInput('s3BucketName', false);
                 }
                 break;
 
-                case this.urlSource: {
+                case TaskParameters.urlSource: {
                     this.templateUrl = tl.getInput('templateUrl', true);
                 }
                 break;
 
-                case this.s3Source: {
+                case TaskParameters.s3Source: {
                     this.s3BucketName = tl.getInput('s3BucketName', true);
                     this.s3ObjectKey = tl.getInput('s3ObjectKey', true);
                 }
@@ -78,7 +83,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
 
             this.templateParametersSource = tl.getInput('templateParametersSource', true);
             switch (this.templateParametersSource) {
-                case this.loadTemplateParametersFromFile: {
+                case TaskParameters.loadTemplateParametersFromFile: {
                     // Value set optional for backwards compatibilty, to enable continued operation of
                     // tasks configured before 'inline' mode was added.
                     // Note that if the user does not give a value then instead of an empty/null
@@ -95,7 +100,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
                 }
                 break;
 
-                case this.loadTemplateParametersInline: {
+                case TaskParameters.loadTemplateParametersInline: {
                     this.templateParameters = tl.getInput('templateParameters', true);
                 }
                 break;
@@ -122,18 +127,29 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
                 const t = tl.getInput('monitoringTimeInMinutes', false);
                 if (t) {
                     this.monitoringTimeInMinutes = parseInt(t, 10);
-                    if (this.monitoringTimeInMinutes < 0 || this.monitoringTimeInMinutes > this.maxTriggerMonitoringTime) {
-                        throw new Error(tl.loc('InvalidTriggerMonitoringTime', this.monitoringTimeInMinutes, this.maxTriggerMonitoringTime));
+                    if (this.monitoringTimeInMinutes < 0 || this.monitoringTimeInMinutes > TaskParameters.maxTriggerMonitoringTime) {
+                        throw new Error(tl.loc('InvalidTriggerMonitoringTime', this.monitoringTimeInMinutes, TaskParameters.maxTriggerMonitoringTime));
                     }
                 }
                 this.rollbackTriggerARNs = tl.getDelimitedInput('rollbackTriggerARNs', '\n', false);
-                if (this.rollbackTriggerARNs && this.rollbackTriggerARNs.length > this.maxRollbackTriggers) {
-                    throw new Error(tl.loc('ExceededMaxRollbackTriggers', this.rollbackTriggerARNs.length, this.maxRollbackTriggers));
+                if (this.rollbackTriggerARNs && this.rollbackTriggerARNs.length > TaskParameters.maxRollbackTriggers) {
+                    throw new Error(tl.loc('ExceededMaxRollbackTriggers', this.rollbackTriggerARNs.length, TaskParameters.maxRollbackTriggers));
                 }
             }
 
             this.onFailure = tl.getInput('onFailure');
+            this.warnWhenNoWorkNeeded = tl.getBoolInput('warnWhenNoWorkNeeded');
             this.outputVariable = tl.getInput('outputVariable', false);
+
+            const t = tl.getInput('timeoutInMins', false);
+            if (t) {
+                const tval = parseInt(t, 10);
+                // allow for shorter periods if user wants, but filter out -ve/0 silliness
+                if (tval > 0) {
+                    this.timeoutInMins = tval;
+                }
+            }
+
         } catch (error) {
             throw new Error(error.message);
         }

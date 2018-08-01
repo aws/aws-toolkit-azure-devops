@@ -1,4 +1,4 @@
-.. Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+.. Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0
    International License (the "License"). You may not use this file except in compliance with the
@@ -41,89 +41,112 @@ Parameters
 You can set the following parameters for the task. Required
 parameters are noted by an asterisk (*). Other parameters are optional.
 
-Displayname*
-------------
+Display name*
+-------------
 
-    The default name of the task, |LAMlong| Deploy Function. You can rename it.
+    The default name of the task instance, which can be modified: Deploy Lambda Function
 
-AWS Credentials*
-----------------
+AWS Credentials
+---------------
 
-    The AWS credentials to be used by the task when it executes on a build host. If needed, choose :guilabel:`+`, and then add a new
-    AWS service endpoint connection.
+    Specifies the AWS credentials to be used by the task in the build agent environment.
 
-AWS Region*
------------
+    You can specify credentials using a service endpoint (of type AWS) in the task configuration or you can leave unspecified. If
+    unspecified the task will attempt to obtain credentials from the following sources in order:
+
+    * From task variables named *AWS.AccessKeyID*, *AWS.SecretAccessKey* and optionally *AWS.SessionToken*.
+    * From credentials set in environment variables in the build agent process. When using environment variables in the
+      build agent process you may use the standard AWS environment variables: *AWS_ACCESS_KEY_ID*, *AWS_SECRET_ACCESS_KEY* and
+      optionally *AWS_SESSION_TOKEN*.
+    * If the build agent is running on an Amazon EC2 instance, from the instance metadata associated with the EC2 instance. For
+      credentials to be available from EC2 instance metadata the instance must have been started with an instance profile referencing
+      a role granting permissions to the task to make calls to AWS on your behalf. See IAMRolesForEC2_ for more information.
+
+AWS Region
+----------
 
     The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more
     information, see :aws-gr:`Regions and Endpoints <rande>` in the |AWS-gr|.
 
+    If a region is not specified in the task configuration the task will attempt to obtain the region to be used using the standard
+    AWS environment variable *AWS_REGION* in the build agent process's environment. Tasks running in build agents hosted on Amazon EC2
+    instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance
+    if no region is configured on the task or set in the environment variable.
+
+    **Note:** The regions listed in the picker are those known at the time this software was released. New regions that are not listed
+    may still be used by entering the *region code* of the region (for example *us_west_2*).
+
 Deployment Mode*
 ----------------
 
-    The operating mode for the task. The default setting, *Update code only*, exclusively uploads new code for an already
-    published function. The alternative setting, *Update code and configuration (or create a new function)* can be
-    used to publish new functions or to deploy new code, and other configuration settings, to a pre-existing function.
-    When updating code and configuration the task performs the configuration changes first, then uploads and optionally
-    publishes the new code.
+    Selects the type of deployment. You can deploy new function code to an existing function or you can specify settings for both code and configuration. For the 'code and configuration' mode if the function does not exist it will be created.
 
 Function Name*
 --------------
 
-    The name of the function to update or create.
+    The name of the Lambda function to create or update. You can also specify the Amazon Resource Name (ARN) for an existing function.
 
 Description
 -----------
 
-    A short, user-defined function description. Lambda does not use this value. 
+    A short, user-defined function description. Lambda does not use this value.
 
 Function Handler*
 -----------------
 
-    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the
-    name of the handler that will be called when your function is invoked. Different languages have different rules
-    for the formatting of this field. For more information, see https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html.
+    "The function within your code that Lambda calls to begin execution. For Node.js, it is the module-name.export value in your function. For Java, it can be package.class-name::handler or package.class-name. For more information and other examples see `Programming Model<https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html>`_.
 
 Runtime*
 --------
 
-    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the language
-    runtime appropriate to the code you are deploying.
+    The runtime environment for the Lambda function you are uploading. The list of runtimes available in the pick list are those known at the time this version of the tools was released. To use a runtime not shown in the list simply enter the runtime identifier in the field.
 
 Code Location*
 --------------
 
     Specifies the source location of the deployment package to be uploaded. You can choose from a file in the local file
-    system or a file previously uploaded to Amazon S3. If the source location is Amazon S3 you can also optionally specify
+    system or a file previously uploaded to Amazon S3. If the source location is Amazon S3 you can also optionally supply
     a specific version of the file.
+
+Zip File Path
+-------------
+
+    Path to the zip file containing the function code to deploy. Required if *Code Location* is set to *Zip file in the work area*.
+
+S3 Bucket
+---------
+
+    The name of the Amazon S3 bucket containing the previously uploaded zip file of the function's code. Required if *Code Location* is set to *Zip file in Amazon S3*.
+
+S3 Object Key
+-------------
+
+    The key (name) of the object in the bucket containing the function's code.  Required if *Code Location* is set to *Zip file in Amazon S3*.
+
+S3 Object Version
+-----------------
+
+    Version of the S3 object containing the function code. If not specified the latest version of the object is used.
 
 Role ARN or Name*
 -----------------
 
-    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the role
-    to be assumed when your function is invoked. The role supplies credentials (if needed) to your function as well as
-    controlling AWS resource access. You can specify either the name of the role or the role's Amazon Resource Name (ARN).
-    If the role name is specified the task will retrieve and use the role ARN for you.
+    The Amazon Resource Name (ARN), or name, of the IAM role that Lambda assumes when it executes your function to access any other Amazon Web Services (AWS) resources. If a role name is supplied the task will attempt to retrieve the ARN automatically.
 
 Memory Size
 -----------
 
-    Displayed when creating a new function, or updating code and configuration for an existing function. The amount of memory, in MB,
-    your Lambda function is given. Lambda uses this memory size to infer the amount of CPU and memory allocated to your function. Your
-    function use-case determines your CPU and memory requirements. For example, a database operation might need less memory compared
-    to an image processing function. The default value is 128 MB. The value must be a multiple of 64 MB.
+    The amount of memory, in MB, your Lambda function is given. Lambda uses this memory size to infer the amount of CPU and memory allocated to your function. Your function use-case determines your CPU and memory requirements. For example, a database operation might need less memory compared to an image processing function. The default value is 128 MB. The value must be a multiple of 64 MB.
 
 Timeout
 -------
 
-    Displayed when creating a new function, or updating code and configuration for an existing function. Specifies the execution time
-    at which Lambda should terminate the function. Because the execution time has cost implications, we recommend you set this value
-    based on your expected execution time. The default is 3 seconds.
+    The function execution time at which Lambda should terminate the function. Because the execution time has cost implications, we recommend you set this value based on your expected execution time. The default is 3 seconds.
 
 Publish
 -------
 
-    This parameter can be used to request AWS Lambda to create or update the Lambda function and publish a version as an atomic operation.
+    If set requests AWS Lambda to create or update the Lambda function and publish a version as an atomic operation.
 
 Advanced
 --------
@@ -144,7 +167,7 @@ KMS Key ARN
 Environment Variables
 ~~~~~~~~~~~~~~~~~~~~~
 
-    Your function's environment configuration settings. Specify one pair per line, in *key*=*value* format.
+    Key-value pairs that represent your environment's configuration settings. Enter as Name=Value, one per line.
 
 Tags
 ~~~~
@@ -172,3 +195,17 @@ Tracing configuration
     from an upstream service. The default setting of X-Ray means that if no tracing header is received, Lambda will call X-Ray for a
     tracing decision.
 
+Output Variable
+~~~~~~~~~~~~~~~
+
+    The name of the variable that will contain the Amazon Resource Name (ARN) of the created or updated function on task completion. The variable can be used as $(variableName) to refer to the function result in subsequent tasks.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * lambda:CreateFunction
+  * lambda:GetFunction
+  * lambda:UpdateFunctionCode
+  * lambda:UpdateFunctionConfiguration

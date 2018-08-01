@@ -1,4 +1,4 @@
-.. Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+.. Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0
    International License (the "License"). You may not use this file except in compliance with the
@@ -36,51 +36,78 @@ Parameters
 You can set the following parameters for the task. Required
 parameters are noted by an asterisk (*). Other parameters are optional.
 
-Displayname*
-------------
+Display name*
+-------------
 
-    The default name of the task, Send Message. The delivery target, topic or queue, is appended
-    to the name.
+    The default name of the task instance, which can be modified: Send Message
 
-AWS Credentials*
-----------------
+AWS Credentials
+---------------
 
-    The AWS credentials to be used by the task when it executes on a build host. If needed, choose :guilabel:`+`, and then add a new
-    AWS service endpoint connection.
+    Specifies the AWS credentials to be used by the task in the build agent environment.
 
-AWS Region*
------------
+    You can specify credentials using a service endpoint (of type AWS) in the task configuration or you can leave unspecified. If
+    unspecified the task will attempt to obtain credentials from the following sources in order:
+
+    * From task variables named *AWS.AccessKeyID*, *AWS.SecretAccessKey* and optionally *AWS.SessionToken*.
+    * From credentials set in environment variables in the build agent process. When using environment variables in the
+      build agent process you may use the standard AWS environment variables: *AWS_ACCESS_KEY_ID*, *AWS_SECRET_ACCESS_KEY* and
+      optionally *AWS_SESSION_TOKEN*.
+    * If the build agent is running on an Amazon EC2 instance, from the instance metadata associated with the EC2 instance. For
+      credentials to be available from EC2 instance metadata the instance must have been started with an instance profile referencing
+      a role granting permissions to the task to make calls to AWS on your behalf. See IAMRolesForEC2_ for more information.
+
+AWS Region
+----------
 
     The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more
     information, see :aws-gr:`Regions and Endpoints <rande>` in the |AWS-gr|.
 
+    If a region is not specified in the task configuration the task will attempt to obtain the region to be used using the standard
+    AWS environment variable *AWS_REGION* in the build agent process's environment. Tasks running in build agents hosted on Amazon EC2
+    instances (Windows or Linux) will also attempt to obtain the region using the instance metadata associated with the EC2 instance
+    if no region is configured on the task or set in the environment variable.
+
+    **Note:** The regions listed in the picker are those known at the time this software was released. New regions that are not listed
+    may still be used by entering the *region code* of the region (for example *us_west_2*).
+
 Message Target*
 ---------------
 
-    The target for the message, a topic in |SNS| or an |SQS| queue.
+    The destination for the message. A message can be sent to a |SNS| (SNS) topic or a |SQS| (SQS) queue.
 
 Message
 -------
 
-    The message to send. For the allowed values, see the respective service help pages for
+    The message content to send. The maximum size for both queue and topic targets is 256KB (262144 bytes, not 262144 characters).
+
+    For more information on the allowed values and content see the respective service help pages for
     `Publish <https://docs.aws.amazon.com/sns/latest/api/API_Publish.html>`_ and
     `SendMessage <http://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html>`_.
 
 Topic ARN*
 ----------
 
-    Required parameter only if :code:`Message Target` is set to :guilabel:`SNS Topic`. Supply the Amazon
-    Resource Name (ARN) of the topic.
+    The Amazon Resource Name (ARN) of the |SNS| topic to which the message will be sent. Required when *Message Target* is set to *SNS Topic*.
 
 Queue Url*
 ----------
 
-    Required parameter only if :code:`Message Target` is set to :guilabel:`SQS Queue`. Supply the URL
-    of the queue.
+    The URL of the |SQS| queue to which the message will be sent. Required when *Message Target* is set to *SQS Queue*.
 
 Delay (seconds)
 ---------------
 
-    Available for |SQS| queues only. The length of time, in seconds, to delay a specific message. Valid
-    values: 0 to 900. Maximum: 15 minutes. Messages with a positive :code:`DelaySeconds` value become available
-    for processing after the delay period is finished. If you don't specify a value, the default value for the queue applies.
+    Available for |SQS| queues only.
+
+    The length of time, in seconds, for which to delay a specific message. Valid values: 0 to 900. Maximum: 15 minutes. Messages with a positive DelaySeconds value become available for processing after the delay period is finished. If you don't specify a value, the default value for the queue applies.
+
+Task Permissions
+================
+
+This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
+
+  * sns:GetTopicAttributes
+  * sns:Publish
+  * sqs:GetQueueAttributes
+  * sqs:SendMessage

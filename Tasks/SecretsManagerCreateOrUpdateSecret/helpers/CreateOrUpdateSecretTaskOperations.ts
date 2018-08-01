@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -10,21 +10,28 @@ import tl = require('vsts-task-lib/task');
 import fs = require('fs');
 import path = require('path');
 import SecretsManager = require('aws-sdk/clients/secretsmanager');
-import Parameters = require('./CreateOrUpdateSecretTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './CreateOrUpdateSecretTaskParameters';
 
 export class TaskOperations {
 
-    public static async createOrUpdateSecret(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
+
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
 
         try {
-            await this.updateSecret(taskParameters);
+            await this.updateSecret();
+            console.log(tl.loc('UpdateSecretCompleted'));
         } catch (err) {
             if (err.code === 'ResourceNotFoundException') {
-                if (taskParameters.autoCreateSecret) {
-                    await this.createSecret(taskParameters);
+                if (this.taskParameters.autoCreateSecret) {
+                    await this.createSecret();
+                    console.log(tl.loc('CreateSecretCompleted'));
                 } else {
                     throw new Error(tl.loc('SecretNotFound'));
                 }
@@ -32,42 +39,40 @@ export class TaskOperations {
                 throw new Error(tl.loc('SecretUpdateFailed', err));
             }
         }
-
-        console.log(tl.loc('TaskCompleted'));
     }
 
-    private static secretsManagerClient: SecretsManager;
+    private secretsManagerClient: SecretsManager;
 
-    private static async updateSecret(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async updateSecret(): Promise<void> {
 
-        console.log(tl.loc('UpdatingSecret', taskParameters.secretNameOrId));
+        console.log(tl.loc('UpdatingSecret', this.taskParameters.secretNameOrId));
 
         // treat updating descrption et al about the secret as distinct from a value update
-        if (taskParameters.description || taskParameters.kmsKeyId) {
+        if (this.taskParameters.description || this.taskParameters.kmsKeyId) {
             const updateMetaRequest: SecretsManager.UpdateSecretRequest = {
-                SecretId: taskParameters.secretNameOrId,
-                Description: taskParameters.description,
-                KmsKeyId: taskParameters.kmsKeyId
+                SecretId: this.taskParameters.secretNameOrId,
+                Description: this.taskParameters.description,
+                KmsKeyId: this.taskParameters.kmsKeyId
             };
 
             await this.secretsManagerClient.updateSecret(updateMetaRequest).promise();
         }
 
         const updateValueRequest: SecretsManager.PutSecretValueRequest = {
-            SecretId: taskParameters.secretNameOrId
+            SecretId: this.taskParameters.secretNameOrId
         };
 
-        if (taskParameters.secretValueSource === Parameters.TaskParameters.inlineSecretSource) {
-            updateValueRequest.SecretString = taskParameters.secretValue;
+        if (this.taskParameters.secretValueSource === TaskParameters.inlineSecretSource) {
+            updateValueRequest.SecretString = this.taskParameters.secretValue;
         } else {
-            switch (taskParameters.secretValueType) {
-                case Parameters.TaskParameters.stringSecretType: {
-                    updateValueRequest.SecretString = fs.readFileSync(taskParameters.secretValueFile, 'utf8');
+            switch (this.taskParameters.secretValueType) {
+                case TaskParameters.stringSecretType: {
+                    updateValueRequest.SecretString = fs.readFileSync(this.taskParameters.secretValueFile, 'utf8');
                 }
                 break;
 
-                case Parameters.TaskParameters.binarySecretType: {
-                    updateValueRequest.SecretBinary = fs.readFileSync(taskParameters.secretValueFile);
+                case TaskParameters.binarySecretType: {
+                    updateValueRequest.SecretBinary = fs.readFileSync(this.taskParameters.secretValueFile);
                 }
                 break;
             }
@@ -75,60 +80,60 @@ export class TaskOperations {
 
         const response = await this.secretsManagerClient.putSecretValue(updateValueRequest).promise();
 
-        if (taskParameters.arnOutputVariable) {
-            console.log(tl.loc('SettingArnOutputVariable', taskParameters.arnOutputVariable));
-            tl.setVariable(taskParameters.arnOutputVariable, response.ARN);
+        if (this.taskParameters.arnOutputVariable) {
+            console.log(tl.loc('SettingArnOutputVariable', this.taskParameters.arnOutputVariable));
+            tl.setVariable(this.taskParameters.arnOutputVariable, response.ARN);
         }
 
-        if (taskParameters.versionIdOutputVariable) {
-            console.log(tl.loc('SettingVersionIdOutputVariable', taskParameters.versionIdOutputVariable));
-            tl.setVariable(taskParameters.versionIdOutputVariable, response.VersionId);
+        if (this.taskParameters.versionIdOutputVariable) {
+            console.log(tl.loc('SettingVersionIdOutputVariable', this.taskParameters.versionIdOutputVariable));
+            tl.setVariable(this.taskParameters.versionIdOutputVariable, response.VersionId);
         }
     }
 
-    private static async createSecret(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createSecret(): Promise<void> {
         console.log(tl.loc('SecretNotFoundAutoCreating'));
 
         const request: SecretsManager.CreateSecretRequest = {
-            Name: taskParameters.secretNameOrId,
-            KmsKeyId: taskParameters.kmsKeyId,
-            Description: taskParameters.description
+            Name: this.taskParameters.secretNameOrId,
+            KmsKeyId: this.taskParameters.kmsKeyId,
+            Description: this.taskParameters.description
         };
 
-        if (taskParameters.secretValueSource === Parameters.TaskParameters.inlineSecretSource) {
-            request.SecretString = taskParameters.secretValue;
+        if (this.taskParameters.secretValueSource === TaskParameters.inlineSecretSource) {
+            request.SecretString = this.taskParameters.secretValue;
         } else {
-            switch (taskParameters.secretValueType) {
-                case Parameters.TaskParameters.stringSecretType: {
-                    request.SecretString = fs.readFileSync(taskParameters.secretValueFile, 'utf8');
+            switch (this.taskParameters.secretValueType) {
+                case TaskParameters.stringSecretType: {
+                    request.SecretString = fs.readFileSync(this.taskParameters.secretValueFile, 'utf8');
                 }
                 break;
 
-                case Parameters.TaskParameters.binarySecretType: {
-                    request.SecretBinary = fs.readFileSync(taskParameters.secretValueFile);
+                case TaskParameters.binarySecretType: {
+                    request.SecretBinary = fs.readFileSync(this.taskParameters.secretValueFile);
                 }
                 break;
             }
         }
 
-        if (taskParameters.tags) {
-            request.Tags = this.getTags(taskParameters.tags);
+        if (this.taskParameters.tags) {
+            request.Tags = this.getTags(this.taskParameters.tags);
         }
 
         const response = await this.secretsManagerClient.createSecret(request).promise();
 
-        if (taskParameters.arnOutputVariable) {
-            console.log(tl.loc('SettingArnOutputVariable', taskParameters.arnOutputVariable));
-            tl.setVariable(taskParameters.arnOutputVariable, response.ARN);
+        if (this.taskParameters.arnOutputVariable) {
+            console.log(tl.loc('SettingArnOutputVariable', this.taskParameters.arnOutputVariable));
+            tl.setVariable(this.taskParameters.arnOutputVariable, response.ARN);
         }
 
-        if (taskParameters.versionIdOutputVariable) {
-            console.log(tl.loc('SettingVersionIdOutputVariable', taskParameters.versionIdOutputVariable));
-            tl.setVariable(taskParameters.versionIdOutputVariable, response.VersionId);
+        if (this.taskParameters.versionIdOutputVariable) {
+            console.log(tl.loc('SettingVersionIdOutputVariable', this.taskParameters.versionIdOutputVariable));
+            tl.setVariable(this.taskParameters.versionIdOutputVariable, response.VersionId);
         }
     }
 
-    private static getTags(tags: string[]): SecretsManager.Tag[] {
+    private getTags(tags: string[]): SecretsManager.Tag[] {
 
         let arr: SecretsManager.Tag[];
 
@@ -149,15 +154,13 @@ export class TaskOperations {
         return arr;
     }
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const opts: SecretsManager.ClientConfiguration = {
-            apiVersion: '2017-10-17',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2017-10-17'
         };
 
-        this.secretsManagerClient = sdkutils.createAndConfigureSdkClient(SecretsManager, opts, taskParameters, tl.debug);
+        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug);
     }
 
 }

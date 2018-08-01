@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -7,12 +7,12 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import sdkutils = require('sdkutils/sdkutils');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends sdkutils.AWSTaskParametersBase {
+export class TaskParameters extends AWSTaskParametersBase {
 
-    public readonly imageNameSource: string = 'imagename';
-    public readonly imageIdSource: string = 'imageid';
+    public static readonly imageNameSource: string = 'imagename';
+    public static readonly imageIdSource: string = 'imageid';
 
     public imageSource: string;
     public sourceImageName: string;
@@ -27,7 +27,7 @@ export class TaskParameters extends sdkutils.AWSTaskParametersBase {
         super();
         try {
             this.imageSource = tl.getInput('imageSource', true);
-            if (this.imageSource === this.imageNameSource) {
+            if (this.imageSource === TaskParameters.imageNameSource) {
                 this.sourceImageName = tl.getInput('sourceImageName', true);
                 this.sourceImageTag = tl.getInput('sourceImageTag', false);
                 if (!this.sourceImageTag) {

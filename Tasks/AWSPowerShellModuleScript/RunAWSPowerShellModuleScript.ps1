@@ -17,6 +17,9 @@ Import-VstsLocStrings "$PSScriptRoot\task.json"
 # off to PowerShell for execution
 try
 {
+    # suppress any progress bars to attempt to speed things up
+    $ProgressPreference = 'SilentlyContinue'
+
     # Agent.TempDirectory was added in agent version 2.115.0, which may not
     # be available in 2015 installs of TFS, so probe for and fallback to
     # another temp location variable if necessary. This allows us to set
@@ -32,65 +35,134 @@ try
 
     Assert-VstsPath -LiteralPath $tempDirectory -PathType 'Container'
 
-    $awsEndpoint = Get-VstsInput -Name 'awsCredentials' -Require
-    $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
-    $awsRegion = Get-VstsInput -Name 'regionName' -Require
-
-    # install the module if not present
+    # install the module if not present (we assume if present it is an an autoload-capable
+    # location)
     Write-Host (Get-VstsLocString -Key 'TestingModuleInstalled')
+    $manualImportPath = $null
     if (!(Get-Module -Name AWSPowerShell -ListAvailable))
     {
         Write-Host (Get-VstsLocString -Key 'InstallingModule')
+        # Use Save-Module, to a temp folder, over Install-Module which currently has a
+        # long output-less lag once the module has downloaded.
+        # See https://github.com/aws/aws-vsts-tools/issues/51
         try
         {
-            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            # Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            Save-Module -Name AWSPowerShell -Path $tempDirectory -Verbose
         }
         catch
         {
             Write-Host (Get-VstsLocString -Key 'UsingNugetProvider')
             Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force
-            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            # Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
+            Save-Module -Name AWSPowerShell -Path $tempDirectory -Verbose
         }
+
+        # figure out the actual path to import from, allowing for the possibility of multiple versions
+        # being left around due to a prior accident
+        $moduleVersionFolder = Get-ChildItem -Path (Join-Path $tempDirectory 'AWSPowerShell') |
+            Sort-Object -Property Name -Descending |
+            Select-Object -First 1
+        $manualImportPath = [IO.Path]::Combine($tempDirectory, 'AWSPowerShell', $moduleVersionFolder, 'AWSPowerShell.psd1')
     }
 
-    Write-Host (Get-VstsLocString -Key 'InitializingAWSContext' -ArgumentList $awsRegion)
-    $env:AWS_REGION = $awsRegion
-    
-    # Use environment variables to pass credentials, to avoid leaving any profiles
-    # around when the build completes and any contention from parallel or multi-user
-    # build setups
-    if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn)
+    if ($manualImportPath)
     {
-        Write-Host "Configuring task to use role-scoped credentials"
-        Import-Module -Name AWSPowerShell
-        $assumeRoleParameters = @{
-            'AccessKey' = $awsEndpointAuth.Auth.Parameters.UserName
-            'SecretKey' = $awsEndpointAuth.Auth.Parameters.Password
-            'RoleArn' = $awsEndpointAuth.Auth.Parameters.AssumeRoleArn
-        }
-        if ($awsEndpointAuth.Auth.Parameters.RoleSessionName)
-        {
-            $assumeRoleParameters.Add('RoleSessionName', $awsEndpointAuth.Auth.Parameters.RoleSessionName)
-        }
-        else
-        {
-            $assumeRoleParameters.Add('RoleSessionName', 'aws-vsts-tools')
-        }
-        if ($awsEndpointAuth.Auth.Parameters.ExternalId)
-        {
-            $assumeRoleParameters.Add('ExternalId', $awsEndpointAuth.Auth.Parameters.ExternalId)
-        }
-
-        $assumeRoleResponse = Use-STSRole @assumeRoleParameters
-
-        $env:AWS_ACCESS_KEY_ID = $assumeRoleResponse.Credentials.AccessKeyId
-        $env:AWS_SECRET_ACCESS_KEY = $assumeRoleResponse.Credentials.SecretAccessKey
-        $env:AWS_SESSION_TOKEN = $assumeRoleResponse.Credentials.SessionToken
+        Write-Host (Get-VstsLocString -Key 'ImportingModuleFrom' -ArgumentList $manualImportPath)
+        Import-Module $manualImportPath
     }
     else
     {
-        $env:AWS_ACCESS_KEY_ID = $awsEndpointAuth.Auth.Parameters.UserName
-        $env:AWS_SECRET_ACCESS_KEY = $awsEndpointAuth.Auth.Parameters.Password
+        Import-Module -Name AWSPowerShell
+    }
+
+    # If credentials and/or region are not defined on the task we assume them to be
+    # already set in the host environment or, if on EC2, to be in instance metadata.
+    # We prefer to use environment variables to pass credentials, to avoid leaving
+    # any profiles around when the build completes and any contention from parallel
+    # or multi-user build setups.
+    $awsEndpoint = Get-VstsInput -Name 'awsCredentials'
+    if ($awsEndpoint)
+    {
+        $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
+        if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn)
+        {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentials')
+            $assumeRoleParameters = @{
+                'AccessKey' = $awsEndpointAuth.Auth.Parameters.UserName
+                'SecretKey' = $awsEndpointAuth.Auth.Parameters.Password
+                'RoleArn' = $awsEndpointAuth.Auth.Parameters.AssumeRoleArn
+            }
+            if ($awsEndpointAuth.Auth.Parameters.RoleSessionName)
+            {
+                $assumeRoleParameters.Add('RoleSessionName', $awsEndpointAuth.Auth.Parameters.RoleSessionName)
+            }
+            else
+            {
+                $assumeRoleParameters.Add('RoleSessionName', 'aws-vsts-tools')
+            }
+            if ($awsEndpointAuth.Auth.Parameters.ExternalId)
+            {
+                $assumeRoleParameters.Add('ExternalId', $awsEndpointAuth.Auth.Parameters.ExternalId)
+            }
+
+            $assumeRoleResponse = Use-STSRole @assumeRoleParameters
+
+            $env:AWS_ACCESS_KEY_ID = $assumeRoleResponse.Credentials.AccessKeyId
+            $env:AWS_SECRET_ACCESS_KEY = $assumeRoleResponse.Credentials.SecretAccessKey
+            $env:AWS_SESSION_TOKEN = $assumeRoleResponse.Credentials.SessionToken
+        }
+        else
+        {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForStandardCredentials')
+            $env:AWS_ACCESS_KEY_ID = $awsEndpointAuth.Auth.Parameters.UserName
+            $env:AWS_SECRET_ACCESS_KEY = $awsEndpointAuth.Auth.Parameters.Password
+        }
+    }
+    else
+    {
+        # credentials may also be set in task variables, so try there before
+        # assuming they are set in the process environment
+        $accessKey = Get-VstsTaskVariable -Name 'AWS.AccessKeyID'
+        if ($accessKey)
+        {
+            $secretKey = Get-VstsTaskVariable -Name 'AWS.SecretAccessKey'
+            if (!($secretKey))
+            {
+                throw (Get-VstsLocString -Key 'MissingSecretKeyVariable')
+            }
+
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForTaskVariableCredentials')
+            $env:AWS_ACCESS_KEY_ID = $accessKey
+            $env:AWS_SECRET_ACCESS_KEY = $secretKey
+
+            $token = Get-VstsTaskVariable -Name 'AWS.SessionToken'
+            if ($token)
+            {
+                $env:AWS_SESSION_TOKEN = $token
+            }
+        }
+    }
+
+    $awsRegion = Get-VstsInput -Name 'regionName'
+    if ($awsRegion)
+    {
+        Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskConfiguration')
+    }
+    else
+    {
+        # as for credentials, region can also be set from a task variable
+        $awsRegion = Get-VstsTaskVariable -Name 'AWS.Region'
+        if ($awsRegion)
+        {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskVariable')
+        }
+    }
+
+    if ($awsRegion)
+    {
+        Write-Host (Get-VstsLocString -Key 'RegionConfiguredTo' -ArgumentList $awsRegion)
+        $env:AWS_REGION = $awsRegion
     }
 
     # Was not able to get the Get-VstsWebProxy helper to work, plus it has a

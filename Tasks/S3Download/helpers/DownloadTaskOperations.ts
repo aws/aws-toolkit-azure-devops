@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -12,39 +12,42 @@ import fs = require('fs');
 import mm = require('minimatch');
 
 import S3 = require('aws-sdk/clients/s3');
-import Parameters = require('./DownloadTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './DownloadTaskParameters';
 
 export class TaskOperations {
 
-    public static async downloadArtifacts(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        const exists = await this.testBucketExists(taskParameters.bucketName);
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
+
+        const exists = await this.testBucketExists(this.taskParameters.bucketName);
         if (!exists) {
-            throw new Error(tl.loc('BucketNotExist', taskParameters.bucketName));
+            throw new Error(tl.loc('BucketNotExist', this.taskParameters.bucketName));
         }
 
-        await this.downloadFiles(taskParameters);
+        await this.downloadFiles();
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static s3Client: S3;
+    private s3Client: S3;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion,
-            s3ForcePathStyle: taskParameters.forcePathStyleAddressing
+            s3ForcePathStyle: this.taskParameters.forcePathStyleAddressing
         };
-        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
-    private static async testBucketExists(bucketName: string): Promise<boolean> {
+    private async testBucketExists(bucketName: string): Promise<boolean> {
         try {
             await this.s3Client.headBucket({ Bucket: bucketName}).promise();
             return true;
@@ -53,35 +56,35 @@ export class TaskOperations {
         }
     }
 
-    private static async downloadFiles(taskParameters: Parameters.TaskParameters) {
+    private async downloadFiles() {
 
         let msgSource: string;
-        if (taskParameters.sourceFolder) {
-            msgSource = taskParameters.sourceFolder;
+        if (this.taskParameters.sourceFolder) {
+            msgSource = this.taskParameters.sourceFolder;
         } else {
             msgSource = '/';
         }
-        console.log(tl.loc('DownloadingFiles', msgSource, taskParameters.bucketName, taskParameters.targetFolder ));
+        console.log(tl.loc('DownloadingFiles', msgSource, this.taskParameters.bucketName, this.taskParameters.targetFolder ));
 
-        if (!fs.existsSync(taskParameters.targetFolder)) {
-            tl.mkdirP(taskParameters.targetFolder);
+        if (!fs.existsSync(this.taskParameters.targetFolder)) {
+            tl.mkdirP(this.taskParameters.targetFolder);
         }
 
         const allDownloads = [];
-        const allKeys = await this.fetchAllObjectKeys(taskParameters);
-        for (const glob of taskParameters.globExpressions) {
-            const matchedKeys = await this.matchObjectKeys(allKeys, taskParameters.sourceFolder, glob);
+        const allKeys = await this.fetchAllObjectKeys();
+        for (const glob of this.taskParameters.globExpressions) {
+            const matchedKeys = await this.matchObjectKeys(allKeys, this.taskParameters.sourceFolder, glob);
             for (const matchedKey of matchedKeys) {
                 let dest: string;
-                if (taskParameters.flattenFolders) {
+                if (this.taskParameters.flattenFolders) {
                     const fname: string = path.basename(matchedKey);
-                    dest = path.join(taskParameters.targetFolder, fname);
+                    dest = path.join(this.taskParameters.targetFolder, fname);
                 } else {
-                    dest = path.join(taskParameters.targetFolder, matchedKey);
+                    dest = path.join(this.taskParameters.targetFolder, matchedKey);
                 }
 
                 if (fs.existsSync(dest)) {
-                    if (taskParameters.overwrite) {
+                    if (this.taskParameters.overwrite) {
                         console.log(tl.loc('FileOverwriteWarning', dest, matchedKey));
                     } else {
                         throw new Error(tl.loc('FileExistsError', dest, matchedKey));
@@ -90,12 +93,12 @@ export class TaskOperations {
 
                 console.log(tl.loc('QueueingDownload', matchedKey));
                 const params: S3.GetObjectRequest = {
-                    Bucket: taskParameters.bucketName,
+                    Bucket: this.taskParameters.bucketName,
                     Key: matchedKey
                 };
-                if (taskParameters.keyManagement === taskParameters.customerManagedKeyValue) {
-                    params.SSECustomerAlgorithm = taskParameters.aes256AlgorithmValue;
-                    params.SSECustomerKey = taskParameters.customerKey;
+                if (this.taskParameters.keyManagement === TaskParameters.customerManagedKeyValue) {
+                    params.SSECustomerAlgorithm = TaskParameters.aes256AlgorithmValue;
+                    params.SSECustomerKey = this.taskParameters.customerKey;
                 }
                 allDownloads.push(this.downloadFile(params, dest));
             }
@@ -104,7 +107,7 @@ export class TaskOperations {
         return Promise.all(allDownloads);
     }
 
-    private static downloadFile(s3Params: S3.GetObjectRequest, dest: string): Promise<void> {
+    private downloadFile(s3Params: S3.GetObjectRequest, dest: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             const dir: string = path.dirname(dest);
@@ -121,19 +124,19 @@ export class TaskOperations {
         });
     }
 
-    private static async fetchAllObjectKeys(taskParameters: Parameters.TaskParameters) : Promise<string[]> {
-        if (taskParameters.sourceFolder) {
-            console.log(tl.loc('ListingKeysFromPrefix', taskParameters.sourceFolder, taskParameters.bucketName));
+    private async fetchAllObjectKeys() : Promise<string[]> {
+        if (this.taskParameters.sourceFolder) {
+            console.log(tl.loc('ListingKeysFromPrefix', this.taskParameters.sourceFolder, this.taskParameters.bucketName));
         } else {
-            console.log(tl.loc('ListingKeysFromRoot', taskParameters.bucketName));
+            console.log(tl.loc('ListingKeysFromRoot', this.taskParameters.bucketName));
         }
 
         const allKeys: string[] = [];
         let nextToken : string = null;
         do {
             const params: S3.ListObjectsRequest = {
-                Bucket: taskParameters.bucketName,
-                Prefix: taskParameters.sourceFolder,
+                Bucket: this.taskParameters.bucketName,
+                Prefix: this.taskParameters.sourceFolder,
                 Marker: nextToken
             };
             try {
@@ -155,7 +158,7 @@ export class TaskOperations {
         return allKeys;
     }
 
-    private static async matchObjectKeys(allKeys: string[], sourcePrefix: string, glob: string): Promise<string[]> {
+    private async matchObjectKeys(allKeys: string[], sourcePrefix: string, glob: string): Promise<string[]> {
         let sourcePrefixLen: number = 0;
         if (sourcePrefix) {
             console.log(tl.loc('GlobbingFromPrefix', sourcePrefix, glob));

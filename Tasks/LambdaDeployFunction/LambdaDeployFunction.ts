@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -9,19 +9,19 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
 
-import Parameters = require ('./helpers/DeployFunctionTaskParameters');
-import Operations = require('./helpers/DeployFunctionTaskOperations');
+import { TaskParameters } from './helpers/DeployFunctionTaskParameters';
+import { TaskOperations } from './helpers/DeployFunctionTaskOperations';
 
 function run(): Promise<void> {
 
     const taskManifestFile = path.join(__dirname, 'task.json');
     tl.setResourcePath(taskManifestFile);
-    sdkutils.setSdkUserAgentFromManifest(taskManifestFile);
+    SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
 
-    const taskParameters = new Parameters.TaskParameters();
-    return Operations.TaskOperations.deployFunction(taskParameters);
+    const taskParameters = new TaskParameters();
+    return new TaskOperations(taskParameters).execute();
 }
 
 // run

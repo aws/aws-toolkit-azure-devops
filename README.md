@@ -1,30 +1,12 @@
 # Overview
 
-The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI. The tools include a new service endpoint type, *AWS*, to supply AWS credentials to the tasks when they are executed by build agents.
+The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
 
 The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
 
-**Note:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for *Assume Role* credentials in the AWS endpoint type while we address a compatibility issue with this version of TFS.
+**Note for Team Foundation Server 2015 Users:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for extra fields in the *AWS* endpoint type to support *Assume Role* credentials. These fields, although marked optional, are unfortunately treated as required in TFS 2015 editions.
 
 ## Highlighted Features
-
-### Create an AWS Credentials Connection for a Project
-
-To work with AWS services an AWS subscription has to be linked to each project in Team Foundation Server or Visual Studio Team Services using the Services tab in the Account Administration section. Add the AWS subscription to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Each VSTS/TFS project is associated with its own set of credentials. **The credentials are used by the VSTS/TFS build agents when running builds and/or releases for a project containing tasks from the AWS tools.**
-
-Select the *AWS* endpoint type and provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
-
-- A name used to refer to the credentials when configuring the AWS tasks
-- AWS Access Key ID
-- AWS Secret Access Key
-
-The credentials associated with the project are used by VSTS or TFS build agents that execute the AWS tasks you configure in your build and/or release pipelines. You can associate a single set of credentials to be used in all AWS tasks in a project or you can associate multiple sets of credentials. Project team members reference the associated credentials when configuring tasks for a project's build and/or release definitions.
-
-**Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
-
-Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
-
-![aws endpoint](images/AWSEndpoint.png)
 
 ### Transfer Files to and from Amazon S3 Buckets
 
@@ -76,10 +58,42 @@ Run AWS CLI commands against an AWS connection.
 
 ![AWSCLI](images/AWSCLI.png)
 
+## Credentials Handling for AWS Services
+
+To enable tasks to call AWS services when run as part of your build or release pipelines AWS credentials need to have been configured for the tasks or be available in the host process for the build agent. Note that the credentials are used specifically by the tasks when run in a build agent process, they are not related to end-user logins to your VSTS or TFS instance.
+
+The AWS tasks support the following mechanisms for obtaining AWS credentials:
+
+* One or more service endpoints, of type *AWS*, can be created and populated with AWS access and secret keys, and optionally data for *Assumed Role* credentials.
+  * Tasks reference the configured service endpoint instances by name as part of their configuration and pull the required credentials from the endpoint when run.
+* Variables defined on the task or build.
+  * If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
+    variables are named *AWS.AccessKeyID*, *AWS.SecretAccessKey* and optionally *AWS.SessionToken*. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the variable *AWS.Region*.
+* Environment variables in the build agent's environment.
+  * If tasks are not configured with the name of a service endpoint, and credentials or region are not available from task variables, the tasks will attempt to obtain credentials, and optionally region, from standard environment variables in the build process environment. These variables are *AWS_ACCESS_KEY_ID*, *AWS_SECRET_ACCESS_KEY* and optionally *AWS_SESSION_TOKEN*. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the environment variable *AWS_REGION*.
+* EC2 instance metadata, for build hosts running on EC2 instances.
+  * Both credential and region information can be automatically obtained from the instance metadata in this scenario.
+
+### Configuring an AWS Service Endpoint
+
+To use *AWS* service endpoints add the AWS subscription(s) to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Note that each VSTS/TFS project is associated with its own set of credentials. Service endpoints are not shared across projects. You can associate a single service endpoint to be used with all AWS tasks in a build or multiple endpoints if you require.
+
+Select the *AWS* endpoint type and provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
+
+* A name used to refer to the credentials when configuring the AWS tasks
+* AWS Access Key ID
+* AWS Secret Access Key
+
+![aws endpoint](images/AWSEndpoint.png)
+
+**Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
+
+Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
+
 ## Minimum supported environments
 
-- Visual Studio Team Services
-- Team Foundation Server 2015 Update 3 (or higher)
+* Visual Studio Team Services
+* Team Foundation Server 2015 Update 3 (or higher)
 
 ## Contributors
 

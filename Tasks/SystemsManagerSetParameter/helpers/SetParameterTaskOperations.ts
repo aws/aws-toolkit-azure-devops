@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -9,51 +9,54 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import SSM = require('aws-sdk/clients/ssm');
-import Parameters = require('./SetParameterTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './SetParameterTaskParameters';
 
 export class TaskOperations {
 
-    public static async setParameterValue(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
+
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
 
         // to avoid a security breach if someone tries to rewrite a secure string as a plain
         // value, test for existence and type and force a secure update if necessary
-        const forceAsSecureString = await this.testParameterExistsAndIsSecureStringType(taskParameters.parameterName);
-        await this.createOrUpdateParameter(taskParameters, forceAsSecureString);
+        const forceAsSecureString = await this.testParameterExistsAndIsSecureStringType(this.taskParameters.parameterName);
+        await this.createOrUpdateParameter(forceAsSecureString);
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static ssmClient: SSM;
+    private ssmClient: SSM;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const ssmOpts: SSM.ClientConfiguration = {
-            apiVersion: '2014-11-06',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2014-11-06'
         };
-        this.ssmClient = sdkutils.createAndConfigureSdkClient(SSM, ssmOpts, taskParameters, tl.debug);
+        this.ssmClient = await SdkUtils.createAndConfigureSdkClient(SSM, ssmOpts, this.taskParameters, tl.debug);
     }
 
-    private static async createOrUpdateParameter(taskParameters: Parameters.TaskParameters, forceAsSecureString: boolean): Promise<void> {
+    private async createOrUpdateParameter(forceAsSecureString: boolean): Promise<void> {
 
         try {
             await this.ssmClient.putParameter({
-                Name: taskParameters.parameterName,
-                Type: forceAsSecureString ? 'SecureString' : taskParameters.parameterType,
-                Value: taskParameters.parameterValue,
+                Name: this.taskParameters.parameterName,
+                Type: forceAsSecureString ? 'SecureString' : this.taskParameters.parameterType,
+                Value: this.taskParameters.parameterValue,
                 Overwrite: true,
-                KeyId: taskParameters.encryptionKeyId
+                KeyId: this.taskParameters.encryptionKeyId
             }).promise();
         } catch (error) {
             throw new Error(tl.loc('CreateOrUpdateFailed', error));
         }
     }
 
-    private static async testParameterExistsAndIsSecureStringType(parameterName: string): Promise<boolean> {
+    private async testParameterExistsAndIsSecureStringType(parameterName: string): Promise<boolean> {
 
         let result: boolean = false;
 
@@ -62,7 +65,7 @@ export class TaskOperations {
                 Name: parameterName
             }).promise();
 
-            result = response.Parameter.Type === Parameters.TaskParameters.secureStringType;
+            result = response.Parameter.Type === TaskParameters.secureStringType;
             if (result) {
                 console.log(tl.loc('ParameterExistsAndIsSecureString', parameterName));
             } else {

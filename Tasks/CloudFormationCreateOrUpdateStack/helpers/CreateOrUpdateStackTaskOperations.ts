@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -12,150 +12,103 @@ import fs = require('fs');
 import yaml = require('js-yaml');
 import CloudFormation = require('aws-sdk/clients/cloudformation');
 import S3 = require('aws-sdk/clients/s3');
-import Parameters = require('./CreateOrUpdateStackTaskParameters');
-import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './CreateOrUpdateStackTaskParameters';
 
 export class TaskOperations {
 
-    public static async createOrUpdateStack(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        let stackId: string = await this.testStackExists(taskParameters.stackName);
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
+
+        let stackId: string = await this.testStackExists(this.taskParameters.stackName);
         if (stackId) {
             console.log(tl.loc('StackExists'));
-            if (taskParameters.useChangeSet) {
-                stackId = await this.createOrUpdateWithChangeSet(taskParameters, 'UPDATE');
+            if (this.taskParameters.useChangeSet) {
+                stackId = await this.createOrUpdateWithChangeSet('UPDATE');
             } else {
-                await this.updateStack(taskParameters);
+                await this.updateStack();
             }
         } else {
             console.log(tl.loc('StackDoesNotExist'));
-            if (taskParameters.useChangeSet) {
-                stackId = await this.createOrUpdateWithChangeSet(taskParameters, 'CREATE');
+            if (this.taskParameters.useChangeSet) {
+                stackId = await this.createOrUpdateWithChangeSet('CREATE');
             } else {
-                stackId = await this.createStack(taskParameters);
+                stackId = await this.createStack();
             }
         }
 
-        if (taskParameters.outputVariable) {
-            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
-            tl.setVariable(taskParameters.outputVariable, stackId);
+        if (this.taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable));
+            tl.setVariable(this.taskParameters.outputVariable, stackId);
         }
 
-        console.log(tl.loc('TaskCompleted', taskParameters.stackName, stackId));
+        console.log(tl.loc('TaskCompleted', this.taskParameters.stackName, stackId));
     }
 
-    private static cloudFormationClient: CloudFormation;
-    private static s3Client: S3;
+    private cloudFormationClient: CloudFormation;
+    private s3Client: S3;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const cfnOpts: CloudFormation.ClientConfiguration = {
-            apiVersion: '2010-05-15',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2010-05-15'
         };
-        this.cloudFormationClient = sdkutils.createAndConfigureSdkClient(CloudFormation, cfnOpts, taskParameters, tl.debug);
+        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2006-03-01'
         };
-        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
-    private static async testStackExists(stackName: string): Promise<string> {
-        console.log(tl.loc('CheckingForStackExistence', stackName));
-
-        try {
-            const response: CloudFormation.DescribeStacksOutput = await this.cloudFormationClient.describeStacks({
-                StackName: stackName
-            }).promise();
-            if (response.Stacks && response.Stacks.length > 0) {
-                return response.Stacks[0].StackId;
-            }
-        } catch (err) {
-            console.log(tl.loc('StackLookupFailed', stackName, err));
-        }
-
-        return null;
-    }
-
-    // Stacks 'created' with a change set are not fully realised until the change set
-    // executes, so we inspect whether resources exist in order to know which kind
-    // of 'waiter' to use (create complete, update complete) when running a stack update.
-    // It's not enough to know that the stack exists.
-    private static async testStackHasResources(stackName: string): Promise<boolean> {
-        try {
-            const response = await this.cloudFormationClient.describeStackResources({ StackName: stackName }).promise();
-            return (response.StackResources && response.StackResources.length > 0);
-        } catch (err) {
-            return false;
-        }
-    }
-
-    private static async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
-        try {
-            console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName));
-            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
-            console.log(tl.loc('ChangeSetExists ', changeSetName, response.Status));
-            return true;
-        } catch (err) {
-            console.log(tl.loc('ChangeSetLookupFailed', changeSetName, err.message));
-        }
-
-        return false;
-    }
-
-    private static async createStack(taskParameters: Parameters.TaskParameters) : Promise<string> {
+    private async createStack() : Promise<string> {
 
         const request: CloudFormation.CreateStackInput = {
-            StackName: taskParameters.stackName,
-            OnFailure: taskParameters.onFailure,
-            RoleARN: taskParameters.roleARN
+            StackName: this.taskParameters.stackName,
+            OnFailure: this.taskParameters.onFailure,
+            RoleARN: this.taskParameters.roleARN
         };
 
-        switch (taskParameters.templateSource) {
-            case taskParameters.fileSource: {
-                if (taskParameters.s3BucketName) {
-                    request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3BucketName);
+        switch (this.taskParameters.templateSource) {
+            case TaskParameters.fileSource: {
+                if (this.taskParameters.s3BucketName) {
+                    request.TemplateURL = await this.uploadTemplateFile(this.taskParameters.templateFile, this.taskParameters.s3BucketName);
                 } else {
-                    request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+                    request.TemplateBody = await this.loadTemplateFile(this.taskParameters.templateFile);
                 }
             }
             break;
 
-            case taskParameters.urlSource: {
-                request.TemplateURL = taskParameters.templateUrl;
+            case TaskParameters.urlSource: {
+                request.TemplateURL = this.taskParameters.templateUrl;
             }
             break;
 
-            case taskParameters.s3Source: {
+            case TaskParameters.s3Source: {
                 // sync call
-                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
-                    Bucket: taskParameters.s3BucketName,
-                    Key: taskParameters.s3ObjectKey
-                });
-                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
         }
 
-        request.Parameters = await this.loadTemplateParameters(taskParameters);
+        request.Parameters = await this.loadTemplateParameters();
 
-        console.log(tl.loc('CreateStack', taskParameters.templateFile));
+        console.log(tl.loc('CreateStack', this.taskParameters.templateFile));
 
-        request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
-        request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
-        request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
-        request.Tags = this.getTags(taskParameters.tags);
+        request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs);
+        request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes);
+        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM);
+        request.Tags = this.getTags(this.taskParameters.tags);
 
-        if (taskParameters.monitorRollbackTriggers) {
+        if (this.taskParameters.monitorRollbackTriggers) {
             request.RollbackConfiguration = {
-                MonitoringTimeInMinutes: taskParameters.monitoringTimeInMinutes,
-                RollbackTriggers: this.constructRollbackTriggerCollection(taskParameters.rollbackTriggerARNs)
+                MonitoringTimeInMinutes: this.taskParameters.monitoringTimeInMinutes,
+                RollbackTriggers: this.constructRollbackTriggerCollection(this.taskParameters.rollbackTriggerARNs)
             };
         }
 
@@ -170,51 +123,47 @@ export class TaskOperations {
         }
     }
 
-    private static async updateStack(taskParameters: Parameters.TaskParameters) : Promise<void> {
-        console.log(tl.loc('UpdateStack', taskParameters.templateFile));
+    private async updateStack() : Promise<void> {
+        console.log(tl.loc('UpdateStack', this.taskParameters.templateFile));
 
         const request: CloudFormation.UpdateStackInput = {
-            StackName: taskParameters.stackName,
-            RoleARN: taskParameters.roleARN
+            StackName: this.taskParameters.stackName,
+            RoleARN: this.taskParameters.roleARN
         };
 
-        switch (taskParameters.templateSource) {
-            case taskParameters.fileSource: {
-                if (taskParameters.s3BucketName) {
-                    request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3BucketName);
+        switch (this.taskParameters.templateSource) {
+            case TaskParameters.fileSource: {
+                if (this.taskParameters.s3BucketName) {
+                    request.TemplateURL = await this.uploadTemplateFile(this.taskParameters.templateFile, this.taskParameters.s3BucketName);
                 } else {
-                    request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+                    request.TemplateBody = await this.loadTemplateFile(this.taskParameters.templateFile);
                 }
             }
             break;
 
-            case taskParameters.urlSource: {
-                request.TemplateURL = taskParameters.templateUrl;
+            case TaskParameters.urlSource: {
+                request.TemplateURL = this.taskParameters.templateUrl;
             }
             break;
 
-            case taskParameters.s3Source: {
+            case TaskParameters.s3Source: {
                 // sync call
-                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
-                    Bucket: taskParameters.s3BucketName,
-                    Key: taskParameters.s3ObjectKey
-                });
-                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
         }
 
-        request.Parameters = await this.loadTemplateParameters(taskParameters);
+        request.Parameters = await this.loadTemplateParameters();
 
-        request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
-        request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
-        request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
-        request.Tags = this.getTags(taskParameters.tags);
+        request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs);
+        request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes);
+        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM);
+        request.Tags = this.getTags(this.taskParameters.tags);
 
-        if (taskParameters.monitorRollbackTriggers) {
+        if (this.taskParameters.monitorRollbackTriggers) {
             request.RollbackConfiguration = {
-                MonitoringTimeInMinutes: taskParameters.monitoringTimeInMinutes,
-                RollbackTriggers: this.constructRollbackTriggerCollection(taskParameters.rollbackTriggerARNs)
+                MonitoringTimeInMinutes: this.taskParameters.monitoringTimeInMinutes,
+                RollbackTriggers: this.constructRollbackTriggerCollection(this.taskParameters.rollbackTriggerARNs)
             };
         }
 
@@ -229,72 +178,67 @@ export class TaskOperations {
         }
     }
 
-    private static async createOrUpdateWithChangeSet(taskParameters: Parameters.TaskParameters,
-                                                     changesetType: string) : Promise<string> {
+    private async createOrUpdateWithChangeSet(changesetType: string) : Promise<string> {
 
-        const changeSetExists = await this.testChangeSetExists(taskParameters.changeSetName, taskParameters.stackName);
+        const changeSetExists = await this.testChangeSetExists(this.taskParameters.changeSetName, this.taskParameters.stackName);
         if (changeSetExists) {
-            await this.deleteExistingChangeSet(taskParameters.changeSetName, taskParameters.stackName);
+            await this.deleteExistingChangeSet(this.taskParameters.changeSetName, this.taskParameters.stackName);
         }
 
         const request: CloudFormation.CreateChangeSetInput = {
-            ChangeSetName: taskParameters.changeSetName,
+            ChangeSetName: this.taskParameters.changeSetName,
             ChangeSetType: changesetType,
-            StackName: taskParameters.stackName,
-            Description: taskParameters.description,
-            RoleARN: taskParameters.roleARN
+            StackName: this.taskParameters.stackName,
+            Description: this.taskParameters.description,
+            RoleARN: this.taskParameters.roleARN
         };
 
-        switch (taskParameters.templateSource) {
-            case taskParameters.fileSource: {
-                if (taskParameters.s3BucketName) {
-                    request.TemplateURL = await this.uploadTemplateFile(taskParameters.templateFile, taskParameters.s3BucketName);
+        switch (this.taskParameters.templateSource) {
+            case TaskParameters.fileSource: {
+                if (this.taskParameters.s3BucketName) {
+                    request.TemplateURL = await this.uploadTemplateFile(this.taskParameters.templateFile, this.taskParameters.s3BucketName);
                 } else {
-                    request.TemplateBody = await this.loadTemplateFile(taskParameters.templateFile);
+                    request.TemplateBody = await this.loadTemplateFile(this.taskParameters.templateFile);
                 }
             }
             break;
 
-            case taskParameters.urlSource: {
-                request.TemplateURL = taskParameters.templateUrl;
+            case TaskParameters.urlSource: {
+                request.TemplateURL = this.taskParameters.templateUrl;
             }
             break;
 
-            case taskParameters.s3Source: {
+            case TaskParameters.s3Source: {
                 // sync call
-                request.TemplateURL = this.s3Client.getSignedUrl('getObject', {
-                    Bucket: taskParameters.s3BucketName,
-                    Key: taskParameters.s3ObjectKey
-                });
-                console.log(tl.loc('GeneratedTemplateUrl', request.TemplateURL));
+                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
         }
 
-        request.Parameters = await this.loadTemplateParameters(taskParameters);
+        request.Parameters = await this.loadTemplateParameters();
 
-        request.NotificationARNs = this.getNotificationArns(taskParameters.notificationARNs);
-        request.ResourceTypes = this.getResourceTypes(taskParameters.resourceTypes);
-        request.Capabilities = this.getCapabilities(taskParameters.capabilityIAM, taskParameters.capabilityNamedIAM);
-        request.Tags = this.getTags(taskParameters.tags);
+        request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs);
+        request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes);
+        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM);
+        request.Tags = this.getTags(this.taskParameters.tags);
 
-        if (taskParameters.monitorRollbackTriggers) {
+        if (this.taskParameters.monitorRollbackTriggers) {
             request.RollbackConfiguration = {
-                MonitoringTimeInMinutes: taskParameters.monitoringTimeInMinutes,
-                RollbackTriggers: this.constructRollbackTriggerCollection(taskParameters.rollbackTriggerARNs)
+                MonitoringTimeInMinutes: this.taskParameters.monitoringTimeInMinutes,
+                RollbackTriggers: this.constructRollbackTriggerCollection(this.taskParameters.rollbackTriggerARNs)
             };
         }
 
         try {
             // note that we can create a change set with no changes, but when we wait for completion it's then
             // that we get a validation failure, which we check for inside waitForChangeSetCreation
-            console.log(tl.loc('CreatingChangeSet', changesetType, taskParameters.changeSetName));
+            console.log(tl.loc('CreatingChangeSet', changesetType, this.taskParameters.changeSetName));
             const response: CloudFormation.CreateChangeSetOutput = await this.cloudFormationClient.createChangeSet(request).promise();
 
             tl.debug(`Change set id ${response.Id}, stack id ${response.StackId}`);
             const changesToApply = await this.waitForChangeSetCreation(request.ChangeSetName, request.StackName);
-            if (changesToApply && taskParameters.autoExecuteChangeSet) {
-                await this.executeChangeSet(taskParameters.changeSetName, taskParameters.stackName);
+            if (changesToApply && this.taskParameters.autoExecuteChangeSet) {
+                await this.executeChangeSet(this.taskParameters.changeSetName, this.taskParameters.stackName);
             }
             return response.StackId;
         }  catch (err) {
@@ -303,7 +247,7 @@ export class TaskOperations {
         }
     }
 
-    private static constructRollbackTriggerCollection(rollbackTriggerArns: string[]): CloudFormation.RollbackTrigger[] {
+    private constructRollbackTriggerCollection(rollbackTriggerArns: string[]): CloudFormation.RollbackTrigger[] {
         const triggers: CloudFormation.RollbackTrigger[] = [];
 
         rollbackTriggerArns.forEach((rta) => {
@@ -320,7 +264,7 @@ export class TaskOperations {
         return triggers;
     }
 
-    private static async executeChangeSet(changeSetName: string, stackName: string) : Promise<void> {
+    private async executeChangeSet(changeSetName: string, stackName: string) : Promise<void> {
         console.log(tl.loc('ExecutingChangeSet', changeSetName, stackName));
 
         try {
@@ -340,7 +284,7 @@ export class TaskOperations {
         }
     }
 
-    private static async deleteExistingChangeSet(changeSetName: string, stackName: string): Promise<void> {
+    private async deleteExistingChangeSet(changeSetName: string, stackName: string): Promise<void> {
         try {
             console.log(tl.loc('DeletingExistingChangeSet', changeSetName, stackName));
             await this.cloudFormationClient.deleteChangeSet({ ChangeSetName: changeSetName, StackName: stackName }).promise();
@@ -349,7 +293,7 @@ export class TaskOperations {
         }
     }
 
-    private static getCapabilities(capabilityIAM: boolean, capabilityNamedIAM: boolean) {
+    private getCapabilities(capabilityIAM: boolean, capabilityNamedIAM: boolean) {
 
         const arr = [];
 
@@ -365,7 +309,7 @@ export class TaskOperations {
         return (arr && arr.length > 0) ? arr : null;
     }
 
-    private static getTags(tags: string[]): CloudFormation.Tags {
+    private getTags(tags: string[]): CloudFormation.Tags {
 
         let arr: CloudFormation.Tags;
 
@@ -386,7 +330,7 @@ export class TaskOperations {
         return arr;
     }
 
-    private static getNotificationArns(notificationARNs: string[]) {
+    private getNotificationArns(notificationARNs: string[]) {
         // Supplying an empty array is different (to the service) than a null
         // array. When splitting our task parameters, we get an empty array.
         if (notificationARNs && notificationARNs.length > 0) {
@@ -396,7 +340,7 @@ export class TaskOperations {
         return null;
     }
 
-    private static getResourceTypes(resourceTypes: string []) {
+    private getResourceTypes(resourceTypes: string []) {
         // Supplying an empty array is different (to the service) than a null
         // array. When splitting our task parameters, we get an empty array.
         if (resourceTypes && resourceTypes.length > 0) {
@@ -406,7 +350,7 @@ export class TaskOperations {
         return null;
     }
 
-    private static async loadTemplateFile(templateFile: string): Promise<string> {
+    private async loadTemplateFile(templateFile: string): Promise<string> {
         console.log(tl.loc('LoadingTemplateFile', templateFile));
         if (!tl.exist(templateFile)) {
             throw new Error(tl.loc('TemplateFileDoesNotExist', templateFile));
@@ -421,45 +365,38 @@ export class TaskOperations {
         }
     }
 
-    private static async uploadTemplateFile(templateFile: string, s3BucketName: string): Promise<string> {
+    private async uploadTemplateFile(templateFile: string, s3BucketName: string): Promise<string> {
         const fileBuffer = fs.createReadStream(templateFile);
         const objectKey = path.basename(templateFile);
 
         console.log(tl.loc('UploadingTemplate', templateFile, objectKey, s3BucketName));
         try {
-            const response: S3.ManagedUpload.SendData = await this.s3Client.upload({
+            await this.s3Client.upload({
                 Bucket: s3BucketName,
                 Key: objectKey,
                 Body: fileBuffer
             }).promise();
 
-            // sync call
-            const templateUrl = this.s3Client.getSignedUrl('getObject', {
-                Bucket: s3BucketName,
-                Key: objectKey
-            });
-
-            console.log(tl.loc('GeneratedTemplateUrl', templateUrl));
-
+            const templateUrl = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', s3BucketName, objectKey);
             return templateUrl;
         } catch (err) {
             throw new Error(tl.loc('TemplateUploadFailed', err));
         }
     }
 
-    private static loadTemplateParameters(taskParameters: Parameters.TaskParameters): CloudFormation.Parameters {
+    private loadTemplateParameters(): CloudFormation.Parameters {
 
         let parsedParameters: CloudFormation.Parameters;
 
-        switch (taskParameters.templateParametersSource) {
-            case taskParameters.loadTemplateParametersFromFile: {
-                parsedParameters = this.loadParametersFromFile(taskParameters.templateParametersFile);
+        switch (this.taskParameters.templateParametersSource) {
+            case TaskParameters.loadTemplateParametersFromFile: {
+                parsedParameters = this.loadParametersFromFile(this.taskParameters.templateParametersFile);
             }
             break;
 
-            case taskParameters.loadTemplateParametersInline: {
+            case TaskParameters.loadTemplateParametersInline: {
                 console.log(tl.loc('LoadingTemplateParameters'));
-                parsedParameters = this.parseParameters(taskParameters.templateParameters);
+                parsedParameters = this.parseParameters(this.taskParameters.templateParameters);
             }
             break;
         }
@@ -470,7 +407,7 @@ export class TaskOperations {
         return parsedParameters;
     }
 
-    private static loadParametersFromFile(parametersFile: string): CloudFormation.Parameters {
+    private loadParametersFromFile(parametersFile: string): CloudFormation.Parameters {
         if (!parametersFile) {
             console.log(tl.loc('NoParametersFileSpecified'));
             return null;
@@ -486,7 +423,7 @@ export class TaskOperations {
         return templateParameters;
     }
 
-    private static parseParameters(parameters: string): CloudFormation.Parameters {
+    private parseParameters(parameters: string): CloudFormation.Parameters {
 
         let templateParameters;
         try {
@@ -508,7 +445,7 @@ export class TaskOperations {
 
     // If there were no changes, a validation error is thrown which we want to suppress
     // rather than erroring out and failing the build.
-    private static isNoWorkToDoValidationError(errCodeOrStatus: string, errMessage: string): boolean {
+    private isNoWorkToDoValidationError(errCodeOrStatus: string, errMessage: string): boolean {
         let noWorkToDo: boolean = false;
         try {
             if (errCodeOrStatus.search(/ValidationError/) !== -1 && errMessage.search(/^No updates are to be performed./) !== -1) {
@@ -520,7 +457,9 @@ export class TaskOperations {
             }
 
             if (noWorkToDo) {
-                tl.warning(tl.loc('NoWorkToDo'));
+                if (this.taskParameters.warnWhenNoWorkNeeded) {
+                    tl.warning(tl.loc('NoWorkToDo'));
+                }
                 return true;
             }
         // tslint:disable-next-line:no-empty
@@ -530,31 +469,33 @@ export class TaskOperations {
         return false;
     }
 
-    private static async waitForStackCreation(stackName: string) : Promise<void> {
+    private async waitForStackCreation(stackName: string) : Promise<void> {
         console.log(tl.loc('WaitingForStackCreation', stackName));
         try {
-            await this.cloudFormationClient.waitFor('stackCreateComplete', { StackName: stackName }).promise();
+            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins);
+            await this.cloudFormationClient.waitFor('stackCreateComplete', parms).promise();
             console.log(tl.loc('StackCreated', stackName));
         } catch (err) {
             throw new Error(tl.loc('StackCreationFailed', stackName, err.message));
         }
     }
 
-    private static async waitForStackUpdate(stackName: string) : Promise<void> {
+    private async waitForStackUpdate(stackName: string) : Promise<void> {
         console.log(tl.loc('WaitingForStackUpdate', stackName));
         try {
-            await this.cloudFormationClient.waitFor('stackUpdateComplete', { StackName: stackName }).promise();
+            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins);
+            await this.cloudFormationClient.waitFor('stackUpdateComplete', parms).promise();
             console.log(tl.loc('StackUpdated', stackName));
         } catch (err) {
             throw new Error(tl.loc('StackUpdateFailed', stackName, err.message));
         }
     }
 
-    private static async waitForChangeSetCreation(changeSetName: string, stackName: string) : Promise<boolean> {
+    private async waitForChangeSetCreation(changeSetName: string, stackName: string) : Promise<boolean> {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName));
         try {
-            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete',
-                                                    { ChangeSetName: changeSetName, StackName: stackName }).promise();
+            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName);
+            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms).promise();
             console.log(tl.loc('ChangeSetValidated'));
         } catch (err) {
             // Inspect to see if the error was down to the service reporting (as an exception trapped
@@ -573,4 +514,66 @@ export class TaskOperations {
         return true;
     }
 
+    private setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
+
+        if (timeout !== TaskParameters.defaultTimeoutInMins) {
+            console.log(tl.loc('SettingCustomTimeout', timeout));
+        }
+
+        const p: any = {
+            StackName: stackName,
+            $waiter: {
+                maxAttempts: Math.round(timeout * 60 / 30)
+            }
+        };
+
+        if (changeSetName) {
+            p.ChangeSetName = changeSetName;
+        }
+
+        return p;
+    }
+
+    private async testStackExists(stackName: string): Promise<string> {
+        console.log(tl.loc('CheckingForStackExistence', stackName));
+
+        try {
+            const response: CloudFormation.DescribeStacksOutput = await this.cloudFormationClient.describeStacks({
+                StackName: stackName
+            }).promise();
+            if (response.Stacks && response.Stacks.length > 0) {
+                return response.Stacks[0].StackId;
+            }
+        } catch (err) {
+            console.log(tl.loc('StackLookupFailed', this.taskParameters.stackName, err));
+        }
+
+        return null;
+    }
+
+    // Stacks 'created' with a change set are not fully realised until the change set
+    // executes, so we inspect whether resources exist in order to know which kind
+    // of 'waiter' to use (create complete, update complete) when running a stack update.
+    // It's not enough to know that the stack exists.
+    private async testStackHasResources(stackName: string): Promise<boolean> {
+        try {
+            const response = await this.cloudFormationClient.describeStackResources({ StackName: stackName }).promise();
+            return (response.StackResources && response.StackResources.length > 0);
+        } catch (err) {
+            return false;
+        }
+    }
+
+    private async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
+        try {
+            console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName));
+            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
+            console.log(tl.loc('ChangeSetExists', changeSetName, response.Status));
+            return true;
+        } catch (err) {
+            console.log(tl.loc('ChangeSetLookupFailed', changeSetName, err.message));
+        }
+
+        return false;
+    }
 }

@@ -10,6 +10,8 @@ var semver = require('semver');
 var shell = require('shelljs');
 var syncRequest = require('sync-request');
 var modclean = require('modclean');
+var filenormalize = require('file-normalize');
+var jsonQuery = require('json-query');
 
 // global paths
 var downloadPath = path.join(__dirname, '_download');
@@ -77,6 +79,7 @@ var test = function (options, p) {
     return result;
 }
 exports.test = test;
+
 //------------------------------------------------------------------------------
 
 var assert = function (value, name) {
@@ -686,6 +689,7 @@ var validateTask = function (task) {
     }
 };
 exports.validateTask = validateTask;
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -1056,4 +1060,137 @@ var storeNonAggregatedZip = function (zipPath, release, commit) {
     fs.writeFileSync(destMarker, '');
 }
 exports.storeNonAggregatedZip = storeNonAggregatedZip;
+
 //------------------------------------------------------------------------------
+
+// Common handler to serialize json manifests to file, ensuring we get normalized
+// line terminators and blank line at end of file.
+var serializeToFile = function(jsonObj, filePath) {
+    var content = filenormalize.normalizeEOL(JSON.stringify(jsonObj, null, 4) + '\n');
+    fs.writeFileSync(filePath, content);
+}
+exports.serializeToFile = serializeToFile;
+
+// Update version info in the specified package.json file
+var updatePackageJsonVersion = function(packageJsonPath, versionInfo) {
+    var oldContent = fs.readFileSync(packageJsonPath);
+    var packageJson = JSON.parse(oldContent);
+    packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
+    console.log(`> ...stamped version ${packageJson.version} into package.json`);
+    serializeToFile(packageJson, packageJsonPath);
+}
+exports.updatePackageJsonVersion = updatePackageJsonVersion;
+
+// Updates the vss-extension manifest version in the build output folder
+// based on data contained in the root _versioninfo.json control file.
+var versionstampExtension = function(outputRoot, extensionManifest, versionInfo) {
+
+    var extensionManifestPath = path.join(outputRoot, extensionManifest);
+    var oldContent = fs.readFileSync(extensionManifestPath);
+    var extensionJson = JSON.parse(oldContent);
+    extensionJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
+    console.log(`> ...extension manifest updated to version ${extensionJson.version}`);
+    serializeToFile(extensionJson, extensionManifestPath);
+}
+exports.versionstampExtension = versionstampExtension;
+
+// Updates the task manifest and related package.json file in the build output
+// based on data contained in the root _versioninfo.json control file.
+var versionstampTask = function(outputTaskRoot, versionInfo) {
+
+    var taskManifestFile = path.join(outputTaskRoot, 'task.json');
+    var oldContent = fs.readFileSync(taskManifestFile);
+    var taskManifest = JSON.parse(oldContent);
+    taskManifest.version.Major = versionInfo.Major;
+    taskManifest.version.Minor = versionInfo.Minor;
+    taskManifest.version.Patch = versionInfo.Patch;
+    console.log(`> ...stamped version ${taskManifest.version.Major}.${taskManifest.version.Minor}.${taskManifest.version.Patch} into task manifest`);
+    serializeToFile(taskManifest, taskManifestFile);
+
+    var packageJsonFile = path.join(outputTaskRoot, 'package.json');
+    if (fs.existsSync(packageJsonFile)) {
+        updatePackageJsonVersion(packageJsonFile, versionInfo);
+    }
+}
+exports.versionstampTask = versionstampTask;
+
+// Injects the known regions (at build time) into the 'regionName' input picker in a built
+// task.json file.
+var injectKnownRegionsIntoPicker = function(outputTaskRoot, knownRegions) {
+
+    var taskManifestFile = path.join(outputTaskRoot, 'task.json');
+    var taskManifest = JSON.parse(fs.readFileSync(taskManifestFile));
+
+    var regionNameInput = jsonQuery('inputs[name=regionName]', {
+        data: taskManifest
+    }).value;
+
+    regionNameInput.options = knownRegions;
+    serializeToFile(taskManifest, taskManifestFile);
+}
+exports.injectKnownRegionsIntoPicker = injectKnownRegionsIntoPicker;
+
+// Copies the pre- or post-build content, if an overlay content root was specified,
+// to the build output location
+var copyOverlayContent = function(overlayFolderRoot, buildStage, outputRoot) {
+    if (!overlayFolderRoot) {
+        console.log(`> no content overlay folder specified. skipping copy of ${buildStage} materials`);
+        return;
+    }
+
+    var buildOverlays = path.join(overlayFolderRoot, buildStage);
+    if (pathExists(buildOverlays)) {
+        console.log(`> Copying ${buildStage} overlay content to ${outputRoot}`);
+        matchCopy(path.join('**', '*'), buildOverlays, outputRoot, { noRecurse: false,  matchBase: false });
+    }
+}
+exports.copyOverlayContent = copyOverlayContent;
+
+var fallbackRegions = {
+    "ap-northeast-1" : "Asia Pacific (Tokyo) - ap-northeast-1" ,
+    "ap-northeast-2" : "Asia Pacific (Seoul) - ap-northeast-2",
+    "ap-south-1" : "Asia Pacific (Mumbai) - ap-south-1",
+    "ap-southeast-1" : "Asia Pacific (Singapore) - ap-southeast-1",
+    "ap-southeast-2" : "Asia Pacific (Sydney) - ap-southeast-2",
+    "ca-central-1" : "Canada (Central) - ca-central-1",
+    "cn-north-1" : "China (Beijing) - cn-north-1",
+    "cn-northwest-1" : "China (Ningxia) - cn-northwest-1",
+    "eu-central-1" : "EU (Frankfurt) - eu-central-1",
+    "eu-west-1" : "EU (Ireland) - eu-west-1",
+    "eu-west-2" : "EU (London) - eu-west-2",
+    "eu-west-3" : "EU (Paris) - eu-west-3",
+    "sa-east-1" : "South America (Sao Paulo) - sa-east-1",
+    "us-east-1" : "US East (N. Virginia) - us-east-1",
+    "us-east-2" : "US East (Ohio) - us-east-2",
+    "us-gov-west-1" : "AWS GovCloud (US) - us-gov-west-1",
+    "us-west-1" : "US West (N. California) - us-west-1",
+    "us-west-2" : "US West (Oregon) - us-west-2"
+}
+
+// Downloads the latest known AWS regions file used by the various
+// AWS toolkits and constructs the object we'll inject into each
+// task's region picker options field at build time.
+var fetchLatestRegions = function() {
+    var endpointsFileUrl = 'https://aws-toolkit-endpoints.s3.amazonaws.com/endpoints.json';
+
+    var availableRegions = {}
+
+    try {
+        console.log('> Downloading latest toolkits endpoint data');
+        var res = syncRequest('GET', endpointsFileUrl);
+        var allEndpoints = JSON.parse(res.getBody());
+
+        for (var p = 0; p < allEndpoints.partitions.length; p++) {
+            var partition = allEndpoints.partitions[p];
+
+            var regionKeys = Object.keys(partition.regions);
+            regionKeys.forEach((rk) => {
+                availableRegions[rk] = `${partition.regions[rk].description} [${rk.toString()}]`;
+            })
+        }
+    } catch (err) {
+        console.log(`...error downloading endpoints: ${err}`);
+    }
+    return availableRegions;
+}
+exports.fetchLatestRegions = fetchLatestRegions;

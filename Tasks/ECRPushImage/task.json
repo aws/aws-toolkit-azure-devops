@@ -4,7 +4,7 @@
     "friendlyName": "AWS Elastic Container Registry Push",
     "description": "Push a local Docker image to AWS Elastic Container Registry",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/) documentation for working with this service.",
+    "helpMarkDown": "Please refer to [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/) documentation for working with this service.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/ecr-pushimage.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* ecr:DescribeRepositories\n* ecr:CreateRepository\n* ecr:GetAuthorizationToken",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -36,16 +36,20 @@
             "type": "connectedService:AWS",
             "label": "AWS Credentials",
             "defaultValue": "",
-            "required": true,
-            "helpMarkDown": "Select the AWS credentials to use when it executes on a build host. If needed, click on 'Manage', and add a new Service Endpoint of type 'AWS'."
+            "required": false,
+            "helpMarkDown": "Specifies the AWS credentials to be used by the task in the build agent environment.\n\nYou can specify credentials using a service endpoint (of type _AWS_) in the task configuration or you can leave unspecified. If unspecified the task will attempt to obtain credentials from the following sources in order:\n\n* From task variables named _AWS.AccessKeyID_, _AWS.SecretAccessKey_ and optionally _AWS.SessionToken_.\n* From credentials set in environment variables in the build agent process. When using environment variables in the build agent process you may use the standard AWS environment variables: _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_.\n* If the build agent is running on an Amazon EC2 instance, from the instance metadata associated with the EC2 instance. For credentials to be available from EC2 instance metadata the instance must have been started with an instance profile referencing a role granting permissions to the task to make calls to AWS on your behalf. See [Using an IAM Role to Grant Permissions to Applications Running on Amazon EC2 Instances](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html) for more information."
         },
         {
             "name": "regionName",
             "label": "AWS Region",
-            "type": "string",
-            "required": true,
+            "type": "pickList",
+            "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html)."
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
+            "options": {},
+            "properties": {
+                "EditableOptions": "True"
+            }
         },
         {
             "name": "imageSource",
@@ -53,7 +57,7 @@
             "label": "Image Identity",
             "required": true,
             "defaultValue": "imagename",
-            "helpMarkDown": "The identity of the image to push.",
+            "helpMarkDown": "How the image to be pushed is identified. You can select from either the image ID or the image name. If image name is selected a tag can also be specified",
             "options": {
                 "imagename": "Image name with optional tag",
                 "imageid": "Image ID"
@@ -68,7 +72,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "Required if the image is to be identified using a repository name and tag",
+            "helpMarkDown": "The name of the image to push. Required _Image Identity_ is set to _Image name with optional tag_.",
             "visibleRule": "imageSource = imagename"
         },
         {
@@ -77,7 +81,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "latest",
-            "helpMarkDown": "Optional tag to suffix to the image name. If a tag value is not supplied, 'latest' is assumed",
+            "helpMarkDown": "Optional tag to suffix to the image name. If a tag is not supplied, 'latest' is assumed",
             "visibleRule": "imageSource = imagename"
         },
         {
@@ -86,7 +90,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "Required if the image is to be identified using the image ID",
+            "helpMarkDown": "The ID of the image to push. Required if _Image Identity_ is set to _Image ID_",
             "visibleRule": "imageSource = imageId"
         },
         {
@@ -95,7 +99,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The name of the repository to push the image to."
+            "helpMarkDown": "The name of the repository to which the image will be pushed."
         },
         {
             "name": "pushTag",

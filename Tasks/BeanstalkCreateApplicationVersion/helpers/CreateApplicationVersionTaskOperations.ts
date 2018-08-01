@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -13,40 +13,44 @@ import Q = require('q');
 import archiver = require('archiver');
 import Beanstalk = require('aws-sdk/clients/elasticbeanstalk');
 import S3 = require('aws-sdk/clients/s3');
-import { BeanstalkUtils } from 'beanstalkutils/beanstalkutils';
-import Parameters = require('./CreateApplicationVersionTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { BeanstalkUtils } from 'beanstalkutils/beanstalkutils';
 import { TaskParameters } from './CreateApplicationVersionTaskParameters';
 
 export class TaskOperations {
 
-    public static async execute(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.constructServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        await BeanstalkUtils.verifyApplicationExists(this.beanstalkClient, taskParameters.applicationName);
+    public async execute(): Promise<void> {
+        await this.constructServiceClients();
 
-        const versionLabel = BeanstalkUtils.constructVersionLabel(taskParameters.versionLabel);
+        await BeanstalkUtils.verifyApplicationExists(this.beanstalkClient, this.taskParameters.applicationName);
+
+        const versionLabel = BeanstalkUtils.constructVersionLabel(this.taskParameters.versionLabel);
 
         let s3Bucket: string;
         let s3Key: string;
 
-        if (taskParameters.applicationType !== taskParameters.applicationTypeS3Archive) {
+        if (this.taskParameters.applicationType !== TaskParameters.applicationTypeS3Archive) {
 
             s3Bucket = await BeanstalkUtils.determineS3Bucket(this.beanstalkClient);
             let deploymentBundle: string;
-            if (taskParameters.applicationType === taskParameters.applicationTypeAspNetCoreForWindows) {
-                const tempDirectory = sdkutils.getTempLocation();
-                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundle(taskParameters.dotnetPublishPath, tempDirectory);
+            if (this.taskParameters.applicationType === TaskParameters.applicationTypeAspNetCoreForWindows) {
+                const tempDirectory = SdkUtils.getTempLocation();
+                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundle(this.taskParameters.dotnetPublishPath, tempDirectory);
             } else {
-                deploymentBundle = taskParameters.webDeploymentArchive;
+                deploymentBundle = this.taskParameters.webDeploymentArchive;
             }
 
-            s3Key = taskParameters.applicationName + '/' + path.basename(deploymentBundle, '.zip') + '-' + versionLabel + '.zip';
+            s3Key = this.taskParameters.applicationName + '/' + path.basename(deploymentBundle, '.zip') + '-' + versionLabel + '.zip';
             await BeanstalkUtils.uploadBundle(this.s3Client, deploymentBundle, s3Bucket, s3Key);
         } else {
-            s3Bucket = taskParameters.deploymentBundleBucket;
-            s3Key = taskParameters.deploymentBundleKey;
+            s3Bucket = this.taskParameters.deploymentBundleBucket;
+            s3Key = this.taskParameters.deploymentBundleKey;
         }
 
         const sourceBundle: Beanstalk.S3Location = {
@@ -55,45 +59,41 @@ export class TaskOperations {
         };
 
         const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
-            ApplicationName: taskParameters.applicationName,
+            ApplicationName: this.taskParameters.applicationName,
             VersionLabel: versionLabel,
             SourceBundle: sourceBundle,
-            Description: taskParameters.description
+            Description: this.taskParameters.description
         };
 
         await this.beanstalkClient.createApplicationVersion(versionRequest).promise();
-        if (taskParameters.description) {
-            console.log(tl.loc('CreatedApplicationVersionWithDescription', versionRequest.VersionLabel, taskParameters.description, taskParameters.applicationName));
+        if (this.taskParameters.description) {
+            console.log(tl.loc('CreatedApplicationVersionWithDescription', versionRequest.VersionLabel, this.taskParameters.description, this.taskParameters.applicationName));
         } else {
-            console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel, taskParameters.applicationName));
+            console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel, this.taskParameters.applicationName));
         }
 
-        if (taskParameters.outputVariable) {
-            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable, versionLabel));
-            tl.setVariable(taskParameters.outputVariable, versionLabel);
+        if (this.taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, versionLabel));
+            tl.setVariable(this.taskParameters.outputVariable, versionLabel);
         }
 
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static beanstalkClient: Beanstalk;
-    private static s3Client: S3;
+    private beanstalkClient: Beanstalk;
+    private s3Client: S3;
 
-    private static async constructServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async constructServiceClients(): Promise<void> {
 
         const beanstalkOpts: Beanstalk.ClientConfiguration = {
-            apiVersion: '2010-12-01',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2010-12-01'
         };
-        this.beanstalkClient = sdkutils.createAndConfigureSdkClient(Beanstalk, beanstalkOpts, taskParameters, tl.debug);
+        this.beanstalkClient = await SdkUtils.createAndConfigureSdkClient(Beanstalk, beanstalkOpts, this.taskParameters, tl.debug);
 
         const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2006-03-01'
         };
-        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
 }

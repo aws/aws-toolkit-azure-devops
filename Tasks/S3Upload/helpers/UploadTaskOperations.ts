@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -11,42 +11,45 @@ import path = require('path');
 import fs = require('fs');
 import AWS = require('aws-sdk/global');
 import S3 = require('aws-sdk/clients/s3');
-import Parameters = require('./UploadTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './UploadTaskParameters';
 
 export class TaskOperations {
 
-    public static async uploadArtifacts(taskParameters: Parameters.TaskParameters): Promise<void> {
-        await this.createServiceClients(taskParameters);
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        if (taskParameters.createBucket) {
-            await this.createBucketIfNotExist(taskParameters.bucketName, taskParameters.awsRegion);
+    public async execute(): Promise<void> {
+        await this.createServiceClients();
+
+        if (this.taskParameters.createBucket) {
+            await this.createBucketIfNotExist(this.taskParameters.bucketName, await this.taskParameters.getRegion());
         } else {
-            const exists = await this.testBucketExists(taskParameters.bucketName);
+            const exists = await this.testBucketExists(this.taskParameters.bucketName);
             if (!exists) {
-                throw new Error(tl.loc('BucketNotExistNoAutocreate', taskParameters.bucketName));
+                throw new Error(tl.loc('BucketNotExistNoAutocreate', this.taskParameters.bucketName));
             }
         }
 
-        await this.uploadFiles(taskParameters);
+        await this.uploadFiles();
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private static s3Client: S3;
+    private s3Client: S3;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion,
-            s3ForcePathStyle: taskParameters.forcePathStyleAddressing
+            s3ForcePathStyle: this.taskParameters.forcePathStyleAddressing
         };
-        this.s3Client = sdkutils.createAndConfigureSdkClient(S3, s3Opts, taskParameters, tl.debug);
+        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
-    private static async createBucketIfNotExist(bucketName: string, region: string) : Promise<void> {
+    private async createBucketIfNotExist(bucketName: string, region: string) : Promise<void> {
         const exists = await this.testBucketExists(bucketName);
         if (exists) {
             return;
@@ -62,7 +65,7 @@ export class TaskOperations {
         }
     }
 
-    private static async testBucketExists(bucketName: string): Promise<boolean> {
+    private async testBucketExists(bucketName: string): Promise<boolean> {
         try {
             await this.s3Client.headBucket({ Bucket: bucketName}).promise();
             return true;
@@ -71,35 +74,35 @@ export class TaskOperations {
         }
     }
 
-    private static async uploadFiles(taskParameters: Parameters.TaskParameters) {
+    private async uploadFiles() {
 
         let msgTarget: string;
-        if (taskParameters.targetFolder) {
-            msgTarget = taskParameters.targetFolder;
+        if (this.taskParameters.targetFolder) {
+            msgTarget = this.taskParameters.targetFolder;
         } else {
             msgTarget = '/';
         }
-        console.log(tl.loc('UploadingFiles', taskParameters.sourceFolder, msgTarget, taskParameters.bucketName));
+        console.log(tl.loc('UploadingFiles', this.taskParameters.sourceFolder, msgTarget, this.taskParameters.bucketName));
 
-        const matchedFiles = this.findFiles(taskParameters);
+        const matchedFiles = this.findFiles();
         for (let i = 0; i < matchedFiles.length; i++) {
             const matchedFile = matchedFiles[i];
-            let relativePath = matchedFile.substring(taskParameters.sourceFolder.length);
+            let relativePath = matchedFile.substring(this.taskParameters.sourceFolder.length);
             if (relativePath.startsWith(path.sep)) {
                 relativePath = relativePath.substr(1);
             }
             let targetPath = relativePath;
 
-            if (taskParameters.flattenFolders) {
+            if (this.taskParameters.flattenFolders) {
                 const flatFileName = path.basename(matchedFile);
-                if (taskParameters.targetFolder) {
-                    targetPath = path.join(taskParameters.targetFolder, flatFileName);
+                if (this.taskParameters.targetFolder) {
+                    targetPath = path.join(this.taskParameters.targetFolder, flatFileName);
                 } else {
                     targetPath = flatFileName;
                 }
             } else {
-                if (taskParameters.targetFolder) {
-                    targetPath = path.join(taskParameters.targetFolder, relativePath);
+                if (this.taskParameters.targetFolder) {
+                    targetPath = path.join(this.taskParameters.targetFolder, relativePath);
                 } else {
                     targetPath = relativePath;
                 }
@@ -112,10 +115,10 @@ export class TaskOperations {
                 const fileBuffer = fs.createReadStream(matchedFile);
                 try {
                     let contentType: string;
-                    if (taskParameters.contentType) {
-                        contentType = taskParameters.contentType;
+                    if (this.taskParameters.contentType) {
+                        contentType = this.taskParameters.contentType;
                     } else {
-                        contentType = this.knownMimeTypes.get(path.extname(matchedFile));
+                        contentType = TaskOperations.knownMimeTypes.get(path.extname(matchedFile));
                         if (!contentType) {
                             contentType = 'application/octet-stream';
                         }
@@ -123,25 +126,25 @@ export class TaskOperations {
                     console.log(tl.loc('UploadingFile', matchedFile, contentType));
 
                     const request: S3.PutObjectRequest = {
-                        Bucket: taskParameters.bucketName,
+                        Bucket: this.taskParameters.bucketName,
                         Key: targetPath,
                         Body: fileBuffer,
-                        ACL: taskParameters.filesAcl,
+                        ACL: this.taskParameters.filesAcl,
                         ContentType: contentType,
-                        StorageClass: taskParameters.storageClass
+                        StorageClass: this.taskParameters.storageClass
                     };
-                    switch (taskParameters.keyManagement) {
-                        case taskParameters.noKeyManagementValue:
+                    switch (this.taskParameters.keyManagement) {
+                        case TaskParameters.noKeyManagementValue:
                             break;
-                        case taskParameters.awsKeyManagementValue: {
-                            request.ServerSideEncryption = taskParameters.encryptionAlgorithm;
-                            request.SSEKMSKeyId = taskParameters.kmsMasterKeyId;
+                        case TaskParameters.awsKeyManagementValue: {
+                            request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm;
+                            request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId;
                         }
                         break;
 
-                        case taskParameters.customerKeyManagementValue: {
-                            request.SSECustomerAlgorithm = taskParameters.encryptionAlgorithm;
-                            request.SSECustomerKey = taskParameters.customerKey;
+                        case TaskParameters.customerKeyManagementValue: {
+                            request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm;
+                            request.SSECustomerKey = this.taskParameters.customerKey;
                         }
                         break;
                     }
@@ -332,12 +335,12 @@ export class TaskOperations {
         [ '.wmv', 'video/x-ms-wmv' ]
     ]);
 
-    private static findFiles(taskParameters: Parameters.TaskParameters): string[] {
-        console.log(`Searching ${taskParameters.sourceFolder} for files to upload`);
-        taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder);
-        const allPaths = tl.find(taskParameters.sourceFolder); // default find options (follow sym links)
+    private findFiles(): string[] {
+        console.log(`Searching ${this.taskParameters.sourceFolder} for files to upload`);
+        this.taskParameters.sourceFolder = path.normalize(this.taskParameters.sourceFolder);
+        const allPaths = tl.find(this.taskParameters.sourceFolder); // default find options (follow sym links)
         tl.debug(tl.loc('AllPaths', allPaths));
-        const matchedPaths = tl.match(allPaths, taskParameters.globExpressions, taskParameters.sourceFolder); // default match options
+        const matchedPaths = tl.match(allPaths, this.taskParameters.globExpressions, this.taskParameters.sourceFolder); // default match options
         tl.debug(tl.loc('MatchedPaths', matchedPaths));
         const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory()); // filter-out directories
         tl.debug(tl.loc('MatchedFiles', matchedFiles));

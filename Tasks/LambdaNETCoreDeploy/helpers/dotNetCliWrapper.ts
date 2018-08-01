@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -24,23 +24,36 @@ export class DotNetCliWrapper {
         return this.executeAsync(['restore'], null);
     }
 
-    public serverlessDeployAsync(awsRegion: string, stackName: string, s3Bucket : string, s3Prefix: string, additionalArgs : string) : Promise<void>  {
+    public serverlessDeployAsync(awsRegion: string,
+                                 stackName: string,
+                                 s3Bucket : string,
+                                 s3Prefix: string,
+                                 packageOnly: boolean,
+                                 packageOutputFile: string,
+                                 additionalArgs : string) : Promise<void>  {
 
         const args = Array<string>();
 
         args.push('lambda');
-        args.push('deploy-serverless');
 
-        args.push('--disable-interactive');
-        args.push('true');
+        if (packageOnly) {
+            console.log(tl.loc('CreatingServerlessPackageOnly', packageOutputFile));
+
+            args.push('package-ci');
+            args.push('-ot');
+            args.push(packageOutputFile);
+        } else {
+            args.push('deploy-serverless');
+
+            if (stackName) {
+                args.push('--stack-name');
+                args.push(stackName);
+            }
+        }
 
         if (awsRegion) {
             args.push('--region');
             args.push(awsRegion);
-        }
-        if (stackName) {
-            args.push('--stack-name');
-            args.push(stackName);
         }
         if (s3Bucket) {
             args.push('--s3-bucket');
@@ -51,6 +64,9 @@ export class DotNetCliWrapper {
             args.push(s3Prefix);
         }
 
+        args.push('--disable-interactive');
+        args.push('true');
+
         return this.executeAsync(args, additionalArgs);
     }
 
@@ -60,14 +76,21 @@ export class DotNetCliWrapper {
                              functionRole : string,
                              functionMemory : number,
                              functionTimeout : number,
+                             packageOnly: boolean,
+                             packageOutputFile: string,
                              additionalArgs : string) : Promise<void>  {
         const args = Array<string>();
 
         args.push('lambda');
-        args.push('deploy-function');
 
-        args.push('--disable-interactive');
-        args.push('true');
+        if (packageOnly) {
+            args.push('package');
+            console.log(tl.loc('CreatingFunctionPackageOnly', packageOutputFile));
+            args.push('-o');
+            args.push(packageOutputFile);
+        } else {
+            args.push('deploy-function');
+        }
 
         if (awsRegion) {
             args.push('--region');
@@ -93,6 +116,9 @@ export class DotNetCliWrapper {
             args.push('--function-timeout');
             args.push(functionTimeout.toString());
         }
+
+        args.push('--disable-interactive');
+        args.push('true');
 
         return this.executeAsync(args, additionalArgs);
     }

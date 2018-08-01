@@ -1,5 +1,5 @@
 /*
-  * Copyright 2017 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
   *
   * Licensed under the MIT License. See the LICENSE accompanying this file
   * for the specific language governing permissions and limitations under
@@ -8,88 +8,89 @@
 
 import tl = require('vsts-task-lib/task');
 import path = require('path');
+import { readFileSync } from 'fs';
 import Lambda = require('aws-sdk/clients/lambda');
 import IAM = require('aws-sdk/clients/iam');
-import Parameters = require('./DeployFunctionTaskParameters');
 import { AWSError } from 'aws-sdk/lib/error';
-import sdkutils = require('sdkutils/sdkutils');
-import { readFileSync } from 'fs';
+import { SdkUtils } from 'sdkutils/sdkutils';
+import { TaskParameters } from './DeployFunctionTaskParameters';
 
 export class TaskOperations {
 
-    public static async deployFunction(taskParameters: Parameters.TaskParameters): Promise<void> {
+    public constructor(
+        public readonly taskParameters: TaskParameters
+    ) {
+    }
 
-        await this.createServiceClients(taskParameters);
+    public async execute(): Promise<void> {
+
+        await this.createServiceClients();
 
         let functionArn: string;
-        const functionExists = await this.testFunctionExists(taskParameters.functionName);
-        switch (taskParameters.deploymentMode) {
-            case taskParameters.deployCodeOnly: {
+        const functionExists = await this.testFunctionExists(this.taskParameters.functionName);
+        switch (this.taskParameters.deploymentMode) {
+            case TaskParameters.deployCodeOnly: {
                 if (functionExists) {
-                    functionArn = await this.updateFunctionCode(taskParameters);
+                    functionArn = await this.updateFunctionCode();
                 } else {
-                    throw new Error(tl.loc('FunctionNotFound', taskParameters.functionName));
+                    throw new Error(tl.loc('FunctionNotFound', this.taskParameters.functionName));
                 }
             }
             break;
 
-            case taskParameters.deployCodeAndConfig: {
+            case TaskParameters.deployCodeAndConfig: {
                 if (functionExists) {
-                    functionArn = await this.updateFunction(taskParameters);
+                    functionArn = await this.updateFunction();
                 } else {
-                    functionArn = await this.createFunction(taskParameters);
+                    functionArn = await this.createFunction();
                 }
             }
             break;
 
             default:
-                throw new Error(`Unrecognized deployment mode ${taskParameters.deploymentMode}`);
+                throw new Error(`Unrecognized deployment mode ${this.taskParameters.deploymentMode}`);
         }
 
-        if (taskParameters.outputVariable) {
-            console.log(tl.loc('SettingOutputVariable', taskParameters.outputVariable));
-            tl.setVariable(taskParameters.outputVariable, functionArn);
+        if (this.taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable));
+            tl.setVariable(this.taskParameters.outputVariable, functionArn);
         }
 
-        console.log(tl.loc('TaskCompleted', taskParameters.functionName, functionArn));
+        console.log(tl.loc('TaskCompleted', this.taskParameters.functionName, functionArn));
     }
 
-    private static lambdaClient: Lambda;
-    private static iamClient: IAM;
+    private lambdaClient: Lambda;
+    private iamClient: IAM;
 
-    private static async createServiceClients(taskParameters: Parameters.TaskParameters): Promise<void> {
+    private async createServiceClients(): Promise<void> {
 
         const lambdaOpts: Lambda.ClientConfiguration = {
-            apiVersion: '2015-03-31',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2015-03-31'
         };
 
-        this.lambdaClient = sdkutils.createAndConfigureSdkClient(Lambda, lambdaOpts, taskParameters, tl.debug);
+        this.lambdaClient = await SdkUtils.createAndConfigureSdkClient(Lambda, lambdaOpts, this.taskParameters, tl.debug);
 
         const iamOpts: IAM.ClientConfiguration = {
-            apiVersion: '2010-05-08',
-            credentials: taskParameters.Credentials,
-            region: taskParameters.awsRegion
+            apiVersion: '2010-05-08'
         };
 
-        this.iamClient = sdkutils.createAndConfigureSdkClient(IAM, iamOpts, taskParameters, tl.debug);
+        this.iamClient = await SdkUtils.createAndConfigureSdkClient(IAM, iamOpts, this.taskParameters, tl.debug);
     }
 
-    private static async updateFunctionCode(taskParameters: Parameters.TaskParameters): Promise<string> {
-        console.log(tl.loc('UpdatingFunctionCode', taskParameters.functionName));
+    private async updateFunctionCode(): Promise<string> {
+        console.log(tl.loc('UpdatingFunctionCode', this.taskParameters.functionName));
 
         try {
             const updateCodeRequest: Lambda.UpdateFunctionCodeRequest = {
-                FunctionName: taskParameters.functionName,
-                Publish: taskParameters.publish
+                FunctionName: this.taskParameters.functionName,
+                Publish: this.taskParameters.publish
             };
-            if (taskParameters.codeLocation === taskParameters.updateFromLocalFile) {
-                updateCodeRequest.ZipFile = readFileSync(taskParameters.localZipFile);
+            if (this.taskParameters.codeLocation === TaskParameters.updateFromLocalFile) {
+                updateCodeRequest.ZipFile = readFileSync(this.taskParameters.localZipFile);
             } else {
-                updateCodeRequest.S3Bucket = taskParameters.s3Bucket;
-                updateCodeRequest.S3Key = taskParameters.s3ObjectKey;
-                updateCodeRequest.S3ObjectVersion = taskParameters.s3ObjectVersion;
+                updateCodeRequest.S3Bucket = this.taskParameters.s3Bucket;
+                updateCodeRequest.S3Key = this.taskParameters.s3ObjectKey;
+                updateCodeRequest.S3ObjectVersion = this.taskParameters.s3ObjectVersion;
             }
 
             const response = await this.lambdaClient.updateFunctionCode(updateCodeRequest).promise();
@@ -99,103 +100,103 @@ export class TaskOperations {
         }
     }
 
-    private static async updateFunction(taskParameters: Parameters.TaskParameters): Promise<string> {
-        console.log(tl.loc('UpdatingFunctionConfiguration', taskParameters.functionName));
+    private async updateFunction(): Promise<string> {
+        console.log(tl.loc('UpdatingFunctionConfiguration', this.taskParameters.functionName));
 
         // Cannot update code and configuration at the same time. As 'publish' option is
         // only available when updating the code, do that last
         try {
             const updateConfigRequest: Lambda.UpdateFunctionConfigurationRequest = {
-                FunctionName: taskParameters.functionName,
-                Handler: taskParameters.functionHandler,
-                Description: taskParameters.description,
-                Role: await sdkutils.roleArnFromName(this.iamClient, taskParameters.roleARN),
-                MemorySize: taskParameters.memorySize,
-                Timeout: taskParameters.timeout,
-                Runtime: taskParameters.runtime,
-                KMSKeyArn: taskParameters.kmsKeyARN,
+                FunctionName: this.taskParameters.functionName,
+                Handler: this.taskParameters.functionHandler,
+                Description: this.taskParameters.description,
+                Role: await SdkUtils.roleArnFromName(this.iamClient, this.taskParameters.roleARN),
+                MemorySize: this.taskParameters.memorySize,
+                Timeout: this.taskParameters.timeout,
+                Runtime: this.taskParameters.runtime,
+                KMSKeyArn: this.taskParameters.kmsKeyARN,
                 DeadLetterConfig: {
-                    TargetArn: taskParameters.deadLetterARN
+                    TargetArn: this.taskParameters.deadLetterARN
                 }
             };
 
-            if (taskParameters.environment) {
+            if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {};
                 updateConfigRequest.Environment.Variables = {};
-                    taskParameters.environment.forEach((ev) => {
-                    const parts = ev.split('=');
-                    updateConfigRequest.Environment.Variables[`${parts[0].trim()}`] = parts[1].trim();
+                    this.taskParameters.environment.forEach((ev) => {
+                        const parts = ev.split('=');
+                        updateConfigRequest.Environment.Variables[`${parts[0].trim()}`] = parts[1].trim();
                 });
             }
-            if (taskParameters.securityGroups) {
+            if (this.taskParameters.securityGroups) {
                 updateConfigRequest.VpcConfig = {
-                    SecurityGroupIds: taskParameters.securityGroups,
-                    SubnetIds: taskParameters.subnets
+                    SecurityGroupIds: this.taskParameters.securityGroups,
+                    SubnetIds: this.taskParameters.subnets
                 };
             }
-            if (taskParameters.tracingConfig !== 'XRay') {
+            if (this.taskParameters.tracingConfig !== 'XRay') {
                 updateConfigRequest.TracingConfig = {
-                    Mode: taskParameters.tracingConfig
+                    Mode: this.taskParameters.tracingConfig
                 };
             }
 
             await this.lambdaClient.updateFunctionConfiguration(updateConfigRequest).promise();
 
-            return await this.updateFunctionCode(taskParameters);
+            return await this.updateFunctionCode();
         } catch (err) {
             throw new Error('Error while updating function configuration: ' + err);
         }
     }
 
-    private static async createFunction(taskParameters: Parameters.TaskParameters): Promise<string> {
-        console.log(tl.loc('CreatingFunction', taskParameters.functionName));
+    private async createFunction(): Promise<string> {
+        console.log(tl.loc('CreatingFunction', this.taskParameters.functionName));
 
         const request: Lambda.CreateFunctionRequest = {
-            FunctionName: taskParameters.functionName,
-            Handler: taskParameters.functionHandler,
-            Description: taskParameters.description,
-            Role: await sdkutils.roleArnFromName(this.iamClient, taskParameters.roleARN),
-            MemorySize: taskParameters.memorySize,
-            Timeout: taskParameters.timeout,
-            Publish: taskParameters.publish,
-            Runtime: taskParameters.runtime,
-            Code: (taskParameters.codeLocation === taskParameters.updateFromLocalFile) ? {
-                ZipFile: readFileSync(taskParameters.localZipFile)
+            FunctionName: this.taskParameters.functionName,
+            Handler: this.taskParameters.functionHandler,
+            Description: this.taskParameters.description,
+            Role: await SdkUtils.roleArnFromName(this.iamClient, this.taskParameters.roleARN),
+            MemorySize: this.taskParameters.memorySize,
+            Timeout: this.taskParameters.timeout,
+            Publish: this.taskParameters.publish,
+            Runtime: this.taskParameters.runtime,
+            Code: (this.taskParameters.codeLocation === TaskParameters.updateFromLocalFile) ? {
+                ZipFile: readFileSync(this.taskParameters.localZipFile)
             } : {
-                S3Bucket: taskParameters.s3Bucket,
-                S3Key: taskParameters.s3ObjectKey,
-                S3ObjectVersion: taskParameters.s3ObjectVersion
+                S3Bucket: this.taskParameters.s3Bucket,
+                S3Key: this.taskParameters.s3ObjectKey,
+                S3ObjectVersion: this.taskParameters.s3ObjectVersion
             },
             DeadLetterConfig: {
-                TargetArn: taskParameters.deadLetterARN
+                TargetArn: this.taskParameters.deadLetterARN
             },
-            KMSKeyArn: taskParameters.kmsKeyARN
+            KMSKeyArn: this.taskParameters.kmsKeyARN
         };
 
-        if (taskParameters.environment) {
+        if (this.taskParameters.environment) {
             request.Environment = {};
             request.Environment.Variables = {};
-            taskParameters.environment.forEach((ev) => {
+            this.taskParameters.environment.forEach((ev) => {
                 const parts = ev.split('=');
                 request.Environment.Variables[`${parts[0].trim()}`] = parts[1].trim();
             });
         }
-        if (taskParameters.tags) {
+        if (this.taskParameters.tags) {
             request.Tags = {};
-            taskParameters.tags.forEach((tv) => {
+            this.taskParameters.tags.forEach((tv) => {
                 const parts = tv.split('=');
                 request.Tags[`${parts[0].trim()}`] = parts[1].trim();
             });
         }
-        if (taskParameters.securityGroups) {
+        if (this.taskParameters.securityGroups) {
             request.VpcConfig = {
-                SecurityGroupIds: taskParameters.securityGroups,
-                SubnetIds: taskParameters.subnets
+                SecurityGroupIds: this.taskParameters.securityGroups,
+                SubnetIds: this.taskParameters.subnets
             };
         }
-        if (taskParameters.tracingConfig !== 'XRay') {
+        if (this.taskParameters.tracingConfig !== 'XRay') {
             request.TracingConfig = {
-                Mode: taskParameters.tracingConfig
+                Mode: this.taskParameters.tracingConfig
             };
         }
 
@@ -207,7 +208,7 @@ export class TaskOperations {
         }
     }
 
-    private static async testFunctionExists(functionName: string): Promise<boolean> {
+    private async testFunctionExists(functionName: string): Promise<boolean> {
         try {
             const response = await this.lambdaClient.getFunction({
                 FunctionName: functionName
