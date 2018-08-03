@@ -76,11 +76,37 @@ try
         Import-Module -Name AWSPowerShell
     }
 
+    ###############################################################################
     # If credentials and/or region are not defined on the task we assume them to be
     # already set in the host environment or, if on EC2, to be in instance metadata.
     # We prefer to use environment variables to pass credentials, to avoid leaving
     # any profiles around when the build completes and any contention from parallel
     # or multi-user build setups.
+    ###############################################################################
+
+    # determine region first in case we need to perform an assume role call
+    # when we get credentials
+    $awsRegion = Get-VstsInput -Name 'regionName'
+    if ($awsRegion)
+    {
+        Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskConfiguration')
+    }
+    else
+    {
+        # as for credentials, region can also be set from a task variable
+        $awsRegion = Get-VstsTaskVariable -Name 'AWS.Region'
+        if ($awsRegion)
+        {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskVariable')
+        }
+    }
+
+    if ($awsRegion)
+    {
+        Write-Host (Get-VstsLocString -Key 'RegionConfiguredTo' -ArgumentList $awsRegion)
+        $env:AWS_REGION = $awsRegion
+    }
+
     $awsEndpoint = Get-VstsInput -Name 'awsCredentials'
     if ($awsEndpoint)
     {
@@ -142,27 +168,6 @@ try
                 $env:AWS_SESSION_TOKEN = $token
             }
         }
-    }
-
-    $awsRegion = Get-VstsInput -Name 'regionName'
-    if ($awsRegion)
-    {
-        Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskConfiguration')
-    }
-    else
-    {
-        # as for credentials, region can also be set from a task variable
-        $awsRegion = Get-VstsTaskVariable -Name 'AWS.Region'
-        if ($awsRegion)
-        {
-            Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskVariable')
-        }
-    }
-
-    if ($awsRegion)
-    {
-        Write-Host (Get-VstsLocString -Key 'RegionConfiguredTo' -ArgumentList $awsRegion)
-        $env:AWS_REGION = $awsRegion
     }
 
     # Was not able to get the Get-VstsWebProxy helper to work, plus it has a
