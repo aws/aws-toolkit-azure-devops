@@ -1,3 +1,9 @@
+### 1.1.1 (2018-02-03)
+
+* Fix for issue #94, AWS PowerShell Module Script task needs to obtain region data before credential discovery so that if an endpoint is specified
+  that defines an assumed role, we have region set in the process before attempting to call the Use-STSRole cmdlet to get temporary credentials based
+  on the role.
+
 ### 1.1.0 (2018-08-02)
 
 * The AWS Credentials property for referencing a service endpoint when configuring tasks is now optional (Issue #34).
