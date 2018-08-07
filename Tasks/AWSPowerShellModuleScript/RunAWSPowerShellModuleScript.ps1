@@ -38,43 +38,30 @@ try
     # install the module if not present (we assume if present it is an an autoload-capable
     # location)
     Write-Host (Get-VstsLocString -Key 'TestingModuleInstalled')
-    $manualImportPath = $null
     if (!(Get-Module -Name AWSPowerShell -ListAvailable))
     {
         Write-Host (Get-VstsLocString -Key 'InstallingModule')
-        # Use Save-Module, to a temp folder, over Install-Module which currently has a
-        # long output-less lag once the module has downloaded.
-        # See https://github.com/aws/aws-vsts-tools/issues/51
+
+        # 1.1.2 - reverted to using Install-Module (this time with -AllowClobber to try and
+        # improve perf). Using Save-Module to a temp location means user script doesn't know
+        # where the module is (unless we were to update $PSModulePath too) and thus unless an
+        # explicit import is done in the user script (from a location it doesn't know - catch 22)
+        # the AWS cmdlets won't be located.
+        #
+        # The original change to use Save-Module originated due to https://github.com/aws/aws-vsts-tools/issues/51
         try
         {
-            # Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
-            Save-Module -Name AWSPowerShell -Path $tempDirectory -Verbose
+            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -AllowClobber -Force
         }
         catch
         {
             Write-Host (Get-VstsLocString -Key 'UsingNugetProvider')
             Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force
-            # Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
-            Save-Module -Name AWSPowerShell -Path $tempDirectory -Verbose
+            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -AllowClobber -Force
         }
-
-        # figure out the actual path to import from, allowing for the possibility of multiple versions
-        # being left around due to a prior accident
-        $moduleVersionFolder = Get-ChildItem -Path (Join-Path $tempDirectory 'AWSPowerShell') |
-            Sort-Object -Property Name -Descending |
-            Select-Object -First 1
-        $manualImportPath = [IO.Path]::Combine($tempDirectory, 'AWSPowerShell', $moduleVersionFolder, 'AWSPowerShell.psd1')
     }
 
-    if ($manualImportPath)
-    {
-        Write-Host (Get-VstsLocString -Key 'ImportingModuleFrom' -ArgumentList $manualImportPath)
-        Import-Module $manualImportPath
-    }
-    else
-    {
-        Import-Module -Name AWSPowerShell
-    }
+    Import-Module -Name AWSPowerShell
 
     ###############################################################################
     # If credentials and/or region are not defined on the task we assume them to be
