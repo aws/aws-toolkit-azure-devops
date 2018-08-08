@@ -142,9 +142,9 @@
     },
     "messages": {
         "GeneratingScript": "Generating script.",
-        "TestingModuleInstalled": "Checking install status for AWSPowerShell module.",
-        "InstallingModule": "Module not found. Installing latest version to current user scope (this may take a few minutes).",
-        "UsingNugetProvider": "Install-Module not available. Attempting to use NuGet provider.",
+        "TestingAWSModuleInstalled": "Checking install status for AWS Tools for Windows PowerShell module.",
+        "AWSModuleNotFound": "AWS Tools for Windows PowerShell module not found.",
+        "InstallingAWSModule": "Installing AWS Tools for Windows PowerShell module to current user scope",
         "ConfiguringRegionFromTaskConfiguration": "Region discovered from task configuration",
         "ConfiguringRegionFromTaskVariable": "Region discovered from task variable",
         "RegionConfiguredTo": "...task region set to {0}.",

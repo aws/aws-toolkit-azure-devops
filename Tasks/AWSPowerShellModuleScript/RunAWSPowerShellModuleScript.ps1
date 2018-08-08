@@ -37,27 +37,28 @@ try
 
     # install the module if not present (we assume if present it is an an autoload-capable
     # location)
-    Write-Host (Get-VstsLocString -Key 'TestingModuleInstalled')
+    Write-Host (Get-VstsLocString -Key 'TestingAWSModuleInstalled')
     if (!(Get-Module -Name AWSPowerShell -ListAvailable))
     {
-        Write-Host (Get-VstsLocString -Key 'InstallingModule')
+        Write-Host (Get-VstsLocString -Key 'AWSModuleNotFound')
 
-        # 1.1.2 - reverted to using Install-Module (this time with -AllowClobber to try and
-        # improve perf). Using Save-Module to a temp location means user script doesn't know
-        # where the module is (unless we were to update $PSModulePath too) and thus unless an
-        # explicit import is done in the user script (from a location it doesn't know - catch 22)
-        # the AWS cmdlets won't be located.
+        # AllowClobber is not available in Install-Module in the Hosted agent (but is in the
+        # Hosted 2017 agent). We always install/update the latest NuGet package
+        # provider to work around Install-Module on the Hosted agent also not having -Force and
+        # producing the error
         #
-        # The original change to use Save-Module originated due to https://github.com/aws/aws-vsts-tools/issues/51
-        try
+        # 'Exception calling “ShouldContinue” with “2” argument(s): “Windows PowerShell is in NonInteractive mode.'
+        #
+        Write-Host (Get-VstsLocString -Key 'InstallingAWSModule')
+        Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force
+        $installModuleCmd = Get-Command Install-Module
+        if ($installModuleCmd.Parameters.ContainsKey("AllowClobber"))
         {
             Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -AllowClobber -Force
         }
-        catch
+        else
         {
-            Write-Host (Get-VstsLocString -Key 'UsingNugetProvider')
-            Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force
-            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -AllowClobber -Force
+            Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
         }
     }
 
