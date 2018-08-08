@@ -63,8 +63,6 @@ export abstract class AWSTaskParametersBase {
         this.completeProxySetup();
     }
 
-    private configuredCredentials: AWS.Credentials;
-
     // Probes for credentials to be used by the executing task. Credentials
     // can be configured as a service endpoint (of type 'AWS'), or specified
     // using task variables. If we don't discover credentials inside the
@@ -72,17 +70,14 @@ export abstract class AWSTaskParametersBase {
     // environment variables on the build host (or, if the build host is
     // an EC2 instance, in instance metadata).
     public async getCredentials() : Promise<AWS.Credentials> {
-        if (this.configuredCredentials) {
-            return this.configuredCredentials;
-        }
 
         console.log('Configuring credentials for task');
 
-        this.configuredCredentials =
+        const credentials =
             this.attemptEndpointCredentialConfiguration(tl.getInput('awsCredentials', false))
                 || this.attemptCredentialConfigurationFromVariables();
-        if (this.configuredCredentials) {
-            return this.configuredCredentials;
+        if (credentials) {
+            return credentials;
         }
 
         // at this point user either has to have credentials in environment vars or
@@ -171,48 +166,43 @@ export abstract class AWSTaskParametersBase {
         const token = tl.getVariable(AWSTaskParametersBase.awsSessionTokenVariable);
 
         console.log('...configuring AWS credentials from task variables');
-        this.configuredCredentials = new AWS.Credentials({
+        return new AWS.Credentials({
             accessKeyId: accessKey,
             secretAccessKey: secretKey,
             sessionToken: token
         });
-
-        return this.configuredCredentials;
     }
 
-    private configuredRegion: string;
-
     public async getRegion() : Promise<string> {
-        if (this.configuredRegion) {
-            return this.configuredRegion;
-        }
 
         console.log('Configuring region for task');
 
         let region = tl.getInput('regionName', false);
         if (region) {
-            this.configuredRegion = region.toLowerCase();
-            console.log(`...configured to use region ${this.configuredRegion}, defined in task.`);
-            return this.configuredRegion;
+            // lowercase it because the picker we know have can return mixed case
+            // data if the user typed in a region whose prefix (US- etc) exists
+            // already in the friendly text
+            region = region.toLowerCase();
+            console.log(`...configured to use region ${region}, defined in task.`);
+            return region;
         }
 
         region = tl.getVariable(AWSTaskParametersBase.awsRegionVariable);
         if (region) {
-            this.configuredRegion = region.toLowerCase();
-            console.log(`...configured to use region ${this.configuredRegion}, defined in task variable ${AWSTaskParametersBase.awsRegionVariable}.`);
-            return this.configuredRegion;
+            console.log(`...configured to use region ${region}, defined in task variable ${AWSTaskParametersBase.awsRegionVariable}.`);
+            return region;
         }
 
         if (process.env.AWS_REGION) {
-            this.configuredRegion = process.env.AWS_REGION;
-            console.log(`...configured to use region ${this.configuredRegion}, defined in environment variable.`);
-            return this.configuredRegion;
+            region = process.env.AWS_REGION;
+            console.log(`...configured to use region ${region}, defined in environment variable.`);
+            return region;
         }
 
         try {
-            this.configuredRegion = await this.queryRegionFromMetadata();
-            console.log(`...configured to use region ${this.configuredRegion}, from EC2 instance metadata.`);
-            return this.configuredRegion;
+            region = await this.queryRegionFromMetadata();
+            console.log(`...configured to use region ${region}, from EC2 instance metadata.`);
+            return region;
         } catch (err) {
             console.log(`...error: failed to query EC2 instance metadata for region - ${err}`);
         }
