@@ -1,9 +1,10 @@
 ### 1.1.3 (2018-02-08)
 
-* Fixed issue #96, updated credential and region core code to not cache the discovered data. This could potentially cause issues with token expiry with build pipelines
-  that run across a credential refresh boundary.
-* Additional update for issue #95, to check the selected build host has the -AllowClobber switch available for use with Install-Module. If
-  not we will use standard Install-Module (which unfortunately will be slow, per what was discovered in issue #51).
+* Fixed issue #96. CLI task not forcing creation of an initial set of credentials when using a service endpoint based on an assumed role. Also removed
+  caching of credentials and region inside the core code so as to avoid potential consistency issues going forward.
+* Additional update for issue #95, to check the selected build host has the -AllowClobber switch available for use with Install-Module and to always
+  install/update NuGet provider to ensure we have access to a version of Install-Module that supports the -Force switch. If -AllowClobber is not available
+  on the hosted agent we will fall back to standard Install-Module which is slow (per what was discovered in issue #51).
 
 ### 1.1.2 (2018-02-07)
 
