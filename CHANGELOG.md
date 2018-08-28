@@ -1,4 +1,12 @@
-### 1.1.3 (2018-02-08)
+### 1.1.5 (2018-08-28)
+
+* Update to the AWS CloudFormation Create/Update Stack task to accommodate changed messages and error states when a stack update results in no work.
+
+### 1.1.4
+
+* Used for internal testing, not released publicly.
+
+### 1.1.3 (2018-08-08)
 
 * Fixed issue #96. CLI task not forcing creation of an initial set of credentials when using a service endpoint based on an assumed role. Also removed
   caching of credentials and region inside the core code so as to avoid potential consistency issues going forward.
@@ -6,14 +14,14 @@
   install/update NuGet provider to ensure we have access to a version of Install-Module that supports the -Force switch. If -AllowClobber is not available
   on the hosted agent we will fall back to standard Install-Module which is slow (per what was discovered in issue #51).
 
-### 1.1.2 (2018-02-07)
+### 1.1.2 (2018-08-07)
 
 * Fixed issue #95, need to revert to using Install-Module instead of Save-Module for the AWS PowerShell Module Script task. The use of Save-Module
   was introduced to try and solve performance issues reported in issue #51 however it does lead to the module being placed in a temp location and thus
   it isn't auto-import compatible causing issues when run on build hosts where the module hadn't previously been cached in an auto-import compatible
   location.
 
-### 1.1.1 (2018-02-03)
+### 1.1.1 (2018-08-03)
 
 * Fix for issue #94, AWS PowerShell Module Script task needs to obtain region data before credential discovery so that if an endpoint is specified
   that defines an assumed role, we have region set in the process before attempting to call the Use-STSRole cmdlet to get temporary credentials based

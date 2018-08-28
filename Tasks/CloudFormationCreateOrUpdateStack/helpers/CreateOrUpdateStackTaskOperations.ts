@@ -444,18 +444,26 @@ export class TaskOperations {
     }
 
     // If there were no changes, a validation error is thrown which we want to suppress
-    // rather than erroring out and failing the build.
+    // (issue #28) instead of erroring out and failing the build. The only way to determine
+    // this is to inspect the message in conjunction with the status code, and over time
+    // there has been some variance in service behavior based on how we attempted to make the
+    // change. So now detect either of the errors, and for either if the message indicates
+    // a no-op.
     private isNoWorkToDoValidationError(errCodeOrStatus: string, errMessage: string): boolean {
         let noWorkToDo: boolean = false;
-        try {
-            if (errCodeOrStatus.search(/ValidationError/) !== -1 && errMessage.search(/^No updates are to be performed./) !== -1) {
-                // first case comes back when we're updating stacks without change sets
-                noWorkToDo = true;
-            } else if (errCodeOrStatus.search(/FAILED/) !== -1 && errMessage.search(/^The submitted information didn't contain changes./) !== -1) {
-                // this case comes back when we're updating using change sets
-                noWorkToDo = true;
-            }
+        const knownNoOpErrorMessages = [
+            /^No updates are to be performed./,
+            /^The submitted information didn't contain changes./
+        ];
 
+        try {
+            if (errCodeOrStatus.search(/ValidationError/) !== -1 || errCodeOrStatus.search(/FAILED/) !== -1) {
+                knownNoOpErrorMessages.forEach((element) => {
+                    if (errMessage.search(element) !== -1) {
+                        noWorkToDo = true;
+                    }
+                });
+            }
             if (noWorkToDo) {
                 if (this.taskParameters.warnWhenNoWorkNeeded) {
                     tl.warning(tl.loc('NoWorkToDo'));
