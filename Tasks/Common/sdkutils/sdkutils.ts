@@ -138,7 +138,7 @@ export abstract class SdkUtils {
     public static async getPresignedUrl(s3Client: S3, operation: string, bucketName: string, objectKey: string): Promise<string> {
         // use async call so we handle static vs instance credentials correctly
         return new Promise<string>((resolve, reject) => {
-            const templateUrl = s3Client.getSignedUrl(operation, {
+            s3Client.getSignedUrl(operation, {
                 Bucket: bucketName,
                 Key: objectKey
             }, function(err: any, url: string) {
@@ -146,7 +146,7 @@ export abstract class SdkUtils {
                     console.log(`Failed to generate presigned url to template, error: ${err}`);
                     reject(err);
                 } else {
-                    console.log(`Generated url to template: ${templateUrl}`);
+                    console.log(`Generated url to template: ${url}`);
                     resolve(url);
                 }
             });
