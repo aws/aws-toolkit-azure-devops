@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var path = require("path")
 var nodeExternals = require('webpack-node-externals');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
@@ -15,6 +16,11 @@ module.exports = {
       }
     })
   ],
+  resolve: {
+	alias: {
+	  "aws-sdk": path.resolve(__dirname, 'node_modules/aws-sdk'),
+	},
+  },
   plugins: [
     new webpack.LoaderOptionsPlugin({
       test: /\.(js|jsx)$/,

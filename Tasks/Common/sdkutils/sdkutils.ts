@@ -15,6 +15,15 @@ import { AWSTaskParametersBase } from './awsTaskParametersBase';
 
 export abstract class SdkUtils {
 
+    private static readonly agentTempDirectoryVariable: string = 'Agent.TempDirectory';
+    private static readonly userAgentPrefix: string = 'AWS-VSTS';
+    private static readonly userAgentSuffix: string = 'exec-env/VSTS';
+    private static readonly userAgentHeader: string = 'User-Agent';
+
+    // set on the integration test server so we validate the agent is set
+    // on all test builds that use sdk clients
+    private static readonly validateUserAgentEnvVariable: string = 'AWSVSTSTesting_ValidateUserAgent';
+
     // Injects a custom user agent conveying extension version and task being run into the
     // sdk so usage metrics can be tied to the tools.
     public static setSdkUserAgentFromManifest(taskManifestFilePath: string): void {
@@ -22,9 +31,7 @@ export abstract class SdkUtils {
         if (fs.existsSync(taskManifestFilePath)) {
             const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8'));
             const version = taskManifest.version;
-            const userAgentString = 'AWS-VSTS/' +
-                version.Major + '.' + version.Minor + '.' + version.Patch +
-                ' exec-env/VSTS-' + taskManifest.name;
+            const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${this.userAgentSuffix}-${taskManifest.name}`;
 
             (AWS as any).util.userAgent = () => {
                 return userAgentString;
@@ -37,7 +44,7 @@ export abstract class SdkUtils {
     // prefer Agent.TempDirectory but if not available due to use of a lower agent version
     // (it was added in agent v2.115.0), fallback to using TEMP
     public static getTempLocation(): string {
-        let tempDirectory = tl.getVariable('Agent.TempDirectory');
+        let tempDirectory = tl.getVariable(this.agentTempDirectoryVariable);
         if (!tempDirectory) {
             tempDirectory = process.env.TEMP;
             console.log(`Agent.TempDirectory not available, falling back to TEMP location at ${tempDirectory}`);
@@ -68,6 +75,21 @@ export abstract class SdkUtils {
 
                     const httpRequest = response.request.httpRequest;
                     const httpResponse = response.httpResponse;
+
+                    // For integration testing we validate that the user agent string we rely on for usage metrics was set.
+                    // An environment variable allows us to easily enable/disable validation across all build tests if needed
+                    // instead of using a per-definition build variable. We validate the agent in all builds (so we catch an
+                    // error from any test) but only output that we've done the check in one so as to not spam the output from
+                    // all requests in all tests.
+                    if (process.env[this.validateUserAgentEnvVariable]) {
+                        const agent: string = httpRequest.headers[this.userAgentHeader];
+                        if ((agent.startsWith(`${this.userAgentPrefix}/`)) && agent.includes(`${this.userAgentSuffix}-`)) {
+                            // Note: only displays if system.debug variable set true on the build
+                            logger(`User-Agent ${agent} validated successfully`);
+                        } else {
+                            throw new Error(`User-Agent was not configured correctly for tools: ${agent}`);
+                        }
+                    }
 
                     // Choosing to not log request or response body content at this stage, partly to avoid
                     // having to detect and avoid streaming content or object uploads, and partly to avoid
