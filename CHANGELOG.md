@@ -1,3 +1,7 @@
+### 1.1.6 (2018-10-01)
+
+* Bug fix to remove duplicate webpacked copy of the AWS SDK for Node.js which was causing issues with the user agent string set by the tools.
+
 ### 1.1.5 (2018-08-28)
 
 * Update to the AWS CloudFormation Create/Update Stack task to accommodate changed messages and error states when a stack update results in no work.
