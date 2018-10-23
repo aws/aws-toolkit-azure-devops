@@ -1,3 +1,7 @@
+### 1.1.7 (TBD)
+
+* Fixed issue #112, shell task not initialized correctly when a role-based credential endpoint was used.
+
 ### 1.1.6 (2018-10-01)
 
 * Bug fix to remove duplicate webpacked copy of the AWS SDK for Node.js which was causing issues with the user agent string set by the tools.

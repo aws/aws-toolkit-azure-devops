@@ -81,6 +81,7 @@ export class TaskOperations {
 
         const credentials = await this.taskParameters.getCredentials();
         if (credentials) {
+            await credentials.getPromise();
             tl.debug('configure credentials into environment variables');
             env.AWS_ACCESS_KEY_ID = credentials.accessKeyId;
             env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey;
