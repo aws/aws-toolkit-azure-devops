@@ -126,7 +126,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "Optional description of the version"
+            "helpMarkDown": "Optional description of the version."
         },
         {
             "name": "outputVariable",
@@ -134,6 +134,14 @@
             "label": "Version Label Output Variable",
             "defaultValue": "",
             "helpMarkDown": "The name of the variable that will contain the version label of the new application revision.",
+            "required": false
+        },
+        {
+            "name": "eventPollingDelay",
+            "type": "string",
+            "label": "Event poll delay (seconds)",
+            "defaultValue": "5",
+            "helpMarkDown": "The time, in seconds, to wait between calls to retrieve the latest events from the deployment to the environment.",
             "required": false
         },
         {
@@ -188,6 +196,8 @@
         "SettingOutputVariable": "Setting output variable %s with the version label %s",
         "ApplicationExistsQueryError": "DescribeApplications: error %s returned querying for existence of application %s",
         "EnvironmentExistsQueryError": "DescribeEnvironments: error %s thrown querying for existence of environment %s for application %s",
+        "InvalidEventPollDelay": "Event polling delay setting of %s is invalid (minimum %s seconds, maximum %s seconds) - task will use minimum poll delay by default",
+        "ConfiguredEventPollDelay": "Task configured to wait %s seconds between queries for deployment events",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }

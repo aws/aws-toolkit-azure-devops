@@ -1,6 +1,7 @@
-### 1.1.7 (TBD)
+### 1.1.7 (2018-10-24)
 
 * Fixed issue #112, shell task not initialized correctly when a role-based credential endpoint was used.
+* Issue #115, added option to the Elastic Beanstalk deployment task allowing configuration of event polling frequency  during deployment. The default (and minimum) delay is 5 seconds. Users can now specify a custom delay of up to 5 minutes (300 seconds) to help avoid throttling errors from the service when multiple deployments are in progress, all polling for events.
 
 ### 1.1.6 (2018-10-01)
 
