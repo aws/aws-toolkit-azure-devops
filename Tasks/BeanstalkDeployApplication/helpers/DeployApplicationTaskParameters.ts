@@ -14,8 +14,12 @@ export class TaskParameters extends AWSTaskParametersBase {
     // options for applicationType
     public static readonly applicationTypeAspNet: string = 'aspnet';
     public static readonly applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows';
+
     public static readonly applicationTypeS3Archive: string = 's3';
     public static readonly applicationTypeExistingVersion: string = 'version';
+
+    public static readonly defaultEventPollingDelay: number = 5; // seconds
+    public static readonly maxEventPollingDelay: number = 300; // seconds, 5 mins
 
     public applicationName: string;
     public environmentName: string;
@@ -28,6 +32,7 @@ export class TaskParameters extends AWSTaskParametersBase {
     public description: string;
 
     public outputVariable: string;
+    public eventPollingDelay: number = TaskParameters.defaultEventPollingDelay;
 
     constructor() {
         super();
@@ -62,6 +67,22 @@ export class TaskParameters extends AWSTaskParametersBase {
             this.versionLabel = tl.getInput('versionLabel', this.applicationType === TaskParameters.applicationTypeExistingVersion);
             this.description = tl.getInput('description', false);
             this.outputVariable = tl.getInput('outputVariable', false);
+            const pollDelay = tl.getInput('eventPollingDelay', false);
+            if (pollDelay) {
+                try {
+                    const pollDelayValue = parseInt(pollDelay, 10);
+                    if (pollDelayValue >= TaskParameters.defaultEventPollingDelay && pollDelayValue <= TaskParameters.maxEventPollingDelay) {
+                        this.eventPollingDelay = pollDelayValue;
+                    } else {
+                        throw new Error();
+                    }
+                } catch {
+                    console.log(tl.loc('InvalidEventPollDelay',
+                                       pollDelay,
+                                       TaskParameters.defaultEventPollingDelay,
+                                       TaskParameters.maxEventPollingDelay));
+                }
+            }
         } catch (error) {
             throw new Error(error.message);
         }

@@ -69,7 +69,10 @@ export class TaskOperations {
                                      this.taskParameters.description,
                                      this.taskParameters.applicationType === TaskParameters.applicationTypeExistingVersion);
 
-        await this.waitForDeploymentCompletion(this.taskParameters.applicationName, this.taskParameters.environmentName, startingEventDate);
+        await this.waitForDeploymentCompletion(this.taskParameters.applicationName,
+                                               this.taskParameters.environmentName,
+                                               startingEventDate,
+                                               this.taskParameters.eventPollingDelay);
 
         if (this.taskParameters.outputVariable) {
             console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, versionLabel));
@@ -137,7 +140,8 @@ export class TaskOperations {
 
     private async waitForDeploymentCompletion(applicationName: string,
                                               environmentName: string,
-                                              startingEventDate: Date): Promise<void> {
+                                              startingEventDate: Date,
+                                              eventPollDelay: number): Promise<void> {
 
         const requestEnvironment: Beanstalk.DescribeEnvironmentsMessage = {
             ApplicationName: applicationName,
@@ -153,12 +157,15 @@ export class TaskOperations {
         let lastPrintedEventDate = startingEventDate;
 
         console.log(tl.loc('WaitingForDeployment'));
+        console.log(tl.loc('ConfiguredEventPollDelay', eventPollDelay));
+
         console.log(tl.loc('EventsComing'));
 
         let success = true;
         let environment: Beanstalk.EnvironmentDescription;
         do {
-            await this.sleep(5000);
+            tl.debug(`...event poll sleep for ${eventPollDelay}s`);
+            await this.sleep(eventPollDelay * 1000);
 
             const responseEnvironments = await this.beanstalkClient.describeEnvironments(requestEnvironment).promise();
             if (responseEnvironments.Environments.length === 0) {
