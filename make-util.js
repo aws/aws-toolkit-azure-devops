@@ -1071,21 +1071,11 @@ var serializeToFile = function(jsonObj, filePath) {
 }
 exports.serializeToFile = serializeToFile;
 
-// Update version info in the specified package.json file
-var updatePackageJsonVersion = function(packageJsonPath, versionInfo) {
-    var oldContent = fs.readFileSync(packageJsonPath);
-    var packageJson = JSON.parse(oldContent);
-    packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
-    console.log(`> ...stamped version ${packageJson.version} into package.json`);
-    serializeToFile(packageJson, packageJsonPath);
-}
-exports.updatePackageJsonVersion = updatePackageJsonVersion;
+// Updates the specified vss-extension manifest file version information
+var versionstampExtension = function(extensionManifestPath, versionInfo) {
 
-// Updates the vss-extension manifest version in the build output folder
-// based on data contained in the root _versioninfo.json control file.
-var versionstampExtension = function(outputRoot, extensionManifest, versionInfo) {
+    banner('> ...updating extension manifest ' + extensionManifestPath);
 
-    var extensionManifestPath = path.join(outputRoot, extensionManifest);
     var oldContent = fs.readFileSync(extensionManifestPath);
     var extensionJson = JSON.parse(oldContent);
     extensionJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
@@ -1094,31 +1084,44 @@ var versionstampExtension = function(outputRoot, extensionManifest, versionInfo)
 }
 exports.versionstampExtension = versionstampExtension;
 
-// Updates the task manifest and related package.json file in the build output
-// based on data contained in the root _versioninfo.json control file.
-var versionstampTask = function(outputTaskRoot, versionInfo) {
+// Updates the version information in a task manifest and related package.json
+// file for a task
+var versionstampTask = function(taskRoot, versionInfo) {
 
-    var taskManifestFile = path.join(outputTaskRoot, 'task.json');
+    banner('> ...updating task files at ' + taskRoot);
+
+    var taskManifestFile = path.join(taskRoot, 'task.json');
     var oldContent = fs.readFileSync(taskManifestFile);
     var taskManifest = JSON.parse(oldContent);
     taskManifest.version.Major = versionInfo.Major;
     taskManifest.version.Minor = versionInfo.Minor;
     taskManifest.version.Patch = versionInfo.Patch;
-    console.log(`> ...stamped version ${taskManifest.version.Major}.${taskManifest.version.Minor}.${taskManifest.version.Patch} into task manifest`);
+    console.log(`> ......stamped version ${taskManifest.version.Major}.${taskManifest.version.Minor}.${taskManifest.version.Patch} into task manifest`);
     serializeToFile(taskManifest, taskManifestFile);
 
-    var packageJsonFile = path.join(outputTaskRoot, 'package.json');
+    var packageJsonFile = path.join(taskRoot, 'package.json');
     if (fs.existsSync(packageJsonFile)) {
         updatePackageJsonVersion(packageJsonFile, versionInfo);
     }
 }
 exports.versionstampTask = versionstampTask;
 
-// Injects the known regions (at build time) into the 'regionName' input picker in a built
-// task.json file.
-var injectKnownRegionsIntoPicker = function(outputTaskRoot, knownRegions) {
+// Update version info in the specified package.json file
+var updatePackageJsonVersion = function(packageJsonPath, versionInfo) {
+    var oldContent = fs.readFileSync(packageJsonPath);
+    var packageJson = JSON.parse(oldContent);
+    packageJson.version = versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch;
+    console.log(`> ......stamped version ${packageJson.version} into package.json`);
+    serializeToFile(packageJson, packageJsonPath);
+}
+exports.updatePackageJsonVersion = updatePackageJsonVersion;
 
-    var taskManifestFile = path.join(outputTaskRoot, 'task.json');
+// Updates the option values for a tasks's Region picker with the set of currently
+// known regions.
+var updateTaskRegionPickerOptions = function(taskManifestFile, knownRegions) {
+
+    banner('> ...updating task manifest ' + taskManifestFile);
+
     var taskManifest = JSON.parse(fs.readFileSync(taskManifestFile));
 
     var regionNameInput = jsonQuery('inputs[name=regionName]', {
@@ -1128,7 +1131,7 @@ var injectKnownRegionsIntoPicker = function(outputTaskRoot, knownRegions) {
     regionNameInput.options = knownRegions;
     serializeToFile(taskManifest, taskManifestFile);
 }
-exports.injectKnownRegionsIntoPicker = injectKnownRegionsIntoPicker;
+exports.updateTaskRegionPickerOptions = updateTaskRegionPickerOptions;
 
 // Copies the pre- or post-build content, if an overlay content root was specified,
 // to the build output location
@@ -1168,28 +1171,24 @@ var fallbackRegions = {
 }
 
 // Downloads the latest known AWS regions file used by the various
-// AWS toolkits and constructs the object we'll inject into each
-// task's region picker options field at build time.
+// AWS toolkits and constructs an object we can inject into each
+// task's region picker options.
 var fetchLatestRegions = function() {
     var endpointsFileUrl = 'https://aws-toolkit-endpoints.s3.amazonaws.com/endpoints.json';
 
     var availableRegions = {}
 
-    try {
-        console.log('> Downloading latest toolkits endpoint data');
-        var res = syncRequest('GET', endpointsFileUrl);
-        var allEndpoints = JSON.parse(res.getBody());
+    console.log('> Downloading latest toolkits endpoint data');
+    var res = syncRequest('GET', endpointsFileUrl);
+    var allEndpoints = JSON.parse(res.getBody());
 
-        for (var p = 0; p < allEndpoints.partitions.length; p++) {
-            var partition = allEndpoints.partitions[p];
+    for (var p = 0; p < allEndpoints.partitions.length; p++) {
+        var partition = allEndpoints.partitions[p];
 
-            var regionKeys = Object.keys(partition.regions);
-            regionKeys.forEach((rk) => {
-                availableRegions[rk] = `${partition.regions[rk].description} [${rk.toString()}]`;
-            })
-        }
-    } catch (err) {
-        console.log(`...error downloading endpoints: ${err}`);
+        var regionKeys = Object.keys(partition.regions);
+        regionKeys.forEach((rk) => {
+            availableRegions[rk] = `${partition.regions[rk].description} [${rk.toString()}]`;
+        })
     }
     return availableRegions;
 }

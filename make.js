@@ -53,7 +53,7 @@ var validateTask = util.validateTask;
 var serializeToFile = util.serializeToFile;
 var versionstampExtension = util.versionstampExtension;
 var versionstampTask = util.versionstampTask;
-var injectKnownRegionsIntoPicker = util.injectKnownRegionsIntoPicker;
+var updateTaskRegionPickerOptions = util.updateTaskRegionPickerOptions;
 var copyOverlayContent = util.copyOverlayContent;
 var fetchLatestRegions = util.fetchLatestRegions;
 
@@ -126,15 +126,15 @@ target.clean = function () {
 };
 
 // Updates the root _versionInfo.json file, incrementing specific version components
-// for the extension. As the extension and tasks build, the data contained in this
-// master version file are stamped into the various manifests.
+// for the extension, and then stamps the new version through the source tree into
+// the task manifests and respective package.json files
 // Options to specify the version field to update:
 //     --versionfield major - increments the major version, sets minor and patch to 0
 //     --versionfield minor - increments the minor version, sets patch to 0
 //     --versionfield patch - increments the patch version only (this is the default
 //                            behavior if --versionfield is not specified)
 //
-target.updateversion = function() {
+target.updateversioninfo = function() {
 
     var updateMajor = false;
     var updateMinor = false;
@@ -164,7 +164,7 @@ target.updateversion = function() {
 
     var versionInfoFile = path.join(sourceRoot, masterVersionFile);
     var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
-    console.log(`> ${masterVersionFile} previous version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
+    banner(`> ${masterVersionFile} previous version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
     if (updateMajor) {
         versionInfo.Major = (parseInt(versionInfo.Major) + 1).toString();
         versionInfo.Minor = '0';
@@ -175,8 +175,40 @@ target.updateversion = function() {
     } else {
         versionInfo.Patch = (parseInt(versionInfo.Patch) + 1).toString();
     }
-    console.log(`> ${masterVersionFile} new version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
+    banner(`> ${masterVersionFile} new version: ${versionInfo.Major}.${versionInfo.Minor}.${versionInfo.Patch}`)
     serializeToFile(versionInfo, versionInfoFile);
+
+    // flow the version change through the source tree; this ensures new version
+    // data is picked up when new task.loc.json files are created and avoids the
+    // issue described in https://github.com/aws/aws-vsts-tools/issues/117.
+    banner('> Updating source tree with new version data');
+
+    versionstampExtension(path.join(sourceRoot, manifestFile), versionInfo);
+
+    taskList.forEach(function(taskName) {
+        var taskPath = path.join(sourceTasksRoot, taskName);
+        ensureExists(taskPath);
+
+        versionstampTask(taskPath, versionInfo);
+    });
+}
+
+target.updateregioninfo = function() {
+    banner('Updating options for task region pickers from latest endpoint data');
+
+    // if an error occurs retrieving the data we leave the current task options
+    // unchanged
+    try {
+        var awsRegions = fetchLatestRegions();
+        taskList.forEach(function(taskName) {
+            var taskPath = path.join(sourceTasksRoot, taskName);
+            ensureExists(taskPath);
+
+            updateTaskRegionPickerOptions(path.join(taskPath, 'task.json'), awsRegions);
+        });
+    } catch (err) {
+        throw new Error(`Error downloading endpoints, update skipped: ${err}`);
+    }
 }
 
 // Builds the extension into a _build folder. If the --release switch is specified
@@ -193,17 +225,7 @@ target.build = function() {
         }
     });
 
-    // load the master version info ready for stamping into the extension
-    // and task manifests
-    var versionInfoFile = path.join(sourceRoot, masterVersionFile);
-    var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
-
     copyOverlayContent(options.overlayfolder, prebuild, buildRoot);
-
-    // fetch the latest region data we'll inject into each task's regionName
-    // picker during the build; if an error occurs, we'll just inject an
-    // empty set
-    var awsRegions = fetchLatestRegions();
 
     taskList.forEach(function(taskName) {
         banner('> Building: ' + taskName);
@@ -320,11 +342,6 @@ target.build = function() {
         console.log();
         console.log('> copying task resources');
         copyTaskResources(taskMake, taskPath, outDir);
-
-        // stamp the master version into the task manifest and package.json files
-        versionstampTask(outDir, versionInfo);
-
-        injectKnownRegionsIntoPicker(outDir, awsRegions);
     });
 
     copyOverlayContent(options.overlayfolder, postbuild, buildRoot);
@@ -391,14 +408,6 @@ target.package = function() {
     packageRootFiles.forEach(function(item) {
         cp(path.join(sourceRoot, item), packageRoot);
     });
-
-    // load the master version info ready for stamping into the extension
-    // and task manifests
-    var versionInfoFile = path.join(sourceRoot, masterVersionFile);
-    var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
-
-    // stamp the master version into the extension manifest
-    versionstampExtension(packageRoot, manifestFile, versionInfo);
 
     // stage manifest images
     cp('-R', path.join(sourceRoot, 'images'), packageRoot);
