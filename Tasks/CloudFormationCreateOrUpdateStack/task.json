@@ -13,8 +13,8 @@
     "demands": [],
     "version": {
         "Major": "1",
-        "Minor": "0",
-        "Patch": "22"
+        "Minor": "1",
+        "Patch": "8"
     },
     "runsOn": [
         "Agent"
