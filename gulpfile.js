@@ -36,8 +36,12 @@ gulp.task('test', function (cb) {
     make('test', cb);
 });
 
-gulp.task('updateversion', function(cb) {
-    make('updateversion', cb);
+gulp.task('updateversioninfo', function(cb) {
+    make('updateversioninfo', cb);
+});
+
+gulp.task('updateregioninfo', function(cb) {
+    make('updateregioninfo', cb);
 });
 
 gulp.task('package', function (cb) {
