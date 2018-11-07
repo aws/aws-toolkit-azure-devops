@@ -122,3 +122,5 @@ This task requires permissions to call the following AWS service APIs (depending
   * ecr:DescribeRepositories
   * ecr:CreateRepository
   * ecr:GetAuthorizationToken
+  * ecr:InitiateLayerUpload
+  * ecr:UploadLayerPart
