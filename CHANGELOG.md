@@ -1,3 +1,7 @@
+### TBD
+
+* Merged PR #123, fix for missing permissions on the ECR Push Image task documentation.
+
 ### 1.1.8 (2018-11-01)
 
 * Issue #117, updated build process for version and region picker information to fix issues with unrecognized task ids and missing icons in Azure DevOps Server. There are no task changes in this release.
