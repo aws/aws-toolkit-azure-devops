@@ -1,5 +1,6 @@
 ### TBD
 
+* Issue 126, fix for use of assume role credentials in Lambda .NET Core deployment task. The task did not wait for temporary credentials to be generated once it obtained the credential object bound in the task parameters.
 * Issue #124, fix for missing permissions on the Elastic Beanstalk Deploy Application task documentation.
 * Merged PR #123, fix for missing permissions on the ECR Push Image task documentation.
 

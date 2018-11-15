@@ -44,6 +44,8 @@ export class TaskOperations {
         // for the task, we assume they are already set in the host environment.
         const credentials = await this.taskParameters.getCredentials();
         if (credentials) {
+            await credentials.getPromise();
+            tl.debug('configure credentials into environment variables');
             env.AWS_ACCESS_KEY_ID = credentials.accessKeyId;
             env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey;
             if (credentials.sessionToken) {
