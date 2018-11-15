@@ -1,5 +1,6 @@
 ### TBD
 
+* Issue #124, fix for missing permissions on the Elastic Beanstalk Deploy Application task documentation.
 * Merged PR #123, fix for missing permissions on the ECR Push Image task documentation.
 
 ### 1.1.8 (2018-11-01)
