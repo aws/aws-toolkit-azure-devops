@@ -143,6 +143,11 @@ export class TaskOperations {
                                               startingEventDate: Date,
                                               eventPollDelay: number): Promise<void> {
 
+        // upper limit to the random amount we add to the initial event poll start delay
+        // and any extensions during event polling when throttling exhausts the sdk's
+        // auto-retry ability
+        const randomJitterUpperLimit: number = 5;
+
         const requestEnvironment: Beanstalk.DescribeEnvironmentsMessage = {
             ApplicationName: applicationName,
             EnvironmentNames: [environmentName]
@@ -163,36 +168,53 @@ export class TaskOperations {
 
         let success = true;
         let environment: Beanstalk.EnvironmentDescription;
+
+        // delay the event poll by a random amount, up to 5 seconds, so that if multiple
+        // deployments run in parallel they don't all start querying at the same time and
+        // potentially trigger throttling from the outset
+        const initialStartDelay = Math.floor(Math.random() * (randomJitterUpperLimit)) + 1;
+        await this.sleep(initialStartDelay * 1000);
+
         do {
             tl.debug(`...event poll sleep for ${eventPollDelay}s`);
             await this.sleep(eventPollDelay * 1000);
 
-            const responseEnvironments = await this.beanstalkClient.describeEnvironments(requestEnvironment).promise();
-            if (responseEnvironments.Environments.length === 0) {
-                throw new Error(tl.loc('FailedToFindEnvironment'));
-            }
-            environment = responseEnvironments.Environments[0];
-
-            requestEvents.StartTime = lastPrintedEventDate;
-            const responseEvent = await this.beanstalkClient.describeEvents(requestEvents).promise();
-
-            if (responseEvent.Events.length > 0) {
-                for (let i = responseEvent.Events.length - 1; i >= 0; i--) {
-                    const event = responseEvent.Events[i];
-                    if (event.EventDate <= lastPrintedEventDate) {
-                        continue;
-                    }
-
-                    console.log(event.EventDate + '   ' + event.Severity + '   ' + event.Message);
-
-                    if (event.Message === 'Failed to deploy application.') {
-                        success = false;
-                    }
+            // if any throttling exception escapes the sdk's default retry logic,
+            // extend the user's selected poll delay by a random, sub-5 second, amount
+            try {
+                const responseEnvironments = await this.beanstalkClient.describeEnvironments(requestEnvironment).promise();
+                if (responseEnvironments.Environments.length === 0) {
+                    throw new Error(tl.loc('FailedToFindEnvironment'));
                 }
+                environment = responseEnvironments.Environments[0];
 
-                lastPrintedEventDate = responseEvent.Events[0].EventDate;
+                requestEvents.StartTime = lastPrintedEventDate;
+                const responseEvent = await this.beanstalkClient.describeEvents(requestEvents).promise();
+
+                if (responseEvent.Events.length > 0) {
+                    for (let i = responseEvent.Events.length - 1; i >= 0; i--) {
+                        const event = responseEvent.Events[i];
+                        if (event.EventDate <= lastPrintedEventDate) {
+                            continue;
+                        }
+
+                        console.log(event.EventDate + '   ' + event.Severity + '   ' + event.Message);
+
+                        if (event.Message === 'Failed to deploy application.') {
+                            success = false;
+                        }
+                    }
+
+                    lastPrintedEventDate = responseEvent.Events[0].EventDate;
+                }
+            } catch (err) {
+                if (err.code === 'Throttling') {
+                    eventPollDelay += Math.floor(Math.random() * (randomJitterUpperLimit)) + 1;
+                    console.log(tl.loc('EventPollWaitExtended', eventPollDelay));
+                } else {
+                    throw err;
+                }
             }
-
         } while (environment.Status === 'Launching' || environment.Status === 'Updating');
 
         if (!success) {

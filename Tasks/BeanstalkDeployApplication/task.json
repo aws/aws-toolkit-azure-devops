@@ -220,6 +220,7 @@
         "EnvironmentExistsQueryError": "DescribeEnvironments: error %s thrown querying for existence of environment %s for application %s",
         "InvalidEventPollDelay": "Event polling delay setting of %s is invalid (minimum %s seconds, maximum %s seconds) - task will use minimum poll delay by default",
         "ConfiguredEventPollDelay": "Task configured to wait %s seconds between queries for deployment events",
+        "EventPollWaitExtended": "Throttling detected, extending event polling delay to %s seconds",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }

@@ -3,6 +3,7 @@
 * Issue 126, fix for use of assume role credentials in Lambda .NET Core deployment task. The task did not wait for temporary credentials to be generated once it obtained the credential object bound in the task parameters.
 * Issue #124, fix for missing permissions on the Elastic Beanstalk Deploy Application task documentation.
 * Merged PR #123, fix for missing permissions on the ECR Push Image task documentation.
+* Updated the Elastic Beanstalk Deploy Application task to detect when throttling errors exhaust the underlying SDKs retry capability and to automatically extend the event polling delay by some random amount instead of failing the task. The task also adds a random start delay prior to the first poll for events so that multiple simultaneous deployments do not all start event polling at, or very close to, the same time which could also lead to early throttling errors.
 
 ### 1.1.8 (2018-11-01)
 
