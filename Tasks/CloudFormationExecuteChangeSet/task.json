@@ -102,6 +102,30 @@
             "required": false
         },
         {
+            "name": "captureStackOutputs",
+            "type": "pickList",
+            "label": "Stack Outputs",
+            "defaultValue": "ignore",
+            "groupName": "OutputOptions",
+            "helpMarkDown": "Retrieves the values of the stack outputs declared in the template and stores their values into task variables, with each variable named using the key name of each output, or as a single JSON-formatted blob with a variable named using the stack name suffixed with 'Outputs'.",
+            "required": false,
+            "options": {
+                "ignore": "Skip processing stack outputs",
+                "asVariables": "Save stack outputs into task variables",
+                "asJSON": "Save stack outputs as a JSON blob"
+            }
+        },
+        {
+            "name": "captureAsSecuredVars",
+            "type": "boolean",
+            "label": "Use secured variables",
+            "defaultValue": "true",
+            "helpMarkDown": "When selected the build variables created to hold the stack outputs, or the json-formatted blob output, will be created as secure build variables that will not echo to the console logs. This mode is set as the default to prevent accidental secrets leakage.",
+            "groupName": "OutputOptions",
+            "required": false,
+            "visibleRule": "captureStackOutputs != ignore"
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
@@ -138,6 +162,10 @@
         "SettingOutputVariable": "Setting stack ID into output variable %s",
         "ChangeSetDoesNotExist": "Change set %s does not exist",
         "TaskCompleted": "Executed change set %s",
+        "CreatingStackOutputVariable": "Creating stack variable %s to hold corresponding stack output value.",
+        "ProcessingStackOutputsToBuildVariables": "Processing stack outputs to individual build variables",
+        "ProcessingStackOutputsToJsonBlobBuildVariable": "Processing stack outputs to single JSON-formatted build variable",
+        "SkippingStackOutputsProcessing": "Skipping processing of stack outputs to build variables as task option is set to 'ignore' mode",
         "FailedToObtainStackStatus": "Error querying status of stack: %s"
     }
 }

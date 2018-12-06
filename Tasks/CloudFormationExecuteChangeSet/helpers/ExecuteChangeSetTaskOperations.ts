@@ -7,12 +7,10 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import path = require('path');
-import fs = require('fs');
 import CloudFormation = require('aws-sdk/clients/cloudformation');
-import { AWSError } from 'aws-sdk/lib/error';
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './ExecuteChangeSetTaskParameters';
+import { CloudFormationUtils } from 'cloudformationutils/cloudformationutils';
 
 export class TaskOperations {
 
@@ -48,6 +46,13 @@ export class TaskOperations {
             if (this.taskParameters.outputVariable) {
                 console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable));
                 tl.setVariable(this.taskParameters.outputVariable, stackId);
+            }
+
+            if (this.taskParameters.captureStackOutputs !== TaskParameters.ignoreStackOutputs) {
+                await CloudFormationUtils.captureStackOutputs(this.cloudFormationClient,
+                                                              this.taskParameters.stackName,
+                                                              this.taskParameters.captureStackOutputs === TaskParameters.stackOutputsAsJson,
+                                                              this.taskParameters.captureAsSecuredVars);
             }
 
             console.log(tl.loc('TaskCompleted', this.taskParameters.changeSetName));
@@ -116,5 +121,4 @@ export class TaskOperations {
             throw new Error(tl.loc('StackUpdateFailed', stackName, err.message));
         }
     }
-
 }

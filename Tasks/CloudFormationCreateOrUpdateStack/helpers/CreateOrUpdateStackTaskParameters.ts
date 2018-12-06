@@ -15,12 +15,17 @@ export class TaskParameters extends AWSTaskParametersBase {
     public static readonly fileSource: string = 'file';
     public static readonly urlSource: string = 'url';
     public static readonly s3Source: string = 's3';
+    public static readonly usePreviousTemplate: string = 'usePrevious';
 
     public static readonly maxRollbackTriggers: number = 5;
     public static readonly maxTriggerMonitoringTime: number = 180;
 
     public static readonly loadTemplateParametersFromFile: string = 'file';
     public static readonly loadTemplateParametersInline: string = 'inline';
+
+    public static readonly ignoreStackOutputs: string = 'ignore';
+    public static readonly stackOutputsAsVariables: string = 'asVariables';
+    public static readonly stackOutputsAsJson: string = 'asJSON';
 
     public static readonly defaultTimeoutInMins: number = 60;
 
@@ -51,6 +56,8 @@ export class TaskParameters extends AWSTaskParametersBase {
     public onFailure: string;
     public warnWhenNoWorkNeeded: boolean;
     public outputVariable: string;
+    public captureStackOutputs: string;
+    public captureAsSecuredVars: boolean;
 
     public timeoutInMins: number = TaskParameters.defaultTimeoutInMins;
 
@@ -83,7 +90,7 @@ export class TaskParameters extends AWSTaskParametersBase {
             }
 
             this.templateParametersSource = tl.getInput('templateParametersSource', true);
-            switch (this.templateParametersSource) {
+			switch (this.templateParametersSource) {
                 case TaskParameters.loadTemplateParametersFromFile: {
                     // Value set optional for backwards compatibilty, to enable continued operation of
                     // tasks configured before 'inline' mode was added.
@@ -98,17 +105,18 @@ export class TaskParameters extends AWSTaskParametersBase {
                             this.templateParametersFile = null;
                         }
                     }
-                }
                     break;
+                }
 
                 case TaskParameters.loadTemplateParametersInline: {
                     this.templateParameters = tl.getInput('templateParameters', true);
-                }
                     break;
+                }
 
                 default:
                     throw new Error(`Unrecognized template parameters source: ${this.templateParametersSource}`);
             }
+            
 
             this.useChangeSet = tl.getBoolInput('useChangeSet', false);
             this.changeSetName = tl.getInput('changeSetName', this.useChangeSet);
@@ -142,6 +150,8 @@ export class TaskParameters extends AWSTaskParametersBase {
             this.onFailure = tl.getInput('onFailure');
             this.warnWhenNoWorkNeeded = tl.getBoolInput('warnWhenNoWorkNeeded');
             this.outputVariable = tl.getInput('outputVariable', false);
+            this.captureStackOutputs = tl.getInput('captureStackOutputs', false);
+            this.captureAsSecuredVars = tl.getBoolInput('captureAsSecuredVars', false);
 
             const t = tl.getInput('timeoutInMins', false);
             if (t) {
