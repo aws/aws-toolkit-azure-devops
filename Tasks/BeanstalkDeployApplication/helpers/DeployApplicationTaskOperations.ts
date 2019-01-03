@@ -208,6 +208,7 @@ export class TaskOperations {
                     lastPrintedEventDate = responseEvent.Events[0].EventDate;
                 }
             } catch (err) {
+                // if we are still encountering throttles, increase the poll delay some more
                 if (err.code === 'Throttling') {
                     eventPollDelay += Math.floor(Math.random() * (randomJitterUpperLimit)) + 1;
                     console.log(tl.loc('EventPollWaitExtended', eventPollDelay));
