@@ -458,6 +458,7 @@
         "ProcessingStackOutputsToBuildVariables": "Processing stack outputs to individual build variables",
         "ProcessingStackOutputsToJsonBlobBuildVariable": "Processing stack outputs to single JSON-formatted build variable",
         "SkippingStackOutputsProcessing": "Skipping processing of stack outputs to build variables as task option is set to 'ignore' mode",
-        "SettingCustomTimeout": "Setting maximum wait period for stack creation/update to %s minutes"
+        "SettingCustomTimeout": "Setting maximum wait period for stack creation/update to %s minutes",
+        "ErrorRetrievingStackOutputs": "Error retrieving outputs from stack %s: %s"
     }
 }
