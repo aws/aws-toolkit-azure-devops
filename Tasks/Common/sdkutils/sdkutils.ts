@@ -138,7 +138,9 @@ export abstract class SdkUtils {
         if (awsServiceOpts) {
             if (!awsServiceOpts.credentials) {
                 const credentials = await taskParams.getCredentials();
-                awsServiceOpts.credentials = await credentials.getPromise();
+                if (credentials) {
+                    awsServiceOpts.credentials = await credentials.getPromise();
+                }
             }
             if (!awsServiceOpts.region) {
                 awsServiceOpts.region = await taskParams.getRegion()
@@ -149,7 +151,7 @@ export abstract class SdkUtils {
 
         const credentials = await taskParams.getCredentials();
         return new awsService({
-            credentials: credentials.getPromise(),
+            credentials: credentials ? credentials.getPromise() : undefined,
             region: await taskParams.getRegion()
         })
     }
