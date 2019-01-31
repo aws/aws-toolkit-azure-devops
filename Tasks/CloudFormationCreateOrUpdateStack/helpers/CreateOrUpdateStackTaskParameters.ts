@@ -117,7 +117,7 @@ export class TaskParameters extends AWSTaskParametersBase {
 
             this.capabilityIAM = tl.getBoolInput('capabilityIAM', false);
             this.capabilityNamedIAM = tl.getBoolInput('capabilityNamedIAM', false);
-            this.capabilityAutoExpand = tl.getBoolInput('capabilityAutoExpand', false);
+            this.capabilityAutoExpand = tl.getBoolInput('capabilityAutoExpand2', false);
 
             this.roleARN = tl.getInput('roleARN', false);
             this.tags = tl.getDelimitedInput('tags', '\n', false);
