@@ -124,8 +124,12 @@ export class TaskOperations {
                 updateConfigRequest.Environment = {};
                 updateConfigRequest.Environment.Variables = {};
                     this.taskParameters.environment.forEach((ev) => {
-                        const parts = ev.split('=');
-                        updateConfigRequest.Environment.Variables[`${parts[0].trim()}`] = parts[1].trim();
+                        const firstEqualsCharIndex = ev.indexOf('=');
+                        if (firstEqualsCharIndex > 0) {
+                            const key = ev.substr(0, firstEqualsCharIndex);
+                            const value = ev.substr(firstEqualsCharIndex + 1, ev.length - firstEqualsCharIndex - 1);
+                            updateConfigRequest.Environment.Variables[`${key.trim()}`] = value.trim();
+                        }
                 });
             }
             if (this.taskParameters.securityGroups) {
