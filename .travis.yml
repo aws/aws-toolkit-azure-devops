@@ -1,0 +1,16 @@
+language: node_js
+
+node_js: 
+  - "lts/*"
+
+matrix:
+  include:
+    - os: linux
+    - os: osx
+
+script:
+  - npm install gulp
+  - npm install tfx-cli
+  - npm install
+  - gulp package --publisher amazonwebservices-internal --release
+
