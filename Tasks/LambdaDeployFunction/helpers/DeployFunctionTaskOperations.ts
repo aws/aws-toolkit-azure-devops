@@ -127,7 +127,7 @@ export class TaskOperations {
                         const firstEqualsCharIndex = ev.indexOf('=');
                         if (firstEqualsCharIndex > 0) {
                             const key = ev.substr(0, firstEqualsCharIndex);
-                            const value = ev.substr(firstEqualsCharIndex + 1, ev.length - firstEqualsCharIndex - 1);
+                            const value = ev.substr(firstEqualsCharIndex + 1);
                             updateConfigRequest.Environment.Variables[`${key.trim()}`] = value.trim();
                         }
                 });
