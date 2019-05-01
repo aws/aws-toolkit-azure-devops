@@ -6,6 +6,7 @@ node_js:
 matrix:
   include:
     - os: windows
+    - os: osx
 
 script:
   - npm install gulp
