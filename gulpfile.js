@@ -22,35 +22,35 @@ function make (target, cb) {
 }
 
 gulp.task('build', function (cb) {
-    make('build', cb);
+    return make('build', cb);
 });
 
 gulp.task('default', gulp.series('build'));
 
 gulp.task('clean', function (cb) {
-    make('clean', cb);
+    return make('clean', cb);
 });
 
 gulp.task('test', function (cb) {
-    make('build', cb) &&
+    return make('build', cb) &&
     make('test', cb);
 });
 
 gulp.task('updateversioninfo', function(cb) {
-    make('updateversioninfo', cb);
+    return make('updateversioninfo', cb);
 });
 
 gulp.task('updateregioninfo', function(cb) {
-    make('updateregioninfo', cb);
+    return make('updateregioninfo', cb);
 });
 
 gulp.task('package', function (cb) {
-    make('clean', cb) &&
+    return make('clean', cb) &&
     make('build', cb) &&
     make('test', cb) &&
     make('package', cb);
 });
 
 gulp.task('publish', function (cb) {
-    make('publish', cb);
+    return make('publish', cb);
 })
