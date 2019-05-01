@@ -36,7 +36,6 @@
         "file-loader": "^0.11.2",
         "file-normalize": "^1.1.2",
         "gulp": "^4.0.1",
-        "gulp-util": "3.0.8",
         "json-query": "^2.2.2",
         "minimist": "^1.2.0",
         "mocha": "^6.1.4",

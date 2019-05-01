@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 var child_process = require('child_process');
 var process = require('process');
 
@@ -14,7 +13,7 @@ function make (target, done) {
     catch (err) {
         var msg = err.output ? err.output.toString() : err.message;
         console.error(msg);
-        done(new gutil.PluginError(msg));
+        done(new Error(msg));
         return false;
     }
 
