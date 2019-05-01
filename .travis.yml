@@ -1,0 +1,15 @@
+language: node_js
+
+node_js: 
+  - "lts/*"
+
+matrix:
+  include:
+    - os: windows
+
+script:
+  - npm install gulp
+  - npm install tfx-cli
+  - npm install
+  - gulp package --publisher travisci-build --release
+
