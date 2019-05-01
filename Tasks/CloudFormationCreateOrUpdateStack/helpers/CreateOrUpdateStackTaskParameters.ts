@@ -39,6 +39,7 @@ export class TaskParameters extends AWSTaskParametersBase {
     public autoExecuteChangeSet: boolean;
     public capabilityIAM: boolean;
     public capabilityNamedIAM: boolean;
+    public capabilityAutoExpand: boolean;
     public roleARN: string;
     public notificationARNs: string[];
     public resourceTypes: string[];
@@ -64,18 +65,18 @@ export class TaskParameters extends AWSTaskParametersBase {
                     this.templateFile = tl.getPathInput('templateFile', true, true);
                     this.s3BucketName = tl.getInput('s3BucketName', false);
                 }
-                break;
+                    break;
 
                 case TaskParameters.urlSource: {
                     this.templateUrl = tl.getInput('templateUrl', true);
                 }
-                break;
+                    break;
 
                 case TaskParameters.s3Source: {
                     this.s3BucketName = tl.getInput('s3BucketName', true);
                     this.s3ObjectKey = tl.getInput('s3ObjectKey', true);
                 }
-                break;
+                    break;
 
                 default:
                     throw new Error(`Unrecognized template source: ${this.templateSource}`);
@@ -98,12 +99,12 @@ export class TaskParameters extends AWSTaskParametersBase {
                         }
                     }
                 }
-                break;
+                    break;
 
                 case TaskParameters.loadTemplateParametersInline: {
                     this.templateParameters = tl.getInput('templateParameters', true);
                 }
-                break;
+                    break;
 
                 default:
                     throw new Error(`Unrecognized template parameters source: ${this.templateParametersSource}`);
@@ -116,6 +117,7 @@ export class TaskParameters extends AWSTaskParametersBase {
 
             this.capabilityIAM = tl.getBoolInput('capabilityIAM', false);
             this.capabilityNamedIAM = tl.getBoolInput('capabilityNamedIAM', false);
+            this.capabilityAutoExpand = tl.getBoolInput('capabilityAutoExpand', false);
 
             this.roleARN = tl.getInput('roleARN', false);
             this.tags = tl.getDelimitedInput('tags', '\n', false);

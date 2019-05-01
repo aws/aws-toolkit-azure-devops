@@ -102,7 +102,7 @@ export class TaskOperations {
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs);
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes);
-        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM);
+        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM, this.taskParameters.capabilityAutoExpand);
         request.Tags = this.getTags(this.taskParameters.tags);
 
         if (this.taskParameters.monitorRollbackTriggers) {
@@ -157,7 +157,7 @@ export class TaskOperations {
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs);
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes);
-        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM);
+        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM, this.taskParameters.capabilityAutoExpand);
         request.Tags = this.getTags(this.taskParameters.tags);
 
         if (this.taskParameters.monitorRollbackTriggers) {
@@ -219,7 +219,7 @@ export class TaskOperations {
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs);
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes);
-        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM);
+        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM, this.taskParameters.capabilityAutoExpand);
         request.Tags = this.getTags(this.taskParameters.tags);
 
         if (this.taskParameters.monitorRollbackTriggers) {
@@ -241,7 +241,7 @@ export class TaskOperations {
                 await this.executeChangeSet(this.taskParameters.changeSetName, this.taskParameters.stackName);
             }
             return response.StackId;
-        }  catch (err) {
+        } catch (err) {
             console.error(tl.loc('ChangeSetCreationFailed', err.message), err);
             throw err;
         }
@@ -293,7 +293,7 @@ export class TaskOperations {
         }
     }
 
-    private getCapabilities(capabilityIAM: boolean, capabilityNamedIAM: boolean) {
+    private getCapabilities(capabilityIAM: boolean, capabilityNamedIAM: boolean, capabilityAutoExpand: boolean) {
 
         const arr = [];
 
@@ -304,6 +304,10 @@ export class TaskOperations {
         if (capabilityNamedIAM) {
             console.log(tl.loc('AddingCapability', 'CAPABILITY_NAMED_IAM'));
             arr.push('CAPABILITY_NAMED_IAM');
+        }
+        if (capabilityAutoExpand) {
+            console.log(tl.loc('AddingCapability', 'CAPABILITY_AUTO_EXPAND'));
+            arr.push('CAPABILITY_AUTO_EXPAND');
         }
 
         return (arr && arr.length > 0) ? arr : null;
@@ -511,7 +515,7 @@ export class TaskOperations {
             // the caller that no work is needed rather than fail the task. This allows CI pipelines
             // with multiple stacks to be updated when some stacks have no changes.
             // https://github.com/aws/aws-vsts-tools/issues/28
-            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
+            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName }).promise();
             if (this.isNoWorkToDoValidationError(response.Status, response.StatusReason)) {
                 return false;
             } else {
@@ -575,7 +579,7 @@ export class TaskOperations {
     private async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
         try {
             console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName));
-            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName}).promise();
+            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName }).promise();
             console.log(tl.loc('ChangeSetExists', changeSetName, response.Status));
             return true;
         } catch (err) {
