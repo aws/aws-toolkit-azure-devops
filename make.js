@@ -401,7 +401,7 @@ target.test = function() {
 target.package = function() {
     banner('Packaging extension');
 
-    mkdir(packageRoot);
+    mkdir('-p', packageRoot);
 
     // stage license, readme and the extension manifest file
     var packageRootFiles =  [ manifestFile, 'LICENSE', 'README.md' ];
@@ -412,7 +412,7 @@ target.package = function() {
     // stage manifest images
     cp('-R', path.join(sourceRoot, 'images'), packageRoot);
 
-    mkdir(packageTasksRoot);
+    mkdir('-p', packageTasksRoot);
 
     copyOverlayContent(options.overlayfolder, prebuild, buildRoot);
 
@@ -422,7 +422,7 @@ target.package = function() {
 
         var taskBuildFolder = path.join(buildTasksRoot, taskName);
         var taskPackageFolder = path.join(packageTasksRoot, taskName);
-        mkdir(taskPackageFolder);
+        mkdir('-p', taskPackageFolder);
 
         var taskDef = require(path.join(taskBuildFolder, 'task.json'));
         if (taskDef.execution.hasOwnProperty('Node')) {
