@@ -7,11 +7,9 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import path = require('path');
 import { readFileSync } from 'fs';
 import Lambda = require('aws-sdk/clients/lambda');
 import IAM = require('aws-sdk/clients/iam');
-import { AWSError } from 'aws-sdk/lib/error';
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './DeployFunctionTaskParameters';
 
@@ -122,11 +120,7 @@ export class TaskOperations {
 
             if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {};
-                updateConfigRequest.Environment.Variables = {};
-                    this.taskParameters.environment.forEach((ev) => {
-                        const parts = ev.split('=');
-                        updateConfigRequest.Environment.Variables[`${parts[0].trim()}`] = parts[1].trim();
-                });
+                updateConfigRequest.Environment.Variables = this.extractKeyValuesFrom(this.taskParameters.environment);
             }
             if (this.taskParameters.securityGroups) {
                 updateConfigRequest.VpcConfig = {
@@ -175,11 +169,7 @@ export class TaskOperations {
 
         if (this.taskParameters.environment) {
             request.Environment = {};
-            request.Environment.Variables = {};
-            this.taskParameters.environment.forEach((ev) => {
-                const parts = ev.split('=');
-                request.Environment.Variables[`${parts[0].trim()}`] = parts[1].trim();
-            });
+            request.Environment.Variables = this.extractKeyValuesFrom(this.taskParameters.environment);
         }
         if (this.taskParameters.tags) {
             request.Tags = {};
@@ -219,4 +209,15 @@ export class TaskOperations {
         }
     }
 
+    private extractKeyValuesFrom(source: string[]) {
+        return source.reduce((acc: any, ev) => {
+            const firstEqualsCharIndex = ev.indexOf('=');
+            if (firstEqualsCharIndex > 0) {
+                const key = ev.substr(0, firstEqualsCharIndex);
+                const value = ev.substr(firstEqualsCharIndex + 1);
+                acc[`${key.trim()}`] = value.trim();
+            }
+            return acc;
+        }, {});
+    }
 }
