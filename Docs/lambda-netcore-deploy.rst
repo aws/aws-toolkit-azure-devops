@@ -172,7 +172,7 @@ Task Permissions
 This task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):
 
   * lambda:CreateFunction
-  * lamda:UpdateFunctionCode
+  * lambda:UpdateFunctionCode
   * lambda:GetFunctionConfiguration
   * cloudformation:CreateChangeSet
   * cloudformation:ExecuteChangeSet
