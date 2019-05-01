@@ -1,5 +1,10 @@
 # Overview
 
+System | Status
+---|---
+Build ([develop](https://github.com/aws/aws-vsts-tools/tree/develop) branch) | ![TravisCI Build Status - develop branch](https://travis-ci.org/aws/aws-vsts-tools.svg?branch=develop)
+Build ([master](https://github.com/aws/aws-vsts-tools/tree/master) branch) | ![TravisCI Build Status - master branch](https://travis-ci.org/aws/aws-vsts-tools.svg?branch=master)
+
 The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
 
 The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
@@ -89,6 +94,13 @@ Select the *AWS* endpoint type and provide the following parameters. Please refe
 **Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
 
 Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
+
+## Build 
+
+* To build for testing purposes, run `gulp build`
+* To package for installation into VSTS, run `gulp package --publisherid <your-publisher-id-here> --release`
+
+note: Due to [this bug](https://npm.community/t/npm-install-for-package-with-local-dependency-fails/754/2), Tasks/BeanstalkCreateApplicationVersion has a .npmrc file that disables package lock for this module. Without this, rebuild will not work.
 
 ## Minimum supported environments
 
