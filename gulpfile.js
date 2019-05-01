@@ -22,30 +22,30 @@ function make (target, done) {
 
 gulp.task('build', gulp.series(function (done) {
     make('build', done);
-	done();
+    done();
 }));
 
 gulp.task('default', gulp.series('build'));
 
 gulp.task('clean', function (done) {
     make('clean', done);
-	done();
+    done();
 });
 
 gulp.task('test', function (done) {
     make('build', done) &&
     make('test', done);
-	done();
+    done();
 });
 
 gulp.task('updateversioninfo', function(done) {
     make('updateversioninfo', done);
-	done();
+    done();
 });
 
 gulp.task('updateregioninfo', function(done) {
     make('updateregioninfo', done);
-	done();
+    done();
 });
 
 gulp.task('package', function (done) {
@@ -53,10 +53,10 @@ gulp.task('package', function (done) {
     make('build', done) &&
     make('test', done) &&
     make('package', done);
-	done();
+    done();
 });
 
 gulp.task('publish', function (done) {
     make('publish', done);
-	done();
+    done();
 })
