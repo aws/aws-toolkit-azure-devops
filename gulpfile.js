@@ -3,7 +3,7 @@ var gutil = require('gulp-util');
 var child_process = require('child_process');
 var process = require('process');
 
-function make (target, cb) {
+function make (target, done) {
     var cl = ('node make.js ' + target + ' ' + process.argv.slice(3).join(' ')).trim();
     console.log('------------------------------------------------------------');
     console.log('> ' + cl);
@@ -14,43 +14,50 @@ function make (target, cb) {
     catch (err) {
         var msg = err.output ? err.output.toString() : err.message;
         console.error(msg);
-        cb(new gutil.PluginError(msg));
+        done(new gutil.PluginError(msg));
         return false;
     }
 
     return true;
 }
 
-gulp.task('build', function (cb) {
-    return make('build', cb);
-});
+gulp.task('build', gulp.series(function (done) {
+    make('build', done);
+	done();
+}));
 
 gulp.task('default', gulp.series('build'));
 
-gulp.task('clean', function (cb) {
-    return make('clean', cb);
+gulp.task('clean', function (done) {
+    make('clean', done);
+	done();
 });
 
-gulp.task('test', function (cb) {
-    return make('build', cb) &&
-    make('test', cb);
+gulp.task('test', function (done) {
+    make('build', done) &&
+    make('test', done);
+	done();
 });
 
-gulp.task('updateversioninfo', function(cb) {
-    return make('updateversioninfo', cb);
+gulp.task('updateversioninfo', function(done) {
+    make('updateversioninfo', done);
+	done();
 });
 
-gulp.task('updateregioninfo', function(cb) {
-    return make('updateregioninfo', cb);
+gulp.task('updateregioninfo', function(done) {
+    make('updateregioninfo', done);
+	done();
 });
 
-gulp.task('package', function (cb) {
-    return make('clean', cb) &&
-    make('build', cb) &&
-    make('test', cb) &&
-    make('package', cb);
+gulp.task('package', function (done) {
+    make('clean', done) &&
+    make('build', done) &&
+    make('test', done) &&
+    make('package', done);
+	done();
 });
 
-gulp.task('publish', function (cb) {
-    return make('publish', cb);
+gulp.task('publish', function (done) {
+    make('publish', done);
+	done();
 })
