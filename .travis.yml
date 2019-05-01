@@ -11,5 +11,5 @@ script:
   - npm install gulp
   - npm install tfx-cli
   - npm install
-  - gulp package --publisher amazonwebservices-internal --release
+  - gulp package --publisher travisci-build --release
 
