@@ -25,7 +25,7 @@ gulp.task('build', function (cb) {
     make('build', cb);
 });
 
-gulp.task('default', ['build']);
+gulp.task('default', gulp.series('build'));
 
 gulp.task('clean', function (cb) {
     make('clean', cb);
