@@ -90,6 +90,13 @@ Select the *AWS* endpoint type and provide the following parameters. Please refe
 
 Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
 
+## Build 
+
+* To build for testing purposes, run `gulp build`
+* To build, run `gulp package --publisherid <your-publisher-id-here> --release`
+
+note: Due to [this bug](https://npm.community/t/npm-install-for-package-with-local-dependency-fails/754/2), Tasks/BeanstalkCreateApplicationVersion has a .npmrc file that disables package lock for this module. Without this, rebuild will not work.
+
 ## Minimum supported environments
 
 * Visual Studio Team Services
