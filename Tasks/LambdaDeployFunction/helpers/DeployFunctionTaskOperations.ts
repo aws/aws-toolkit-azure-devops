@@ -7,11 +7,9 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import path = require('path');
 import { readFileSync } from 'fs';
 import Lambda = require('aws-sdk/clients/lambda');
 import IAM = require('aws-sdk/clients/iam');
-import { AWSError } from 'aws-sdk/lib/error';
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './DeployFunctionTaskParameters';
 
