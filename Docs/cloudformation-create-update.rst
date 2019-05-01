@@ -217,6 +217,11 @@ Create or Update Named IAM Resources ('CAPABILITY_NAMED_IAM')
 
     If your stack manipulates IAM resources with custom names, you must add this capability otherwise an :code:`InsufficientCapabilities` error is returned.
 
+Create or Update Named IAM Resources ('CAPABILITY_AUTO_EXPAND')
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If your stack used custom CloudFormation Macros, you must add this capability otherwise an :code:`InsufficientCapabilities` error is returned.
+
 Advanced
 --------
 
