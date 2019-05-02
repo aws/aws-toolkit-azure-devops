@@ -6,8 +6,8 @@
   * the License.
   */
 
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 import tl = require('vsts-task-lib/task');
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
 export class TaskParameters extends AWSTaskParametersBase {
 
@@ -31,7 +31,7 @@ export class TaskParameters extends AWSTaskParametersBase {
         super();
     }
 
-    public static buildFromEnvironemnt() : TaskParameters {
+    public static buildFromEnvironment() : TaskParameters {
         const taskParameters: TaskParameters = new TaskParameters();
         try {
             taskParameters.bucketName = tl.getInput('bucketName', true);
