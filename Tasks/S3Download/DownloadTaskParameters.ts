@@ -6,8 +6,8 @@
   * the License.
   */
 
-import tl = require('vsts-task-lib/task');
 import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
+import tl = require('vsts-task-lib/task');
 
 export class TaskParameters extends AWSTaskParametersBase {
 
@@ -29,22 +29,28 @@ export class TaskParameters extends AWSTaskParametersBase {
 
     constructor() {
         super();
-        try {
-            this.bucketName = tl.getInput('bucketName', true);
-            this.sourceFolder = tl.getPathInput('sourceFolder', false, false);
-            this.targetFolder = tl.getPathInput('targetFolder', true, false);
-            this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
-            this.overwrite = tl.getBoolInput('overwrite', false);
-            this.forcePathStyleAddressing = tl.getBoolInput('forcePathStyleAddressing', false);
-            this.flattenFolders = tl.getBoolInput('flattenFolders', false);
 
-            this.keyManagement = tl.getInput('keyManagement', false);
-            if (this.keyManagement === TaskParameters.customerManagedKeyValue) {
+    }
+
+    public static build() : TaskParameters {
+        const taskParameters: TaskParameters = new TaskParameters();
+        try {
+            taskParameters.bucketName = tl.getInput('bucketName', true);
+            taskParameters.sourceFolder = tl.getPathInput('sourceFolder', false, false);
+            taskParameters.targetFolder = tl.getPathInput('targetFolder', true, false);
+            taskParameters.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true);
+            taskParameters.overwrite = tl.getBoolInput('overwrite', false);
+            taskParameters.forcePathStyleAddressing = tl.getBoolInput('forcePathStyleAddressing', false);
+            taskParameters.flattenFolders = tl.getBoolInput('flattenFolders', false);
+
+            taskParameters.keyManagement = tl.getInput('keyManagement', false);
+            if (taskParameters.keyManagement === TaskParameters.customerManagedKeyValue) {
                 const customerKey = tl.getInput('customerKey', true);
-                this.customerKey = Buffer.from(customerKey, 'hex');
+                taskParameters.customerKey = Buffer.from(customerKey, 'hex');
             }
         } catch (error) {
             throw new Error(error.message);
         }
+        return taskParameters;
     }
 }
