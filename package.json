@@ -54,7 +54,7 @@
         "tslint": "^5.16.0",
         "typescript": "^3.4.5",
         "uglifyjs-webpack-plugin": "^2.1.2",
-        "validator": "^8.0.0",
+        "validator": "^10.11.0",
         "webpack": "^4.30.0",
         "webpack-node-externals": "^1.7.2"
     },
@@ -76,14 +76,5 @@
             "\\.ts$": "ts-jest"
         },
         "testRegex": "/tests/.*\\.ts$"
-    },
-    "devDependencies": {
-        "adm-zip": "^0.4.13",
-        "file-normalize": "^1.1.2",
-        "json-query": "^2.2.2",
-        "minimist": "^1.2.0",
-        "modclean": "^3.0.0-beta.1",
-        "sync-request": "^6.1.0",
-        "validator": "^10.11.0"
     }
 }
