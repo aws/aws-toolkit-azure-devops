@@ -17,6 +17,8 @@ import { TaskParameters } from './DownloadTaskParameters';
 
 export class TaskOperations {
 
+    private s3Client: S3;
+
     public constructor(
         public readonly taskParameters: TaskParameters
     ) {
@@ -34,8 +36,6 @@ export class TaskOperations {
 
         console.log(tl.loc('TaskCompleted'));
     }
-
-    private s3Client: S3;
 
     private async createServiceClients(): Promise<void> {
 
