@@ -1,16 +1,16 @@
 {
     "name": "aws-vsts-tools",
     "version": "1.0.22",
-    "description": "AWS Tools for Visual Studio Team Services",
+    "description": "aws tools for visual studio team services",
     "private": true,
-    "main": "gulpfile.js",
+    "main": "_build/tasks",
     "scripts": {
         "build": "node make.js build",
         "test": "jest",
         "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
-        "lint": "tslint -c tslint.json 'Tasks/**/*.ts'",
-        "publish" : "node make.js publish",
+        "lint": "tslint -c tslint.json 'tasks/**/*.ts'",
+        "publish": "node make.js publish",
         "update-version-info": "node make.js updateversioninfo",
         "update-region-info": "node make.js updateregioninfo"
     },
@@ -19,19 +19,19 @@
         "url": "https://github.com/aws/aws-vsts-tools"
     },
     "keywords": [
-        "AWS",
-        "S3",
-        "CloudFormation",
-        "CLI",
-        "Lambda",
-        "CodeDeploy",
-        "EC2"
+        "aws",
+        "s3",
+        "cloudformation",
+        "cli",
+        "lambda",
+        "codedeploy",
+        "ec2"
     ],
-    "author": "Amazon Web Services LLC",
-    "license": "Apache",
+    "author": "amazon web services llc",
+    "license": "apache",
     "bugs": "https://github.com/aws/aws-vsts-tools/issues",
     "homepage": "https://github.com/aws/aws-vsts-tools",
-    "devDependencies": {
+    "devdependencies": {
         "@types/jest": "^24.0.12",
         "@types/node": "^8.0.34",
         "adm-zip": "0.4.11",
@@ -40,7 +40,6 @@
         "clean-webpack-plugin": "^2.0.1",
         "file-loader": "^0.11.2",
         "file-normalize": "^1.1.2",
-        "gulp": "^4.0.1",
         "jest": "^24.7.1",
         "json-query": "^2.2.2",
         "minimist": "^1.2.0",
