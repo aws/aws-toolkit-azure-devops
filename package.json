@@ -32,9 +32,9 @@
         "@types/jest": "^24.0.12",
         "@types/node": "^8.0.34",
         "adm-zip": "0.4.11",
-        "babel-loader": "^7.1.5",
+        "babel-loader": "^8.0.5",
         "babel-preset-env": "^1.7.0",
-        "clean-webpack-plugin": "^0.1.16",
+        "clean-webpack-plugin": "^2.0.1",
         "file-loader": "^0.11.2",
         "file-normalize": "^1.1.2",
         "gulp": "^4.0.1",
@@ -51,10 +51,10 @@
         "ts-loader": "^2.2.2",
         "tslint": "^5.16.0",
         "typescript": "^3.4.5",
-        "uglifyjs-webpack-plugin": "^1.2.7",
+        "uglifyjs-webpack-plugin": "^2.1.2",
         "validator": "^8.0.0",
-        "webpack": "^3.1.0",
-        "webpack-node-externals": "^1.6.0"
+        "webpack": "^4.30.0",
+        "webpack-node-externals": "^1.7.2"
     },
     "dependencies": {
         "aws-sdk": "2.279.1",
@@ -63,7 +63,7 @@
         "js-yaml": "^3.13.1",
         "npm": "^6.2.0",
         "shelljs": "0.7.8",
-        "vsts-task-lib": "2.0.6"
+        "vsts-task-lib": "2.7.0"
     },
     "jest": {
         "moduleFileExtensions": [

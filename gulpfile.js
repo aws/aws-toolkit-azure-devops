@@ -32,12 +32,6 @@ gulp.task('clean', function (done) {
     done();
 });
 
-gulp.task('test', function (done) {
-    make('build', done) &&
-    make('test', done);
-    done();
-});
-
 gulp.task('updateversioninfo', function(done) {
     make('updateversioninfo', done);
     done();
@@ -49,9 +43,8 @@ gulp.task('updateregioninfo', function(done) {
 });
 
 gulp.task('package', function (done) {
-    make('clean', done) &&
+    make('clean', done);
     make('build', done) &&
-    make('test', done) &&
     make('package', done);
     done();
 });

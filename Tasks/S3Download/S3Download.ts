@@ -16,7 +16,6 @@ import { TaskParameters } from './DownloadTaskParameters';
 import { TaskOperations } from './DownloadTaskOperations';
 
 async function run(): Promise<void> {
-
     const taskManifestFile = path.join(__dirname, 'task.json');
     tl.setResourcePath(taskManifestFile);
     SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
