@@ -110,12 +110,6 @@ else {
     taskList = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'make-options.json'))).tasks;
 }
 
-// set the runner options. should either be empty or a comma delimited list of test runners.
-// for example: ts OR ts,ps
-//
-// note, currently the ts runner igores this setting and will always run.
-process.env['TASK_TEST_RUNNER'] = options.runner || '';
-
 target.clean = function () {
     if (pathExists(buildRoot)) {
        rm('-Rf', buildRoot);
@@ -347,52 +341,6 @@ target.build = function() {
     copyOverlayContent(options.overlayfolder, postbuild, buildRoot);
 
     banner('Build successful', true);
-}
-
-// NOTE: testing via Mocha or some other suitable framework will be added
-// in a future release. This target is retained as reference in preparation
-// for that work.
-//
-// Runs tests for the scope of tasks being built if a root-level Tests folder
-// exists.
-// npm test
-// node make.js test
-// node make.js test --task taskName --suite L0
-target.test = function() {
-    var testsPath = path.join(sourceRoot, 'Tests');
-    if (!pathExists(testsPath))
-    {
-        console.log('> !! no tests found at project root, skipping "test" target');
-        return;
-    }
-
-    ensureTool('tsc', '--version', 'Version 2.3.4');
-    ensureTool('mocha', '--version', '2.3.3');
-
-    // build the general tests and ps test infra
-    rm('-Rf', buildTestsRoot);
-    mkdir('-p', path.join(buildTestsRoot));
-    cd(testsPath);
-    run(`tsc --rootDir ${path.join(sourceRoot, 'Tests')} --outDir ${buildTestsRoot}`);
-    console.log();
-    console.log('> copying ps test lib resources');
-    mkdir('-p', path.join(buildTestsRoot, 'lib'));
-    matchCopy(path.join('**', '@(*.ps1|*.psm1)'), path.join(sourceRoot, 'Tests', 'lib'), path.join(buildTestsRoot, 'lib'));
-
-    // find the tests
-    var suiteType = options.suite || 'L0';
-    var taskType = options.task || '*';
-    var pattern1 = buildTasksRoot + '/' + taskType + '/Tests/' + suiteType + '.js';
-    var pattern2 = buildTasksRoot + '/Common/' + taskType + '/Tests/' + suiteType + '.js';
-    var pattern3 = buildTestsRoot + '/' + suiteType + '.js';
-    var testsSpec = matchFind(pattern1, buildRoot)
-        .concat(matchFind(pattern2, buildRoot))
-        .concat(matchFind(pattern3, buildTestsRoot, { noRecurse: true }));
-    if (!testsSpec.length && !process.env.TF_BUILD) {
-        fail(`Unable to find tests using the following patterns: ${JSON.stringify([pattern1, pattern2, pattern3])}`);
-    }
-
-    run('mocha ' + testsSpec.join(' '), /*inheritStreams:*/true);
 }
 
 // Re-packages the build into a _package folder, then runs the tfx
