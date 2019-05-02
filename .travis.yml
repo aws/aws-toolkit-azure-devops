@@ -9,6 +9,7 @@ matrix:
     - os: linux
 
 script:
+  - npm install typescript
   - npm install
   - npm run package -- --publisher travisci-build --release
   - npm test
