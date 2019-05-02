@@ -12,21 +12,16 @@ import fs = require('fs');
 import mm = require('minimatch');
 
 import S3 = require('aws-sdk/clients/s3');
-import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './DownloadTaskParameters';
 
 export class TaskOperations {
-
-    private s3Client: S3;
-
     public constructor(
-        public readonly taskParameters: TaskParameters
+        public readonly taskParameters: TaskParameters,
+        public readonly s3Client: S3
     ) {
     }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients();
-
         const exists = await this.testBucketExists(this.taskParameters.bucketName);
         if (!exists) {
             throw new Error(tl.loc('BucketNotExist', this.taskParameters.bucketName));
@@ -35,15 +30,6 @@ export class TaskOperations {
         await this.downloadFiles();
 
         console.log(tl.loc('TaskCompleted'));
-    }
-
-    private async createServiceClients(): Promise<void> {
-
-        const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01',
-            s3ForcePathStyle: this.taskParameters.forcePathStyleAddressing
-        };
-        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug);
     }
 
     private async testBucketExists(bucketName: string): Promise<boolean> {
