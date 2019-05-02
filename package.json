@@ -31,7 +31,7 @@
     "license": "apache",
     "bugs": "https://github.com/aws/aws-vsts-tools/issues",
     "homepage": "https://github.com/aws/aws-vsts-tools",
-    "devdependencies": {
+    "devDependencies": {
         "@types/jest": "^24.0.12",
         "@types/node": "^8.0.34",
         "adm-zip": "0.4.11",
