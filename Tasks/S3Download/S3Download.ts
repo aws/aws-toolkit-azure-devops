@@ -20,7 +20,7 @@ async function run(): Promise<void> {
     tl.setResourcePath(taskManifestFile);
     SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
 
-    const taskParameters = TaskParameters.build();
+    const taskParameters = TaskParameters.buildFromEnvironment();
     const s3 = await DefaultClients.createDefaultS3Client(taskParameters, taskParameters.forcePathStyleAddressing, tl.debug);
     return new TaskOperations(taskParameters, s3).execute();
 }
