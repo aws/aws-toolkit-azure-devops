@@ -12,7 +12,6 @@ import fs = require('fs');
 import mm = require('minimatch');
 
 import S3 = require('aws-sdk/clients/s3');
-import { AWSError } from 'aws-sdk/lib/error';
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './DownloadTaskParameters';
 
