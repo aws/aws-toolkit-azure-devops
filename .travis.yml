@@ -13,4 +13,5 @@ script:
   - npm install tfx-cli
   - npm install
   - gulp package --publisher travisci-build --release
+  - npm test
 
