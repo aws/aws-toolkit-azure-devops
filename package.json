@@ -7,9 +7,12 @@
     "scripts": {
         "build": "node make.js build",
         "test": "jest",
-        "package": "node make.js package",
+        "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
-        "lint": "tslint -c tslint.json 'Tasks/**/*.ts'"
+        "lint": "tslint -c tslint.json 'Tasks/**/*.ts'",
+        "publish" : "node make.js publish",
+        "update-version-info": "node make.js updateversioninfo",
+        "update-region-info": "node make.js updateregioninfo"
     },
     "repository": {
         "type": "git",
