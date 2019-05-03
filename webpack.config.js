@@ -31,7 +31,7 @@ module.exports = {
           {
             exclude: /(node_modules)/,
             use: {
-              loader: 'babel-loader',
+              loader: 'babel-loader?cacheDirectory=true',
               options: {
                 presets: ['env']
               }
@@ -43,6 +43,8 @@ module.exports = {
     new UglifyJSPlugin({
       test: /\.js($|\?)/i,
       sourceMap: true,
+      cache: true,
+      parallel: true,
       uglifyOptions: {
         compress: true
       }

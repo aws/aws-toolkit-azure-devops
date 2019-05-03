@@ -205,6 +205,66 @@ target.updateregioninfo = function() {
     }
 }
 
+buildIndvidualTask = function(mod, taskPath) {
+    var modPath = path.join(taskPath, mod['module']);
+    var modName = path.basename(modPath);
+    var modOutDir = path.join(commonBuildTasksRoot, modName);
+
+    if (!test('-d', modOutDir)) {
+        banner('Building module ' + modPath, true);
+
+        mkdir('-p', modOutDir);
+
+        // create loc files
+        var modJsonPath = path.join(modPath, 'module.json');
+        if (test('-f', modJsonPath)) {
+            createResjson(require(modJsonPath), modPath);
+        }
+
+        // npm install and compile
+        if ((mod.type === 'node' && mod.compile == true) || test('-f', path.join(modPath, 'tsconfig.json'))) {
+            buildNodeTask(modPath, modOutDir);
+        }
+
+        // copy default resources and any additional resources defined in the module's make.json
+        console.log();
+        console.log('> copying module resources');
+        var modMakePath = path.join(modPath, 'make.json');
+        var modMake = test('-f', modMakePath) ? require(modMakePath) : {};
+        copyTaskResources(modMake, modPath, modOutDir);
+
+        // get externals
+        if (modMake.hasOwnProperty('externals')) {
+            console.log('Getting module externals');
+            getExternals(modMake.externals, modOutDir);
+        }
+    }
+
+    // npm install the common module to the task dir
+    if (mod.type === 'node' && mod.compile == true) {
+        mkdir('-p', path.join(taskPath, 'node_modules'));
+        rm('-Rf', path.join(taskPath, 'node_modules', modName));
+        var originalDir = pwd();
+        cd(taskPath);
+        run('npm install ' + modOutDir);
+        cd(originalDir);
+    }
+    // copy module resources to the task output dir
+    else if (mod.type === 'ps') {
+        console.log();
+        console.log('> copying module resources to task');
+        var dest;
+        if (mod.hasOwnProperty('dest')) {
+            dest = path.join(outDir, mod.dest, modName);
+        }
+        else {
+            dest = path.join(outDir, 'ps_modules', modName);
+        }
+
+        matchCopy('!Tests', modOutDir, dest, { noRecurse: true, matchBase: true });
+    }
+}
+
 // Builds the extension into a _build folder. If the --release switch is specified
 // the build is generated for production release (no map files, npm modules set to
 // production only)
@@ -265,63 +325,7 @@ target.build = function() {
             var common = taskMake['common'];
 
             common.forEach(function(mod) {
-                var modPath = path.join(taskPath, mod['module']);
-                var modName = path.basename(modPath);
-                var modOutDir = path.join(commonBuildTasksRoot, modName);
-
-                if (!test('-d', modOutDir)) {
-                    banner('Building module ' + modPath, true);
-
-                    mkdir('-p', modOutDir);
-
-                    // create loc files
-                    var modJsonPath = path.join(modPath, 'module.json');
-                    if (test('-f', modJsonPath)) {
-                        createResjson(require(modJsonPath), modPath);
-                    }
-
-                    // npm install and compile
-                    if ((mod.type === 'node' && mod.compile == true) || test('-f', path.join(modPath, 'tsconfig.json'))) {
-                        buildNodeTask(modPath, modOutDir);
-                    }
-
-                    // copy default resources and any additional resources defined in the module's make.json
-                    console.log();
-                    console.log('> copying module resources');
-                    var modMakePath = path.join(modPath, 'make.json');
-                    var modMake = test('-f', modMakePath) ? require(modMakePath) : {};
-                    copyTaskResources(modMake, modPath, modOutDir);
-
-                    // get externals
-                    if (modMake.hasOwnProperty('externals')) {
-                        console.log('Getting module externals');
-                        getExternals(modMake.externals, modOutDir);
-                    }
-                }
-
-                // npm install the common module to the task dir
-                if (mod.type === 'node' && mod.compile == true) {
-                    mkdir('-p', path.join(taskPath, 'node_modules'));
-                    rm('-Rf', path.join(taskPath, 'node_modules', modName));
-                    var originalDir = pwd();
-                    cd(taskPath);
-                    run('npm install ' + modOutDir);
-                    cd(originalDir);
-                }
-                // copy module resources to the task output dir
-                else if (mod.type === 'ps') {
-                    console.log();
-                    console.log('> copying module resources to task');
-                    var dest;
-                    if (mod.hasOwnProperty('dest')) {
-                        dest = path.join(outDir, mod.dest, modName);
-                    }
-                    else {
-                        dest = path.join(outDir, 'ps_modules', modName);
-                    }
-
-                    matchCopy('!Tests', modOutDir, dest, { noRecurse: true, matchBase: true });
-                }
+                buildIndvidualTask(mod, taskPath)
             });
         }
 
