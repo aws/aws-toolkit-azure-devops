@@ -12,6 +12,7 @@ import IAM = require('aws-sdk/clients/iam');
 import S3 = require('aws-sdk/clients/s3');
 import AWS = require('aws-sdk/global');
 import { AWSTaskParametersBase } from './awsTaskParametersBase';
+import path = require('path');
 
 export abstract class SdkUtils {
 
@@ -23,6 +24,18 @@ export abstract class SdkUtils {
     // set on the integration test server so we validate the agent is set
     // on all test builds that use sdk clients
     private static readonly validateUserAgentEnvVariable: string = 'AWSVSTSTesting_ValidateUserAgent';
+
+    public static readResources(): void {
+        const taskManifestFile = path.join(__dirname, 'task.json');
+        tl.setResourcePath(taskManifestFile);
+        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
+    }
+
+    public static readResourcesFromRelativePath(relativeResourcePath: string): void {
+        const taskManifestFile = path.join(__dirname, relativeResourcePath);
+        tl.setResourcePath(taskManifestFile);
+        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
+    }
 
     // Injects a custom user agent conveying extension version and task being run into the
     // sdk so usage metrics can be tied to the tools.
