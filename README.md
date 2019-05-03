@@ -11,6 +11,10 @@ The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https:/
 
 **Note for Team Foundation Server 2015 Users:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for extra fields in the *AWS* endpoint type to support *Assume Role* credentials. These fields, although marked optional, are unfortunately treated as required in TFS 2015 editions.
 
+## User Guide
+
+The [User Guide](https://docs.aws.amazon.com/vsts/latest/userguide/welcome.html) contains additional instructions for getting up and running with the extension.
+
 ## Highlighted Features
 
 ### Transfer Files to and from Amazon S3 Buckets
