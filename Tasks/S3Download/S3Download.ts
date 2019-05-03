@@ -10,7 +10,7 @@ import tl = require('vsts-task-lib/task');
 import path = require('path');
 
 import { SdkUtils } from 'sdkutils/sdkutils';
-import { DefaultClients } from 'sdkutils/defaultClients';
+import { createDefaultS3Client } from 'sdkutils/defaultClients';
 
 import { TaskParameters } from './DownloadTaskParameters';
 import { TaskOperations } from './DownloadTaskOperations';
@@ -21,7 +21,7 @@ async function run(): Promise<void> {
     SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
 
     const taskParameters = TaskParameters.build();
-    const s3 = await DefaultClients.createDefaultS3Client(taskParameters.awsTaskParametersBase, taskParameters.forcePathStyleAddressing, tl.debug);
+    const s3 = await createDefaultS3Client(taskParameters.awsTaskParametersBase, taskParameters.forcePathStyleAddressing, tl.debug);
     return new TaskOperations(s3, taskParameters).execute();
 }
 
