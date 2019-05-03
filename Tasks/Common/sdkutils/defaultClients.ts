@@ -7,7 +7,6 @@ export class DefaultClients {
     taskParams: AWSTaskParametersBase,
     forcePathStyle: boolean,
     logger: (msg: string) => void): Promise<S3>  {
-
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01',
             s3ForcePathStyle: forcePathStyle
