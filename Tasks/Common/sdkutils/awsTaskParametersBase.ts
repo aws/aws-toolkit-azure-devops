@@ -53,7 +53,14 @@ export abstract class AWSTaskParametersBase {
     protected readonly roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration';
 
     protected constructor() {
+        buildBase();
+    }
 
+    // This is a shim until the constructor can be removed and buildBase is called by every task parameter base
+    protected constructor(shim: string) {
+    }
+
+    protected buildBase() {
         this.logRequestData = tl.getBoolInput('logRequest', false);
         this.logResponseData = tl.getBoolInput('logResponse', false);
 

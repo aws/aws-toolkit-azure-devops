@@ -1,5 +1,5 @@
-import { TaskParameters } from '../../../Tasks/S3Download/DownloadTaskParameters';
 import { TaskOperations } from '../../../Tasks/S3Download/DownloadTaskOperations';
+import { TaskParameters } from '../../../Tasks/S3Download/DownloadTaskParameters';
 
 test('Creates a TaskOperation', () => {
     const taskParameters = new TaskParameters();
