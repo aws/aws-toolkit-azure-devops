@@ -1,2 +1,1 @@
-import { AWSTaskParametersBase } from './awsTaskParametersBase';
-export { AWSTaskParametersBase as AWSConnectionParameters };
+export { AWSTaskParametersBase as AWSConnectionParameters } from './awsTaskParametersBase';

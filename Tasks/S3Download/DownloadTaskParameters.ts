@@ -7,16 +7,16 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
+import { AWSConnectionParameters } from 'sdkutils/awsConnectionParameters';
 
 export class TaskParameters {
-    public awsTaskParametersBase: AWSTaskParametersBase;
     // options for Server-side encryption Key Management
     public static readonly noneOrAWSManagedKeyValue: string = 'noneOrAWSManaged';
     public static readonly customerManagedKeyValue: string = 'customerManaged';
 
     public static readonly aes256AlgorithmValue: string = 'AES256';
 
+    public awsConnectionParameters: AWSConnectionParameters;
     public bucketName: string;
     public sourceFolder: string;
     public targetFolder: string;
@@ -30,7 +30,7 @@ export class TaskParameters {
     public static build() : TaskParameters {
         const taskParameters: TaskParameters = new TaskParameters();
         try {
-            taskParameters.awsTaskParametersBase = new AWSTaskParametersBase();
+            taskParameters.awsConnectionParameters = new AWSConnectionParameters();
             taskParameters.bucketName = tl.getInput('bucketName', true);
             taskParameters.sourceFolder = tl.getPathInput('sourceFolder', false, false);
             taskParameters.targetFolder = tl.getPathInput('targetFolder', true, false);
