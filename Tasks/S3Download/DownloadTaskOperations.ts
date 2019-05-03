@@ -16,8 +16,8 @@ import { TaskParameters } from './DownloadTaskParameters';
 
 export class TaskOperations {
     public constructor(
-        public readonly taskParameters: TaskParameters,
-        public readonly s3Client: S3
+        public readonly s3Client: S3,
+        public readonly taskParameters: TaskParameters
     ) {
     }
 

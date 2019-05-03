@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "incremental": true,
         "target": "ES6",
         "module": "commonjs",
         "sourceMap": true,

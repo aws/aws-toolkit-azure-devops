@@ -3,5 +3,5 @@ import { TaskParameters } from '../../../Tasks/S3Download/DownloadTaskParameters
 
 test('Creates a TaskOperation', () => {
     const taskParameters = new TaskParameters();
-    expect(new TaskOperations(taskParameters, null)).not.toBeNull();
+    expect(new TaskOperations(null, taskParameters)).not.toBeNull();
 });

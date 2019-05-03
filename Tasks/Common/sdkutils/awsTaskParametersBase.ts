@@ -12,7 +12,7 @@ import STS = require('aws-sdk/clients/sts');
 import AWS = require('aws-sdk/global');
 import HttpsProxyAgent = require('https-proxy-agent');
 
-export abstract class AWSTaskParametersBase {
+export class AWSTaskParametersBase {
 
     // Task variable names that can be used to supply the AWS credentials
     // to a task (in addition to using a service endpoint, or environment
@@ -52,15 +52,7 @@ export abstract class AWSTaskParametersBase {
     // release definitions to the required duration (in seconds, min 900 max 3600).
     protected readonly roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration';
 
-    protected constructor() {
-        buildBase();
-    }
-
-    // This is a shim until the constructor can be removed and buildBase is called by every task parameter base
-    protected constructor(shim: string) {
-    }
-
-    protected buildBase() {
+    public constructor() {
         this.logRequestData = tl.getBoolInput('logRequest', false);
         this.logResponseData = tl.getBoolInput('logResponse', false);
 

@@ -9,8 +9,8 @@
 import tl = require('vsts-task-lib/task');
 import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
 
-export class TaskParameters extends AWSTaskParametersBase {
-
+export class TaskParameters {
+    public awsTaskParametersBase: AWSTaskParametersBase;
     // options for Server-side encryption Key Management
     public static readonly noneOrAWSManagedKeyValue: string = 'noneOrAWSManaged';
     public static readonly customerManagedKeyValue: string = 'customerManaged';
@@ -27,14 +27,10 @@ export class TaskParameters extends AWSTaskParametersBase {
     public keyManagement: string;
     public customerKey: Buffer;
 
-    constructor() {
-        super();
-    }
-
     public static build() : TaskParameters {
         const taskParameters: TaskParameters = new TaskParameters();
-        TaskParameters.buildBase();
         try {
+            taskParameters.awsTaskParametersBase = new AWSTaskParametersBase();
             taskParameters.bucketName = tl.getInput('bucketName', true);
             taskParameters.sourceFolder = tl.getPathInput('sourceFolder', false, false);
             taskParameters.targetFolder = tl.getPathInput('targetFolder', true, false);
