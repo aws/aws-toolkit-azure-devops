@@ -6,7 +6,7 @@ const AWS = require('aws-sdk');
 
 describe('S3 Download', () => {
     beforeAll(() => {
-        ;
+        SdkUtils.readResourcesFromRelativePath('../../../Tasks/S3Download/task.json');
     });
 
     test('Creates a TaskOperation', () => {
@@ -15,12 +15,11 @@ describe('S3 Download', () => {
     });
 
     test('Handles not being able to connect to a bucket', async () => {
-        SdkUtils.readResourcesFromRelativePath('../../../Tasks/S3Download/task.json');
         const s3 = new AWS.S3({region: 'us-east-1'});
         s3.headBucket = jest.fn((params, cb) => {throw new Error('doesn\'t exist dummy'); });
         const taskParameters = new TaskParameters();
         const taskOperation = new TaskOperations(s3, taskParameters);
-        //expect.assertions(1);
-        await taskOperation.execute().catch((e) => { console.log(e);/* expect(e).toContain('BucketNotExist');*/ });
+        expect.assertions(1);
+        await taskOperation.execute().catch((e) => { expect(e.message).toContain('not exist'); });
     });
 });
