@@ -21,7 +21,7 @@ async function run(): Promise<void> {
     SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
 
     const taskParameters = TaskParameters.build();
-    const s3 = await createDefaultS3Client(taskParameters.awsTaskParametersBase, taskParameters.forcePathStyleAddressing, tl.debug);
+    const s3 = await createDefaultS3Client(taskParameters.awsConnectionParameters, taskParameters.forcePathStyleAddressing, tl.debug);
     return new TaskOperations(s3, taskParameters).execute();
 }
 
