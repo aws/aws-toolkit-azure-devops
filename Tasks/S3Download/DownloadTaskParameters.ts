@@ -31,7 +31,7 @@ export class TaskParameters extends AWSTaskParametersBase {
         super();
     }
 
-    public static buildFromEnvironment() : TaskParameters {
+    public static build() : TaskParameters {
         const taskParameters: TaskParameters = new TaskParameters();
         try {
             taskParameters.bucketName = tl.getInput('bucketName', true);
