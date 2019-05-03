@@ -6,7 +6,7 @@
     "main": "_build/tasks",
     "scripts": {
         "build": "node make.js build",
-        "test": "jest",
+        "test": "jest --coverage",
         "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
         "lint": "tslint -c tslint.json 'tasks/**/*.ts'",
