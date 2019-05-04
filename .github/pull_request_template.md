@@ -26,10 +26,8 @@
 <!-- - [ ] I have read the **CONTRIBUTING** document -->
 - [ ] Local run of `npm run package` succeeds
 - [ ] My code follows the code style of this project
-<!-- 
 - [ ] I have added tests to cover my changes
 - [ ] All new and existing tests passed
--->
 - [ ] A short description of the change has been added to the **CHANGELOG** (CHANGELOG.md)
 
 ## License

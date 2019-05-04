@@ -6,7 +6,7 @@
     "main": "_build/tasks",
     "scripts": {
         "build": "node make.js build",
-        "test": "jest --coverage",
+        "test": "jest",
         "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
         "lint": "tslint -c tslint.json 'tasks/**/*.ts'",
@@ -68,6 +68,8 @@
         "vsts-task-lib": "2.7.0"
     },
     "jest": {
+        "coverageDirectory": "./coverage/",
+        "collectCoverage": true,
         "moduleFileExtensions": [
             "js",
             "ts"

@@ -2,7 +2,6 @@
 
 System | Status
 ---|---
-Build ([develop](https://github.com/aws/aws-vsts-tools/tree/develop) branch) | ![TravisCI Build Status - develop branch](https://travis-ci.org/aws/aws-vsts-tools.svg?branch=develop)
 Build ([master](https://github.com/aws/aws-vsts-tools/tree/master) branch) | ![TravisCI Build Status - master branch](https://travis-ci.org/aws/aws-vsts-tools.svg?branch=master)
 
 The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
