@@ -1,10 +1,7 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
 import tl = require('vsts-task-lib/task');
 import fs = require('fs');
@@ -26,15 +23,15 @@ export abstract class SdkUtils {
     private static readonly validateUserAgentEnvVariable: string = 'AWSVSTSTesting_ValidateUserAgent';
 
     public static readResources(): void {
-        const taskManifestFile = path.join(__dirname, 'task.json');
-        tl.setResourcePath(taskManifestFile);
-        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
+        const taskManifestFile = path.join(__dirname, 'task.json')
+        tl.setResourcePath(taskManifestFile)
+        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile)
     }
 
     public static readResourcesFromRelativePath(relativeResourcePath: string): void {
-        const taskManifestFile = path.join(__dirname, relativeResourcePath);
-        tl.setResourcePath(taskManifestFile);
-        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
+        const taskManifestFile = path.join(__dirname, relativeResourcePath)
+        tl.setResourcePath(taskManifestFile)
+        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile)
     }
 
     // Injects a custom user agent conveying extension version and task being run into the
@@ -78,7 +75,7 @@ export abstract class SdkUtils {
         awsService.prototype.customizeRequests((request) => {
 
             const logRequestData = taskParams.logRequestData;
-            const logResponseData = taskParams.logResponseData;
+            const logResponseData = taskParams.logResponseData
             const operation = request.operation;
 
             request.on('complete', (response) => {
@@ -130,7 +127,7 @@ export abstract class SdkUtils {
                     logger(`  Error inspecting request/response data, ${err}`);
                 }
             });
-        });
+        })
 
         // If not already set for the service, poke any obtained credentials and/or
         // region into the service options. If credentials remain undefined, the sdk
@@ -138,35 +135,35 @@ export abstract class SdkUtils {
         // instance metadata
         if (awsServiceOpts) {
             if (!awsServiceOpts.credentials) {
-                awsServiceOpts.credentials = await taskParams.getCredentials();
+                awsServiceOpts.credentials = await taskParams.getCredentials()
             }
             if (!awsServiceOpts.region) {
-                awsServiceOpts.region = await taskParams.getRegion();
+                awsServiceOpts.region = await taskParams.getRegion()
             }
 
-            return new awsService(awsServiceOpts);
+            return new awsService(awsServiceOpts)
         }
 
         return new awsService({
             credentials: await taskParams.getCredentials(),
             region: await taskParams.getRegion()
-        });
+        })
     }
 
     public static async roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {
         if (roleName.startsWith('arn:')) {
-            return roleName;
+            return roleName
         }
 
         try {
-            console.log(`Attempting to retrieve Amazon Resource Name (ARN) for role ${roleName}`);
+            console.log(`Attempting to retrieve Amazon Resource Name (ARN) for role ${roleName}`)
 
             const response = await iamClient.getRole({
                 RoleName: roleName
-            }).promise();
-            return response.Role.Arn;
+            }).promise()
+            return response.Role.Arn
         } catch (err) {
-            throw new Error(`Error while obtaining ARN: ${err}`);
+            throw new Error(`Error while obtaining ARN: ${err}`)
         }
     }
 
@@ -185,6 +182,6 @@ export abstract class SdkUtils {
                     resolve(url);
                 }
             });
-        });
+        })
     }
 }

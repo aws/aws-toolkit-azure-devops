@@ -59,12 +59,7 @@ rules:
   no-eval: true
   no-floating-promises: true
   no-for-in-array: true
-  no-implicit-dependencies:
-    options:
-      -
-        - vscode
-        - semver-regex
-        - del
+  no-implicit-dependencies: false
   no-inferred-empty-object-type: true
   no-invalid-template-strings: true
   no-invalid-this:
@@ -134,8 +129,8 @@ rules:
   encoding: true
   file-header:
     options:
-      - "Copyright \\d{4} Amazon.com, Inc. or its affiliates. All Rights Reserved.\\r?\\n \\* SPDX-License-Identifier: Apache-2.0"
-      - "Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.\nSPDX-License-Identifier: Apache-2.0"
+      - "Copyright \\d{4} Amazon.com, Inc. or its affiliates. All Rights Reserved.\\r?\\n \\* SPDX-License-Identifier: MIT"
+      - "Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.\nSPDX-License-Identifier: MIT"
   file-name-casing:
     options:
       - camel-case
