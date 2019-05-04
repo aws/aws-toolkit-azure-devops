@@ -9,7 +9,7 @@
         "test": "jest",
         "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
-        "lint": "tslint -c tslint.json 'tasks/**/*.ts'",
+        "lint": "tslint -c tslint.yaml 'Tasks/**/*.ts'",
         "publish": "node make.js publish",
         "update-version-info": "node make.js updateversioninfo",
         "update-region-info": "node make.js updateregioninfo"
@@ -52,6 +52,8 @@
         "ts-jest": "^24.0.2",
         "ts-loader": "^2.2.2",
         "tslint": "^5.16.0",
+        "tslint-eslint-rules": "^5.4.0",
+        "tslint-no-circular-imports": "^0.6.1",
         "typescript": "^3.4.5",
         "uglifyjs-webpack-plugin": "^2.1.2",
         "validator": "^10.11.0",
