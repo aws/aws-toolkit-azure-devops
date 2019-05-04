@@ -90,7 +90,7 @@ export class TaskOperations {
         return Promise.all(allDownloads)
     }
 
-    private downloadFile(s3Params: S3.GetObjectRequest, dest: string): Promise<void> {
+    private async downloadFile(s3Params: S3.GetObjectRequest, dest: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             const dir: string = path.dirname(dest)
@@ -109,7 +109,10 @@ export class TaskOperations {
 
     private async fetchAllObjectKeys(): Promise<string[]> {
         if (this.taskParameters.sourceFolder) {
-            console.log(tl.loc('ListingKeysFromPrefix', this.taskParameters.sourceFolder, this.taskParameters.bucketName))
+            console.log(tl.loc(
+                'ListingKeysFromPrefix',
+                this.taskParameters.sourceFolder,
+                this.taskParameters.bucketName))
         } else {
             console.log(tl.loc('ListingKeysFromRoot', this.taskParameters.bucketName))
         }
