@@ -122,7 +122,7 @@ export class TaskOperations {
         }
 
         const allKeys: string[] = []
-        let nextToken: string = null
+        let nextToken: string
         do {
             const params: S3.ListObjectsRequest = {
                 Bucket: this.taskParameters.bucketName,
@@ -141,7 +141,7 @@ export class TaskOperations {
                 })
             } catch (err) {
                 console.error(err)
-                nextToken = null
+                nextToken = undefined
             }
         } while (nextToken)
 
@@ -169,5 +169,4 @@ export class TaskOperations {
 
         return matchedKeys
     }
-
 }
