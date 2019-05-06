@@ -31,7 +31,7 @@ export class TaskOperations {
 
     private async testBucketExists(bucketName: string): Promise<boolean> {
         try {
-            await this.s3Client.headBucket({ Bucket: bucketName}).promise()
+            await this.s3Client.headBucket({ Bucket: bucketName }).promise()
 
             return true
         } catch (err) {
@@ -47,7 +47,11 @@ export class TaskOperations {
         } else {
             msgSource = '/'
         }
-        console.log(tl.loc('DownloadingFiles', msgSource, this.taskParameters.bucketName, this.taskParameters.targetFolder ))
+        console.log(tl.loc(
+            'DownloadingFiles',
+            msgSource,
+            this.taskParameters.bucketName,
+            this.taskParameters.targetFolder))
 
         if (!fs.existsSync(this.taskParameters.targetFolder)) {
             tl.mkdirP(this.taskParameters.targetFolder)

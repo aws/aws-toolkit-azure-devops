@@ -134,6 +134,7 @@ rules:
   file-name-casing:
     options:
       - camel-case
+      - pascal-case
   interface-name:
     options:
       - never-prefix
