@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-import fs = require('fs')
-import mm = require('minimatch')
-import path = require('path')
-import tl = require('vsts-task-lib/task')
+import * as fs from 'fs'
+import * as mm from 'minimatch'
+import * as path from 'path'
+import * as tl from 'vsts-task-lib/task'
+import { TaskParameters } from './DownloadTaskParameters'
 
 import S3 = require('aws-sdk/clients/s3')
-import { TaskParameters } from './DownloadTaskParameters'
 
 export class TaskOperations {
     public constructor(
