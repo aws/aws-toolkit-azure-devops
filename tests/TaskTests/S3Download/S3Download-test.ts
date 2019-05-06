@@ -2,6 +2,7 @@
  * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
+
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Download/DownloadTaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Download/DownloadTaskParameters'

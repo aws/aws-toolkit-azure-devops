@@ -43,7 +43,6 @@
         "jest": "^24.7.1",
         "json-query": "^2.2.2",
         "minimist": "^1.2.0",
-        "mocha": "^6.1.4",
         "modclean": "^2.1.0",
         "rimraf": "^2.5.4",
         "semver": "^5.4.1",
