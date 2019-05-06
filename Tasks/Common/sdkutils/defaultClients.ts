@@ -4,11 +4,11 @@
  */
 
 import { S3 } from 'aws-sdk/clients/all'
-import { AWSTaskParametersBase } from './awsTaskParametersBase'
+import { AWSConnectionParameters  } from './awsConnectionParameters'
 import { SdkUtils } from './sdkutils'
 
 export async function createDefaultS3Client(
-    taskParams: AWSTaskParametersBase,
+    connectionParams: AWSConnectionParameters,
     forcePathStyle: boolean,
     logger: (msg: string) => void): Promise<S3>  {
     const s3Opts: S3.ClientConfiguration = {
@@ -16,5 +16,5 @@ export async function createDefaultS3Client(
         s3ForcePathStyle: forcePathStyle
     }
 
-    return await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, taskParams, logger)
+    return await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, connectionParams, logger)
 }
