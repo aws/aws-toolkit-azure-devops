@@ -1,0 +1,81 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "align": [false],
+        "curly": true,
+        "eofline": true,
+        "indent": [
+            true,
+            "spaces",
+            4
+        ],
+        "max-line-length": [
+            false
+        ],
+        "member-ordering": [false],
+        "no-angle-bracket-type-assertion": false,
+        "no-console": [
+            true,
+            "debug",
+            "info",
+            "time",
+            "timeEnd",
+            "trace"
+        ],
+        "no-empty": true,
+        "no-shadowed-variable": false,
+        "object-literal-sort-keys": false,
+        "object-literal-key-quotes": [
+            false,
+            "as-needed"
+        ],
+        "one-line": [
+            true,
+            "check-open-brace",
+            "check-catch",
+            "check-else",
+            "check-whitespace"
+        ],
+        "one-variable-per-declaration": [true],
+        "only-arrow-functions": [false],
+        "ordered-imports": [false],
+        "prefer-const": true,
+        "prefer-for-of": false,
+        "prefer-type-cast": true,
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "trailing-comma": [
+            true,
+            {
+                "singleline": "never",
+                "multiline": "never"
+            }
+        ],
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "typedef": [
+            true,
+            "parameter",
+            "property-declaration",
+            "member-variable-declaration"
+        ],
+        "typedef-whitespace": [false],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-separator",
+            "check-type"
+        ]
+    },
+    "rulesDirectory": []
+}
