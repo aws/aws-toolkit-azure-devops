@@ -24,12 +24,10 @@
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - [ ] I have read the **README** document
 <!-- - [ ] I have read the **CONTRIBUTING** document -->
-- [ ] Local run of `gulp package` succeeds
+- [ ] Local run of `npm run package` succeeds
 - [ ] My code follows the code style of this project
-<!-- 
 - [ ] I have added tests to cover my changes
 - [ ] All new and existing tests passed
--->
 - [ ] A short description of the change has been added to the **CHANGELOG** (CHANGELOG.md)
 
 ## License
