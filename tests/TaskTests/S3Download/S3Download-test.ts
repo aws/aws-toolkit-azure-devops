@@ -25,10 +25,14 @@ describe('S3 Download', () => {
     }
     const getObjectWithContents = {
         createReadStream: function() {
-            return new ReadableStream().push('data').push(null)
+            const dataStream = new ReadableStream()
+            dataStream.push('data')
+            dataStream.push(null)
+
+            return dataStream
         }
     }
-    const targetFolder: string = './folder'
+    const targetFolder: string = 'folder'
 
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -47,18 +51,6 @@ describe('S3 Download', () => {
         const taskOperation = new TaskOperations(s3, taskParameters)
         expect.assertions(1)
         await taskOperation.execute().catch((e) => { expect(e.message).toContain('not exist') })
-    })
-
-    test('Makes a folder if it does not exist', async () => {
-        try {fs.rmdirSync(targetFolder) } catch (e) {}
-        const s3 = new AWS.S3({ region: 'us-east-1' })
-        const taskParameters = new TaskParameters()
-        taskParameters.targetFolder = targetFolder
-        const taskOperation = new TaskOperations(s3, taskParameters)
-        await taskOperation.execute().catch((e) => { /* ignored as this is not required for the test */ })
-        fs.access(targetFolder, fs.constants.F_OK, (err) => {
-            throw new Error('Failed to create file!\n' + err.message)
-        })
     })
 
     test('Deals with null list objects succeeds', async () => {
@@ -80,12 +72,19 @@ describe('S3 Download', () => {
         const s3 = new AWS.S3({ region: 'us-east-1' })
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjects = jest.fn((params, cb) => listObjectsResponseWithContents)
-        s3.GetObject = jest.fn((params, cb) => getObjectWithContents)
+        s3.getObject = jest.fn((params, cb) => getObjectWithContents)
         const taskParameters = new TaskParameters()
         taskParameters.targetFolder = targetFolder + '2'
         taskParameters.bucketName = 'bucket'
         taskParameters.globExpressions = ['*']
         const taskOperation = new TaskOperations(s3, taskParameters)
-        await taskOperation.execute().catch((e) => { console.log(e.message)})
+        await taskOperation.execute()
+    })
+
+    afterAll(() => {
+        // cleanup created folders
+        try {fs.rmdirSync(targetFolder) } catch (e) {}
+        try {fs.unlinkSync(targetFolder + '2/test') } catch (e) {}
+        try {fs.rmdirSync(targetFolder + '2') } catch (e) {}
     })
 })
