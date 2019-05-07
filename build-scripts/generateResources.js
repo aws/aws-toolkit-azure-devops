@@ -198,4 +198,4 @@ findMatchingFiles(inTasks).forEach((path) =>
         generateTaskResources(path)
     }
 )
-console.time(timeMessage)
+console.timeEnd(timeMessage)
