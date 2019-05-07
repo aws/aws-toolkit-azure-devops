@@ -1,9 +1,19 @@
 {
     "compilerOptions": {
+		"baseUrl": ".",
         "target": "ES6",
         "module": "commonjs",
         "sourceMap": true,
-        "alwaysStrict": true
+//        "strict": true,
+        "paths": {
+			"aws-sdk*": [ "node_modules/aws-sdk/*" ],
+			"sdkutils*": [ "Tasks/Common/sdkutils/*" ],
+			"beanstalkutils*": [ "Tasks/Common/beanstalkutils*" ],
+			"cloudformationutils*": [ "Tasks/Common/cloudformationutils*" ]
+        },
+		"rootDirs" : [
+			"Tasks"	
+		]
     },
     "exclude": [
         "node_modules"
