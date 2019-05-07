@@ -7,6 +7,7 @@ const fs = require('fs-extra')
 const path = require('path')
 var validate = require('validator')
 
+const timeMessage = 'Generated resources'
 const taskJson = 'task.json'
 const TaskLocJson = 'task.loc.json'
 const tasksDirectory = 'Tasks'
@@ -191,9 +192,10 @@ var createResjson = function (task, taskPath) {
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2));
 };
 
-
+console.time(timeMessage)
 findMatchingFiles(inTasks).forEach((path) =>
     {
         generateTaskResources(path)
     }
 )
+console.time(timeMessage)
