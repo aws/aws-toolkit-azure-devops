@@ -17,6 +17,12 @@ const outBuildTasks = path.join(repoRoot, '_build', tasksDirectory)
 const outPackage = path.join(repoRoot, '_package')
 const outPackageTasks = path.join(outPackage, tasksDirectory)
 
+var publisher = ''
+
+const unprocessFolders = [
+    'Common'
+]
+
 function findMatchingFiles(directory) {
     return fs.readdirSync(directory)
 }
@@ -40,6 +46,11 @@ function package() {
     findMatchingFiles(inTasks).forEach(function(taskName) {
         console.log('> processing task ' + taskName);
 
+        if(unprocessFolders.every((folderName) => folderName === taskName)) {
+            console.log('skpping task ' + taskName)
+            return
+        }
+
         var taskBuildFolder = path.join(outBuildTasks, taskName);
         var taskPackageFolder = path.join(outPackageTasks, taskName);
         fs.mkdirpSync(taskPackageFolder);
@@ -58,12 +69,10 @@ function package() {
             var webpackCmd = 'webpack --config '
                                 + webpackConfig
                                 + ' '
-                                + path.join(taskBuildFolder, taskName + '.js ')
-                                + '-o '
+                                + taskName + '.js '
                                 + path.join(taskPackageFolder, taskName + '.js');
-            console.log("jklsdfjkldfsjkldfsjkldfsldfjksdfjklslkd\n\n\n\nn\n\n\n\nn\n\n\n\n\nnfjs "+webpackCmd)
             try {
-                output = ncp.execSync(webpackCmd);
+                output = ncp.execSync(webpackCmd, {stdio: 'pipe'});
                 console.log(output)
             }
             catch (err) {
@@ -72,7 +81,7 @@ function package() {
             }
 
             shell.cd(taskPackageFolder);
-            var npmCmd = 'npm install vsts-task-lib' + (options.release ? ' --only=production' : '');
+            var npmCmd = 'npm install vsts-task-lib --only=production';
             try {
                 output = ncp.execSync(npmCmd);
                 console.log(output)
@@ -91,9 +100,10 @@ function package() {
     });
 
     console.log('Creating deployment vsix');
-    var tfxcmd = 'tfx extension create --root ' + packageRoot + ' --output-path ' + packageRoot + ' --manifests ' + path.join(packageRoot, manifestFile);
-    if (options.publisher)
+    var tfxcmd = 'tfx extension create --root ' + outPackage + ' --output-path ' + outPackage + ' --manifests ' + path.join(repoRoot, manifestFile);
+    if (publisher) {
         tfxcmd += ' --publisher ' + options.publisher;
+    }
 
     ncp.execSync(tfxcmd);
 
@@ -101,5 +111,11 @@ function package() {
 }
 
 console.time(timeMessage)
+// print process.argv
+process.argv.forEach(function (val, index, array) {
+    if(index === '--publisher') {
+        publisher = val
+    }
+});
 package()
 console.timeEnd(timeMessage)
