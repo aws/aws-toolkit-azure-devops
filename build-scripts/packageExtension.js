@@ -5,15 +5,15 @@
 
 const fs = require('fs-extra')
 const path = require('path')
-var validate = require('validator')
+var ncp = require('child_process')
+var shell = require('shelljs');
 
 const timeMessage = 'Packaged extension'
-const taskJson = 'task.json'
-const TaskLocJson = 'task.loc.json'
+var manifestFile = 'vss-extension.json';
 const tasksDirectory = 'Tasks'
 const repoRoot = path.dirname(__dirname)
 const inTasks = path.join(repoRoot, tasksDirectory)
-const outTasks = path.join(repoRoot, '_build', tasksDirectory)
+const outBuildTasks = path.join(repoRoot, '_build', tasksDirectory)
 const outPackage = path.join(repoRoot, '_package')
 const outPackageTasks = path.join(outPackage, tasksDirectory)
 
@@ -28,64 +28,76 @@ function package() {
     // stage license, readme and the extension manifest file
     var packageRootFiles =  [ manifestFile, 'LICENSE', 'README.md' ];
     packageRootFiles.forEach(function(item) {
-        cp(path.join(sourceRoot, item), outPackage);
+        fs.copySync(path.join(repoRoot, item), path.join(outPackage, item), {overwrite: true});
     });
 
     // stage manifest images
-    cp('-R', path.join(sourceRoot, 'images'), outPackage);
+    fs.copySync(path.join(repoRoot, 'images'), path.join(outPackage, 'images'), {overwrite: true});
 
     fs.mkdirpSync(outPackageTasks);
-
-    copyOverlayContent(options.overlayfolder, prebuild, buildRoot);
 
     // clean, dedupe and pack each task as needed
     findMatchingFiles(inTasks).forEach(function(taskName) {
         console.log('> processing task ' + taskName);
 
-        var taskBuildFolder = path.join(buildTasksRoot, taskName);
-        var taskPackageFolder = path.join(packageTasksRoot, taskName);
-        mkdir('-p', taskPackageFolder);
+        var taskBuildFolder = path.join(outBuildTasks, taskName);
+        var taskPackageFolder = path.join(outPackageTasks, taskName);
+        fs.mkdirpSync(taskPackageFolder);
 
         var taskDef = require(path.join(taskBuildFolder, 'task.json'));
         if (taskDef.execution.hasOwnProperty('Node')) {
-            cd(taskBuildFolder);
-
-            cp(path.join(taskBuildFolder, '*.json'), taskPackageFolder);
-            cp(path.join(taskBuildFolder, '*.png'), taskPackageFolder);
-            cp('-R', path.join(taskBuildFolder, 'Strings'), taskPackageFolder);
+            shell.cd(taskBuildFolder);
+            fs.copySync(path.join(taskBuildFolder, 'task.json'), path.join(taskPackageFolder, 'task.json'), {overwrite: true});
+            fs.copySync(path.join(taskBuildFolder, 'task.loc.json'), path.join(taskPackageFolder, 'task.loc.json'), {overwrite: true});
+            fs.copySync(path.join(taskBuildFolder, 'package.json'), path.join(taskPackageFolder, 'package.json'), {overwrite: true});
+            fs.copySync(path.join(taskBuildFolder, 'icon.png'), path.join(taskPackageFolder, 'icon.png'), {overwrite: true});
+            fs.copySync(path.join(taskBuildFolder, 'Strings'), path.join(taskPackageFolder, 'Strings'), {overwrite: true});
 
             console.log('> packing node-based task');
-            var webpackConfig = path.join(sourceRoot, 'webpack.config.js');
+            var webpackConfig = path.join(repoRoot, 'webpack.config.js');
             var webpackCmd = 'webpack --config '
                                 + webpackConfig
                                 + ' '
-                                + taskName + '.js '
+                                + path.join(taskBuildFolder, taskName + '.js ')
+                                + '-o '
                                 + path.join(taskPackageFolder, taskName + '.js');
-            run(webpackCmd);
+            console.log("jklsdfjkldfsjkldfsjkldfsldfjksdfjklslkd\n\n\n\nn\n\n\n\nn\n\n\n\n\nnfjs "+webpackCmd)
+            try {
+                output = ncp.execSync(webpackCmd);
+                console.log(output)
+            }
+            catch (err) {
+                console.error(err.output ? err.output.toString() : err.message);
+                process.exit(1);
+            }
 
-            // safely re-populate the unpacked vsts-task-lib
-            cd(taskPackageFolder);
-            var cmd = 'npm install vsts-task-lib' + (options.release ? ' --only=production' : '');
-            run(cmd);
+            shell.cd(taskPackageFolder);
+            var npmCmd = 'npm install vsts-task-lib' + (options.release ? ' --only=production' : '');
+            try {
+                output = ncp.execSync(npmCmd);
+                console.log(output)
+            }
+            catch (err) {
+                console.error(err.output ? err.output.toString() : err.message);
+                process.exit(1);
+            };
 
-            cd(sourceRoot); // go back to consistent start location
+            shell.cd(repoRoot);
         } else {
-            console.log('> copying non-node task');
+            console.log('Copying non-node task ' + taskName);
 
-            matchCopy('**', taskBuildFolder, taskPackageFolder);
+            fs.copySync(taskBuildFolder, taskPackageFolder);
         }
     });
 
-    copyOverlayContent(options.overlayfolder, postbuild, packageRoot);
-
-    console.log('> creating deployment vsix');
+    console.log('Creating deployment vsix');
     var tfxcmd = 'tfx extension create --root ' + packageRoot + ' --output-path ' + packageRoot + ' --manifests ' + path.join(packageRoot, manifestFile);
     if (options.publisher)
         tfxcmd += ' --publisher ' + options.publisher;
 
-    run(tfxcmd);
+    ncp.execSync(tfxcmd);
 
-    banner('Packaging successful', true);
+    console.log('Packaging successful');
 }
 
 console.time(timeMessage)
