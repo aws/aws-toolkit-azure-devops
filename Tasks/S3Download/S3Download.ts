@@ -9,11 +9,11 @@ import { createDefaultS3Client } from 'sdkutils/defaultClients'
 import { SdkUtils } from 'sdkutils/sdkutils'
 
 import { TaskOperations } from './DownloadTaskOperations'
-import { TaskParameters } from './DownloadTaskParameters'
+import { buildTaskParameters, TaskParameters } from './DownloadTaskParameters'
 
 async function run(): Promise<void> {
     SdkUtils.readResources()
-    const taskParameters = TaskParameters.build()
+    const taskParameters = buildTaskParameters()
     const s3 = await createDefaultS3Client(
         taskParameters.awsConnectionParameters,
         taskParameters.forcePathStyleAddressing,

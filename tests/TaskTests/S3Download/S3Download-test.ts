@@ -12,6 +12,19 @@ import { TaskParameters } from '../../../Tasks/S3Download/DownloadTaskParameters
 describe('S3 Download', () => {
     const S3 = require('aws-sdk/clients/s3')
 
+    const baseTaskParameters: TaskParameters = {
+        awsConnectionParameters: undefined,
+        bucketName: '',
+        sourceFolder: '',
+        targetFolder: '',
+        globExpressions: undefined,
+        overwrite: false,
+        forcePathStyleAddressing: false,
+        flattenFolders: false,
+        keyManagement: '',
+        customerKey: undefined
+    }
+
     const headBucketResponse = {
         promise: function() { }
     }
@@ -29,6 +42,7 @@ describe('S3 Download', () => {
         createReadStream: function() {
             const dataStream = new ReadableStream()
             dataStream.push('data')
+            // tslint:disable-next-line:no-null-keyword
             dataStream.push(null)
 
             return dataStream
@@ -42,14 +56,14 @@ describe('S3 Download', () => {
     })
 
     test('Creates a TaskOperation', () => {
-        const taskParameters = new TaskParameters()
+        const taskParameters = baseTaskParameters
         expect(new TaskOperations(undefined, taskParameters)).not.toBeNull()
     })
 
     test('Handles not being able to connect to a bucket', async () => {
         const s3 = new S3({ region: 'us-east-1' })
         s3.headBucket = jest.fn((params, cb) => { throw new Error('doesn\'t exist dummy') })
-        const taskParameters = new TaskParameters()
+        const taskParameters = baseTaskParameters
         const taskOperation = new TaskOperations(s3, taskParameters)
         expect.assertions(1)
         await taskOperation.execute().catch((e) => { expect(e.message).toContain('not exist') })
@@ -59,7 +73,7 @@ describe('S3 Download', () => {
         const s3 = new S3({ region: 'us-east-1' })
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjects = jest.fn((params, cb) => listObjectsResponse)
-        const taskParameters = new TaskParameters()
+        const taskParameters = baseTaskParameters
         taskParameters.targetFolder = targetFolder
         taskParameters.bucketName = 'what'
         // required parameter
@@ -75,7 +89,7 @@ describe('S3 Download', () => {
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjects = jest.fn((params, cb) => listObjectsResponseWithContents)
         s3.getObject = jest.fn((params, cb) => getObjectWithContents)
-        const taskParameters = new TaskParameters()
+        const taskParameters = baseTaskParameters
         taskParameters.targetFolder = targetFolder + '2'
         taskParameters.bucketName = 'bucket'
         taskParameters.globExpressions = ['*']

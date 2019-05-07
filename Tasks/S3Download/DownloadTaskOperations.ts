@@ -7,7 +7,7 @@ import * as fs from 'fs'
 import * as mm from 'minimatch'
 import * as path from 'path'
 import * as tl from 'vsts-task-lib/task'
-import { TaskParameters } from './DownloadTaskParameters'
+import { TaskParameters, aes256AlgorithmValue, customerManagedKeyValue } from './DownloadTaskParameters'
 
 import S3 = require('aws-sdk/clients/s3')
 
@@ -83,8 +83,8 @@ export class TaskOperations {
                     Bucket: this.taskParameters.bucketName,
                     Key: matchedKey
                 }
-                if (this.taskParameters.keyManagement === TaskParameters.customerManagedKeyValue) {
-                    params.SSECustomerAlgorithm = TaskParameters.aes256AlgorithmValue
+                if (this.taskParameters.keyManagement === customerManagedKeyValue) {
+                    params.SSECustomerAlgorithm = aes256AlgorithmValue
                     params.SSECustomerKey = this.taskParameters.customerKey
                 }
                 allDownloads.push(this.downloadFile(params, dest))
