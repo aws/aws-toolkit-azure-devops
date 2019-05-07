@@ -10,6 +10,7 @@
         "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
         "lint": "tslint --project .",
+        "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
         "update-version-info": "node make.js updateversioninfo",
         "update-region-info": "node make.js updateregioninfo"

@@ -3,19 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-/*
-    This script is called from npm run compile. It copies the
-    files and directories listed in `relativePaths` to `out/`.
-*/
-
 const fs = require('fs-extra')
 const path = require('path')
 
 const timeMessage = 'Copied resources'
-const tasksDirecotry = 'Tasks'
+const tasksDirectory = 'Tasks'
 const repoRoot = path.dirname(__dirname)
-const inTasks = path.join(repoRoot, tasksDirecotry)
-const outTasks = path.join(repoRoot, '_build', tasksDirecotry)
+const inTasks = path.join(repoRoot, tasksDirectory)
+const outTasks = path.join(repoRoot, '_build', tasksDirectory)
 
 const bannedFiles = [
     'tsconfig.json',
