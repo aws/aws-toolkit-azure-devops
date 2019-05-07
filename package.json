@@ -1,56 +1,63 @@
 {
     "name": "aws-vsts-tools",
     "version": "1.0.22",
-    "description": "AWS Tools for Visual Studio Team Services",
+    "description": "aws tools for visual studio team services",
     "private": true,
-    "main": "gulpfile.js",
+    "main": "_build/tasks",
     "scripts": {
         "build": "node make.js build",
-        "test": "node make.js test",
-        "package": "node make.js package",
-        "clean": "node make.js clean"
+        "test": "jest",
+        "package": "node make.js build && node make.js package",
+        "clean": "node make.js clean",
+        "lint": "tslint -c tslint.yaml 'Tasks/**/*.ts'",
+        "publish": "node make.js publish",
+        "update-version-info": "node make.js updateversioninfo",
+        "update-region-info": "node make.js updateregioninfo"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/aws/aws-vsts-tools"
     },
     "keywords": [
-        "AWS",
-        "S3",
-        "CloudFormation",
-        "CLI",
-        "Lambda",
-        "CodeDeploy",
-        "EC2"
+        "aws",
+        "s3",
+        "cloudformation",
+        "cli",
+        "lambda",
+        "codedeploy",
+        "ec2"
     ],
-    "author": "Amazon Web Services LLC",
-    "license": "Apache",
+    "author": "amazon web services llc",
+    "license": "apache",
     "bugs": "https://github.com/aws/aws-vsts-tools/issues",
     "homepage": "https://github.com/aws/aws-vsts-tools",
     "devDependencies": {
+        "@types/jest": "^24.0.12",
         "@types/node": "^8.0.34",
         "adm-zip": "0.4.11",
-        "babel-loader": "^7.1.5",
+        "babel-loader": "^8.0.5",
         "babel-preset-env": "^1.7.0",
-        "clean-webpack-plugin": "^0.1.16",
+        "clean-webpack-plugin": "^2.0.1",
         "file-loader": "^0.11.2",
         "file-normalize": "^1.1.2",
-        "gulp": "^4.0.1",
+        "jest": "^24.7.1",
         "json-query": "^2.2.2",
         "minimist": "^1.2.0",
-        "mocha": "^6.1.4",
         "modclean": "^2.1.0",
         "rimraf": "^2.5.4",
         "semver": "^5.4.1",
         "sync-request": "^4.1.0",
         "tfx-cli": "^0.7.5",
+        "ts-jest": "^24.0.2",
         "ts-loader": "^2.2.2",
-        "tslint": "^5.5.0",
-        "typescript": "^2.4.1",
-        "uglifyjs-webpack-plugin": "^1.2.7",
-        "validator": "^8.0.0",
-        "webpack": "^3.1.0",
-        "webpack-node-externals": "^1.6.0"
+        "tslint": "^5.16.0",
+        "tslint-eslint-rules": "^5.4.0",
+        "tslint-no-circular-imports": "^0.6.1",
+        "typescript": "^3.4.5",
+        "uglifyjs-webpack-plugin": "^2.1.2",
+        "validator": "^10.11.0",
+        "webpack": "^4.30.0",
+        "webpack-node-externals": "^1.7.2"
     },
     "dependencies": {
         "aws-sdk": "2.279.1",
@@ -59,6 +66,18 @@
         "js-yaml": "^3.13.1",
         "npm": "^6.2.0",
         "shelljs": "0.7.8",
-        "vsts-task-lib": "2.0.6"
+        "vsts-task-lib": "2.7.0"
+    },
+    "jest": {
+        "coverageDirectory": "./coverage/",
+        "collectCoverage": true,
+        "moduleFileExtensions": [
+            "js",
+            "ts"
+        ],
+        "transform": {
+            "\\.ts$": "ts-jest"
+        },
+        "testRegex": "/tests/.*\\.ts$"
     }
 }

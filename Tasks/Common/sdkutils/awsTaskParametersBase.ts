@@ -1,10 +1,7 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
 import tl = require('vsts-task-lib/task');
 import { parse, format, Url } from 'url';
@@ -12,7 +9,7 @@ import STS = require('aws-sdk/clients/sts');
 import AWS = require('aws-sdk/global');
 import HttpsProxyAgent = require('https-proxy-agent');
 
-export abstract class AWSTaskParametersBase {
+export class AWSTaskParametersBase {
 
     // Task variable names that can be used to supply the AWS credentials
     // to a task (in addition to using a service endpoint, or environment
@@ -52,8 +49,7 @@ export abstract class AWSTaskParametersBase {
     // release definitions to the required duration (in seconds, min 900 max 3600).
     protected readonly roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration';
 
-    protected constructor() {
-
+    public constructor() {
         this.logRequestData = tl.getBoolInput('logRequest', false);
         this.logResponseData = tl.getBoolInput('logResponse', false);
 

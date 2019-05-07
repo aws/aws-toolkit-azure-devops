@@ -110,12 +110,6 @@ else {
     taskList = JSON.parse(fs.readFileSync(path.join(sourceRoot, 'make-options.json'))).tasks;
 }
 
-// set the runner options. should either be empty or a comma delimited list of test runners.
-// for example: ts OR ts,ps
-//
-// note, currently the ts runner igores this setting and will always run.
-process.env['TASK_TEST_RUNNER'] = options.runner || '';
-
 target.clean = function () {
     if (pathExists(buildRoot)) {
        rm('-Rf', buildRoot);
@@ -211,6 +205,66 @@ target.updateregioninfo = function() {
     }
 }
 
+buildIndvidualTask = function(mod, taskPath) {
+    var modPath = path.join(taskPath, mod['module']);
+    var modName = path.basename(modPath);
+    var modOutDir = path.join(commonBuildTasksRoot, modName);
+
+    if (!test('-d', modOutDir)) {
+        banner('Building module ' + modPath, true);
+
+        mkdir('-p', modOutDir);
+
+        // create loc files
+        var modJsonPath = path.join(modPath, 'module.json');
+        if (test('-f', modJsonPath)) {
+            createResjson(require(modJsonPath), modPath);
+        }
+
+        // npm install and compile
+        if ((mod.type === 'node' && mod.compile == true) || test('-f', path.join(modPath, 'tsconfig.json'))) {
+            buildNodeTask(modPath, modOutDir);
+        }
+
+        // copy default resources and any additional resources defined in the module's make.json
+        console.log();
+        console.log('> copying module resources');
+        var modMakePath = path.join(modPath, 'make.json');
+        var modMake = test('-f', modMakePath) ? require(modMakePath) : {};
+        copyTaskResources(modMake, modPath, modOutDir);
+
+        // get externals
+        if (modMake.hasOwnProperty('externals')) {
+            console.log('Getting module externals');
+            getExternals(modMake.externals, modOutDir);
+        }
+    }
+
+    // npm install the common module to the task dir
+    if (mod.type === 'node' && mod.compile == true) {
+        mkdir('-p', path.join(taskPath, 'node_modules'));
+        rm('-Rf', path.join(taskPath, 'node_modules', modName));
+        var originalDir = pwd();
+        cd(taskPath);
+        run('npm install ' + modOutDir);
+        cd(originalDir);
+    }
+    // copy module resources to the task output dir
+    else if (mod.type === 'ps') {
+        console.log();
+        console.log('> copying module resources to task');
+        var dest;
+        if (mod.hasOwnProperty('dest')) {
+            dest = path.join(outDir, mod.dest, modName);
+        }
+        else {
+            dest = path.join(outDir, 'ps_modules', modName);
+        }
+
+        matchCopy('!Tests', modOutDir, dest, { noRecurse: true, matchBase: true });
+    }
+}
+
 // Builds the extension into a _build folder. If the --release switch is specified
 // the build is generated for production release (no map files, npm modules set to
 // production only)
@@ -271,63 +325,7 @@ target.build = function() {
             var common = taskMake['common'];
 
             common.forEach(function(mod) {
-                var modPath = path.join(taskPath, mod['module']);
-                var modName = path.basename(modPath);
-                var modOutDir = path.join(commonBuildTasksRoot, modName);
-
-                if (!test('-d', modOutDir)) {
-                    banner('Building module ' + modPath, true);
-
-                    mkdir('-p', modOutDir);
-
-                    // create loc files
-                    var modJsonPath = path.join(modPath, 'module.json');
-                    if (test('-f', modJsonPath)) {
-                        createResjson(require(modJsonPath), modPath);
-                    }
-
-                    // npm install and compile
-                    if ((mod.type === 'node' && mod.compile == true) || test('-f', path.join(modPath, 'tsconfig.json'))) {
-                        buildNodeTask(modPath, modOutDir);
-                    }
-
-                    // copy default resources and any additional resources defined in the module's make.json
-                    console.log();
-                    console.log('> copying module resources');
-                    var modMakePath = path.join(modPath, 'make.json');
-                    var modMake = test('-f', modMakePath) ? require(modMakePath) : {};
-                    copyTaskResources(modMake, modPath, modOutDir);
-
-                    // get externals
-                    if (modMake.hasOwnProperty('externals')) {
-                        console.log('Getting module externals');
-                        getExternals(modMake.externals, modOutDir);
-                    }
-                }
-
-                // npm install the common module to the task dir
-                if (mod.type === 'node' && mod.compile == true) {
-                    mkdir('-p', path.join(taskPath, 'node_modules'));
-                    rm('-Rf', path.join(taskPath, 'node_modules', modName));
-                    var originalDir = pwd();
-                    cd(taskPath);
-                    run('npm install ' + modOutDir);
-                    cd(originalDir);
-                }
-                // copy module resources to the task output dir
-                else if (mod.type === 'ps') {
-                    console.log();
-                    console.log('> copying module resources to task');
-                    var dest;
-                    if (mod.hasOwnProperty('dest')) {
-                        dest = path.join(outDir, mod.dest, modName);
-                    }
-                    else {
-                        dest = path.join(outDir, 'ps_modules', modName);
-                    }
-
-                    matchCopy('!Tests', modOutDir, dest, { noRecurse: true, matchBase: true });
-                }
+                buildIndvidualTask(mod, taskPath)
             });
         }
 
@@ -347,52 +345,6 @@ target.build = function() {
     copyOverlayContent(options.overlayfolder, postbuild, buildRoot);
 
     banner('Build successful', true);
-}
-
-// NOTE: testing via Mocha or some other suitable framework will be added
-// in a future release. This target is retained as reference in preparation
-// for that work.
-//
-// Runs tests for the scope of tasks being built if a root-level Tests folder
-// exists.
-// npm test
-// node make.js test
-// node make.js test --task taskName --suite L0
-target.test = function() {
-    var testsPath = path.join(sourceRoot, 'Tests');
-    if (!pathExists(testsPath))
-    {
-        console.log('> !! no tests found at project root, skipping "test" target');
-        return;
-    }
-
-    ensureTool('tsc', '--version', 'Version 2.3.4');
-    ensureTool('mocha', '--version', '2.3.3');
-
-    // build the general tests and ps test infra
-    rm('-Rf', buildTestsRoot);
-    mkdir('-p', path.join(buildTestsRoot));
-    cd(testsPath);
-    run(`tsc --rootDir ${path.join(sourceRoot, 'Tests')} --outDir ${buildTestsRoot}`);
-    console.log();
-    console.log('> copying ps test lib resources');
-    mkdir('-p', path.join(buildTestsRoot, 'lib'));
-    matchCopy(path.join('**', '@(*.ps1|*.psm1)'), path.join(sourceRoot, 'Tests', 'lib'), path.join(buildTestsRoot, 'lib'));
-
-    // find the tests
-    var suiteType = options.suite || 'L0';
-    var taskType = options.task || '*';
-    var pattern1 = buildTasksRoot + '/' + taskType + '/Tests/' + suiteType + '.js';
-    var pattern2 = buildTasksRoot + '/Common/' + taskType + '/Tests/' + suiteType + '.js';
-    var pattern3 = buildTestsRoot + '/' + suiteType + '.js';
-    var testsSpec = matchFind(pattern1, buildRoot)
-        .concat(matchFind(pattern2, buildRoot))
-        .concat(matchFind(pattern3, buildTestsRoot, { noRecurse: true }));
-    if (!testsSpec.length && !process.env.TF_BUILD) {
-        fail(`Unable to find tests using the following patterns: ${JSON.stringify([pattern1, pattern2, pattern3])}`);
-    }
-
-    run('mocha ' + testsSpec.join(' '), /*inheritStreams:*/true);
 }
 
 // Re-packages the build into a _package folder, then runs the tfx

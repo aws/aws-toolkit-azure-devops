@@ -1,27 +1,25 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task');
-import path = require('path');
+import tl = require('vsts-task-lib/task')
 
-import { SdkUtils } from 'sdkutils/sdkutils';
+import { createDefaultS3Client } from 'sdkutils/defaultClients'
+import { SdkUtils } from 'sdkutils/sdkutils'
 
-import { TaskParameters } from './helpers/DownloadTaskParameters';
-import { TaskOperations } from './helpers/DownloadTaskOperations';
+import { TaskOperations } from './DownloadTaskOperations'
+import { buildTaskParameters, TaskParameters } from './DownloadTaskParameters'
 
-function run(): Promise<void> {
+async function run(): Promise<void> {
+    SdkUtils.readResources()
+    const taskParameters = buildTaskParameters()
+    const s3 = await createDefaultS3Client(
+        taskParameters.awsConnectionParameters,
+        taskParameters.forcePathStyleAddressing,
+        tl.debug)
 
-    const taskManifestFile = path.join(__dirname, 'task.json');
-    tl.setResourcePath(taskManifestFile);
-    SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
-
-    const taskParameters = new TaskParameters();
-    return new TaskOperations(taskParameters).execute();
+    return new TaskOperations(s3, taskParameters).execute()
 }
 
 // run
@@ -29,4 +27,4 @@ run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, '')
 ).catch((error) =>
     tl.setResult(tl.TaskResult.Failed, error)
-);
+)
