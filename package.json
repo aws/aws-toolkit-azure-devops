@@ -9,7 +9,7 @@
         "test": "jest",
         "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
-        "lint": "tslint -c tslint.yaml 'Tasks/**/*.ts'",
+        "lint": "tslint --project .",
         "publish": "node make.js publish",
         "update-version-info": "node make.js updateversioninfo",
         "update-region-info": "node make.js updateregioninfo"
@@ -75,6 +75,9 @@
             "js",
             "ts"
         ],
+		"moduleNameMapper": {
+			"^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts"
+		},
         "transform": {
             "\\.ts$": "ts-jest"
         },
