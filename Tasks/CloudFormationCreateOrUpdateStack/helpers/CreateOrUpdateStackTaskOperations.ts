@@ -14,7 +14,7 @@ import CloudFormation = require('aws-sdk/clients/cloudformation');
 import S3 = require('aws-sdk/clients/s3');
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './CreateOrUpdateStackTaskParameters';
-import { CloudFormationUtils } from 'cloudformationutils/cloudformationutils';
+import { CloudFormationUtils } from 'sdkutils/cloudformationutils';
 
 export class TaskOperations {
 

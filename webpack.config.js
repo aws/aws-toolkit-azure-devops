@@ -20,7 +20,7 @@ module.exports = {
 	alias: {
 	  "aws-sdk": path.resolve(__dirname, 'node_modules/aws-sdk'),
 	  "sdkutils": path.resolve(__dirname, '_build/Tasks/Common/sdkutils'),
-	  "beanstalkutils": path.resolve(__dirname, '_build/Tasks/Common/beanstalkutils')
+	  "beanstalkutils": path.resolve(__dirname, '_build/Tasks/Common/beanstalkutils'),
 	}
   },
   plugins: [
