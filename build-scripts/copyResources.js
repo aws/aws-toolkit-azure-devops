@@ -22,9 +22,20 @@ const bannedFiles = [
     'make.json'
 ]
 
+const bannedExtensions = [
+    'ts'
+]
+
 const filterFunc = (src, dest) => {
     return bannedFiles.every((element) => {
         if(src.includes(element)) {
+            return false
+        }
+        return true
+    }) 
+    &&  
+    bannedExtensions.every((element) => {
+        if(src.endsWith(element)) {
             return false
         }
         return true
