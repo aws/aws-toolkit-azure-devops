@@ -5,13 +5,13 @@
     "private": true,
     "main": "_build/tasks",
     "scripts": {
-        "build": "node make.js build",
+        "build": "tsc -p ./",
         "test": "jest",
-        "package": "node make.js build && node make.js package",
         "clean": "node make.js clean",
         "lint": "tslint --project .",
         "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
+        "package": "node ./build-scripts/packageExtension.js",
         "update-version-info": "node make.js updateversioninfo",
         "update-region-info": "node make.js updateregioninfo"
     },
