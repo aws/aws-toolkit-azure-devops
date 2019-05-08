@@ -53,7 +53,7 @@
         "webpack-node-externals": "^1.7.2"
     },
     "dependencies": {
-        "aws-sdk": "2.279.1",
+        "aws-sdk": "2.452.0",
         "base-64": "0.1.0",
         "https-proxy-agent": "2.2.1",
         "js-yaml": "^3.13.1",
@@ -69,7 +69,8 @@
             "ts"
         ],
         "moduleNameMapper": {
-            "^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts"
+            "^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts",
+            "^aws-sdk/(.*)": "<rootDir>/node_modules/aws-sdk/$1.js"
         },
         "transform": {
             "\\.ts$": "ts-jest"
