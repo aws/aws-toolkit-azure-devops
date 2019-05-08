@@ -7,7 +7,6 @@ const fs = require('fs-extra')
 const path = require('path')
 const ncp = require('child_process')
 const shell = require('shelljs');
-const minimist = require('minimist');
 
 const timeMessage = 'Packaged extension'
 const manifestFile = 'vss-extension.json';
@@ -17,15 +16,6 @@ const inTasks = path.join(repoRoot, tasksDirectory)
 const outBuildTasks = path.join(repoRoot, '_build', tasksDirectory)
 const outPackage = path.join(repoRoot, '_package')
 const outPackageTasks = path.join(outPackage, tasksDirectory)
-
-var pops = {
-    string: [
-        'publisher',
-    ],
-    boolean: [
-        'release'
-    ]
-};
 
 const unprocessFolders = [
     'Common',
@@ -122,6 +112,9 @@ function package(options) {
 }
 
 console.time(timeMessage)
-var options = minimist(process.argv, pops);
+var options = process.argv.slice(2);
+if(options.length > 0 && options[0].startsWith('publisher')) {
+    options.publisher = options[0].split('=')[1]
+}
 package(options)
 console.timeEnd(timeMessage)

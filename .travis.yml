@@ -13,7 +13,6 @@ install:
 
 script:
   - npm install
-  - npm run package -- --publisher travisci-build --release
-  - npm test
+  - npm run fullBuild publisher=travisci-build
   - codecov
 
