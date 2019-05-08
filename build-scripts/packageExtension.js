@@ -5,11 +5,12 @@
 
 const fs = require('fs-extra')
 const path = require('path')
-var ncp = require('child_process')
-var shell = require('shelljs');
+const ncp = require('child_process')
+const shell = require('shelljs');
+const minimist = require('minimist');
 
 const timeMessage = 'Packaged extension'
-var manifestFile = 'vss-extension.json';
+const manifestFile = 'vss-extension.json';
 const tasksDirectory = 'Tasks'
 const repoRoot = path.dirname(__dirname)
 const inTasks = path.join(repoRoot, tasksDirectory)
@@ -17,7 +18,14 @@ const outBuildTasks = path.join(repoRoot, '_build', tasksDirectory)
 const outPackage = path.join(repoRoot, '_package')
 const outPackageTasks = path.join(outPackage, tasksDirectory)
 
-var publisher = ''
+var pops = {
+    string: [
+        'publisher',
+    ],
+    boolean: [
+        'release'
+    ]
+};
 
 const unprocessFolders = [
     'Common'
@@ -28,7 +36,7 @@ function findMatchingFiles(directory) {
 }
 
 
-function package() {
+function package(options) {
     fs.mkdirpSync(outPackage);
 
     // stage license, readme and the extension manifest file
@@ -83,7 +91,7 @@ function package() {
             shell.cd(taskPackageFolder);
             var npmCmd = 'npm install vsts-task-lib --only=production';
             try {
-                output = ncp.execSync(npmCmd);
+                output = ncp.execSync(npmCmd, {stdio: 'pipe'});
                 console.log(output)
             }
             catch (err) {
@@ -100,22 +108,19 @@ function package() {
     });
 
     console.log('Creating deployment vsix');
-    var tfxcmd = 'tfx extension create --root ' + outPackage + ' --output-path ' + outPackage + ' --manifests ' + path.join(repoRoot, manifestFile);
-    if (publisher) {
+    var tfxcmd = 'tfx extension create --root ' + outPackage + ' --output-path ' + outPackage + ' --manifests ' + path.join(outPackage, manifestFile);
+    if (options.publisher) {
         tfxcmd += ' --publisher ' + options.publisher;
     }
 
-    ncp.execSync(tfxcmd);
+    console.log('Packaging with:' + tfxcmd)
+
+    ncp.execSync(tfxcmd, {stdio: 'pipe'});
 
     console.log('Packaging successful');
 }
 
 console.time(timeMessage)
-// print process.argv
-process.argv.forEach(function (val, index, array) {
-    if(index === '--publisher') {
-        publisher = val
-    }
-});
-package()
+var options = minimist(process.argv, pops);
+package(options)
 console.timeEnd(timeMessage)
