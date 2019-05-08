@@ -11,11 +11,6 @@
         "Release"
     ],
     "demands": [],
-    "version": {
-        "Major": "1",
-        "Minor": "1",
-        "Patch": "8"
-    },
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS CLI: $(awsCommand)",
     "groups": [

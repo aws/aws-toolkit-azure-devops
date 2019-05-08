@@ -13,6 +13,7 @@ const timeMessage = 'Generated resources'
 const taskJson = 'task.json'
 const taskLocJson = 'task.loc.json'
 const tasksDirectory = 'Tasks'
+const masterVersionFile = '_versioninfo.json';
 const repoRoot = path.dirname(__dirname)
 const inTasks = path.join(repoRoot, tasksDirectory)
 const outTasks = path.join(repoRoot, '_build', tasksDirectory)
@@ -25,6 +26,8 @@ function findMatchingFiles(directory) {
 // AWS toolkits and constructs an object we can inject into each
 // task's region picker options.
 function fetchLatestRegions() {
+    console.log('Fetching AWS regions')
+
     var endpointsFileUrl = 'https://aws-toolkit-endpoints.s3.amazonaws.com/endpoints.json';
 
     var availableRegions = {}
@@ -151,9 +154,18 @@ var createResjson = function (task, taskPath) {
     var resjsonPath = path.join(outTasks, taskPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson');
     mkdir('-p', path.dirname(resjsonPath));
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2));
-};
+}
 
-function addFieldsToTask(task, taskPath) {
+function addVersionToTask(task) {
+    task.version = {
+        Major: versionInfo.Major,
+        Minor: versionInfo.Minor,
+        Patch: versionInfo.Patch
+    }
+    return task
+}
+
+function addAWSRegionsToTask(task) {
     knownRegions = fetchLatestRegions()
 
     var regionNameInput = jsonQuery('inputs[name=regionName]', {
@@ -162,10 +174,12 @@ function addFieldsToTask(task, taskPath) {
 
     regionNameInput.options = knownRegions;
 
-    fs.writeFileSync(path.join(outTasks, taskPath, taskJson), JSON.stringify(task, null, 2));;
     return task
 }
 
+function writeTask(task, taskPath) {
+    fs.writeFileSync(path.join(outTasks, taskPath, taskJson), JSON.stringify(task, null, 2));;
+}
 
 var createResjson = function (task, taskPath) {
     var resources = {};
@@ -226,12 +240,16 @@ function generateTaskResources(taskPath) {
 
     var task = JSON.parse(fs.readFileSync(taskJsonPath));
     validateTask(task)
-    task = addFieldsToTask(task, taskPath)
+    task = addVersionToTask(task)
+    task = addAWSRegionsToTask(task)
+    writeTask(task, taskPath)
     generateTaskLoc(task, taskPath)
     createResjson(task, taskPath)
 };
 
 console.time(timeMessage)
+var versionInfoFile = path.join(repoRoot, masterVersionFile);
+var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
 var knownRegions = fetchLatestRegions()
 findMatchingFiles(inTasks).forEach((path) =>
     {
