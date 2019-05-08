@@ -34,7 +34,6 @@
     "devDependencies": {
         "@types/jest": "^24.0.12",
         "@types/node": "^8.0.34",
-        "adm-zip": "0.4.11",
         "babel-loader": "^8.0.5",
         "babel-preset-env": "^1.7.0",
         "clean-webpack-plugin": "^2.0.1",
@@ -43,8 +42,6 @@
         "fs-extra": "^7.0.1",
         "jest": "^24.7.1",
         "json-query": "^2.2.2",
-        "minimist": "^1.2.0",
-        "modclean": "^2.1.0",
         "rimraf": "^2.5.4",
         "semver": "^5.4.1",
         "sync-request": "^4.1.0",
