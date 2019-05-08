@@ -26,5 +26,5 @@ async function run(): Promise<void> {
 run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, '')
 ).catch((error) =>
-    tl.setResult(tl.TaskResult.Failed, error)
+    tl.setResult(tl.TaskResult.Failed, `${error}`)
 )
