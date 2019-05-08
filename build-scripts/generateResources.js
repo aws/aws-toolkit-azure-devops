@@ -48,19 +48,23 @@ function fetchLatestRegions() {
 
 var validateTask = function (task) {
     if (!task.id || !validate.isUUID(task.id)) {
-        fail('id is a required guid');
+        console.error('Validation failure, id is a required guid for task:\n' + task);
+        process.exit(1);
     };
 
     if (!task.name || !validate.isAlphanumeric(task.name)) {
-        fail('name is a required alphanumeric string');
+        console.error('name is a required alphanumeric string for task:\n' + task);
+        process.exit(1);
     }
 
     if (!task.friendlyName || !validate.isLength(task.friendlyName, 1, 40)) {
-        fail('friendlyName is a required string <= 40 chars');
+        console.error('friendlyName is a required string <= 40 chars for task:\n' + task);
+        process.exit(1);
     }
 
     if (!task.instanceNameFormat) {
-        fail('instanceNameFormat is required');
+        console.error('instanceNameFormat is required for task:\n' + task);
+        process.exit(1);
     }
 };
 
@@ -162,7 +166,6 @@ function addVersionToTask(task) {
         Minor: versionInfo.Minor,
         Patch: versionInfo.Patch
     }
-    return task
 }
 
 function addAWSRegionsToTask(task) {
@@ -173,8 +176,6 @@ function addAWSRegionsToTask(task) {
     }).value;
 
     regionNameInput.options = knownRegions;
-
-    return task
 }
 
 function writeTask(task, taskPath) {
@@ -240,8 +241,8 @@ function generateTaskResources(taskPath) {
 
     var task = JSON.parse(fs.readFileSync(taskJsonPath));
     validateTask(task)
-    task = addVersionToTask(task)
-    task = addAWSRegionsToTask(task)
+    addVersionToTask(task)
+    addAWSRegionsToTask(task)
     writeTask(task, taskPath)
     generateTaskLoc(task, taskPath)
     createResjson(task, taskPath)
