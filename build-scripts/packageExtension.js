@@ -75,8 +75,7 @@ function package(options) {
                             + '--output-filename ' + taskName + '.js'
         console.log(webpackCmd)
         try {
-            output = ncp.execSync(webpackCmd, {stdio: 'pipe'});
-            console.log(output)
+            ncp.execSync(webpackCmd, {stdio: 'pipe'});
         }
         catch (err) {
             console.error(err.output ? err.output.toString() : err.message);
