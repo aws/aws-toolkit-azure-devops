@@ -7,13 +7,12 @@
     "scripts": {
         "build": "tsc -p ./",
         "test": "jest",
-        "clean": "node make.js clean",
+        "clean": "node ./build-scripts/clean.js",
         "lint": "tslint --project .",
         "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
         "package": "node ./build-scripts/packageExtension.js",
-        "update-version-info": "node make.js updateversioninfo",
-        "update-region-info": "node make.js updateregioninfo"
+        "update-version-info": "node make.js updateversioninfo"
     },
     "repository": {
         "type": "git",

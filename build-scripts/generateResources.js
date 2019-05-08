@@ -4,12 +4,14 @@
  */
 
 const fs = require('fs-extra')
+const jsonQuery = require('json-query');
 const path = require('path')
-var validate = require('validator')
+const syncRequest = require('sync-request');
+const validate = require('validator')
 
 const timeMessage = 'Generated resources'
 const taskJson = 'task.json'
-const TaskLocJson = 'task.loc.json'
+const taskLocJson = 'task.loc.json'
 const tasksDirectory = 'Tasks'
 const repoRoot = path.dirname(__dirname)
 const inTasks = path.join(repoRoot, tasksDirectory)
@@ -17,6 +19,28 @@ const outTasks = path.join(repoRoot, '_build', tasksDirectory)
 
 function findMatchingFiles(directory) {
     return fs.readdirSync(directory)
+}
+
+// Downloads the latest known AWS regions file used by the various
+// AWS toolkits and constructs an object we can inject into each
+// task's region picker options.
+function fetchLatestRegions() {
+    var endpointsFileUrl = 'https://aws-toolkit-endpoints.s3.amazonaws.com/endpoints.json';
+
+    var availableRegions = {}
+
+    var res = syncRequest('GET', endpointsFileUrl);
+    var allEndpoints = JSON.parse(res.getBody());
+
+    for (var p = 0; p < allEndpoints.partitions.length; p++) {
+        var partition = allEndpoints.partitions[p];
+
+        var regionKeys = Object.keys(partition.regions);
+        regionKeys.forEach((rk) => {
+            availableRegions[rk] = `${partition.regions[rk].description} [${rk.toString()}]`;
+        })
+    }
+    return availableRegions;
 }
 
 var validateTask = function (task) {
@@ -73,7 +97,7 @@ function generateTaskLoc(taskLoc, taskPath) {
         });
     }
 
-    fs.writeFileSync(path.join(outTasks, taskPath, TaskLocJson), JSON.stringify(taskLoc, null, 2));
+    fs.writeFileSync(path.join(outTasks, taskPath, taskLocJson), JSON.stringify(taskLoc, null, 2));
 }
 
 var createResjson = function (task, taskPath) {
@@ -129,15 +153,19 @@ var createResjson = function (task, taskPath) {
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2));
 };
 
-function generateTaskResources(taskPath) {
-    var taskJsonPath = path.join(inTasks, taskPath, taskJson);
-    try {fs.accessSync(taskJsonPath) } catch (e) { return }
+function addFieldsToTask(task, taskPath) {
+    knownRegions = fetchLatestRegions()
 
-    var task = JSON.parse(fs.readFileSync(taskJsonPath));
-    validateTask(task)
-    generateTaskLoc(task, taskPath)
-    createResjson(task, taskPath)
-};
+    var regionNameInput = jsonQuery('inputs[name=regionName]', {
+        data: task
+    }).value;
+
+    regionNameInput.options = knownRegions;
+
+    fs.writeFileSync(path.join(outTasks, taskPath, taskJson), JSON.stringify(task, null, 2));;
+    return task
+}
+
 
 var createResjson = function (task, taskPath) {
     var resources = {};
@@ -192,7 +220,19 @@ var createResjson = function (task, taskPath) {
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2));
 };
 
+function generateTaskResources(taskPath) {
+    var taskJsonPath = path.join(inTasks, taskPath, taskJson);
+    try {fs.accessSync(taskJsonPath) } catch (e) { return }
+
+    var task = JSON.parse(fs.readFileSync(taskJsonPath));
+    validateTask(task)
+    task = addFieldsToTask(task, taskPath)
+    generateTaskLoc(task, taskPath)
+    createResjson(task, taskPath)
+};
+
 console.time(timeMessage)
+var knownRegions = fetchLatestRegions()
 findMatchingFiles(inTasks).forEach((path) =>
     {
         generateTaskResources(path)
