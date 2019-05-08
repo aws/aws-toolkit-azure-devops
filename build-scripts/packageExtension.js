@@ -55,7 +55,7 @@ function package(options) {
     findMatchingFiles(inTasks).forEach(function(taskName) {
         console.log('Processing task ' + taskName);
 
-        if(!unprocessFolders.every((folderName) => { folderName !== taskName})) {
+        if(!unprocessFolders.every((folderName) => { return folderName !== taskName})) {
             console.log('Skpping task ' + taskName)
             return
         }
