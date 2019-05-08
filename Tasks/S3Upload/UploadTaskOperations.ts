@@ -4,19 +4,19 @@
  */
 
 import S3 = require('aws-sdk/clients/s3')
-import AWS = require('aws-sdk/global')
-import { AWSError } from 'aws-sdk/lib/error'
 import fs = require('fs')
 import path = require('path')
-import { SdkUtils } from 'sdkutils/sdkutils'
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './UploadTaskParameters'
+import { awsKeyManagementValue,
+        customerKeyManagementValue,
+        noKeyManagementValue,
+        TaskParameters } from './UploadTaskParameters'
 
 export class TaskOperations {
 
     // known mime types as recognized by the AWS SDK for .NET and
     // AWS Toolkit for Visual Studio
-    private static knownMimeTypes: Map<string, string> = new Map<string, string>([
+    private static readonly knownMimeTypes: Map<string, string> = new Map<string, string>([
         [ '.ai', 'application/postscript' ],
         [ '.aif', 'audio/x-aiff' ],
         [ '.aifc', 'audio/x-aiff' ],
@@ -190,18 +190,17 @@ export class TaskOperations {
         [ '.wmv', 'video/x-ms-wmv' ]
     ])
 
-    private s3Client: S3
-
     public constructor(
+        public readonly s3Client: S3,
         public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients()
-
         if (this.taskParameters.createBucket) {
-            await this.createBucketIfNotExist(this.taskParameters.bucketName, await this.taskParameters.getRegion())
+            await this.createBucketIfNotExist(
+                this.taskParameters.bucketName,
+                await this.taskParameters.awsConnectionParameters.getRegion())
         } else {
             const exists = await this.testBucketExists(this.taskParameters.bucketName)
             if (!exists) {
@@ -211,15 +210,6 @@ export class TaskOperations {
 
         await this.uploadFiles()
         console.log(tl.loc('TaskCompleted'))
-    }
-
-    private async createServiceClients(): Promise<void> {
-
-        const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01',
-            s3ForcePathStyle: this.taskParameters.forcePathStyleAddressing
-        }
-        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug)
     }
 
     private async createBucketIfNotExist(bucketName: string, region: string): Promise<void> {
@@ -249,18 +239,19 @@ export class TaskOperations {
     }
 
     private async uploadFiles() {
-
         let msgTarget: string
         if (this.taskParameters.targetFolder) {
             msgTarget = this.taskParameters.targetFolder
         } else {
             msgTarget = '/'
         }
-        console.log(tl.loc('UploadingFiles', this.taskParameters.sourceFolder, msgTarget, this.taskParameters.bucketName))
+        console.log(tl.loc('UploadingFiles',
+                           this.taskParameters.sourceFolder,
+                           msgTarget,
+                           this.taskParameters.bucketName))
 
         const matchedFiles = this.findFiles()
-        for (let i = 0; i < matchedFiles.length; i++) {
-            const matchedFile = matchedFiles[i]
+        for (const matchedFile of matchedFiles) {
             let relativePath = matchedFile.substring(this.taskParameters.sourceFolder.length)
             if (relativePath.startsWith(path.sep)) {
                 relativePath = relativePath.substr(1)
@@ -308,19 +299,19 @@ export class TaskOperations {
                         StorageClass: this.taskParameters.storageClass
                     }
                     switch (this.taskParameters.keyManagement) {
-                        case TaskParameters.noKeyManagementValue:
+                        case noKeyManagementValue:
                             break
-                        case TaskParameters.awsKeyManagementValue: {
+                        case awsKeyManagementValue: {
                             request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
                             request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
                         }
-                                                                   break
+                                                    break
 
-                        case TaskParameters.customerKeyManagementValue: {
+                        case customerKeyManagementValue: {
                             request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
                             request.SSECustomerKey = this.taskParameters.customerKey
                         }
-                                                                        break
+                                                         break
                     }
 
                     const response: S3.ManagedUpload.SendData = await this.s3Client.upload(request).promise()
@@ -338,9 +329,13 @@ export class TaskOperations {
         this.taskParameters.sourceFolder = path.normalize(this.taskParameters.sourceFolder)
         const allPaths = tl.find(this.taskParameters.sourceFolder) // default find options (follow sym links)
         tl.debug(tl.loc('AllPaths', allPaths))
-        const matchedPaths = tl.match(allPaths, this.taskParameters.globExpressions, this.taskParameters.sourceFolder) // default match options
+        const matchedPaths = tl.match(
+            allPaths,
+            this.taskParameters.globExpressions,
+            this.taskParameters.sourceFolder) // default match options
         tl.debug(tl.loc('MatchedPaths', matchedPaths))
-        const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory()) // filter-out directories
+        // filter-out directories
+        const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory())
         tl.debug(tl.loc('MatchedFiles', matchedFiles))
         tl.debug(tl.loc('FoundNFiles', matchedFiles.length))
 

@@ -3,79 +3,82 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase'
+import { AWSConnectionParameters } from 'sdkutils/awsConnectionParameters'
 import tl = require('vsts-task-lib/task')
 
-export class TaskParameters extends AWSTaskParametersBase {
-
     // options for Server-side encryption Key Management; 'none' disables SSE
-    public static readonly noKeyManagementValue: string = 'none'
-    public static readonly awsKeyManagementValue: string = 'awsManaged'
-    public static readonly customerKeyManagementValue: string = 'customerManaged'
+export const noKeyManagementValue: string = 'none'
+export const awsKeyManagementValue: string = 'awsManaged'
+export const customerKeyManagementValue: string = 'customerManaged'
 
-    // options for encryption algorithm when key management is set to 'aws';
-    // customer managed keys always use AES256
-    public static readonly awskmsAlgorithmValue: string = 'KMS' // translated to aws:kms when used in api call
-    public static readonly aes256AlgorithmValue: string = 'AES256'
+// options for encryption algorithm when key management is set to 'aws';
+// customer managed keys always use AES256
+export const awskmsAlgorithmValue: string = 'KMS' // translated to aws:kms when used in api call
+export const aes256AlgorithmValue: string = 'AES256'
 
-    public bucketName: string
-    public sourceFolder: string
-    public targetFolder: string
-    public flattenFolders: boolean
-    public overwrite: boolean
-    public globExpressions: string[]
-    public filesAcl: string
-    public createBucket: boolean
-    public contentType: string
-    public forcePathStyleAddressing: boolean
-    public storageClass: string
-    public keyManagement: string
-    public encryptionAlgorithm: string
-    public kmsMasterKeyId: string
-    public customerKey: Buffer
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters
+    bucketName: string
+    sourceFolder: string
+    targetFolder: string
+    flattenFolders: boolean
+    overwrite: boolean
+    globExpressions: string[]
+    filesAcl: string
+    createBucket: boolean
+    contentType: string
+    forcePathStyleAddressing: boolean
+    storageClass: string
+    keyManagement: string
+    encryptionAlgorithm: string
+    kmsMasterKeyId: string
+    customerKey: Buffer
+}
 
-    public constructor() {
-        super()
-        try {
-            this.bucketName = tl.getInput('bucketName', true)
-            this.overwrite = tl.getBoolInput('overwrite', false)
-            this.flattenFolders = tl.getBoolInput('flattenFolders', false)
-            this.sourceFolder = tl.getPathInput('sourceFolder', true, true)
-            this.targetFolder = tl.getInput('targetFolder', false)
-            this.globExpressions = tl.getDelimitedInput('globExpressions', '\n', true)
-            this.filesAcl = tl.getInput('filesAcl', false)
-            this.createBucket = tl.getBoolInput('createBucket')
-            this.contentType = tl.getInput('contentType', false)
-            this.forcePathStyleAddressing = tl.getBoolInput('forcePathStyleAddressing', false)
-            this.storageClass = tl.getInput('storageClass', false)
-            if (!this.storageClass) {
-                this.storageClass = 'STANDARD'
-            }
-
-            this.keyManagement = tl.getInput('keyManagement', false)
-            if (this.keyManagement && this.keyManagement !== TaskParameters.noKeyManagementValue) {
-                switch (this.keyManagement) {
-                    case TaskParameters.awsKeyManagementValue: {
-                        const algorithm = tl.getInput('encryptionAlgorithm', true)
-                        if (algorithm === TaskParameters.awskmsAlgorithmValue) {
-                            this.encryptionAlgorithm = 'aws:kms'
-                        } else {
-                            this.encryptionAlgorithm = TaskParameters.aes256AlgorithmValue
-                        }
-                        this.kmsMasterKeyId = tl.getInput('kmsMasterKeyId', algorithm === TaskParameters.awskmsAlgorithmValue)
-                    }
-                                                               break
-
-                    case TaskParameters.customerKeyManagementValue: {
-                        this.encryptionAlgorithm = TaskParameters.aes256AlgorithmValue
-                        const customerKey = tl.getInput('customerKey', true)
-                        this.customerKey = Buffer.from(customerKey, 'hex')
-                    }
-                                                                    break
+export function buildTaskParameters(): TaskParameters {
+    const parameters: TaskParameters = {
+        awsConnectionParameters: new AWSConnectionParameters(),
+        bucketName: tl.getInput('bucketName', true),
+        overwrite: tl.getBoolInput('overwrite', false),
+        flattenFolders: tl.getBoolInput('flattenFolders', false),
+        sourceFolder: tl.getPathInput('sourceFolder', true, true),
+        targetFolder: tl.getInput('targetFolder', false),
+        globExpressions: tl.getDelimitedInput('globExpressions', '\n', true),
+        filesAcl: tl.getInput('filesAcl', false),
+        createBucket: tl.getBoolInput('createBucket'),
+        contentType: tl.getInput('contentType', false),
+        forcePathStyleAddressing: tl.getBoolInput('forcePathStyleAddressing', false),
+        storageClass: tl.getInput('storageClass', false),
+        keyManagement: undefined,
+        encryptionAlgorithm: undefined,
+        kmsMasterKeyId: undefined,
+        customerKey: undefined
+    }
+    if (!parameters.storageClass) {
+        parameters.storageClass = 'STANDARD'
+    }
+    parameters.keyManagement = tl.getInput('keyManagement', false)
+    if (parameters.keyManagement && parameters.keyManagement !== noKeyManagementValue) {
+        switch (parameters.keyManagement) {
+            case awsKeyManagementValue: {
+                const algorithm = tl.getInput('encryptionAlgorithm', true)
+                if (algorithm === awskmsAlgorithmValue) {
+                    parameters.encryptionAlgorithm = 'aws:kms'
+                } else {
+                    parameters.encryptionAlgorithm = aes256AlgorithmValue
                 }
+                parameters.kmsMasterKeyId = tl.getInput('kmsMasterKeyId', algorithm === awskmsAlgorithmValue)
+                break
             }
-        } catch (error) {
-            throw new Error(error.message)
+
+            case customerKeyManagementValue: {
+                parameters.encryptionAlgorithm = aes256AlgorithmValue
+                const customerKey = tl.getInput('customerKey', true)
+                parameters.customerKey = Buffer.from(customerKey, 'hex')
+                break
+            }
         }
     }
+
+    return parameters
 }

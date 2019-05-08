@@ -8,18 +8,22 @@ import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'sdkutils/sdkutils'
 
+import { createDefaultS3Client } from 'sdkutilsdefaultClients'
+import { buildTaskParameters } from 'Tasks/S3Upload/UploadTaskParameters'
 import { TaskOperations } from './UploadTaskOperations'
-import { TaskParameters } from './UploadTaskParameters'
 
-function run(): Promise<void> {
-
+async function run(): Promise<void> {
     const taskManifestFile = path.join(__dirname, 'task.json')
     tl.setResourcePath(taskManifestFile)
     SdkUtils.setSdkUserAgentFromManifest(taskManifestFile)
 
-    const taskParameters = new TaskParameters()
+    const taskParameters = buildTaskParameters()
+    const s3 = await createDefaultS3Client(
+        taskParameters.awsConnectionParameters,
+        taskParameters.forcePathStyleAddressing,
+        tl.debug)
 
-    return new TaskOperations(taskParameters).execute()
+    return new TaskOperations(s3, taskParameters).execute()
 }
 
 // run
