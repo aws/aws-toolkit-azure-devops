@@ -9,6 +9,9 @@ module.exports = {
     __dirname: false,
     __filename: false
   },
+  output: {
+    pathinfo: false
+  },
   externals: [
     nodeExternals({
       whitelist: function (moduleName) {

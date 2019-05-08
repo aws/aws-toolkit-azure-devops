@@ -28,7 +28,8 @@ var pops = {
 };
 
 const unprocessFolders = [
-    'Common'
+    'Common',
+    '.DS_Store'
 ]
 
 function findMatchingFiles(directory) {
@@ -52,10 +53,10 @@ function package(options) {
 
     // clean, dedupe and pack each task as needed
     findMatchingFiles(inTasks).forEach(function(taskName) {
-        console.log('> processing task ' + taskName);
+        console.log('Processing task ' + taskName);
 
-        if(unprocessFolders.every((folderName) => folderName === taskName)) {
-            console.log('skpping task ' + taskName)
+        if(!unprocessFolders.every((folderName) => { folderName !== taskName})) {
+            console.log('Skpping task ' + taskName)
             return
         }
 

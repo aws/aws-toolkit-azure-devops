@@ -244,8 +244,8 @@ function generateTaskResources(taskPath) {
     addVersionToTask(task)
     addAWSRegionsToTask(task)
     writeTask(task, taskPath)
-    generateTaskLoc(task, taskPath)
     createResjson(task, taskPath)
+    generateTaskLoc(task, taskPath)
 };
 
 console.time(timeMessage)
