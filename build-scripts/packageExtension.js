@@ -30,11 +30,9 @@ function findMatchingFiles(directory) {
 function package(options) {
     fs.mkdirpSync(outPackage);
 
-    // stage license, readme and the extension manifest file
-    var packageRootFiles =  [ manifestFile, 'LICENSE', 'README.md' ];
-    packageRootFiles.forEach(function(item) {
-        fs.copySync(path.join(repoRoot, item), path.join(outPackage, item), {overwrite: true});
-    });
+    fs.copySync(path.join(repoRoot, 'LICENSE'), path.join(outPackage, 'LICENSE'), {overwrite: true});
+    fs.copySync(path.join(repoRoot, 'README.md'), path.join(outPackage, 'README.md'), {overwrite: true});
+    fs.copySync(path.join(repoRoot, '_build', manifestFile), path.join(outPackage, manifestFile), {overwrite: true});
 
     // stage manifest images
     fs.copySync(path.join(repoRoot, 'images'), path.join(outPackage, 'images'), {overwrite: true});

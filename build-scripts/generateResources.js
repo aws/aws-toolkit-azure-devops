@@ -17,6 +17,8 @@ const masterVersionFile = '_versioninfo.json';
 const repoRoot = path.dirname(__dirname)
 const inTasks = path.join(repoRoot, tasksDirectory)
 const outTasks = path.join(repoRoot, '_build', tasksDirectory)
+const vssPath = path.join(repoRoot, 'vss-extension.json')
+const vssBuildPath = path.join(repoRoot, '_build', 'vss-extension.json')
 
 function findMatchingFiles(directory) {
     return fs.readdirSync(directory)
@@ -43,7 +45,7 @@ function fetchLatestRegions() {
             availableRegions[rk] = `${partition.regions[rk].description} [${rk.toString()}]`;
         })
     }
-    return availableRegions;
+    return availableRegions
 }
 
 var validateTask = function (task) {
@@ -248,13 +250,20 @@ function generateTaskResources(taskPath) {
     generateTaskLoc(task, taskPath)
 };
 
+function addVersionToVssExtension() {
+    var vss = JSON.parse(fs.readFileSync(vssPath));
+    vss.version = "" + versionInfo.Major + "." + versionInfo.Minor + "." + versionInfo.Patch
+    fs.writeFileSync(vssBuildPath, JSON.stringify(vss, null, 2));
+}
+
 console.time(timeMessage)
-var versionInfoFile = path.join(repoRoot, masterVersionFile);
-var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile));
+var versionInfoFile = path.join(repoRoot, masterVersionFile)
+var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile))
 var knownRegions = fetchLatestRegions()
 findMatchingFiles(inTasks).forEach((path) =>
     {
         generateTaskResources(path)
     }
 )
+addVersionToVssExtension()
 console.timeEnd(timeMessage)
