@@ -6,6 +6,8 @@ linterOptions:
   exclude:
     - node_modules/**
     - '**/*.json'
+    - 'Tasks/**'
+
 rules:
   # TypeScript-specific
   # These rules find errors related to TypeScript features:
