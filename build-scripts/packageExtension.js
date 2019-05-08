@@ -53,47 +53,48 @@ function package(options) {
         fs.mkdirpSync(taskPackageFolder);
 
         var taskDef = require(path.join(taskBuildFolder, 'task.json'));
-        if (taskDef.execution.hasOwnProperty('Node')) {
-            shell.cd(taskBuildFolder);
-            fs.copySync(path.join(taskBuildFolder, 'task.json'), path.join(taskPackageFolder, 'task.json'), {overwrite: true});
-            fs.copySync(path.join(taskBuildFolder, 'task.loc.json'), path.join(taskPackageFolder, 'task.loc.json'), {overwrite: true});
-            fs.copySync(path.join(taskBuildFolder, 'package.json'), path.join(taskPackageFolder, 'package.json'), {overwrite: true});
-            fs.copySync(path.join(taskBuildFolder, 'icon.png'), path.join(taskPackageFolder, 'icon.png'), {overwrite: true});
-            fs.copySync(path.join(taskBuildFolder, 'Strings'), path.join(taskPackageFolder, 'Strings'), {overwrite: true});
-
-            console.log('> packing node-based task');
-            var webpackConfig = path.join(repoRoot, 'webpack.config.js');
-            var webpackCmd = 'webpack --config '
-                                + webpackConfig
-                                + ' '
-                                + taskName + '.js '
-                                + path.join(taskPackageFolder, taskName + '.js');
-            try {
-                output = ncp.execSync(webpackCmd, {stdio: 'pipe'});
-                console.log(output)
-            }
-            catch (err) {
-                console.error(err.output ? err.output.toString() : err.message);
-                process.exit(1);
-            }
-
-            shell.cd(taskPackageFolder);
-            var npmCmd = 'npm install vsts-task-lib --only=production';
-            try {
-                output = ncp.execSync(npmCmd, {stdio: 'pipe'});
-                console.log(output)
-            }
-            catch (err) {
-                console.error(err.output ? err.output.toString() : err.message);
-                process.exit(1);
-            };
-
-            shell.cd(repoRoot);
-        } else {
+        if (!taskDef.execution.hasOwnProperty('Node')) {
             console.log('Copying non-node task ' + taskName);
 
             fs.copySync(taskBuildFolder, taskPackageFolder);
+            return;
         }
+        shell.cd(taskBuildFolder);
+        fs.copySync(path.join(taskBuildFolder, 'task.json'), path.join(taskPackageFolder, 'task.json'), {overwrite: true});
+        fs.copySync(path.join(taskBuildFolder, 'task.loc.json'), path.join(taskPackageFolder, 'task.loc.json'), {overwrite: true});
+        fs.copySync(path.join(taskBuildFolder, 'package.json'), path.join(taskPackageFolder, 'package.json'), {overwrite: true});
+        fs.copySync(path.join(taskBuildFolder, 'icon.png'), path.join(taskPackageFolder, 'icon.png'), {overwrite: true});
+        fs.copySync(path.join(taskBuildFolder, 'Strings'), path.join(taskPackageFolder, 'Strings'), {overwrite: true});
+
+        console.log('packing node-based task');
+        var webpackConfig = path.join(repoRoot, 'webpack.config.js');
+        var webpackCmd = 'webpack ' 
+                            + '--config ' + webpackConfig + ' '
+                            + taskName + '.js '
+                            + '--output-path ' + path.join(taskPackageFolder) + ' '
+                            + '--output-filename ' + taskName + '.js'
+        console.log(webpackCmd)
+        try {
+            output = ncp.execSync(webpackCmd, {stdio: 'pipe'});
+            console.log(output)
+        }
+        catch (err) {
+            console.error(err.output ? err.output.toString() : err.message);
+            process.exit(1);
+        }
+
+        shell.cd(taskPackageFolder);
+        var npmCmd = 'npm install vsts-task-lib --only=production';
+        try {
+            output = ncp.execSync(npmCmd, {stdio: 'pipe'});
+            console.log(output)
+        }
+        catch (err) {
+            console.error(err.output ? err.output.toString() : err.message);
+            process.exit(1);
+        };
+
+        shell.cd(repoRoot);
     });
 
     console.log('Creating deployment vsix');

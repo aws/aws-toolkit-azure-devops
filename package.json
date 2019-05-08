@@ -12,7 +12,7 @@
         "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
         "package": "node ./build-scripts/packageExtension.js",
-		"fullBuild": "npm run build && npm run copyResources && npm run generateResources && npm run test && npm run package"
+        "fullBuild": "npm run build && npm run copyResources && npm run generateResources && npm run test && npm run package"
     },
     "repository": {
         "type": "git",
@@ -48,6 +48,7 @@
         "rimraf": "^2.5.4",
         "semver": "^5.4.1",
         "sync-request": "^4.1.0",
+        "terser-webpack-plugin": "^1.2.3",
         "tfx-cli": "^0.7.5",
         "ts-jest": "^24.0.2",
         "ts-loader": "^2.2.2",
@@ -55,9 +56,9 @@
         "tslint-eslint-rules": "^5.4.0",
         "tslint-no-circular-imports": "^0.6.1",
         "typescript": "^3.4.5",
-        "uglifyjs-webpack-plugin": "^2.1.2",
         "validator": "^10.11.0",
         "webpack": "^4.30.0",
+        "webpack-cli": "^3.3.2",
         "webpack-node-externals": "^1.7.2"
     },
     "dependencies": {
