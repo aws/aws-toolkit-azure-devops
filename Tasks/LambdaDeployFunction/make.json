@@ -1,9 +1,0 @@
-{
-    "common": [
-        {
-            "module": "../Common/sdkutils",
-            "type": "node",
-            "compile": true
-        }
-    ]
-}
