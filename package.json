@@ -11,7 +11,8 @@
         "lint": "tslint --project .",
         "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
-        "package": "node ./build-scripts/packageExtension.js"
+        "package": "node ./build-scripts/packageExtension.js",
+		"fullBuild": "npm run build && npm run test && npm run copyResources && npm run generateResources && npm run package"
     },
     "repository": {
         "type": "git",
