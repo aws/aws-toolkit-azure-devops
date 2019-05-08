@@ -170,9 +170,7 @@ function addVersionToTask(task) {
     }
 }
 
-function addAWSRegionsToTask(task) {
-    knownRegions = fetchLatestRegions()
-
+function addAWSRegionsToTask(task, knownRegions) {
     var regionNameInput = jsonQuery('inputs[name=regionName]', {
         data: task
     }).value;
@@ -237,14 +235,14 @@ var createResjson = function (task, taskPath) {
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2));
 };
 
-function generateTaskResources(taskPath) {
+function generateTaskResources(taskPath, knownRegions) {
     var taskJsonPath = path.join(inTasks, taskPath, taskJson);
     try {fs.accessSync(taskJsonPath) } catch (e) { return }
 
     var task = JSON.parse(fs.readFileSync(taskJsonPath));
     validateTask(task)
     addVersionToTask(task)
-    addAWSRegionsToTask(task)
+    addAWSRegionsToTask(task, knownRegions)
     writeTask(task, taskPath)
     createResjson(task, taskPath)
     generateTaskLoc(task, taskPath)
@@ -259,10 +257,10 @@ function addVersionToVssExtension() {
 console.time(timeMessage)
 var versionInfoFile = path.join(repoRoot, masterVersionFile)
 var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile))
-var knownRegions = fetchLatestRegions()
+const knownRegions = fetchLatestRegions()
 findMatchingFiles(inTasks).forEach((path) =>
     {
-        generateTaskResources(path)
+        generateTaskResources(path, knownRegions)
     }
 )
 addVersionToVssExtension()
