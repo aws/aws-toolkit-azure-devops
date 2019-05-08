@@ -21,7 +21,6 @@ linterOptions:
     - Tasks/LambdaDeployFunction/**
     - Tasks/LambdaInvokeFunction/**
     - Tasks/LambdaNETCoreDeploy/**
-    - Tasks/S3Upload/**
     - Tasks/SecretsManagerCreateOrUpdateSecret/**
     - Tasks/SecretsManagerGetSecret/**
     - Tasks/SendMessage/**
