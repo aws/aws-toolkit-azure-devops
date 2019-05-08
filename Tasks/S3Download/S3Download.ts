@@ -9,7 +9,7 @@ import { createDefaultS3Client } from 'sdkutils/defaultClients'
 import { SdkUtils } from 'sdkutils/sdkutils'
 
 import { TaskOperations } from './DownloadTaskOperations'
-import { buildTaskParameters, TaskParameters } from './DownloadTaskParameters'
+import { buildTaskParameters } from './DownloadTaskParameters'
 
 async function run(): Promise<void> {
     SdkUtils.readResources()

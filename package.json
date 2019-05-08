@@ -64,6 +64,9 @@
     "jest": {
         "coverageDirectory": "./coverage/",
         "collectCoverage": true,
+        "collectCoverageFrom": [
+			"Tasks/**"
+        ],
         "moduleFileExtensions": [
             "js",
             "ts"
