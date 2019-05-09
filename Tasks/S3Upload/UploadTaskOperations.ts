@@ -296,6 +296,7 @@ export class TaskOperations {
                         Body: fileBuffer,
                         ACL: this.taskParameters.filesAcl,
                         ContentType: contentType,
+                        ContentEncoding: this.taskParameters.contentEncoding,
                         StorageClass: this.taskParameters.storageClass
                     }
                     switch (this.taskParameters.keyManagement) {

@@ -27,6 +27,7 @@ export interface TaskParameters {
     filesAcl: string
     createBucket: boolean
     contentType: string
+    contentEncoding: string
     forcePathStyleAddressing: boolean
     storageClass: string
     keyManagement: string
@@ -47,6 +48,7 @@ export function buildTaskParameters(): TaskParameters {
         filesAcl: tl.getInput('filesAcl', false),
         createBucket: tl.getBoolInput('createBucket'),
         contentType: tl.getInput('contentType', false),
+        contentEncoding: tl.getInput('contentEncoding', false),
         forcePathStyleAddressing: tl.getBoolInput('forcePathStyleAddressing', false),
         storageClass: tl.getInput('storageClass', false),
         keyManagement: undefined,
