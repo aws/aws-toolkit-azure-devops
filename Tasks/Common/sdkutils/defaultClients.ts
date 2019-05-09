@@ -16,5 +16,5 @@ export async function createDefaultS3Client(
         s3ForcePathStyle: forcePathStyle
     }
 
-    return await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, connectionParams, logger)
+    return await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, connectionParams, logger) as S3
 }

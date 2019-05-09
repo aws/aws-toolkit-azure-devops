@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { S3 } from 'aws-sdk/clients/all'
 import * as fs from 'fs'
 import * as mm from 'minimatch'
 import * as path from 'path'
 import * as tl from 'vsts-task-lib/task'
-import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './DownloadTaskParameters'
 
-import S3 = require('aws-sdk/clients/s3')
+import { testBucketExists } from 'sdkutils/s3utils'
+import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './DownloadTaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -19,7 +20,7 @@ export class TaskOperations {
     }
 
     public async execute(): Promise<void> {
-        const exists = await this.testBucketExists(this.taskParameters.bucketName)
+        const exists = await testBucketExists(this.s3Client, this.taskParameters.bucketName)
         if (!exists) {
             throw new Error(tl.loc('BucketNotExist', this.taskParameters.bucketName))
         }
@@ -27,16 +28,6 @@ export class TaskOperations {
         await this.downloadFiles()
 
         console.log(tl.loc('TaskCompleted'))
-    }
-
-    private async testBucketExists(bucketName: string): Promise<boolean> {
-        try {
-            await this.s3Client.headBucket({ Bucket: bucketName }).promise()
-
-            return true
-        } catch (err) {
-            return false
-        }
     }
 
     private async downloadFiles() {

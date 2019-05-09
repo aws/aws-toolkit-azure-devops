@@ -6,6 +6,7 @@
 import S3 = require('aws-sdk/clients/s3')
 import fs = require('fs')
 import path = require('path')
+import { testBucketExists } from 'sdkutils/s3utils'
 import tl = require('vsts-task-lib/task')
 import { awsKeyManagementValue,
         customerKeyManagementValue,
@@ -202,7 +203,7 @@ export class TaskOperations {
                 this.taskParameters.bucketName,
                 await this.taskParameters.awsConnectionParameters.getRegion())
         } else {
-            const exists = await this.testBucketExists(this.taskParameters.bucketName)
+            const exists = await testBucketExists(this.s3Client, this.taskParameters.bucketName)
             if (!exists) {
                 throw new Error(tl.loc('BucketNotExistNoAutocreate', this.taskParameters.bucketName))
             }
@@ -213,7 +214,7 @@ export class TaskOperations {
     }
 
     private async createBucketIfNotExist(bucketName: string, region: string): Promise<void> {
-        const exists = await this.testBucketExists(bucketName)
+        const exists = await testBucketExists(this.s3Client, bucketName)
         if (exists) {
             return
         }
@@ -227,28 +228,19 @@ export class TaskOperations {
             throw err
         }
     }
-
-    private async testBucketExists(bucketName: string): Promise<boolean> {
-        try {
-            await this.s3Client.headBucket({ Bucket: bucketName}).promise()
-
-            return true
-        } catch (err) {
-            return false
-        }
-    }
-
     private async uploadFiles() {
+
         let msgTarget: string
         if (this.taskParameters.targetFolder) {
             msgTarget = this.taskParameters.targetFolder
         } else {
             msgTarget = '/'
         }
-        console.log(tl.loc('UploadingFiles',
-                           this.taskParameters.sourceFolder,
-                           msgTarget,
-                           this.taskParameters.bucketName))
+        console.log(tl.loc(
+            'UploadingFiles',
+            this.taskParameters.sourceFolder,
+            msgTarget,
+            this.taskParameters.bucketName))
 
         const matchedFiles = this.findFiles()
         for (const matchedFile of matchedFiles) {
@@ -296,23 +288,23 @@ export class TaskOperations {
                         Body: fileBuffer,
                         ACL: this.taskParameters.filesAcl,
                         ContentType: contentType,
-                        ContentEncoding: this.taskParameters.contentEncoding,
                         StorageClass: this.taskParameters.storageClass
                     }
                     switch (this.taskParameters.keyManagement) {
                         case noKeyManagementValue:
                             break
+
                         case awsKeyManagementValue: {
                             request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
                             request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
+                            break
                         }
-                                                    break
 
                         case customerKeyManagementValue: {
                             request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
                             request.SSECustomerKey = this.taskParameters.customerKey
+                            break
                         }
-                                                         break
                     }
 
                     const response: S3.ManagedUpload.SendData = await this.s3Client.upload(request).promise()
@@ -335,12 +327,10 @@ export class TaskOperations {
             this.taskParameters.globExpressions,
             this.taskParameters.sourceFolder) // default match options
         tl.debug(tl.loc('MatchedPaths', matchedPaths))
-        // filter-out directories
         const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory())
         tl.debug(tl.loc('MatchedFiles', matchedFiles))
         tl.debug(tl.loc('FoundNFiles', matchedFiles.length))
 
         return matchedFiles
     }
-
 }

@@ -26,6 +26,7 @@ describe('S3 Download', () => {
         filesAcl: undefined,
         createBucket: undefined,
         contentType: undefined,
+        contentEncoding: undefined,
         forcePathStyleAddressing: undefined,
         storageClass: undefined,
         keyManagement: undefined,
