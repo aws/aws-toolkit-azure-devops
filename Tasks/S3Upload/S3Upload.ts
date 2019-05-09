@@ -9,6 +9,7 @@ import tl = require('vsts-task-lib/task')
 import { SdkUtils } from 'sdkutils/sdkutils'
 
 import { createDefaultS3Client } from 'sdkutils/defaultClients'
+import { getRegion } from 'sdkutilsawsConnectionParameters'
 import { TaskOperations } from './UploadTaskOperations'
 import { buildTaskParameters } from './UploadTaskParameters'
 
@@ -22,8 +23,9 @@ async function run(): Promise<void> {
         taskParameters.awsConnectionParameters,
         taskParameters.forcePathStyleAddressing,
         tl.debug)
+    const region = await getRegion()
 
-    return new TaskOperations(s3, taskParameters).execute()
+    return new TaskOperations(s3, region, taskParameters).execute()
 }
 
 // run

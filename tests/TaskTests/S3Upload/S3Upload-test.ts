@@ -3,10 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { S3, Connect } from 'aws-sdk'
-import * as fs from 'fs'
-import { Readable as ReadableStream } from 'stream'
-import { AWSConnectionParameters } from '../../../Tasks/Common/sdkutils/awsConnectionParameters'
+import { S3 } from 'aws-sdk'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Upload/UploadTaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Upload/UploadTaskParameters'
@@ -48,6 +45,14 @@ describe('S3 Download', () => {
         promise: function() { }
     }
 
+    const headBucketResponseFails = {
+        promise: function() { throw new Error('doesn\'t exist') }
+    }
+
+    const createBucketResponse = {
+        promise: function() { throw new Error('create called') }
+    }
+
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/S3Upload/task.json')
@@ -55,26 +60,28 @@ describe('S3 Download', () => {
 
     test('Creates a TaskOperation', () => {
         const taskParameters = baseTaskParameters
-        expect(new TaskOperations(new S3(), taskParameters)).not.toBeNull()
+        expect(new TaskOperations(new S3(), '', taskParameters)).not.toBeNull()
     })
 
     test('Handles bucket not existing (and not being able to create one)', async () => {
-        const s3 = new S3({ region: 'us-east-1' })
-        s3.headBucket = jest.fn()((params: any, cb: any) => { throw new Error('doesn\'t exist dummy') })
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn()((params: any, cb: any) => headBucketResponseFails)
         const taskParameters = baseTaskParameters
-        const taskOperation = new TaskOperations(s3, taskParameters)
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
         expect.assertions(1)
         await taskOperation.execute().catch((e) => { expect(e.message).toContain('not exist') })
     })
 
-    test('Tries to create a bucket with the option', async () => {
-        const s3 = new S3({ region: 'us-east-1' })
-        s3.headBucket = jest.fn()((params: any, cb: any) => headBucketResponse)
+    test('Tries and fails to create bucket when told to', async () => {
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn((params: any, cb: any) => headBucketResponseFails)
+        s3.createBucket = jest.fn((params: any, cb: any ) => createBucketResponse)
         const taskParameters = {...baseTaskParameters}
         taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
-        const taskOperation = new TaskOperations(s3, taskParameters)
+        taskParameters.bucketName = 'potato'
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
         expect.assertions(1)
-        await taskOperation.execute().catch((e) => { expect(e.message).toContain('not exist') })
+        await taskOperation.execute().catch((e) => { expect(e.message).toContain('create called') })
     })
 })

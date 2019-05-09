@@ -69,6 +69,7 @@ function completeProxySetup(connectionParamaters: AWSConnectionParameters): void
         // do not want any auth in the logged url
         tl.debug(`Configuring task for proxy host ${proxy.host}, protocol ${proxy.protocol}`)
         AWS.config.update({
+            // tslint:disable-next-line: no-unsafe-any
             httpOptions: { agent: new HttpsProxyAgent(format(proxy)) }
         })
     } catch (err) {
@@ -170,7 +171,9 @@ function attemptCredentialConfigurationFromVariables(): AWS.Credentials {
 
     const secretKey = tl.getVariable(awsSecretAccessKeyVariable)
     if (!secretKey) {
-        throw new Error ('AWS access key ID present in task variables but secret key value is missing; cannot configure task credentials.')
+        throw new Error (
+            'AWS access key ID present in task variables but secret key value is missing; '
+            + 'cannot configure task credentials.')
     }
 
     const token = tl.getVariable(awsSessionTokenVariable)
@@ -222,7 +225,9 @@ async function queryRegionFromMetadata(): Promise<string> {
 
                     console.log('...received instance identity document from metadata')
                     const identity = JSON.parse(data)
+                    // tslint:disable-next-line: no-unsafe-any
                     if (identity.region) {
+                        // tslint:disable-next-line: no-unsafe-any
                         resolve(identity.region)
                     } else {
                         throw new Error('...region value not found in instance identity metadata')
