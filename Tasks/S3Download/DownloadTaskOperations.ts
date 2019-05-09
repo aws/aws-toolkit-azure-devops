@@ -9,7 +9,7 @@ import * as mm from 'minimatch'
 import * as path from 'path'
 import * as tl from 'vsts-task-lib/task'
 
-import { testBucketExists } from 'sdkutils/s3utils'
+import { testBucketExists } from 'Common/s3'
 import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './DownloadTaskParameters'
 
 export class TaskOperations {

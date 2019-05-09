@@ -4,8 +4,8 @@
  */
 
 import { S3 } from 'aws-sdk/clients/all'
-import { AWSConnectionParameters  } from './awsConnectionParameters'
-import { SdkUtils } from './sdkutils'
+import { SdkUtils } from 'Common/sdkutils'
+import { AWSConnectionParameters  } from './sdkutils/awsConnectionParameters'
 
 export async function createDefaultS3Client(
     connectionParams: AWSConnectionParameters,

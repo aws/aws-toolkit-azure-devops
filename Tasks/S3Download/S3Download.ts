@@ -5,7 +5,7 @@
 
 import tl = require('vsts-task-lib/task')
 
-import { createDefaultS3Client } from 'sdkutils/defaultClients'
+import { createDefaultS3Client } from 'Common/defaultClients'
 import { SdkUtils } from 'sdkutils/sdkutils'
 
 import { TaskOperations } from './DownloadTaskOperations'

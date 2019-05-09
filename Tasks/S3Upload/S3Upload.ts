@@ -8,8 +8,8 @@ import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'sdkutils/sdkutils'
 
+import { createDefaultS3Client } from 'Common/defaultClients'
 import { getRegion } from 'sdkutils/awsConnectionParameters'
-import { createDefaultS3Client } from 'sdkutils/defaultClients'
 import { TaskOperations } from './UploadTaskOperations'
 import { buildTaskParameters } from './UploadTaskParameters'
 

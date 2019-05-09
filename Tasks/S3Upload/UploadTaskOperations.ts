@@ -4,9 +4,9 @@
  */
 
 import S3 = require('aws-sdk/clients/s3')
+import { knownMimeTypes, testBucketExists } from 'Common/s3'
 import fs = require('fs')
 import path = require('path')
-import { knownMimeTypes, testBucketExists } from 'sdkutils/s3utils'
 import tl = require('vsts-task-lib/task')
 import { awsKeyManagementValue,
         customerKeyManagementValue,
