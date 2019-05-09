@@ -113,7 +113,8 @@ export class TaskOperations {
         }
 
         const allKeys: string[] = []
-        let nextToken: string
+        // tslint:disable-next-line:no-unnecessary-initializer
+        let nextToken: string | undefined = undefined
         do {
             const params: S3.ListObjectsRequest = {
                 Bucket: this.taskParameters.bucketName,
@@ -123,13 +124,15 @@ export class TaskOperations {
             try {
                 const s3Data = await this.s3Client.listObjects(params).promise()
                 nextToken = s3Data.NextMarker
-                s3Data.Contents.forEach((s3object) => {
-                    // AWS IDE toolkits can cause 0 byte 'folder markers' to be in the bucket,
-                    // filter those out
-                    if (!s3object.Key.endsWith('_$folder$')) {
-                        allKeys.push(s3object.Key)
-                    }
-                })
+                if (s3Data.Contents) {
+                    s3Data.Contents.forEach((s3object) => {
+                        // AWS IDE toolkits can cause 0 byte 'folder markers' to be in the bucket,
+                        // filter those out
+                        if (!s3object.Key.endsWith('_$folder$')) {
+                            allKeys.push(s3object.Key)
+                        }
+                    })
+                }
             } catch (err) {
                 console.error(err)
                 nextToken = undefined
