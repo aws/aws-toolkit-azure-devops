@@ -11,15 +11,11 @@ import path = require('path');
 
 import { SdkUtils } from 'sdkutils/sdkutils';
 
-import { TaskParameters } from './helpers/GetSecretTaskParameters';
-import { TaskOperations } from './helpers/GetSecretTaskOperations';
+import { TaskParameters } from './GetSecretTaskParameters';
+import { TaskOperations } from './GetSecretTaskOperations';
 
 function run(): Promise<void> {
-
-    const taskManifestFile = path.join(__dirname, 'task.json');
-    tl.setResourcePath(taskManifestFile);
-    SdkUtils.setSdkUserAgentFromManifest(taskManifestFile);
-
+    SdkUtils.readResources()
     const taskParameters = new TaskParameters();
     return new TaskOperations(taskParameters).execute();
 }
