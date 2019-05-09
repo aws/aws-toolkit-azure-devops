@@ -7,6 +7,7 @@ import S3 = require('aws-sdk/clients/s3')
 import fs = require('fs')
 import path = require('path')
 import { knownMimeTypes, testBucketExists } from 'sdkutils/s3utils'
+import { getRegion } from 'sdkutilsawsConnectionParameters'
 import tl = require('vsts-task-lib/task')
 import { awsKeyManagementValue,
         customerKeyManagementValue,
@@ -24,7 +25,7 @@ export class TaskOperations {
         if (this.taskParameters.createBucket) {
             await this.createBucketIfNotExist(
                 this.taskParameters.bucketName,
-                await this.taskParameters.awsConnectionParameters.getRegion())
+                await getRegion())
         } else {
             const exists = await testBucketExists(this.s3Client, this.taskParameters.bucketName)
             if (!exists) {

@@ -31,6 +31,7 @@ describe('S3 Download', () => {
     const headBucketResponse = {
         promise: function() { }
     }
+
     const listObjectsResponse = {
         promise: function() {
             return { NextMarker: undefined, Contents: undefined}
