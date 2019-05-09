@@ -14,10 +14,7 @@ import { TaskOperations } from './UploadTaskOperations'
 import { buildTaskParameters } from './UploadTaskParameters'
 
 async function run(): Promise<void> {
-    const taskManifestFile = path.join(__dirname, 'task.json')
-    tl.setResourcePath(taskManifestFile)
-    SdkUtils.setSdkUserAgentFromManifest(taskManifestFile)
-
+    SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
     const s3 = await createDefaultS3Client(
         taskParameters.awsConnectionParameters,
