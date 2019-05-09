@@ -8,9 +8,9 @@ import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'sdkutils/sdkutils'
 
-import { createDefaultS3Client } from 'sdkutilsdefaultClients'
-import { buildTaskParameters } from 'Tasks/S3Upload/UploadTaskParameters'
+import { createDefaultS3Client } from 'sdkutils/defaultClients'
 import { TaskOperations } from './UploadTaskOperations'
+import { buildTaskParameters } from './UploadTaskParameters'
 
 async function run(): Promise<void> {
     const taskManifestFile = path.join(__dirname, 'task.json')
