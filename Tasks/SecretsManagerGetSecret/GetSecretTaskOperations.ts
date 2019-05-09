@@ -7,10 +7,8 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import path = require('path');
 import base64 = require('base-64');
 import SecretsManager = require('aws-sdk/clients/secretsmanager');
-import { AWSError } from 'aws-sdk/lib/error';
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './GetSecretTaskParameters';
 
