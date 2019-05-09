@@ -11,11 +11,11 @@ module.exports = {
   },
   resolve: {
 	alias: {
-	  "aws-sdk": path.resolve(__dirname, 'node_modules/aws-sdk'),
-	  "sdkutils": path.resolve(__dirname, '_build/Tasks/Common/sdkutils'),
-    "Common": path.resolve(__dirname, '_build/Tasks/Common'),
-	  "beanstalkutils": path.resolve(__dirname, '_build/Tasks/Common/beanstalkutils')
-	}
+      "aws-sdk": path.resolve(__dirname, 'node_modules/aws-sdk'),
+      "sdkutils": path.resolve(__dirname, '_build/Tasks/Common/sdkutils'),
+      "Common": path.resolve(__dirname, '_build/Tasks/Common'),
+      "beanstalkutils": path.resolve(__dirname, '_build/Tasks/Common/beanstalkutils')
+    }
   },
   externals: {
     "vsts-task-lib/task": 'require("vsts-task-lib/task")'

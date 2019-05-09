@@ -4,7 +4,6 @@
  */
 
 import { S3 } from 'aws-sdk'
-import * as path from 'path'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Upload/UploadTaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Upload/UploadTaskParameters'
@@ -13,7 +12,7 @@ import { TaskParameters } from '../../../Tasks/S3Upload/UploadTaskParameters'
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
-describe('S3 Download', () => {
+describe('S3 Upload', () => {
     const baseTaskParameters: TaskParameters = {
         awsConnectionParameters: undefined,
         bucketName: '',
