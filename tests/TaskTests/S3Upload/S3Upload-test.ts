@@ -54,6 +54,10 @@ describe('S3 Download', () => {
         promise: function() { throw new Error('create called') }
     }
 
+    const validateUpload = {
+        promise: function() { return undefined }
+    }
+
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/S3Upload/task.json')
@@ -86,7 +90,7 @@ describe('S3 Download', () => {
         await taskOperation.execute().catch((e) => { expect(e.message).toContain('create called') })
     })
 
-    test('Test find matching files', () => {
+    test('Finds matching files', () => {
         const s3 = new S3({ region: 'us-east-1' })
         const taskParameters = {...baseTaskParameters}
         taskParameters.bucketName = 'potato'
@@ -96,5 +100,26 @@ describe('S3 Download', () => {
         const results = taskOperation.findMatchingFiles(taskParameters)
         // expect it to find this file only
         expect(results.length).toBe(1)
+    })
+
+    test('Happy path uplaods a found file', async () => {
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn((params: any, cb: any) => headBucketResponse)
+        s3.upload = jest.fn((params: S3.PutObjectRequest, cb: any) => {
+            expect(params.Bucket).toBe('potato')
+            expect(params.Key).toContain('ts')
+
+            return validateUpload
+        })
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.awsConnectionParameters = connectionParameters
+        taskParameters.createBucket = true
+        taskParameters.bucketName = 'potato'
+        taskParameters.sourceFolder = __dirname
+        taskParameters.globExpressions = [ '*.ts' ]
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        expect.assertions(3)
+        await taskOperation.execute()
+        expect(s3.upload.mock.calls.length).toBe(1)
     })
 })
