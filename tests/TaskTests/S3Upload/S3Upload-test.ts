@@ -4,6 +4,7 @@
  */
 
 import { S3 } from 'aws-sdk'
+import * as path from 'path'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Upload/UploadTaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Upload/UploadTaskParameters'
@@ -83,5 +84,17 @@ describe('S3 Download', () => {
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         expect.assertions(1)
         await taskOperation.execute().catch((e) => { expect(e.message).toContain('create called') })
+    })
+
+    test('Test find matching files', () => {
+        const s3 = new S3({ region: 'us-east-1' })
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.bucketName = 'potato'
+        taskParameters.sourceFolder = __dirname
+        taskParameters.globExpressions = [ '*.ts' ]
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        const results = taskOperation.findMatchingFiles(taskParameters)
+        // expect it to find this file only
+        expect(results.length).toBe(1)
     })
 })

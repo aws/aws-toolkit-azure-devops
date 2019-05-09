@@ -37,6 +37,23 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'))
     }
 
+    public findMatchingFiles(taskParameters: TaskParameters): string[] {
+        console.log(`Searching ${taskParameters.sourceFolder} for files to upload`)
+        taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder)
+        const allPaths = tl.find(taskParameters.sourceFolder) // default find options (follow sym links)
+        tl.debug(tl.loc('AllPaths', allPaths))
+        const matchedPaths = tl.match(
+            allPaths,
+            taskParameters.globExpressions,
+            taskParameters.sourceFolder) // default match options
+        tl.debug(tl.loc('MatchedPaths', matchedPaths))
+        const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory())
+        tl.debug(tl.loc('MatchedFiles', matchedFiles))
+        tl.debug(tl.loc('FoundNFiles', matchedFiles.length))
+
+        return matchedFiles
+    }
+
     private async createBucketIfNotExist(bucketName: string, region: string): Promise<void> {
         const exists = await testBucketExists(this.s3Client, bucketName)
         if (exists) {
@@ -52,6 +69,7 @@ export class TaskOperations {
             throw err
         }
     }
+
     private async uploadFiles() {
 
         let msgTarget: string
@@ -66,7 +84,7 @@ export class TaskOperations {
             msgTarget,
             this.taskParameters.bucketName))
 
-        const matchedFiles = this.findFiles()
+        const matchedFiles = this.findMatchingFiles(this.taskParameters)
         for (const matchedFile of matchedFiles) {
             let relativePath = matchedFile.substring(this.taskParameters.sourceFolder.length)
             if (relativePath.startsWith(path.sep)) {
@@ -141,20 +159,4 @@ export class TaskOperations {
         }
     }
 
-    private findFiles(): string[] {
-        console.log(`Searching ${this.taskParameters.sourceFolder} for files to upload`)
-        this.taskParameters.sourceFolder = path.normalize(this.taskParameters.sourceFolder)
-        const allPaths = tl.find(this.taskParameters.sourceFolder) // default find options (follow sym links)
-        tl.debug(tl.loc('AllPaths', allPaths))
-        const matchedPaths = tl.match(
-            allPaths,
-            this.taskParameters.globExpressions,
-            this.taskParameters.sourceFolder) // default match options
-        tl.debug(tl.loc('MatchedPaths', matchedPaths))
-        const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory())
-        tl.debug(tl.loc('MatchedFiles', matchedFiles))
-        tl.debug(tl.loc('FoundNFiles', matchedFiles.length))
-
-        return matchedFiles
-    }
 }
