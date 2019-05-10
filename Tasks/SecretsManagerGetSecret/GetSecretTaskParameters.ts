@@ -3,25 +3,25 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase'
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import tl = require('vsts-task-lib/task')
 
-export class TaskParameters extends AWSTaskParametersBase {
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters,
+    secretIdOrName: string,
+    variableName: string,
+    versionId: string,
+    versionStage: string
+}
 
-    public secretIdOrName: string
-    public variableName: string
-    public versionId: string
-    public versionStage: string
-
-    public constructor() {
-        super()
-        try {
-            this.secretIdOrName = tl.getInput('secretIdOrName', true)
-            this.variableName = tl.getInput('variableName', true)
-            this.versionId = tl.getInput('versionId', false)
-            this.versionStage = tl.getInput('versionStage', false)
-        } catch (error) {
-            throw new Error(`${error}`)
-        }
+export function buildTaskParameters(): TaskParameters {
+    const parameters: TaskParameters = {
+        awsConnectionParameters: buildConnectionParameters(),
+        secretIdOrName: tl.getInput('secretIdOrName', true),
+        variableName: tl.getInput('variableName', true),
+        versionId: tl.getInput('versionId', false),
+        versionStage: tl.getInput('versionStage', false)
     }
+
+    return parameters
 }

@@ -3,19 +3,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-import path = require('path')
 import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'sdkutils/sdkutils'
 
+import { createDefaultSecretsManager } from 'Tasks/Common/defaultClients'
 import { TaskOperations } from './GetSecretTaskOperations'
-import { TaskParameters } from './GetSecretTaskParameters'
+import { buildTaskParameters } from './GetSecretTaskParameters'
 
 async function run(): Promise<void> {
     SdkUtils.readResources()
-    const taskParameters = new TaskParameters()
+    const taskParameters = buildTaskParameters()
+    const secretsManager = await createDefaultSecretsManager(taskParameters.awsConnectionParameters, tl.debug)
 
-    return new TaskOperations(taskParameters).execute()
+    return new TaskOperations(secretsManager, taskParameters).execute()
 }
 
 // run

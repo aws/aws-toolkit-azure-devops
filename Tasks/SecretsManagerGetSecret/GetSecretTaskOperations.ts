@@ -5,22 +5,17 @@
 
 import SecretsManager = require('aws-sdk/clients/secretsmanager')
 import base64 = require('base-64')
-import { SdkUtils } from 'sdkutils/sdkutils'
 import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './GetSecretTaskParameters'
 
 export class TaskOperations {
-
-    private secretsManagerClient: SecretsManager
-
     public constructor(
+        public readonly secretsManagerClient: SecretsManager,
         public readonly taskParameters: TaskParameters
      ) {
      }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients()
-
         console.log(tl.loc('RetrievingSecret', this.taskParameters.secretIdOrName))
 
         const request: SecretsManager.GetSecretValueRequest = {
@@ -45,19 +40,4 @@ export class TaskOperations {
 
         console.log(tl.loc('TaskCompleted', this.taskParameters.variableName))
     }
-
-    private async createServiceClients(): Promise<void> {
-
-        const opts: SecretsManager.ClientConfiguration = {
-            apiVersion: '2017-10-17'
-        }
-
-        // tslint:disable-next-line: no-unsafe-any
-        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(
-            SecretsManager,
-            opts,
-            this.taskParameters,
-            tl.debug)
-    }
-
 }
