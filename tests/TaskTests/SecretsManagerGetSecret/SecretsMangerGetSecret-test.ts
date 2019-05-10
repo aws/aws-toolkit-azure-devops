@@ -5,6 +5,6 @@
 
 describe('Secrets Manger Get Secret', () => {
     test('Does it', () => {
-        return true
+        return undefined
     })
 })
