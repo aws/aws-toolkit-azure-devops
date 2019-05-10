@@ -1,18 +1,17 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task');
-import base64 = require('base-64');
-import SecretsManager = require('aws-sdk/clients/secretsmanager');
-import { SdkUtils } from 'sdkutils/sdkutils';
-import { TaskParameters } from './GetSecretTaskParameters';
+import SecretsManager = require('aws-sdk/clients/secretsmanager')
+import base64 = require('base-64')
+import { SdkUtils } from 'sdkutils/sdkutils'
+import tl = require('vsts-task-lib/task')
+import { TaskParameters } from './GetSecretTaskParameters'
 
 export class TaskOperations {
+
+    private secretsManagerClient: SecretsManager
 
     public constructor(
         public readonly taskParameters: TaskParameters
@@ -20,40 +19,45 @@ export class TaskOperations {
      }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients();
+        await this.createServiceClients()
 
-        console.log(tl.loc('RetrievingSecret', this.taskParameters.secretIdOrName));
+        console.log(tl.loc('RetrievingSecret', this.taskParameters.secretIdOrName))
 
         const request: SecretsManager.GetSecretValueRequest = {
             SecretId: this.taskParameters.secretIdOrName
-        };
+        }
 
         if (this.taskParameters.versionId) {
-            request.VersionId = this.taskParameters.versionId;
+            request.VersionId = this.taskParameters.versionId
         } else if (this.taskParameters.versionStage) {
-            request.VersionStage = this.taskParameters.versionStage;
+            request.VersionStage = this.taskParameters.versionStage
         }
 
-        const response = await this.secretsManagerClient.getSecretValue(request).promise();
+        const response = await this.secretsManagerClient.getSecretValue(request).promise()
         if (response.SecretString) {
-            tl.setVariable(this.taskParameters.variableName, response.SecretString, true);
+            tl.setVariable(this.taskParameters.variableName, response.SecretString, true)
         } else {
-            const v = base64.decode(response.SecretBinary);
-            tl.setVariable(this.taskParameters.variableName, v, true);
+            // tslint:disable-next-line: no-unsafe-any
+            const v = base64.decode(response.SecretBinary)
+            // tslint:disable-next-line: no-unsafe-any
+            tl.setVariable(this.taskParameters.variableName, v, true)
         }
 
-        console.log(tl.loc('TaskCompleted', this.taskParameters.variableName));
+        console.log(tl.loc('TaskCompleted', this.taskParameters.variableName))
     }
-
-    private secretsManagerClient: SecretsManager;
 
     private async createServiceClients(): Promise<void> {
 
         const opts: SecretsManager.ClientConfiguration = {
             apiVersion: '2017-10-17'
-        };
+        }
 
-        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug);
+        // tslint:disable-next-line: no-unsafe-any
+        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(
+            SecretsManager,
+            opts,
+            this.taskParameters,
+            tl.debug)
     }
 
 }

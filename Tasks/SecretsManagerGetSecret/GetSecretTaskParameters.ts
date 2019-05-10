@@ -1,30 +1,27 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task');
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
+import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase'
+import tl = require('vsts-task-lib/task')
 
 export class TaskParameters extends AWSTaskParametersBase {
 
-    public secretIdOrName: string;
-    public variableName: string;
-    public versionId: string;
-    public versionStage: string;
+    public secretIdOrName: string
+    public variableName: string
+    public versionId: string
+    public versionStage: string
 
-    constructor() {
-        super();
+    public constructor() {
+        super()
         try {
-            this.secretIdOrName = tl.getInput('secretIdOrName', true);
-            this.variableName = tl.getInput('variableName', true);
-            this.versionId = tl.getInput('versionId', false);
-            this.versionStage = tl.getInput('versionStage', false);
+            this.secretIdOrName = tl.getInput('secretIdOrName', true)
+            this.variableName = tl.getInput('variableName', true)
+            this.versionId = tl.getInput('versionId', false)
+            this.versionStage = tl.getInput('versionStage', false)
         } catch (error) {
-            throw new Error(error.message);
+            throw new Error(`${error}`)
         }
     }
 }
