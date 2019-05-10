@@ -11,4 +11,8 @@
     "dependencies": {
         "sdkutils": "file:../../_build/Tasks/Common/sdkutils"
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e149bb5... revert
