@@ -19,7 +19,6 @@ async function run(): Promise<void> {
     return new TaskOperations(secretsManager, taskParameters).execute()
 }
 
-// run
 run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, '')
 ).catch((error) =>
