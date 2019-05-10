@@ -35,7 +35,7 @@ export class TaskOperations {
             // tslint:disable-next-line: no-unsafe-any
             const v = base64.decode(response.SecretBinary)
             // tslint:disable-next-line: no-unsafe-any
-            tl.setVariable(this.taskParameters.variableName, v, true)
+            tl.setVariable(this.taskParameters.variableName, v.trim(), true)
         }
 
         console.log(tl.loc('TaskCompleted', this.taskParameters.variableName))

@@ -3,35 +3,99 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { SecretsManager } from 'aws-sdk'
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SecretsManagerGetSecret/GetSecretTaskOperations'
 import { TaskParameters } from '../../../Tasks/SecretsManagerGetSecret/GetSecretTaskParameters'
+
+// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
+// tslint:disable: no-unsafe-any
+jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: undefined,
     secretIdOrName: undefined,
-    variableName: undefined,
+    variableName: 'secret',
     versionId: undefined,
     versionStage: undefined
 }
 
+const secretsManagerFails = {
+    promise: function() { throw new Error('doesn\'t exist') }
+}
+
+const secretsManagerReturnsString = {
+    promise: function() { return {SecretString: 'string'} }
+}
+
+const secretsManagerReturnsBadBase64 = {
+    promise: function() { return {SecretBinary: 'strOo0ing'} }
+}
+
+const secretsManagerReturnsValidBase64 = {
+    promise: function() { return {SecretBinary: 'YWJjCg=='} }
+}
+
+const assertAbc = {
+    promise: function(request: any) {
+        expect(request.VersionId).toBe('abc')
+        expect(request.versionStage).toBe(undefined)
+    }
+}
+
 describe('Secrets Manger Get Secret', () => {
-    test('Fails on exception thrown', () => {
-        return undefined
+    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    beforeAll(() => {
+        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SecretsManagerGetSecret/task.json')
     })
 
-    test('Handles secret string', () => {
-        return undefined
+    test('Creates a TaskOperation', () => {
+        expect(new TaskOperations(new SecretsManager(), defaultTaskParameters)).not.toBeNull()
     })
 
-    test('Handles and decodes secret binary', () => {
-        return undefined
+    test('Fails on exception thrown', async () => {
+        const badSecretsManager = new SecretsManager() as any
+        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerFails)
+        const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
+        await taskOperations.execute().catch((e) => { expect(e.message).toContain('doesn\'t exist') })
     })
 
-    test('reads version stage', () => {
-        return undefined
+    test('Fails on bad base64', async () => {
+        const badSecretsManager = new SecretsManager() as any
+        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsBadBase64)
+        const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
+        await taskOperations.execute().catch((e) => {
+            expect(e.message).toContain('the string to be decoded is not correctly encoded')
+        })
     })
 
-    test('Prioritizes version id', () => {
-        return undefined
+    test('Handles secret string', async () => {
+        const badSecretsManager = new SecretsManager() as any
+        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsString)
+        const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
+        await taskOperations.execute()
+    })
+
+    test('Handles and decodes secret binary', async () => {
+        const badSecretsManager = new SecretsManager() as any
+        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsValidBase64)
+        const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
+        await taskOperations.execute()
+    })
+
+    test('Prioritizes version id', async () => {
+        const taskParametersWithExtraFields = {...defaultTaskParameters}
+        taskParametersWithExtraFields.versionId = 'abc'
+        taskParametersWithExtraFields.versionStage = 'def'
+        const badSecretsManager = new SecretsManager() as any
+        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => {
+            expect(params.VersionId).toBe('abc')
+            expect(params.versionStage).toBe(undefined)
+
+            return secretsManagerReturnsValidBase64
+        })
+        expect.assertions(2)
+        const taskOperations = new TaskOperations(badSecretsManager, taskParametersWithExtraFields)
+        await taskOperations.execute()
     })
 })

@@ -7,7 +7,7 @@ import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'sdkutils/sdkutils'
 
-import { createDefaultSecretsManager } from 'Tasks/Common/defaultClients'
+import { createDefaultSecretsManager } from 'Common/defaultClients'
 import { TaskOperations } from './GetSecretTaskOperations'
 import { buildTaskParameters } from './GetSecretTaskParameters'
 
