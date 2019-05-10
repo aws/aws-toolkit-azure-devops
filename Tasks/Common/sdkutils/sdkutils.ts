@@ -9,7 +9,7 @@ import AWS = require('aws-sdk/global')
 import fs = require('fs')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
-import { AWSConnectionParameters, getCredentials, getRegion } from 'sdkutils/awsConnectionParameters';
+import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters';
 
 export abstract class SdkUtils {
 

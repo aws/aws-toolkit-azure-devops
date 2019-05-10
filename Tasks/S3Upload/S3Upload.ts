@@ -3,13 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import path = require('path')
 import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'sdkutils/sdkutils'
 
+import { getRegion } from 'Common/awsConnectionParameters'
 import { createDefaultS3Client } from 'Common/defaultClients'
-import { getRegion } from 'sdkutils/awsConnectionParameters'
 import { TaskOperations } from './UploadTaskOperations'
 import { buildTaskParameters } from './UploadTaskParameters'
 
