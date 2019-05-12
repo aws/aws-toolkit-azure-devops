@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+import * as fs from 'fs'
 import * as path from 'path'
-import * as ts from 'typescript'
 
 const repoRoot = path.dirname(__dirname)
 
@@ -50,8 +50,8 @@ import { buildTaskParameters } from './TaskParameters'
 
 `
 
-    const thing = header + importStament + runStatement + run
-    console.log(thing)
+    const output = header + importStament + runStatement + run
+    fs.writeFileSync(`Tasks/${filename}/${filename}.ts`, output)
 }
 
 doThing('SecretsManagerGetSecret', 'SecretsManager')
