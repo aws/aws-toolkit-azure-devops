@@ -34,6 +34,7 @@ async function run(): Promise<void> {
     SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
     const client = await createDefault${clientType}(taskParameters, tl.debug)
+
     return new TaskOperations(client, taskParameters).execute()
 }
 `
@@ -47,7 +48,6 @@ import { SdkUtils } from 'Common/sdkutils'
 import { createDefault${clientType} } from 'Common/defaultClients'
 import { TaskOperations } from './TaskOperations'
 import { buildTaskParameters } from './TaskParameters'
-
 `
 
     const output = header + importStament + runStatement + run
@@ -55,3 +55,4 @@ import { buildTaskParameters } from './TaskParameters'
 }
 
 doThing('SecretsManagerGetSecret', 'SecretsManager')
+doThing('S3Download', 'S3')

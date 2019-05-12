@@ -7,8 +7,8 @@ import { S3 } from 'aws-sdk'
 import * as fs from 'fs'
 import { Readable as ReadableStream } from 'stream'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
-import { TaskOperations } from '../../../Tasks/S3Download/DownloadTaskOperations'
-import { TaskParameters } from '../../../Tasks/S3Download/DownloadTaskParameters'
+import { TaskOperations } from '../../../Tasks/S3Download/TaskOperations'
+import { TaskParameters } from '../../../Tasks/S3Download/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
