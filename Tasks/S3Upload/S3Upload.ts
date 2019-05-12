@@ -15,10 +15,7 @@ import { buildTaskParameters } from './UploadTaskParameters'
 async function run(): Promise<void> {
     SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
-    const s3 = await createDefaultS3Client(
-        taskParameters.awsConnectionParameters,
-        taskParameters.forcePathStyleAddressing,
-        tl.debug)
+    const s3 = await createDefaultS3Client(taskParameters, tl.debug)
     const region = await getRegion()
 
     return new TaskOperations(s3, region, taskParameters).execute()

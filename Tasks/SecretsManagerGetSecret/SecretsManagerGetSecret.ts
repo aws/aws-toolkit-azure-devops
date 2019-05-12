@@ -14,7 +14,7 @@ import { buildTaskParameters } from './GetSecretTaskParameters'
 async function run(): Promise<void> {
     SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
-    const secretsManager = await createDefaultSecretsManager(taskParameters.awsConnectionParameters, tl.debug)
+    const secretsManager = await createDefaultSecretsManager(taskParameters, tl.debug)
 
     return new TaskOperations(secretsManager, taskParameters).execute()
 }
