@@ -6,7 +6,7 @@
 import SecretsManager = require('aws-sdk/clients/secretsmanager')
 import base64 = require('base-64')
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './GetSecretTaskParameters'
+import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     public constructor(

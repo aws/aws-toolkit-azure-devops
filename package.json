@@ -5,7 +5,9 @@
     "private": true,
     "main": "_build/tasks",
     "scripts": {
-        "build": "tsc -p ./",
+        "build": "npm run generateCode && npm run compileTypescript",
+        "generateCode": "ts-node ./build-scripts/generateRunners.ts",
+        "compileTypescript": "tsc -p ./",
         "test": "jest",
         "clean": "node ./build-scripts/clean.js",
         "lint": "tslint --project .",

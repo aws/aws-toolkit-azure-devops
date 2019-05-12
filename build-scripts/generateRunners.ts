@@ -33,7 +33,7 @@ function doThing(filename: string, clientType: string) {
 async function run(): Promise<void> {
     SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
-    const client = createDefault${clientType}Client()
+    const client = await createDefault${clientType}(taskParameters, tl.debug)
     return new TaskOperations(client, taskParameters).execute()
 }
 `
@@ -42,7 +42,7 @@ async function run(): Promise<void> {
 `
 import tl = require('vsts-task-lib/task')
 
-import { SdkUtils } from 'Common/sdkutils
+import { SdkUtils } from 'Common/sdkutils'
 
 import { createDefault${clientType} } from 'Common/defaultClients'
 import { TaskOperations } from './TaskOperations'

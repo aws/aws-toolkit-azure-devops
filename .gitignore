@@ -13,3 +13,6 @@
 **/package-lock.json
 **/.DS_Store
 coverage/
+
+# auto generated runners
+Tasks/SecretsManagerGetSecret/SecretsManagerGetSecret.ts
