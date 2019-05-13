@@ -6,6 +6,7 @@ linterOptions:
   exclude:
     - node_modules/**
     - '**/*.json'
+    # TODO remove these as modules are fixed https://github.com/aws/aws-vsts-tools/issues/183
     - Tasks/AWSCLI/**
     - Tasks/AWSPowerShellModuleScript/**
     - Tasks/AWSShellScript/**
