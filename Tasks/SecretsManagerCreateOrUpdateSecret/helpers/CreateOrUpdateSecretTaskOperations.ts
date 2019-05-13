@@ -28,7 +28,6 @@ export class TaskOperations {
             await this.updateSecret();
             console.log(tl.loc('UpdateSecretCompleted'));
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             if (err.code === 'ResourceNotFoundException') {
                 if (this.taskParameters.autoCreateSecret) {
                     await this.createSecret();
@@ -161,11 +160,6 @@ export class TaskOperations {
             apiVersion: '2017-10-17'
         };
 
-        // tslint:disable-next-line: no-unsafe-any
-        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(
-            SecretsManager,
-            opts,
-            this.taskParameters,
-            tl.debug)
+        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug);
     }
 }
