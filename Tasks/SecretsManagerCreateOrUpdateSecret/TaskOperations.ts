@@ -34,6 +34,27 @@ export class TaskOperations {
         }
     }
 
+    public getTags(tags: string[]): SecretsManager.Tag[] {
+
+        let arr: SecretsManager.Tag[]
+
+        if (tags && tags.length > 0) {
+            arr = []
+            tags.forEach((t) => {
+                const kvp = t.split('=')
+                const key = kvp[0].trim()
+                const val = kvp[1].trim()
+                console.log(tl.loc('AddingTag', key, val))
+                arr.push({
+                    Key: key,
+                    Value: val
+                })
+            })
+        }
+
+        return arr
+    }
+
     private async updateSecret(): Promise<void> {
 
         console.log(tl.loc('UpdatingSecret', this.taskParameters.secretNameOrId))
@@ -122,24 +143,4 @@ export class TaskOperations {
         }
     }
 
-    private getTags(tags: string[]): SecretsManager.Tag[] {
-
-        let arr: SecretsManager.Tag[]
-
-        if (tags && tags.length > 0) {
-            arr = []
-            tags.forEach((t) => {
-                const kvp = t.split('=')
-                const key = kvp[0].trim()
-                const val = kvp[1].trim()
-                console.log(tl.loc('AddingTag', key, val))
-                arr.push({
-                    Key: key,
-                    Value: val
-                })
-            })
-        }
-
-        return arr
-    }
 }
