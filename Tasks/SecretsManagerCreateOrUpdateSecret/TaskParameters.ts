@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import tl = require('vsts-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import tl = require('vsts-task-lib/task')
 
 export const stringSecretType: string = 'string'
 export const binarySecretType: string = 'binary'

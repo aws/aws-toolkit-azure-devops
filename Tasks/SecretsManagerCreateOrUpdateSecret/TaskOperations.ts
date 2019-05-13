@@ -6,7 +6,7 @@
 import SecretsManager = require('aws-sdk/clients/secretsmanager')
 import fs = require('fs')
 import tl = require('vsts-task-lib/task')
-import { TaskParameters, inlineSecretSource, stringSecretType, binarySecretType } from './TaskParameters'
+import { binarySecretType, inlineSecretSource, stringSecretType, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -20,7 +20,8 @@ export class TaskOperations {
             await this.updateSecret()
             console.log(tl.loc('UpdateSecretCompleted'))
         } catch (err) {
-            if (err.code === 'ResourceNotFoundException') {
+            // tslint:disable-next-line: no-unsafe-any
+            if (err !== undefined && err.code === 'ResourceNotFoundException') {
                 if (this.taskParameters.autoCreateSecret) {
                     await this.createSecret()
                     console.log(tl.loc('CreateSecretCompleted'))
@@ -52,19 +53,19 @@ export class TaskOperations {
             SecretId: this.taskParameters.secretNameOrId
         }
 
-        if (this.taskParameters.secretValueSource === TaskParameters.inlineSecretSource) {
+        if (this.taskParameters.secretValueSource === inlineSecretSource) {
             updateValueRequest.SecretString = this.taskParameters.secretValue
         } else {
             switch (this.taskParameters.secretValueType) {
-                case TaskParameters.stringSecretType: {
+                case stringSecretType: {
                     updateValueRequest.SecretString = fs.readFileSync(this.taskParameters.secretValueFile, 'utf8')
+                    break
                 }
-                                                      break
 
-                case TaskParameters.binarySecretType: {
+                case binarySecretType: {
                     updateValueRequest.SecretBinary = fs.readFileSync(this.taskParameters.secretValueFile)
+                    break
                 }
-                                                      break
             }
         }
 
@@ -94,15 +95,13 @@ export class TaskOperations {
             request.SecretString = this.taskParameters.secretValue
         } else {
             switch (this.taskParameters.secretValueType) {
-                case stringSecretType: {
+                case stringSecretType:
                     request.SecretString = fs.readFileSync(this.taskParameters.secretValueFile, 'utf8')
-                }
-                                                      break
+                    break
 
-                case binarySecretType: {
+                case binarySecretType:
                     request.SecretBinary = fs.readFileSync(this.taskParameters.secretValueFile)
-                }
-                                                      break
+                    break
             }
         }
 
