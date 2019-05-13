@@ -14,10 +14,17 @@ jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: undefined,
-    secretIdOrName: undefined,
-    variableName: 'secret',
-    versionId: undefined,
-    versionStage: undefined
+    secretNameOrId: undefined,
+    description: undefined,
+    kmsKeyId: undefined,
+    secretValueType: undefined,
+    secretValueSource: undefined,
+    secretValue: undefined,
+    secretValueFile: undefined,
+    autoCreateSecret: false,
+    tags: [],
+    arnOutputVariable: undefined,
+    versionIdOutputVariable: undefined
 }
 
 const secretsManagerFails = {
