@@ -36,7 +36,6 @@ export class TaskOperations {
     }
 
     private async updateSecret(): Promise<void> {
-
         console.log(tl.loc('UpdatingSecret', this.taskParameters.secretNameOrId))
 
         // treat updating descrption et al about the secret as distinct from a value update

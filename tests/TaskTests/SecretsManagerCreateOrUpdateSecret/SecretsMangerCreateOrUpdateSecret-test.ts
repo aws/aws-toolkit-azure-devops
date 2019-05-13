@@ -19,7 +19,7 @@ const defaultTaskParameters: TaskParameters = {
     kmsKeyId: undefined,
     secretValueType: undefined,
     secretValueSource: inlineSecretSource,
-    secretValue: undefined,
+    secretValue: 'super secret',
     secretValueFile: undefined,
     autoCreateSecret: false,
     tags: [],
@@ -57,7 +57,7 @@ describe('Secrets Manger Create Or Update Secret', () => {
         await taskOperations.execute().catch((e) => expect(e.message).toContain('Error updating secret'))
     })
 
-    test('Secret update fails, goes to update, fails because autocreate off', async () => {
+    test('Secret update fails, goes to create, fails because autocreate off', async () => {
         expect.assertions(1)
         const secretsManager = new SecretsManager() as any
         secretsManager.putSecretValue = jest.fn(() => secretsManagerFailsNotFound)
@@ -65,7 +65,7 @@ describe('Secrets Manger Create Or Update Secret', () => {
         await taskOperations.execute().catch((e) => expect(e.message).toContain('Specified secret does not exist'))
     })
 
-    test('Secret update fails, goes to update', async () => {
+    test('Secret update fails, goes to create', async () => {
         expect.assertions(1)
         const taskParams = {...defaultTaskParameters}
         taskParams.autoCreateSecret = true
@@ -78,5 +78,38 @@ describe('Secrets Manger Create Or Update Secret', () => {
         })
         const taskOperations = new TaskOperations(secretsManager, taskParams)
         await taskOperations.execute()
+    })
+
+    test('Secret update, update works', async () => {
+        expect.assertions(1)
+        const secretsManager = new SecretsManager() as any
+        secretsManager.putSecretValue = jest.fn((params, cb) => {
+            expect(params.Name).toBeUndefined()
+
+            return secretsManagerReturnsCreate
+        })
+        const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
+        await taskOperations.execute()
+    })
+
+    test('Secret update, description updated seperately', async () => {
+        expect.assertions(4)
+        const taskParams = {...defaultTaskParameters}
+        taskParams.description = 'descriptive'
+        const secretsManager = new SecretsManager() as any
+        secretsManager.putSecretValue = jest.fn((params) => {
+            expect(params.Name).toBeUndefined()
+
+            return secretsManagerReturnsCreate
+        })
+        secretsManager.updateSecret = jest.fn((params) => {
+            expect(params.Name).toBeUndefined()
+
+            return secretsManagerReturnsCreate
+        })
+        const taskOperations = new TaskOperations(secretsManager, taskParams)
+        await taskOperations.execute()
+        expect(secretsManager.putSecretValue).toBeCalled()
+        expect(secretsManager.updateSecret).toBeCalled()
     })
 })
