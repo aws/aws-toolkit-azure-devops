@@ -5,22 +5,17 @@
 
 import SecretsManager = require('aws-sdk/clients/secretsmanager')
 import fs = require('fs')
-import { SdkUtils } from 'sdkutils/sdkutils'
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './CreateOrUpdateSecretTaskParameters'
+import { TaskParameters, inlineSecretSource, stringSecretType, binarySecretType } from './TaskParameters'
 
 export class TaskOperations {
-
-    private secretsManagerClient: SecretsManager
-
     public constructor(
+        public readonly secretsManagerClient: SecretsManager,
         public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients()
-
         try {
             await this.updateSecret()
             console.log(tl.loc('UpdateSecretCompleted'))
@@ -95,16 +90,16 @@ export class TaskOperations {
             Description: this.taskParameters.description
         }
 
-        if (this.taskParameters.secretValueSource === TaskParameters.inlineSecretSource) {
+        if (this.taskParameters.secretValueSource === inlineSecretSource) {
             request.SecretString = this.taskParameters.secretValue
         } else {
             switch (this.taskParameters.secretValueType) {
-                case TaskParameters.stringSecretType: {
+                case stringSecretType: {
                     request.SecretString = fs.readFileSync(this.taskParameters.secretValueFile, 'utf8')
                 }
                                                       break
 
-                case TaskParameters.binarySecretType: {
+                case binarySecretType: {
                     request.SecretBinary = fs.readFileSync(this.taskParameters.secretValueFile)
                 }
                                                       break
@@ -147,14 +142,5 @@ export class TaskOperations {
         }
 
         return arr
-    }
-
-    private async createServiceClients(): Promise<void> {
-
-        const opts: SecretsManager.ClientConfiguration = {
-            apiVersion: '2017-10-17'
-        }
-
-        this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug)
     }
 }

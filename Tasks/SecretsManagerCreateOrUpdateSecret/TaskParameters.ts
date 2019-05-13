@@ -3,61 +3,64 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase'
 import tl = require('vsts-task-lib/task')
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 
-export class TaskParameters extends AWSTaskParametersBase {
+export const stringSecretType: string = 'string'
+export const binarySecretType: string = 'binary'
 
-    public static readonly stringSecretType: string = 'string'
-    public static readonly binarySecretType: string = 'binary'
+export const inlineSecretSource: string = 'inline'
+export const fileSecretSource: string = 'file'
 
-    public static readonly inlineSecretSource: string = 'inline'
-    public static readonly fileSecretSource: string = 'file'
+export const maxVersionStages: number = 20
+export const maxTags: number = 50
 
-    public static readonly maxVersionStages: number = 20
-    public static readonly maxTags: number = 50
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters
+    secretNameOrId: string
+    description: string
+    kmsKeyId: string
+    secretValueType: string
+    secretValueSource: string
+    secretValue: string
+    secretValueFile: string
+    autoCreateSecret: boolean
+    tags: string[]
+    arnOutputVariable: string
+    versionIdOutputVariable: string
+}
 
-    public secretNameOrId: string
-    public description: string
-    public kmsKeyId: string
-    public secretValueType: string
-    public secretValueSource: string
-    public secretValue: string
-    public secretValueFile: string
-    public autoCreateSecret: boolean
-    public tags: string[]
-    public arnOutputVariable: string
-    public versionIdOutputVariable: string
+export function buildTaskParameters(): TaskParameters {
+    const parameters: TaskParameters = {
+        awsConnectionParameters: buildConnectionParameters(),
+        secretNameOrId: tl.getInput('secretNameOrId', true),
+        description: tl.getInput('description', false),
+        kmsKeyId: tl.getInput('kmsKeyId', false),
+        secretValueType: tl.getInput('secretValueType', true),
+        secretValueSource: tl.getInput('secretValueSource', true),
+        secretValue: undefined,
+        secretValueFile: undefined,
+        autoCreateSecret:  tl.getBoolInput('autoCreateSecret', false),
+        tags: undefined,
+        arnOutputVariable: tl.getInput('arnOutputVariable', false),
+        versionIdOutputVariable: tl.getInput('versionIdOutputVariable', false)
+    }
 
-    public constructor() {
-        super()
-        try {
-            this.secretNameOrId = tl.getInput('secretNameOrId', true)
-            this.description = tl.getInput('description', false)
-            this.secretValueType = tl.getInput('secretValueType', true)
-            this.secretValueSource = tl.getInput('secretValueSource', true)
+    if (parameters.secretValueSource === inlineSecretSource) {
+        parameters.secretValue = tl.getInput('secretValue', true)
+    } else {
+        parameters.secretValueFile = tl.getPathInput('secretValueFile', true, true)
+    }
 
-            if (this.secretValueSource === TaskParameters.inlineSecretSource) {
-                this.secretValue = tl.getInput('secretValue', true)
-            } else {
-                this.secretValueFile = tl.getPathInput('secretValueFile', true, true)
+    if (parameters.autoCreateSecret) {
+        parameters.tags = tl.getDelimitedInput('tags', '\n', false)
+        if (parameters.tags) {
+            const numTags = parameters.tags.length
+            if (numTags > maxTags) {
+                throw new Error(tl.loc('TooManyTags', numTags, maxTags))
             }
-
-            this.kmsKeyId = tl.getInput('kmsKeyId', false)
-            this.autoCreateSecret = tl.getBoolInput('autoCreateSecret', false)
-            if (this.autoCreateSecret) {
-                this.tags = tl.getDelimitedInput('tags', '\n', false)
-                if (this.tags) {
-                    const numTags = this.tags.length
-                    if (numTags > TaskParameters.maxTags) {
-                        throw new Error(tl.loc('TooManyTags', numTags, TaskParameters.maxTags))
-                    }
-                }
-            }
-            this.arnOutputVariable = tl.getInput('arnOutputVariable', false)
-            this.versionIdOutputVariable = tl.getInput('versionIdOutputVariable', false)
-        } catch (error) {
-            throw new Error(error.message)
         }
     }
+
+    return parameters
 }
