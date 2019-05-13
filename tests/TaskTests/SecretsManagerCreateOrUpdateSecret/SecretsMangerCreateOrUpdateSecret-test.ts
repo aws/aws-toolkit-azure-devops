@@ -31,23 +31,12 @@ const secretsManagerFails = {
     promise: function() { throw new Error('doesn\'t exist') }
 }
 
-const secretsManagerReturnsString = {
+const secretsManagerFailsNotFound = {
+    promise: function() { throw {code: 'ResourceNotFoundException'} }
+}
+
+const secretsManagerReturnsCreate = {
     promise: function() { return {SecretString: 'string'} }
-}
-
-const secretsManagerReturnsBadBase64 = {
-    promise: function() { return {SecretBinary: 'strOo0ing'} }
-}
-
-const secretsManagerReturnsValidBase64 = {
-    promise: function() { return {SecretBinary: 'YWJjCg=='} }
-}
-
-const assertAbc = {
-    promise: function(request: any) {
-        expect(request.VersionId).toBe('abc')
-        expect(request.versionStage).toBe(undefined)
-    }
 }
 
 describe('Secrets Manger Create Or Update Secret', () => {
@@ -66,5 +55,28 @@ describe('Secrets Manger Create Or Update Secret', () => {
         secretsManager.putSecretValue = jest.fn(() => secretsManagerFails)
         const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
         await taskOperations.execute().catch((e) => expect(e.message).toContain('Error updating secret'))
+    })
+
+    test('Secret update fails, goes to update, fails because autocreate off', async () => {
+        expect.assertions(1)
+        const secretsManager = new SecretsManager() as any
+        secretsManager.putSecretValue = jest.fn(() => secretsManagerFailsNotFound)
+        const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
+        await taskOperations.execute().catch((e) => expect(e.message).toContain('Specified secret does not exist'))
+    })
+
+    test('Secret update fails, goes to update', async () => {
+        expect.assertions(1)
+        const taskParams = {...defaultTaskParameters}
+        taskParams.autoCreateSecret = true
+        const secretsManager = new SecretsManager() as any
+        secretsManager.putSecretValue = jest.fn(() => secretsManagerFailsNotFound)
+        secretsManager.createSecret = jest.fn((params, cb) => {
+            expect(params.Name).toBeUndefined()
+
+            return secretsManagerReturnsCreate
+        })
+        const taskOperations = new TaskOperations(secretsManager, taskParams)
+        await taskOperations.execute()
     })
 })
