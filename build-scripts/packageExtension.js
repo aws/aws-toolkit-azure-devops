@@ -50,11 +50,11 @@ function package(options) {
             return
         }
 
-        var taskBuildFolder = path.join(folders.outBuildTasks, taskName)
-        var taskPackageFolder = path.join(folders.outPackageTasks, taskName)
+        const taskBuildFolder = path.join(folders.outBuildTasks, taskName)
+        const taskPackageFolder = path.join(folders.outPackageTasks, taskName)
         fs.mkdirpSync(taskPackageFolder)
 
-        var taskDef = require(path.join(taskBuildFolder, 'task.json'))
+        const taskDef = require(path.join(taskBuildFolder, 'task.json'))
         if (!taskDef.execution.hasOwnProperty('Node')) {
             console.log('Copying non-node task ' + taskName)
 
@@ -67,8 +67,8 @@ function package(options) {
         }
 
         console.log('packing node-based task')
-        var webpackConfig = path.join(folders.repoRoot, 'webpack.config.js')
-        var webpackCmd = 'webpack ' 
+        const webpackConfig = path.join(folders.repoRoot, 'webpack.config.js')
+        const webpackCmd = 'webpack '
                         + '--config ' + webpackConfig + ' '
                         + taskName + '.js '
                         + '--output-path ' + path.join(taskPackageFolder) + ' '
