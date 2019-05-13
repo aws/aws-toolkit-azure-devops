@@ -7,49 +7,51 @@ const fs = require('fs-extra')
 const path = require('path')
 const ncp = require('child_process')
 const shell = require('shelljs')
+const folders = require('./scriptUtils')
 
 const timeMessage = 'Packaged extension'
 const manifestFile = 'vss-extension.json'
-const tasksDirectory = 'Tasks'
-const repoRoot = path.dirname(__dirname)
-const inTasks = path.join(repoRoot, tasksDirectory)
-const outBuildTasks = path.join(repoRoot, '_build', tasksDirectory)
-const outPackage = path.join(repoRoot, '_package')
-const outPackageTasks = path.join(outPackage, tasksDirectory)
 
-const unprocessFolders = [
+const ignoredFolders = [
     'Common',
     '.DS_Store'
+]
+
+const vstsFiles = [
+    'task.json',
+    'task.loc.json',
+    'package.json',
+    'icon.png',
+    'Strings'
 ]
 
 function findMatchingFiles(directory) {
     return fs.readdirSync(directory)
 }
 
-
 function package(options) {
-    fs.mkdirpSync(outPackage)
+    fs.mkdirpSync(folders.outPackage)
 
-    fs.copySync(path.join(repoRoot, 'LICENSE'), path.join(outPackage, 'LICENSE'), {overwrite: true})
-    fs.copySync(path.join(repoRoot, 'README.md'), path.join(outPackage, 'README.md'), {overwrite: true})
-    fs.copySync(path.join(repoRoot, '_build', manifestFile), path.join(outPackage, manifestFile), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'LICENSE'), path.join(folders.outPackage, 'LICENSE'), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.outPackage, 'README.md'), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.outPackage, manifestFile), {overwrite: true})
 
     // stage manifest images
-    fs.copySync(path.join(repoRoot, 'images'), path.join(outPackage, 'images'), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.outPackage, 'images'), {overwrite: true})
 
-    fs.mkdirpSync(outPackageTasks)
+    fs.mkdirpSync(folders.outPackageTasks)
 
     // clean, dedupe and pack each task as needed
-    findMatchingFiles(inTasks).forEach(function(taskName) {
+    findMatchingFiles(folders.inTasks).forEach(function(taskName) {
         console.log('Processing task ' + taskName)
 
-        if(!unprocessFolders.every((folderName) => { return folderName !== taskName})) {
+        if(ignoredFolders.some((folderName) => { return folderName === taskName})) {
             console.log('Skpping task ' + taskName)
             return
         }
 
-        var taskBuildFolder = path.join(outBuildTasks, taskName)
-        var taskPackageFolder = path.join(outPackageTasks, taskName)
+        var taskBuildFolder = path.join(folders.outBuildTasks, taskName)
+        var taskPackageFolder = path.join(folders.outPackageTasks, taskName)
         fs.mkdirpSync(taskPackageFolder)
 
         var taskDef = require(path.join(taskBuildFolder, 'task.json'))
@@ -60,14 +62,12 @@ function package(options) {
             return
         }
         shell.cd(taskBuildFolder)
-        fs.copySync(path.join(taskBuildFolder, 'task.json'), path.join(taskPackageFolder, 'task.json'), {overwrite: true})
-        fs.copySync(path.join(taskBuildFolder, 'task.loc.json'), path.join(taskPackageFolder, 'task.loc.json'), {overwrite: true})
-        fs.copySync(path.join(taskBuildFolder, 'package.json'), path.join(taskPackageFolder, 'package.json'), {overwrite: true})
-        fs.copySync(path.join(taskBuildFolder, 'icon.png'), path.join(taskPackageFolder, 'icon.png'), {overwrite: true})
-        fs.copySync(path.join(taskBuildFolder, 'Strings'), path.join(taskPackageFolder, 'Strings'), {overwrite: true})
+        for( const resourceFile of vstsFiles) {
+            fs.copySync(path.join(taskBuildFolder, resourceFile), path.join(taskPackageFolder, resourceFile), {overwrite: true}) 
+        }
 
         console.log('packing node-based task')
-        var webpackConfig = path.join(repoRoot, 'webpack.config.js')
+        var webpackConfig = path.join(folders.repoRoot, 'webpack.config.js')
         var webpackCmd = 'webpack ' 
                         + '--config ' + webpackConfig + ' '
                         + taskName + '.js '
@@ -93,11 +93,11 @@ function package(options) {
             process.exit(1)
         }
 
-        shell.cd(repoRoot)
+        shell.cd(folders.repoRoot)
     })
 
     console.log('Creating deployment vsix')
-    var tfxcmd = 'tfx extension create --root ' + outPackage + ' --output-path ' + outPackage + ' --manifests ' + path.join(outPackage, manifestFile)
+    var tfxcmd = 'tfx extension create --root ' + folders.outPackage + ' --output-path ' + folders.outPackage + ' --manifests ' + path.join(folders.outPackage, manifestFile)
     if (options.publisher) {
         tfxcmd += ' --publisher ' + options.publisher
     }
@@ -111,7 +111,7 @@ function package(options) {
 
 console.time(timeMessage)
 var options = process.argv.slice(2)
-if(options.length > 0 && options[0].startsWith('publisher')) {
+if(options.length > 0 && options[0].split('=')[0] === 'publisher') {
     options.publisher = options[0].split('=')[1]
 }
 package(options)

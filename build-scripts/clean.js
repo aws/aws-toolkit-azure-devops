@@ -5,8 +5,8 @@
 
 const fs = require('fs-extra')
 
-const sourceRoot = __dirname;
-const packageRoot = path.join(sourceRoot, '_package');
+const sourceRoot = path(__dirname)
+const packageRoot = path.join(sourceRoot, '_package')
 const buildRoot = path.join(sourceRoot, '_build')
 
 fs.remove(buildRoot)

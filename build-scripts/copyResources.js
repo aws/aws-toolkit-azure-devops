@@ -3,33 +3,27 @@
  * SPDX-License-Identifier: MIT
  */
 
+const folders = require('./scriptUtils')
 const fs = require('fs-extra')
-const path = require('path')
 
 const timeMessage = 'Copied resources'
-const tasksDirectory = 'Tasks'
-const repoRoot = path.dirname(__dirname)
-const inTasks = path.join(repoRoot, tasksDirectory)
-const outTasks = path.join(repoRoot, '_build', tasksDirectory)
-
-const bannedFiles = [
+const ignoredFiles = [
     'tsconfig.json',
     'make.json'
 ]
-
-const bannedExtensions = [
-    'ts'
+const ignoreExtensions = [
+    '.ts'
 ]
 
 const filterFunc = (src, dest) => {
-    return bannedFiles.every((element) => {
-        if(src.includes(element)) {
+    return ignoredFiles.every((element) => {
+        if(src.endsWith(element)) {
             return false
         }
         return true
     }) 
     &&  
-    bannedExtensions.every((element) => {
+    ignoreExtensions.every((element) => {
         if(src.endsWith(element)) {
             return false
         }
@@ -43,8 +37,8 @@ const options = {
 }
 
 console.time(timeMessage)
-console.log('Copying files from ' + inTasks + ' to ' + outTasks)
-fs.copy(inTasks, outTasks, options)
+console.log('Copying files from ' + folders.inTasks + ' to ' + folders.outTasks)
+fs.copy(folders.inTasks, folders.outTasks, options)
     .then(() => console.info('Successfully coppied files'))
     .catch((error) => console.info('Copy failed with error: ' + error))
 console.timeEnd(timeMessage)
