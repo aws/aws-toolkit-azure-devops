@@ -1,0 +1,10 @@
+[
+    {
+        "TaskName": "SecretsManagerGetSecret",
+        "TaskClient": "SecretsManager"
+    },
+    {
+        "TaskName": "S3Download",
+        "TaskClient": "S3"
+    }
+]
