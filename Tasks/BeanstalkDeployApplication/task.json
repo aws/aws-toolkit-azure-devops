@@ -4,7 +4,7 @@
     "friendlyName": "AWS Elastic Beanstalk Deploy Application",
     "description": "Deploys an application to Amazon EC2 instance(s) using AWS Elastic Beanstalk",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS Elastic Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html) for more details on deploying applications with AWS Elastic Beanstalk.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/elastic-beanstalk-deploy.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* elasticbeanstalk:CreateApplicationVersion\n* elasticbeanstalk:CreateStorageLocation\n* elasticbeanstalk:DescribeApplications\n* elasticbeanstalk:DescribeEnvironments\n* elasticbeanstalk:DescribeEvents\n* elasticbeanstalk:UpdateEnvironment\n\nThe task also requires permissions to upload your application content to the specified Amazon S3 bucket. Depending on the size of the application bundle, either PutObject or the S3 multi-part upload APIs may be used.",
+    "helpMarkDown": "Please refer to [AWS Elastic Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html) for more details on deploying applications with AWS Elastic Beanstalk.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/elastic-beanstalk-deploy.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (not all APIs may be used depending on selected task options and environment configuration):\n* autoscaling:DescribeScalingActivities\n* autoscaling:DescribeAutoScalingGroups\n* autoscaling:ResumeProcesses\n* autoscaling:SuspendProcesses\n* cloudformation:DescribeStackResource\n* cloudformation:DescribeStackResources\n* elasticbeanstalk:CreateApplicationVersion\n* elasticbeanstalk:CreateStorageLocation\n* elasticbeanstalk:DescribeApplications\n* elasticbeanstalk:DescribeEnvironments\n* elasticbeanstalk:DescribeEvents\n* elasticloadbalancing:RegisterInstancesWithLoadBalancer\n* elasticbeanstalk:UpdateEnvironment\n\nThe task also requires permissions to upload your application content to the specified Amazon S3 bucket. Depending on the size of the application bundle, either PutObject or the S3 multi-part upload APIs may be used.",
     "category": "Deploy",
     "visibility": [
         "Build",
@@ -220,6 +220,7 @@
         "EnvironmentExistsQueryError": "DescribeEnvironments: error %s thrown querying for existence of environment %s for application %s",
         "InvalidEventPollDelay": "Event polling delay setting of %s is invalid (minimum %s seconds, maximum %s seconds) - task will use minimum poll delay by default",
         "ConfiguredEventPollDelay": "Task configured to wait %s seconds between queries for deployment events",
+        "EventPollWaitExtended": "Throttling detected, extending event polling delay to %s seconds",
         "TaskCompleted": "Deployment to application %s completed"
     }
 }

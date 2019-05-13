@@ -14,6 +14,7 @@ import CloudFormation = require('aws-sdk/clients/cloudformation');
 import S3 = require('aws-sdk/clients/s3');
 import { SdkUtils } from 'sdkutils/sdkutils';
 import { TaskParameters } from './CreateOrUpdateStackTaskParameters';
+import { CloudFormationUtils } from 'sdkutils/cloudformationutils';
 
 export class TaskOperations {
 
@@ -28,6 +29,11 @@ export class TaskOperations {
         let stackId: string = await this.testStackExists(this.taskParameters.stackName);
         if (stackId) {
             console.log(tl.loc('StackExists'));
+
+            if (this.taskParameters.templateSource === TaskParameters.usePreviousTemplate) {
+                console.log(tl.loc('UpdatingStackWithPreviousTemplate'));
+            }
+
             if (this.taskParameters.useChangeSet) {
                 stackId = await this.createOrUpdateWithChangeSet('UPDATE');
             } else {
@@ -35,6 +41,11 @@ export class TaskOperations {
             }
         } else {
             console.log(tl.loc('StackDoesNotExist'));
+
+            if (this.taskParameters.templateSource === TaskParameters.usePreviousTemplate) {
+                throw new Error(tl.loc('UsePreviousTemplateIsInvalidWhenCreatingStack'));
+            }
+
             if (this.taskParameters.useChangeSet) {
                 stackId = await this.createOrUpdateWithChangeSet('CREATE');
             } else {
@@ -45,6 +56,15 @@ export class TaskOperations {
         if (this.taskParameters.outputVariable) {
             console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable));
             tl.setVariable(this.taskParameters.outputVariable, stackId);
+        }
+
+        if (this.taskParameters.captureStackOutputs !== TaskParameters.ignoreStackOutputs) {
+            await CloudFormationUtils.captureStackOutputs(this.cloudFormationClient,
+                                                          this.taskParameters.stackName,
+                                                          this.taskParameters.captureStackOutputs === TaskParameters.stackOutputsAsJson,
+                                                          this.taskParameters.captureAsSecuredVars);
+        } else {
+            console.log(tl.loc('SkippingStackOutputsProcessing'));
         }
 
         console.log(tl.loc('TaskCompleted', this.taskParameters.stackName, stackId));
@@ -151,6 +171,10 @@ export class TaskOperations {
                 request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
+
+            case TaskParameters.usePreviousTemplate: {
+                request.UsePreviousTemplate = true;
+            }
         }
 
         request.Parameters = await this.loadTemplateParameters();
@@ -213,6 +237,11 @@ export class TaskOperations {
                 request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey);
             }
             break;
+
+            // already validated that stack exists and so this mode is acceptable
+            case TaskParameters.usePreviousTemplate: {
+                request.UsePreviousTemplate = true;
+            }
         }
 
         request.Parameters = await this.loadTemplateParameters();

@@ -99,12 +99,13 @@
             "type": "pickList",
             "label": "Template Source",
             "required": true,
-            "helpMarkDown": "Specifies the location of the template to use to create or update the stack. You can specify the template using either the path to a file in the local file system, a URL to the file or an object in Amazon S3, for which you can specify the bucket and object name (key).\n\nNote that CloudFormation limits the size of template files uploaded to the service to 51,200 bytes. If your template is larger than the allowed size you should choose either the URL or Amazon S3 location options. You can also specify a bucket name for the local file option. If a bucket name  is specified the template is uploaded to the bucket by the task (the object key will be the template filename, less any path).\n\nWhen the task uploads the template to a bucket, or you specify an Amazon S3 bucket name and object key,the task generates a URL to the object and supplies the URL to CloudFormation.",
+            "helpMarkDown": "Specifies the location of the template to use to create or update the stack. You can specify the template using either the path to a file in the local file system, a URL to the file or an object in Amazon S3, for which you can specify the bucket and object name (key).\n\nNote that CloudFormation limits the size of template files uploaded to the service to 51,200 bytes. If your template is larger than the allowed size you should choose either the URL or Amazon S3 location options. You can also specify a bucket name for the local file option. If a bucket name  is specified the template is uploaded to the bucket by the task (the object key will be the template filename, less any path).\n\nWhen the task uploads the template to a bucket, or you specify an Amazon S3 bucket name and object key,the task generates a URL to the object and supplies the URL to CloudFormation.\n\n If *Use previous template* is selected CloudFormation will reuse the existing template that is associated with the stack that you are updating. Selecting this option when the stack does not exist will cause the task to report an error and quit.",
             "defaultValue": "file",
             "options": {
                 "file": "Local file",
                 "url": "URL to the template file",
-                "s3": "Amazon S3 bucket and object key"
+                "s3": "Amazon S3 bucket and object key",
+                "usePrevious": "Use previous template"
             }
         },
         {
@@ -340,11 +341,35 @@
         {
             "name": "outputVariable",
             "type": "string",
-            "label": "Output Variable",
+            "label": "Stack ID Output Variable",
             "defaultValue": "",
             "groupName": "Options",
             "helpMarkDown": "The name of the variable that will contain the ID of the stack on task completion. The variable can be used as $(variableName) to refer to the stack ID in subsequent tasks.",
             "required": false
+        },
+        {
+            "name": "captureStackOutputs",
+            "type": "pickList",
+            "label": "Stack Outputs",
+            "defaultValue": "ignore",
+            "groupName": "Options",
+            "helpMarkDown": "Retrieves the values of the stack outputs declared in the template and stores their values into task variables, with each variable named using the key name of each output, or as a single JSON-formatted blob with a variable named using the stack name suffixed with 'Outputs'.",
+            "required": false,
+            "options": {
+                "ignore": "Skip processing stack outputs",
+                "asVariables": "Save stack outputs into task variables",
+                "asJSON": "Save stack outputs as a JSON blob"
+            }
+        },
+        {
+            "name": "captureAsSecuredVars",
+            "type": "boolean",
+            "label": "Use secured variables",
+            "defaultValue": "true",
+            "helpMarkDown": "When selected the build variables created to hold the stack outputs, or the json-formatted blob output, will be created as secure build variables that will not echo to the console logs. This mode is set as the default to prevent accidental secrets leakage.",
+            "groupName": "Options",
+            "required": false,
+            "visibleRule": "captureStackOutputs != ignore"
         },
         {
             "name": "timeoutInMins",
@@ -427,6 +452,13 @@
         "AddingRollbackTrigger": "Adding AWS::CloudWatch::Alarm rollback trigger for ARN %s",
         "InvalidTriggerMonitoringTime": "%s is not a valid entry for rollback trigger monitoring time. The value must lie between 0 and %s minutes.",
         "ExceededMaxRollbackTriggers": "%s rollback triggers were specified; the service allows a maximum of %s.",
-        "SettingCustomTimeout": "Setting maximum wait period for stack creation/update to %s minutes"
+        "CreatingStackOutputVariable": "Creating stack variable %s to hold corresponding stack output value",
+        "UpdatingStackWithPreviousTemplate": "Updating stack using previously applied template",
+        "UsePreviousTemplateIsInvalidWhenCreatingStack": "Template source 'Use previous template' is invalid when stack does not exist",
+        "ProcessingStackOutputsToBuildVariables": "Processing stack outputs to individual build variables",
+        "ProcessingStackOutputsToJsonBlobBuildVariable": "Processing stack outputs to single JSON-formatted build variable",
+        "SkippingStackOutputsProcessing": "Skipping processing of stack outputs to build variables as task option is set to 'ignore' mode",
+        "SettingCustomTimeout": "Setting maximum wait period for stack creation/update to %s minutes",
+        "ErrorRetrievingStackOutputs": "Error retrieving outputs from stack %s: %s"
     }
 }
