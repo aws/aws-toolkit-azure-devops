@@ -65,7 +65,7 @@
         "coverageDirectory": "./coverage/",
         "collectCoverage": true,
         "collectCoverageFrom": [
-			"Tasks/**"
+            "Tasks/**"
         ],
         "moduleFileExtensions": [
             "js",
