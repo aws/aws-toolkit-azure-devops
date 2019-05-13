@@ -6,7 +6,7 @@
 import { SecretsManager } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SecretsManagerCreateOrUpdateSecret/TaskOperations'
-import { TaskParameters } from '../../../Tasks/SecretsManagerCreateOrUpdateSecret/TaskParameters'
+import { inlineSecretSource, TaskParameters } from '../../../Tasks/SecretsManagerCreateOrUpdateSecret/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -18,7 +18,7 @@ const defaultTaskParameters: TaskParameters = {
     description: undefined,
     kmsKeyId: undefined,
     secretValueType: undefined,
-    secretValueSource: undefined,
+    secretValueSource: inlineSecretSource,
     secretValue: undefined,
     secretValueFile: undefined,
     autoCreateSecret: false,
@@ -58,5 +58,13 @@ describe('Secrets Manger Create Or Update Secret', () => {
 
     test('Creates a TaskOperation', () => {
         expect(new TaskOperations(new SecretsManager(), defaultTaskParameters)).not.toBeNull()
+    })
+
+    test('Secret update fails, fails task', async () => {
+        expect.assertions(1)
+        const secretsManager = new SecretsManager() as any
+        secretsManager.putSecretValue = jest.fn(() => secretsManagerFails)
+        const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
+        await taskOperations.execute().catch((e) => expect(e.message).toContain('Error updating secret'))
     })
 })
