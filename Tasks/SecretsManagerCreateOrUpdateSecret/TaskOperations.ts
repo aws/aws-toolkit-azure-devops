@@ -4,6 +4,7 @@
  */
 
 import SecretsManager = require('aws-sdk/clients/secretsmanager')
+import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import tl = require('vsts-task-lib/task')
 import { binarySecretType, inlineSecretSource, stringSecretType, TaskParameters } from './TaskParameters'
@@ -32,27 +33,6 @@ export class TaskOperations {
                 throw new Error(tl.loc('SecretUpdateFailed', err))
             }
         }
-    }
-
-    public getTags(tags: string[]): SecretsManager.Tag[] {
-
-        let arr: SecretsManager.Tag[]
-
-        if (tags && tags.length > 0) {
-            arr = []
-            tags.forEach((t) => {
-                const kvp = t.split('=')
-                const key = kvp[0].trim()
-                const val = kvp[1].trim()
-                console.log(tl.loc('AddingTag', key, val))
-                arr.push({
-                    Key: key,
-                    Value: val
-                })
-            })
-        }
-
-        return arr
     }
 
     private async updateSecret(): Promise<void> {
@@ -127,7 +107,7 @@ export class TaskOperations {
         }
 
         if (this.taskParameters.tags) {
-            request.Tags = this.getTags(this.taskParameters.tags)
+            request.Tags = SdkUtils.getTags<SecretsManager.Tag[]>(this.taskParameters.tags)
         }
 
         const response = await this.secretsManagerClient.createSecret(request).promise()
@@ -142,5 +122,4 @@ export class TaskOperations {
             tl.setVariable(this.taskParameters.versionIdOutputVariable, response.VersionId)
         }
     }
-
 }

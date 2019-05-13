@@ -195,4 +195,24 @@ export abstract class SdkUtils {
             })
         })
     }
+
+    public static getTags<T extends {Key?: string, Value?: string}[]>(tags: string[]): T {
+        let arr: T
+
+        if (tags && tags.length > 0) {
+            arr = [] as T
+            tags.forEach((t) => {
+                const kvp = t.split('=')
+                const key = kvp[0].trim()
+                const val = kvp[1].trim()
+                console.log(tl.loc('AddingTag', key, val))
+                arr.push({
+                    Key: key,
+                    Value: val
+                })
+            })
+        }
+
+        return arr
+    }
 }
