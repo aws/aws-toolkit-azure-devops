@@ -17,7 +17,9 @@ import { TaskParameters } from './SendMessageTaskParameters';
 export class TaskOperations {
 
     public constructor(
-        public readonly taskParameters: TaskParameters
+        public readonly taskParameters: TaskParameters,
+        public readonly snsClient : SNS,
+        public readonly sqsClient : SQS
     ) {
     }
 
@@ -35,8 +37,6 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted'));
     }
 
-    private sqsClient : SQS;
-    private snsClient : SNS;
 
     private async createServiceClients(): Promise<void> {
 
