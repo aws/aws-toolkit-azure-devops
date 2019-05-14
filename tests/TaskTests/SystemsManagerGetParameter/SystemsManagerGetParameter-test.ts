@@ -36,4 +36,20 @@ describe('Systems Manager Get Parameter', () => {
     test('Creates a TaskOperation', () => {
         expect(new TaskOperations(new SSM(), defaultTaskParameters)).not.toBeNull()
     })
+
+    test('Read mode unknown throws', () => {
+
+    })
+
+    test('Read mode single reads', () => {
+
+    })
+
+    test('Read mode hierarchy reads depth of one', () => {
+
+    })
+
+    test('Read mode hierarchy reads recursively', () => {
+
+    })
 })
