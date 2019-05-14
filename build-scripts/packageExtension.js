@@ -30,19 +30,19 @@ function findMatchingFiles(directory) {
 }
 
 function package(options) {
-    fs.mkdirpSync(folders.outPackage)
+    fs.mkdirpSync(folders.packageRoot)
 
-    fs.copySync(path.join(folders.repoRoot, 'LICENSE'), path.join(folders.outPackage, 'LICENSE'), {overwrite: true})
-    fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.outPackage, 'README.md'), {overwrite: true})
-    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.outPackage, manifestFile), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'LICENSE'), path.join(folders.packageRoot, 'LICENSE'), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.packageRoot, 'README.md'), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.packageRoot, manifestFile), {overwrite: true})
 
     // stage manifest images
-    fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.outPackage, 'images'), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.packageRoot, 'images'), {overwrite: true})
 
-    fs.mkdirpSync(folders.outPackageTasks)
+    fs.mkdirpSync(folders.packageTasks)
 
     // clean, dedupe and pack each task as needed
-    findMatchingFiles(folders.inTasks).forEach(function(taskName) {
+    findMatchingFiles(folders.sourceTasks).forEach(function(taskName) {
         console.log('Processing task ' + taskName)
 
         if(ignoredFolders.some((folderName) => { return folderName === taskName})) {
@@ -50,8 +50,8 @@ function package(options) {
             return
         }
 
-        const taskBuildFolder = path.join(folders.outBuildTasks, taskName)
-        const taskPackageFolder = path.join(folders.outPackageTasks, taskName)
+        const taskBuildFolder = path.join(folders.buildTasks, taskName)
+        const taskPackageFolder = path.join(folders.packageTasks, taskName)
         fs.mkdirpSync(taskPackageFolder)
 
         const taskDef = require(path.join(taskBuildFolder, 'task.json'))
@@ -97,7 +97,7 @@ function package(options) {
     })
 
     console.log('Creating deployment vsix')
-    var tfxcmd = 'tfx extension create --root ' + folders.outPackage + ' --output-path ' + folders.outPackage + ' --manifests ' + path.join(folders.outPackage, manifestFile)
+    var tfxcmd = 'tfx extension create --root ' + folders.packageRoot + ' --output-path ' + folders.packageRoot + ' --manifests ' + path.join(folders.packageRoot, manifestFile)
     if (options.publisher) {
         tfxcmd += ' --publisher ' + options.publisher
     }

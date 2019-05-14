@@ -37,8 +37,8 @@ const options = {
 }
 
 console.time(timeMessage)
-console.log('Copying files from ' + folders.inTasks + ' to ' + folders.outTasks)
-fs.copy(folders.inTasks, folders.outTasks, options)
+console.log('Copying files from ' + folders.sourceTasks + ' to ' + folders.buildTasks)
+fs.copy(folders.sourceTasks, folders.buildTasks, options)
     .then(() => console.info('Successfully coppied files'))
     .catch((error) => console.info('Copy failed with error: ' + error))
 console.timeEnd(timeMessage)

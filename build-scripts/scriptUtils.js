@@ -7,17 +7,15 @@ const path = require('path')
 
 repoRoot = path.dirname(__dirname)
 tasksDirectory = 'Tasks'
-inTasks = path.join(repoRoot, tasksDirectory)
-outTasks = path.join(repoRoot, '_build', tasksDirectory)
-outBuildTasks = path.join(repoRoot, '_build', tasksDirectory)
-outPackage = path.join(repoRoot, '_package')
-outPackageTasks = path.join(outPackage, tasksDirectory)
+sourceTasks = path.join(repoRoot, tasksDirectory)
+buildTasks = path.join(repoRoot, '_build', tasksDirectory)
+packageRoot = path.join(repoRoot, '_package')
+packageTasks = path.join(packageRoot, tasksDirectory)
 
 module.exports = {
     repoRoot: repoRoot,
-    inTasks: inTasks,
-    outTasks: outTasks,
-    outBuildTasks: outBuildTasks,
-    outPackage: outPackage,
-    outPackageTasks: outPackageTasks
+    sourceTasks: sourceTasks,
+    buildTasks: buildTasks,
+    packageRoot: packageRoot,
+    packageTasks: packageTasks
 }

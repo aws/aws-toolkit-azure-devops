@@ -103,7 +103,7 @@ function generateTaskLoc(taskLoc, taskPath) {
         })
     }
 
-    fs.writeFileSync(path.join(folders.outTasks, taskPath, taskLocJson), JSON.stringify(taskLoc, null, 2))
+    fs.writeFileSync(path.join(folders.buildTasks, taskPath, taskLocJson), JSON.stringify(taskLoc, null, 2))
 }
 
 var createResjson = function (task, taskPath) {
@@ -154,7 +154,7 @@ var createResjson = function (task, taskPath) {
         })
     }
 
-    var resjsonPath = path.join(folders.outTasks, taskPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson')
+    var resjsonPath = path.join(folders.buildTasks, taskPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson')
     mkdir('-p', path.dirname(resjsonPath))
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2))
 }
@@ -176,7 +176,7 @@ function addAWSRegionsToTask(task, knownRegions) {
 }
 
 function writeTask(task, taskPath) {
-    fs.writeFileSync(path.join(folders.outTasks, taskPath, taskJson), JSON.stringify(task, null, 2))
+    fs.writeFileSync(path.join(folders.buildTasks, taskPath, taskJson), JSON.stringify(task, null, 2))
 }
 
 var createResjson = function (task, taskPath) {
@@ -227,13 +227,13 @@ var createResjson = function (task, taskPath) {
         })
     }
 
-    var resjsonPath = path.join(folders.outTasks, taskPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson')
+    var resjsonPath = path.join(folders.buildTasks, taskPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson')
     fs.mkdirpSync(path.dirname(resjsonPath))
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2))
 }
 
 function generateTaskResources(taskPath, knownRegions, versionInfo) {
-    var taskJsonPath = path.join(folders.inTasks, taskPath, taskJson)
+    var taskJsonPath = path.join(folders.sourceTasks, taskPath, taskJson)
     try {fs.accessSync(taskJsonPath) } catch (e) { return }
 
     var task = JSON.parse(fs.readFileSync(taskJsonPath))
@@ -255,7 +255,7 @@ console.time(timeMessage)
 var versionInfoFile = path.join(folders.repoRoot, masterVersionFile)
 var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile))
 const knownRegions = fetchLatestRegions()
-findMatchingFiles(folders.inTasks).forEach((path) =>
+findMatchingFiles(folders.sourceTasks).forEach((path) =>
     {
         generateTaskResources(path, knownRegions, versionInfo)
     }
