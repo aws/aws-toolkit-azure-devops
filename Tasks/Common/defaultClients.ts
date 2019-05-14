@@ -56,6 +56,6 @@ export async function createDefaultSSM(
     return await SdkUtils.createAndConfigureSdkClient(
         SSM,
         ssmOpts,
-        configuration,
+        configuration.awsConnectionParameters,
         logger) as SSM
 }

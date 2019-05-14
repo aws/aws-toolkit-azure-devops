@@ -6,63 +6,76 @@
   * the License.
   */
 
-  import tl = require('vsts-task-lib/task');
-  import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
+import tl = require('vsts-task-lib/task');
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters';
 
-  export class TaskParameters extends AWSTaskParametersBase {
+export const transformCustom = 'custom'
+export const transformSubstitute = 'substitute'
+export const readModeSingle = 'single'
 
-    public readMode: string;
-    public parameterName: string;
-    public parameterVersion: number;
-    public parameterPath: string;
-    public recursive: boolean;
-    public variableNameTransform: string;
-    public customVariableName: string;
-    public replacementPattern: string;
-    public replacementText: string;
-    public globalMatch: boolean;
-    public caseInsensitiveMatch: boolean;
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters,
+    readMode: string,
+    parameterName: string,
+    parameterVersion: number,
+    parameterPath: string,
+    recursive: boolean,
+    variableNameTransform: string,
+    customVariableName: string,
+    replacementPattern: string,
+    replacementText: string,
+    globalMatch: boolean,
+    caseInsensitiveMatch: boolean
+}
 
-    constructor() {
-        super();
-        try {
-            this.readMode = tl.getInput('readMode', true);
-            if (this.readMode === 'single') {
-                  this.parameterName = tl.getInput('parameterName', true);
-                  const versionstring = tl.getInput('parameterVersion', false);
-                  if (versionstring) {
-                    const pv = parseInt(versionstring, 10);
-                    if (pv > 0) {
-                        this.parameterVersion = pv;
-                    } else {
-                        throw new Error(tl.loc('InvalidParameterVersion', pv));
-                    }
-                  }
-                  this.variableNameTransform = tl.getInput('singleNameTransform', false);
-            } else {
-                  this.parameterPath = tl.getInput('parameterPath', true);
-                  this.recursive = tl.getBoolInput('recursive', false);
-                  this.variableNameTransform = tl.getInput('hierarchyNameTransform', false);
-            }
-
-            switch (this.variableNameTransform) {
-                case 'substitute': {
-                    this.replacementPattern = tl.getInput('replacementPattern', true);
-                    this.replacementText = tl.getInput('replacementText', false) || '';
-                    this.globalMatch = tl.getBoolInput('globalMatch', false);
-                    this.caseInsensitiveMatch = tl.getBoolInput('caseInsensitiveMatch', false);
-                }
-                break;
-
-                case 'custom': {
-                    this.customVariableName = tl.getInput('customVariableName', true);
-                }
-                break;
-
-                default: break;
-            }
-        } catch (error) {
-            throw new Error(error.message);
-        }
+export function buildTaskParameters(): TaskParameters {
+    const parameters: TaskParameters = {
+        awsConnectionParameters: buildConnectionParameters(),
+        readMode: tl.getInput('readMode', true),
+        parameterName: undefined,
+        parameterVersion: undefined,
+        parameterPath: undefined,
+        recursive: undefined,
+        variableNameTransform: undefined,
+        customVariableName: undefined,
+        replacementPattern: undefined,
+        replacementText: undefined,
+        globalMatch: undefined,
+        caseInsensitiveMatch: undefined
     }
+
+    if (parameters.readMode === readModeSingle) {
+        parameters.parameterName = tl.getInput('parameterName', true);
+        const versionstring = tl.getInput('parameterVersion', false);
+        if (versionstring) {
+          const pv = parseInt(versionstring, 10);
+          if (pv > 0) {
+            parameters.parameterVersion = pv;
+          } else {
+              throw new Error(tl.loc('InvalidParameterVersion', pv));
+          }
+        }
+        parameters.variableNameTransform = tl.getInput('singleNameTransform', false);
+    } else {
+        parameters.parameterPath = tl.getInput('parameterPath', true);
+        parameters.recursive = tl.getBoolInput('recursive', false);
+        parameters.variableNameTransform = tl.getInput('hierarchyNameTransform', false);
+    }
+
+    switch (parameters.variableNameTransform) {
+        case 'substitute':
+            parameters.replacementPattern = tl.getInput('replacementPattern', true);
+            parameters.replacementText = tl.getInput('replacementText', false) || '';
+            parameters.globalMatch = tl.getBoolInput('globalMatch', false);
+            parameters.caseInsensitiveMatch = tl.getBoolInput('caseInsensitiveMatch', false);
+            break
+
+        case 'custom': 
+            parameters.customVariableName = tl.getInput('customVariableName', true);
+            break
+
+        default:
+            break
+    }
+    return parameters
 }

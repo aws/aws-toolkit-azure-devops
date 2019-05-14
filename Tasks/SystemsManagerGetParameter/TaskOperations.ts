@@ -7,11 +7,8 @@
   */
 
 import tl = require('vsts-task-lib/task');
-import path = require('path');
 import SSM = require('aws-sdk/clients/ssm');
-import { AWSError } from 'aws-sdk/lib/error';
-import { SdkUtils } from 'sdkutils/sdkutils';
-import { TaskParameters } from './GetParameterTaskParameters';
+import { TaskParameters } from './TaskParameters';
 
 export class TaskOperations {
 
