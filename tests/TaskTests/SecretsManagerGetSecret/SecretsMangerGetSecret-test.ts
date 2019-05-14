@@ -36,13 +36,6 @@ const secretsManagerReturnsValidBase64 = {
     promise: function() { return {SecretBinary: 'YWJjCg=='} }
 }
 
-const assertAbc = {
-    promise: function(request: any) {
-        expect(request.VersionId).toBe('abc')
-        expect(request.versionStage).toBe(undefined)
-    }
-}
-
 describe('Secrets Manger Get Secret', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -69,17 +62,23 @@ describe('Secrets Manger Get Secret', () => {
         })
     })
 
+    // NOTE: we cannot check it setting since it uses task lib set which is an exported funciton
+    // , not an exported variable that equals a funciton. Maybe in the future we will think of a 
+    // good way to mock it
     test('Handles secret string', async () => {
-        const badSecretsManager = new SecretsManager() as any
-        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsString)
-        const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
+        const secretsManager = new SecretsManager() as any
+        secretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsString)
+        const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
         await taskOperations.execute()
     })
 
+    // NOTE: we cannot check it setting since it uses task lib set which is an exported funciton
+    // , not an exported variable that equals a funciton. Maybe in the future we will think of a 
+    // good way to mock it
     test('Handles and decodes secret binary', async () => {
-        const badSecretsManager = new SecretsManager() as any
-        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsValidBase64)
-        const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
+        const secretsManager = new SecretsManager() as any
+        secretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsValidBase64)
+        const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
         await taskOperations.execute()
     })
 
@@ -87,15 +86,15 @@ describe('Secrets Manger Get Secret', () => {
         const taskParametersWithExtraFields = {...defaultTaskParameters}
         taskParametersWithExtraFields.versionId = 'abc'
         taskParametersWithExtraFields.versionStage = 'def'
-        const badSecretsManager = new SecretsManager() as any
-        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => {
+        const secretsManager = new SecretsManager() as any
+        secretsManager.getSecretValue = jest.fn((params: any, cb: any) => {
             expect(params.VersionId).toBe('abc')
             expect(params.versionStage).toBe(undefined)
 
             return secretsManagerReturnsValidBase64
         })
         expect.assertions(2)
-        const taskOperations = new TaskOperations(badSecretsManager, taskParametersWithExtraFields)
+        const taskOperations = new TaskOperations(secretsManager, taskParametersWithExtraFields)
         await taskOperations.execute()
     })
 })
