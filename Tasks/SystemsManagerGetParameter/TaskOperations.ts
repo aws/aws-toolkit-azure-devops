@@ -4,7 +4,7 @@
  */
 
 import SSM = require('aws-sdk/clients/ssm')
-import { transformParameterToVariableName } from 'Tasks/Common/ssm'
+import { transformParameterToVariableName } from 'Common/ssm'
 import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 

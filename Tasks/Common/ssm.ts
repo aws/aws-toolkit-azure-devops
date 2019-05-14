@@ -23,6 +23,7 @@ export function transformParameterToVariableName(
         replacementPattern: string,
         replacementText: string,
         customVariableName: string}): string {
+
     if (!inputParameterName) {
         inputParameterName = taskParameters.parameterName
     }
