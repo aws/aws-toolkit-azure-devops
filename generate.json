@@ -6,5 +6,9 @@
     {
         "taskName": "S3Download",
         "taskClient": "S3"
+    },
+    {
+        "taskName": "SystemsManagerGetParameter",
+        "taskClient": "SSM"
     }
 ]
