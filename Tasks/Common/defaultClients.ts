@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { S3, SecretsManager } from 'aws-sdk/clients/all'
+import { S3, SecretsManager, SSM } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters  } from './awsConnectionParameters'
 
@@ -44,4 +44,18 @@ export async function createDefaultSecretsManager(
         opts,
         configuration.awsConnectionParameters,
         logger) as SecretsManager
+}
+
+export async function createDefaultSSM(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void): Promise<SSM> {
+    const ssmOpts: SSM.ClientConfiguration = {
+        apiVersion: '2014-11-06'
+    }
+
+    return await SdkUtils.createAndConfigureSdkClient(
+        SSM,
+        ssmOpts,
+        configuration,
+        logger) as SSM
 }

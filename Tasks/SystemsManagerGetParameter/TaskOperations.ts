@@ -16,13 +16,12 @@ import { TaskParameters } from './GetParameterTaskParameters';
 export class TaskOperations {
 
     public constructor(
+        public readonly ssmClient: SSM,
         public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients();
-
         switch (this.taskParameters.readMode) {
             case 'single': {
                 await this.readSingleParameterValue();
@@ -36,16 +35,6 @@ export class TaskOperations {
         }
 
         console.log(tl.loc('TaskCompleted'));
-    }
-
-    private ssmClient: SSM;
-
-    private async createServiceClients(): Promise<void> {
-
-        const ssmOpts: SSM.ClientConfiguration = {
-            apiVersion: '2014-11-06'
-        };
-        this.ssmClient = await SdkUtils.createAndConfigureSdkClient(SSM, ssmOpts, this.taskParameters, tl.debug);
     }
 
     // Reads a single parameter value and stores it into the supplied variable name. SecureString parameter
