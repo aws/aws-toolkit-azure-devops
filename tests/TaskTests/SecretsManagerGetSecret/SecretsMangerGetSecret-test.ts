@@ -63,7 +63,7 @@ describe('Secrets Manger Get Secret', () => {
     })
 
     // NOTE: we cannot check it setting since it uses task lib set which is an exported funciton
-    // , not an exported variable that equals a funciton. Maybe in the future we will think of a 
+    // , not an exported variable that equals a funciton. Maybe in the future we will think of a
     // good way to mock it
     test('Handles secret string', async () => {
         const secretsManager = new SecretsManager() as any
@@ -73,7 +73,7 @@ describe('Secrets Manger Get Secret', () => {
     })
 
     // NOTE: we cannot check it setting since it uses task lib set which is an exported funciton
-    // , not an exported variable that equals a funciton. Maybe in the future we will think of a 
+    // , not an exported variable that equals a funciton. Maybe in the future we will think of a
     // good way to mock it
     test('Handles and decodes secret binary', async () => {
         const secretsManager = new SecretsManager() as any
