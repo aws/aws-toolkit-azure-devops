@@ -12,7 +12,7 @@
         "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
         "package": "node ./build-scripts/packageExtension.js",
-        "fullBuild": "npm run build && npm run copyResources && npm run generateResources && npm run test && npm run package"
+        "fullBuild": "npm run build && npm run lint && npm run copyResources && npm run generateResources && npm run test && npm run package"
     },
     "repository": {
         "type": "git",
@@ -53,7 +53,7 @@
         "webpack-node-externals": "^1.7.2"
     },
     "dependencies": {
-        "aws-sdk": "2.279.1",
+        "aws-sdk": "2.452.0",
         "base-64": "0.1.0",
         "https-proxy-agent": "2.2.1",
         "js-yaml": "^3.13.1",
@@ -64,12 +64,16 @@
     "jest": {
         "coverageDirectory": "./coverage/",
         "collectCoverage": true,
+        "collectCoverageFrom": [
+            "Tasks/**"
+        ],
         "moduleFileExtensions": [
             "js",
             "ts"
         ],
         "moduleNameMapper": {
-            "^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts"
+            "^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts",
+            "^aws-sdk/(.*)": "<rootDir>/node_modules/aws-sdk/$1.js"
         },
         "transform": {
             "\\.ts$": "ts-jest"

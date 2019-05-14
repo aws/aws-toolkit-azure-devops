@@ -3,15 +3,18 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { S3 } from 'aws-sdk'
 import * as fs from 'fs'
 import { Readable as ReadableStream } from 'stream'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Download/DownloadTaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Download/DownloadTaskParameters'
 
-describe('S3 Download', () => {
-    const S3 = require('aws-sdk/clients/s3')
+// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
+// tslint:disable: no-unsafe-any
+jest.mock('aws-sdk')
 
+describe('S3 Download', () => {
     const baseTaskParameters: TaskParameters = {
         awsConnectionParameters: undefined,
         bucketName: '',
@@ -62,7 +65,7 @@ describe('S3 Download', () => {
 
     test('Handles not being able to connect to a bucket', async () => {
         const s3 = new S3({ region: 'us-east-1' })
-        s3.headBucket = jest.fn((params, cb) => { throw new Error('doesn\'t exist dummy') })
+        s3.headBucket = jest.fn()((params, cb) => { throw new Error('doesn\'t exist dummy') })
         const taskParameters = baseTaskParameters
         const taskOperation = new TaskOperations(s3, taskParameters)
         expect.assertions(1)
@@ -70,7 +73,7 @@ describe('S3 Download', () => {
     })
 
     test('Deals with null list objects succeeds', async () => {
-        const s3 = new S3({ region: 'us-east-1' })
+        const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjects = jest.fn((params, cb) => listObjectsResponse)
         const taskParameters = baseTaskParameters
@@ -85,7 +88,7 @@ describe('S3 Download', () => {
     test('Happy path matches all', async () => {
         try {fs.unlinkSync(targetFolder + '2/test') } catch (e) {}
         try {fs.rmdirSync(targetFolder + '2') } catch (e) {}
-        const s3 = new S3({ region: 'us-east-1' })
+        const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjects = jest.fn((params, cb) => listObjectsResponseWithContents)
         s3.getObject = jest.fn((params, cb) => getObjectWithContents)

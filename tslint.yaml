@@ -6,6 +6,29 @@ linterOptions:
   exclude:
     - node_modules/**
     - '**/*.json'
+    # TODO remove these as modules are fixed https://github.com/aws/aws-vsts-tools/issues/183
+    - Tasks/AWSCLI/**
+    - Tasks/AWSPowerShellModuleScript/**
+    - Tasks/AWSShellScript/**
+    - Tasks/BeanstalkCreateApplicationVersion/**
+    - Tasks/BeanstalkDeployApplication/**
+    - Tasks/CloudFormationCreateOrUpdateStack/**
+    - Tasks/CloudFormationDeleteStack/**
+    - Tasks/CloudFormationExecuteChangeSet/**
+    - Tasks/CodeDeployDeployApplication/**
+    - Tasks/Common/**
+    - Tasks/ECRPushImage/**
+    - Tasks/LambdaDeployFunction/**
+    - Tasks/LambdaInvokeFunction/**
+    - Tasks/LambdaNETCoreDeploy/**
+    - Tasks/S3Upload/**
+    - Tasks/SecretsManagerCreateOrUpdateSecret/**
+    - Tasks/SecretsManagerGetSecret/**
+    - Tasks/SendMessage/**
+    - Tasks/SystemsManagerGetParameter/**
+    - Tasks/SystemsManagerRunCommand/**
+    - Tasks/SystemsManagerSetParameter/**
+
 rules:
   # TypeScript-specific
   # These rules find errors related to TypeScript features:

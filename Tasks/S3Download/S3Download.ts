@@ -9,7 +9,7 @@ import { createDefaultS3Client } from 'sdkutils/defaultClients'
 import { SdkUtils } from 'sdkutils/sdkutils'
 
 import { TaskOperations } from './DownloadTaskOperations'
-import { buildTaskParameters, TaskParameters } from './DownloadTaskParameters'
+import { buildTaskParameters } from './DownloadTaskParameters'
 
 async function run(): Promise<void> {
     SdkUtils.readResources()
@@ -26,5 +26,5 @@ async function run(): Promise<void> {
 run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, '')
 ).catch((error) =>
-    tl.setResult(tl.TaskResult.Failed, error)
+    tl.setResult(tl.TaskResult.Failed, `${error}`)
 )
