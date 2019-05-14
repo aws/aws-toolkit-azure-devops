@@ -24,7 +24,7 @@ export function transformParameterToVariableName(
         customVariableName: string},
     inputParameterName?: string): string {
 
-    if (!inputParameterName) {
+    if (inputParameterName === undefined) {
         inputParameterName = taskParameters.parameterName
     }
 
