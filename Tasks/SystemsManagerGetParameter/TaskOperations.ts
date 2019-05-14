@@ -25,6 +25,9 @@ export class TaskOperations {
             case 'hierarchy':
                 await this.readParameterHierarchy()
                 break
+
+            default:
+                throw new Error(tl.loc('UnknownReadMode', this.taskParameters.readMode))
         }
 
         console.log(tl.loc('TaskCompleted'))
@@ -52,7 +55,6 @@ export class TaskOperations {
     // Reads a hierarchy of parameters identified by a common name path. SecureString parameter types are
     // stored as secret variables.
     private async readParameterHierarchy(): Promise<void> {
-
         // do the path name prefixing as a convenience if the user failed to supply it
         let finalParameterPath: string
         if (this.taskParameters.parameterPath.startsWith('/')) {
