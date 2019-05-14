@@ -101,7 +101,7 @@ Tasks can also use assumed role credentials by adding the Amazon Resource name (
 ## Build 
 
 * To build for testing purposes, run `npm run build`
-* To package for installation into VSTS, run `npm run package -- --publisherid <your-publisher-id-here> --release`
+* To package for installation into VSTS, run `npm run fullBuild publisher=<your-publisher-id-here>`
 
 note: Due to [this bug](https://npm.community/t/npm-install-for-package-with-local-dependency-fails/754/2), Tasks/BeanstalkCreateApplicationVersion has a .npmrc file that disables package lock for this module. Without this, rebuild will not work.
 

@@ -52,7 +52,7 @@ describe('S3 Download', () => {
 
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../../Tasks/S3Download/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/S3Download/task.json')
     })
 
     test('Creates a TaskOperation', () => {

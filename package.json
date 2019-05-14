@@ -5,14 +5,14 @@
     "private": true,
     "main": "_build/tasks",
     "scripts": {
-        "build": "node make.js build",
+        "build": "tsc -p ./",
         "test": "jest",
-        "package": "node make.js build && node make.js package",
-        "clean": "node make.js clean",
-        "lint": "tslint -c tslint.yaml 'Tasks/**/*.ts'",
-        "publish": "node make.js publish",
-        "update-version-info": "node make.js updateversioninfo",
-        "update-region-info": "node make.js updateregioninfo"
+        "clean": "node ./build-scripts/clean.js",
+        "lint": "tslint --project .",
+        "generateResources": "node ./build-scripts/generateResources.js",
+        "copyResources": "node ./build-scripts/copyResources.js",
+        "package": "node ./build-scripts/packageExtension.js",
+        "fullBuild": "npm run build && npm run copyResources && npm run generateResources && npm run test && npm run package"
     },
     "repository": {
         "type": "git",
@@ -33,30 +33,23 @@
     "homepage": "https://github.com/aws/aws-vsts-tools",
     "devDependencies": {
         "@types/jest": "^24.0.12",
-        "@types/node": "^8.0.34",
-        "adm-zip": "0.4.11",
-        "babel-loader": "^8.0.5",
-        "babel-preset-env": "^1.7.0",
+        "@types/node": "^12.0.0",
         "clean-webpack-plugin": "^2.0.1",
-        "file-loader": "^0.11.2",
-        "file-normalize": "^1.1.2",
+        "fs-extra": "^7.0.1",
         "jest": "^24.7.1",
         "json-query": "^2.2.2",
-        "minimist": "^1.2.0",
-        "modclean": "^2.1.0",
-        "rimraf": "^2.5.4",
-        "semver": "^5.4.1",
-        "sync-request": "^4.1.0",
+        "sync-request": "^6.1.0",
+        "terser-webpack-plugin": "^1.2.3",
         "tfx-cli": "^0.7.5",
         "ts-jest": "^24.0.2",
-        "ts-loader": "^2.2.2",
+        "ts-loader": "^6.0.0",
         "tslint": "^5.16.0",
         "tslint-eslint-rules": "^5.4.0",
         "tslint-no-circular-imports": "^0.6.1",
         "typescript": "^3.4.5",
-        "uglifyjs-webpack-plugin": "^2.1.2",
         "validator": "^10.11.0",
         "webpack": "^4.30.0",
+        "webpack-cli": "^3.3.2",
         "webpack-node-externals": "^1.7.2"
     },
     "dependencies": {
@@ -75,6 +68,9 @@
             "js",
             "ts"
         ],
+        "moduleNameMapper": {
+            "^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts"
+        },
         "transform": {
             "\\.ts$": "ts-jest"
         },

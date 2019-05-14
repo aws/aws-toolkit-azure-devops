@@ -7,7 +7,7 @@ import * as fs from 'fs'
 import * as mm from 'minimatch'
 import * as path from 'path'
 import * as tl from 'vsts-task-lib/task'
-import { TaskParameters, aes256AlgorithmValue, customerManagedKeyValue } from './DownloadTaskParameters'
+import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './DownloadTaskParameters'
 
 import S3 = require('aws-sdk/clients/s3')
 
