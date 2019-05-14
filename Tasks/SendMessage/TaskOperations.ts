@@ -24,8 +24,6 @@ export class TaskOperations {
     }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients();
-
         if (this.taskParameters.messageTarget === 'topic') {
             await this.verifyTopicExists(this.taskParameters.topicArn);
             await this.sendMessageToTopic();
@@ -35,20 +33,6 @@ export class TaskOperations {
         }
 
         console.log(tl.loc('TaskCompleted'));
-    }
-
-
-    private async createServiceClients(): Promise<void> {
-
-       const sqsOpts: SQS.ClientConfiguration = {
-            apiVersion: '2012-11-05'
-        };
-       this.sqsClient = await SdkUtils.createAndConfigureSdkClient(SQS, sqsOpts, this.taskParameters, tl.debug);
-
-       const snsOpts: SNS.ClientConfiguration = {
-            apiVersion: '2010-03-31'
-        };
-       this.snsClient = await SdkUtils.createAndConfigureSdkClient(SNS, snsOpts, this.taskParameters, tl.debug);
     }
 
     private async verifyTopicExists(topicArn: string): Promise<void> {
@@ -97,5 +81,4 @@ export class TaskOperations {
             throw new Error(tl.loc('SendError', err.message));
         }
     }
-
 }
