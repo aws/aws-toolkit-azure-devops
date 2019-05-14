@@ -20,17 +20,18 @@ describe('S3 Download', () => {
         bucketName: '',
         sourceFolder: '',
         targetFolder: '',
-        globExpressions: undefined,
+        globExpressions: [],
         overwrite: false,
         forcePathStyleAddressing: false,
         flattenFolders: false,
         keyManagement: '',
-        customerKey: undefined
+        customerKey: Buffer.from([])
     }
 
     const headBucketResponse = {
         promise: function() { }
     }
+
     const listObjectsResponse = {
         promise: function() {
             return { NextMarker: undefined, Contents: undefined}
@@ -60,12 +61,12 @@ describe('S3 Download', () => {
 
     test('Creates a TaskOperation', () => {
         const taskParameters = baseTaskParameters
-        expect(new TaskOperations(undefined, taskParameters)).not.toBeNull()
+        expect(new TaskOperations(new S3(), taskParameters)).not.toBeNull()
     })
 
     test('Handles not being able to connect to a bucket', async () => {
         const s3 = new S3({ region: 'us-east-1' })
-        s3.headBucket = jest.fn()((params, cb) => { throw new Error('doesn\'t exist dummy') })
+        s3.headBucket = jest.fn()((params: any, cb: any) => { throw new Error('doesn\'t exist dummy') })
         const taskParameters = baseTaskParameters
         const taskOperation = new TaskOperations(s3, taskParameters)
         expect.assertions(1)

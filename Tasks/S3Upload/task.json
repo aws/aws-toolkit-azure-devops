@@ -184,6 +184,15 @@
             "groupName": "advanced"
         },
         {
+            "name": "contentEncoding",
+            "type": "string",
+            "label": "Content Encoding",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Specifies the content encoding for the uploaded object(s). For more information go to [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11).\n\n__Note:__ that any value is applied to __all__ files processed by the task.",
+            "groupName": "advanced"
+        },
+        {
             "name": "storageClass",
             "type": "pickList",
             "label": "Storage Class",

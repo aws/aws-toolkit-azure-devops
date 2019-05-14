@@ -8,46 +8,56 @@ import { parse, format, Url } from 'url';
 import STS = require('aws-sdk/clients/sts');
 import AWS = require('aws-sdk/global');
 import HttpsProxyAgent = require('https-proxy-agent');
+import { 
+    AWSConnectionParameters,
+    awsRegionVariable,
+    defaultRoleSessionName,
+    minDuration,
+    maxduration,
+    roleCredentialMaxDurationVariableName,
+    awsAccessKeyIdVariable,
+    awsSecretAccessKeyVariable, 
+    awsSessionTokenVariable } from '../awsConnectionParameters';
 
-export class AWSTaskParametersBase {
+export class AWSTaskParametersBase implements AWSConnectionParameters{
 
     // Task variable names that can be used to supply the AWS credentials
     // to a task (in addition to using a service endpoint, or environment
     // variables, or EC2 instance metadata)
-    private static readonly awsAccessKeyIdVariable: string = 'AWS.AccessKeyID';
-    private static readonly awsSecretAccessKeyVariable: string = 'AWS.SecretAccessKey';
-    private static readonly awsSessionTokenVariable: string = 'AWS.SessionToken';
+    private static readonly awsAccessKeyIdVariable: string = awsAccessKeyIdVariable;
+    private static readonly awsSecretAccessKeyVariable: string = awsSecretAccessKeyVariable;
+    private static readonly awsSessionTokenVariable: string = awsSessionTokenVariable;
 
     // Task variable name that can be used to supply the region setting to
     // a task.
-    private static readonly awsRegionVariable: string = 'AWS.Region';
+    private static readonly awsRegionVariable: string = awsRegionVariable;
 
     // pre-formatted url string, or vsts-task-lib/ProxyConfiguration
-    public readonly proxyConfiguration: string | tl.ProxyConfiguration;
+    public proxyConfiguration: string | tl.ProxyConfiguration;
 
     // If set, the task should expect to receive temporary session credentials
     // scoped to the role.
     public AssumeRoleARN: string;
 
     // Optional diagnostic logging switches
-    public readonly logRequestData: boolean;
-    public readonly logResponseData: boolean;
+    public logRequestData: boolean;
+    public logResponseData: boolean;
 
     // Original task credentials configured by the task user; if we are in assume-role
     // mode, these credentials were used to generate the temporary credential
     // fields above
-    protected awsEndpointAuth: tl.EndpointAuthorization;
+    public awsEndpointAuth: tl.EndpointAuthorization;
 
     // default session name to apply to the generated credentials if not overridden
     // in the endpoint definition
-    protected readonly defaultRoleSessionName: string = 'aws-vsts-tools';
+    public readonly defaultRoleSessionName: string = defaultRoleSessionName;
     // The minimum duration, 15mins, should be enough for a task
-    protected readonly minDuration: number = 900;
-    protected readonly maxduration: number = 3600;
-    protected readonly defaultRoleDuration: number = this.minDuration;
+    public readonly minDuration: number = minDuration; 
+    public readonly maxduration: number = maxduration;
+    public readonly defaultRoleDuration: number = this.minDuration;
     // To have a longer duration, users can set this variable in their build or
     // release definitions to the required duration (in seconds, min 900 max 3600).
-    protected readonly roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration';
+    public readonly roleCredentialMaxDurationVariableName: string = roleCredentialMaxDurationVariableName;
 
     public constructor() {
         this.logRequestData = tl.getBoolInput('logRequest', false);

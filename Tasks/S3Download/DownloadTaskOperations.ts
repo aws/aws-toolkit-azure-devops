@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { S3 } from 'aws-sdk/clients/all'
 import * as fs from 'fs'
 import * as mm from 'minimatch'
 import * as path from 'path'
 import * as tl from 'vsts-task-lib/task'
-import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './DownloadTaskParameters'
 
-import S3 = require('aws-sdk/clients/s3')
+import { testBucketExists } from 'Common/s3'
+import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './DownloadTaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -19,7 +20,7 @@ export class TaskOperations {
     }
 
     public async execute(): Promise<void> {
-        const exists = await this.testBucketExists(this.taskParameters.bucketName)
+        const exists = await testBucketExists(this.s3Client, this.taskParameters.bucketName)
         if (!exists) {
             throw new Error(tl.loc('BucketNotExist', this.taskParameters.bucketName))
         }
@@ -27,16 +28,6 @@ export class TaskOperations {
         await this.downloadFiles()
 
         console.log(tl.loc('TaskCompleted'))
-    }
-
-    private async testBucketExists(bucketName: string): Promise<boolean> {
-        try {
-            await this.s3Client.headBucket({ Bucket: bucketName }).promise()
-
-            return true
-        } catch (err) {
-            return false
-        }
     }
 
     private async downloadFiles() {
@@ -122,7 +113,8 @@ export class TaskOperations {
         }
 
         const allKeys: string[] = []
-        let nextToken: string
+        // tslint:disable-next-line:no-unnecessary-initializer
+        let nextToken: string | undefined = undefined
         do {
             const params: S3.ListObjectsRequest = {
                 Bucket: this.taskParameters.bucketName,
@@ -132,13 +124,15 @@ export class TaskOperations {
             try {
                 const s3Data = await this.s3Client.listObjects(params).promise()
                 nextToken = s3Data.NextMarker
-                s3Data.Contents.forEach((s3object) => {
-                    // AWS IDE toolkits can cause 0 byte 'folder markers' to be in the bucket,
-                    // filter those out
-                    if (!s3object.Key.endsWith('_$folder$')) {
-                        allKeys.push(s3object.Key)
-                    }
-                })
+                if (s3Data.Contents) {
+                    s3Data.Contents.forEach((s3object) => {
+                        // AWS IDE toolkits can cause 0 byte 'folder markers' to be in the bucket,
+                        // filter those out
+                        if (!s3object.Key.endsWith('_$folder$')) {
+                            allKeys.push(s3object.Key)
+                        }
+                    })
+                }
             } catch (err) {
                 console.error(err)
                 nextToken = undefined

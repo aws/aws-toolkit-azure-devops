@@ -9,7 +9,7 @@ import AWS = require('aws-sdk/global')
 import fs = require('fs')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
-import { AWSTaskParametersBase } from './awsTaskParametersBase'
+import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters';
 
 export abstract class SdkUtils {
 
@@ -69,7 +69,7 @@ export abstract class SdkUtils {
     // to the task log.
     public static async createAndConfigureSdkClient(awsService: any,
                                                     awsServiceOpts: any,
-                                                    taskParams: AWSTaskParametersBase,
+                                                    taskParams: AWSConnectionParameters,
                                                     logger: (msg: string) => void): Promise<any> {
 
         awsService.prototype.customizeRequests((request) => {
@@ -137,22 +137,22 @@ export abstract class SdkUtils {
         // instance metadata
         if (awsServiceOpts) {
             if (!awsServiceOpts.credentials) {
-                const credentials = await taskParams.getCredentials();
+                const credentials = await await getCredentials(taskParams)
                 if (credentials) {
                     awsServiceOpts.credentials = await credentials.getPromise();
                 }
             }
             if (!awsServiceOpts.region) {
-                awsServiceOpts.region = await taskParams.getRegion()
+                awsServiceOpts.region = await getRegion()
             }
 
             return new awsService(awsServiceOpts)
         }
 
-        const credentials = await taskParams.getCredentials();
+        const credentials = await getCredentials(taskParams)
         return new awsService({
             credentials: credentials ? credentials.getPromise() : undefined,
-            region: await taskParams.getRegion()
+            region: await getRegion()
         })
     }
 

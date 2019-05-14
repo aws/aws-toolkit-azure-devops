@@ -73,6 +73,7 @@
         ],
         "moduleNameMapper": {
             "^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts",
+            "^Common/(.*)": "<rootDir>/Tasks/Common/$1.ts",
             "^aws-sdk/(.*)": "<rootDir>/node_modules/aws-sdk/$1.js"
         },
         "transform": {

@@ -16,12 +16,14 @@ linterOptions:
     - Tasks/CloudFormationDeleteStack/**
     - Tasks/CloudFormationExecuteChangeSet/**
     - Tasks/CodeDeployDeployApplication/**
-    - Tasks/Common/**
+    - Tasks/Common/beanstalkutils/**
+    - Tasks/Common/sdkutils/awsTaskParametersBase.ts
+    - Tasks/Common/sdkutils/sdkutils.ts
+    - Tasks/Common/sdkutils/cloudformationutils.ts
     - Tasks/ECRPushImage/**
     - Tasks/LambdaDeployFunction/**
     - Tasks/LambdaInvokeFunction/**
     - Tasks/LambdaNETCoreDeploy/**
-    - Tasks/S3Upload/**
     - Tasks/SecretsManagerCreateOrUpdateSecret/**
     - Tasks/SecretsManagerGetSecret/**
     - Tasks/SendMessage/**

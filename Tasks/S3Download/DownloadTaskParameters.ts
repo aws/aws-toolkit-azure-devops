@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSConnectionParameters } from 'sdkutils/awsConnectionParameters'
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import tl = require('vsts-task-lib/task')
 
 // options for Server-side encryption Key Management
@@ -26,7 +26,7 @@ export interface TaskParameters {
 
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
-        awsConnectionParameters: new AWSConnectionParameters(),
+        awsConnectionParameters: buildConnectionParameters(),
         bucketName: tl.getInput('bucketName', true),
         sourceFolder: tl.getPathInput('sourceFolder', false, false),
         targetFolder: tl.getPathInput('targetFolder', true, false),
