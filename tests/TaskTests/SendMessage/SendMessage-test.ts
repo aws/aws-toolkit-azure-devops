@@ -21,6 +21,18 @@ const defaultTaskParameters: TaskParameters = {
     delaySeconds: undefined
 }
 
+const promiseThrowsResponse = {
+    promise: function() {
+        throw new Error('no')
+    }
+}
+
+const promiseSuceeds = {
+    promise: function() {
+        return undefined
+    }
+}
+
 describe('Send Message', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -29,5 +41,60 @@ describe('Send Message', () => {
 
     test('Creates a TaskOperation', () => {
         expect(new TaskOperations(new SNS(), new SQS(), defaultTaskParameters)).not.toBeNull()
+    })
+
+    test('Send message to queue when message target is not topic', () => {
+        expect.assertions(1)
+        const sqs = new SQS() as any
+        sqs.getQueueAttributes = jest.fn(() => undefined)
+        const taskOperations = new TaskOperations(new SNS(), sqs, defaultTaskParameters)
+        taskOperations.execute().catch()
+        expect(sqs.getQueueAttributes).toBeCalled()
+    })
+
+    test('Send message to queue when message to topic when target is topic', () => {
+        expect.assertions(1)
+        const taskParams = {...defaultTaskParameters}
+        taskParams.messageTarget = 'topic'
+        const sns = new SNS() as any
+        sns.getTopicAttributes = jest.fn(() => undefined)
+        const taskOperations = new TaskOperations(sns, new SQS(), taskParams)
+        taskOperations.execute().catch()
+        expect(sns.getTopicAttributes).toBeCalled()
+    })
+
+    test('Verify topic exists fails, fails task', async () => {
+        expect.assertions(2)
+        const taskParams = {...defaultTaskParameters}
+        taskParams.messageTarget = 'topic'
+        const sns = new SNS() as any
+        sns.getTopicAttributes = jest.fn(() => promiseThrowsResponse)
+        const taskOperations = new TaskOperations(sns, new SQS(), taskParams)
+        await taskOperations.execute().catch((e) => expect(e.message).toContain('no'))
+        expect(sns.getTopicAttributes).toBeCalled()
+    })
+
+    test('Verify queue exists fails, fails task', () => {
+        expect.assertions(2)
+        const sqs = new SQS() as any
+        sqs.getQueueAttributes = jest.fn(() => promiseThrowsResponse)
+        const taskOperations = new TaskOperations(new SNS(), sqs, defaultTaskParameters)
+        taskOperations.execute().catch((e) => expect(e.message).toContain('no'))
+        expect(sqs.getQueueAttributes).toBeCalled()
+    })
+
+    test('Send message to topic succeeds', () => {
+        const taskOperations = new TaskOperations(new SNS(), new SQS(), defaultTaskParameters)
+    })
+
+    test('Send message to queue succeeds', async () => {
+        expect.assertions(2)
+        const sqs = new SQS() as any
+        sqs.getQueueAttributes = jest.fn(() => promiseSuceeds)
+        sqs.publish = jest.fn(() => promiseSuceeds)
+        const taskOperations = new TaskOperations(new SNS(), sqs, defaultTaskParameters)
+        await taskOperations.execute()
+        expect(sqs.getQueueAttributes).toBeCalled()
+        expect(sqs.publish).toBeCalled()
     })
 })
