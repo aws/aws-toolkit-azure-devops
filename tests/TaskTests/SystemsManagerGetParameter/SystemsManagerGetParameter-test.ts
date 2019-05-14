@@ -5,9 +5,9 @@
 
 import { SSM } from 'aws-sdk'
 
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SystemsManagerGetParameter/TaskOperations'
 import { TaskParameters } from '../../../Tasks/SystemsManagerGetParameter/TaskParameters'
-import { SdkUtils } from 'Common/sdkutils'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any

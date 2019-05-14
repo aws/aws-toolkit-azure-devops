@@ -4,11 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { readModeSingle } from 'Tasks/Common/ssm'
 import tl = require('vsts-task-lib/task')
-
-export const transformCustom = 'custom'
-export const transformSubstitute = 'substitute'
-export const readModeSingle = 'single'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters,
