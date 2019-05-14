@@ -83,18 +83,27 @@ describe('Send Message', () => {
         expect(sqs.getQueueAttributes).toBeCalled()
     })
 
-    test('Send message to topic succeeds', () => {
-        const taskOperations = new TaskOperations(new SNS(), new SQS(), defaultTaskParameters)
+    test('Send message to topic succeeds', async () => {
+        expect.assertions(2)
+        const taskParams = {...defaultTaskParameters}
+        taskParams.messageTarget = 'topic'
+        const sns = new SNS() as any
+        sns.getTopicAttributes = jest.fn(() => promiseSuceeds)
+        sns.publish = jest.fn(() => promiseSuceeds)
+        const taskOperations = new TaskOperations(sns, new SQS(), taskParams)
+        await taskOperations.execute()
+        expect(sns.getTopicAttributes).toBeCalled()
+        expect(sns.publish).toBeCalled()
     })
 
     test('Send message to queue succeeds', async () => {
         expect.assertions(2)
         const sqs = new SQS() as any
         sqs.getQueueAttributes = jest.fn(() => promiseSuceeds)
-        sqs.publish = jest.fn(() => promiseSuceeds)
+        sqs.sendMessage = jest.fn(() => promiseSuceeds)
         const taskOperations = new TaskOperations(new SNS(), sqs, defaultTaskParameters)
         await taskOperations.execute()
         expect(sqs.getQueueAttributes).toBeCalled()
-        expect(sqs.publish).toBeCalled()
+        expect(sqs.sendMessage).toBeCalled()
     })
 })
