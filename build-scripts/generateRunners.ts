@@ -41,10 +41,11 @@ async function run(): Promise<void> {
     SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
 
-    const client = await createDefault${clientType}(taskParameters, tl.debug)
-
     return new TaskOperations(
-        ${clientType.map((it) => `await createDefault${it}(taskParameters, tl.debug),`).join('         \n')}
+        ${clientType.map((it) => {
+            // tslint:disable-next-line:prefer-template
+            return 'await createDefault' + it + '(taskParameters, tl.debug),'
+        }).join('\n        ')}
         taskParameters).execute()
 }
 `

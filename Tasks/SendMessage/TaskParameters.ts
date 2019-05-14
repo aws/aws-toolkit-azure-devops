@@ -1,37 +1,38 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task');
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import tl = require('vsts-task-lib/task')
 
-export class TaskParameters extends AWSTaskParametersBase {
-    public messageTarget: string;
-    public message: string;
-    public topicArn: string;
-    public queueUrl: string;
-    public delaySeconds: number;
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters,
+    messageTarget: string,
+    message: string,
+    topicArn: string,
+    queueUrl: string,
+    delaySeconds: number
+}
 
-    constructor() {
-        super();
-        try {
-            this.messageTarget = tl.getInput('messageTarget', true);
-            this.message = tl.getInput('message', true);
-            if (this.messageTarget === 'topic') {
-                this.topicArn = tl.getInput('topicArn', true);
-            } else {
-                this.queueUrl = tl.getInput('queueUrl', true);
-                const delay = tl.getInput('delaySeconds', false);
-                if (delay) {
-                    this.delaySeconds = parseInt(delay, 10);
-                }
-            }
-        } catch (error) {
-            throw new Error(error.message);
+export function buildTaskParameters(): TaskParameters {
+    const parameters: TaskParameters = {
+        awsConnectionParameters: buildConnectionParameters(),
+        messageTarget: tl.getInput('messageTarget', true),
+        message: tl.getInput('message', true),
+        topicArn: undefined,
+        queueUrl: undefined,
+        delaySeconds: undefined
+    }
+    if (parameters.messageTarget === 'topic') {
+        parameters.topicArn = tl.getInput('topicArn', true)
+    } else {
+        parameters.queueUrl = tl.getInput('queueUrl', true)
+        const delay = tl.getInput('delaySeconds', false)
+        if (delay) {
+            parameters.delaySeconds = parseInt(delay, 10)
         }
     }
+
+    return parameters
 }

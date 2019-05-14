@@ -63,7 +63,7 @@ export async function createDefaultSQS(
 
 export async function createDefaultSNS(
     configuration: GenericClientConfiguration,
-    logger: (msg: string) => void): Promise<SQS> {
+    logger: (msg: string) => void): Promise<SNS> {
     const snsOpts: SNS.ClientConfiguration = {
         apiVersion: '2010-03-31'
     }
@@ -73,5 +73,5 @@ export async function createDefaultSNS(
         SNS,
         snsOpts,
         configuration.awsConnectionParameters,
-        logger) as SQS
+        logger) as SNS
 }

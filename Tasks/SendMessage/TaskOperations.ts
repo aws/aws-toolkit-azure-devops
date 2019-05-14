@@ -1,66 +1,61 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task');
-import path = require('path');
-import SQS = require('aws-sdk/clients/sqs');
-import SNS = require('aws-sdk/clients/sns');
-import { AWSError } from 'aws-sdk/lib/error';
-import { SdkUtils } from 'sdkutils/sdkutils';
-import { TaskParameters } from './SendMessageTaskParameters';
+import SNS = require('aws-sdk/clients/sns')
+import SQS = require('aws-sdk/clients/sqs')
+import tl = require('vsts-task-lib/task')
+import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
 
     public constructor(
-        public readonly taskParameters: TaskParameters,
-        public readonly snsClient : SNS,
-        public readonly sqsClient : SQS
+        public readonly snsClient: SNS,
+        public readonly sqsClient: SQS,
+        public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
         if (this.taskParameters.messageTarget === 'topic') {
-            await this.verifyTopicExists(this.taskParameters.topicArn);
-            await this.sendMessageToTopic();
+            await this.verifyTopicExists(this.taskParameters.topicArn)
+            await this.sendMessageToTopic()
         } else {
-            await this.verifyQueueExists(this.taskParameters.queueUrl);
-            await this.sendMessageToQueue();
+            await this.verifyQueueExists(this.taskParameters.queueUrl)
+            await this.sendMessageToQueue()
         }
 
-        console.log(tl.loc('TaskCompleted'));
+        console.log(tl.loc('TaskCompleted'))
     }
 
     private async verifyTopicExists(topicArn: string): Promise<void> {
         try {
-            await this.snsClient.getTopicAttributes({TopicArn: topicArn}).promise();
+            await this.snsClient.getTopicAttributes({TopicArn: topicArn}).promise()
         } catch (err) {
-            throw new Error(tl.loc('TopicDoesNotExist', topicArn));
+            throw new Error(tl.loc('TopicDoesNotExist', topicArn))
         }
     }
 
     private async verifyQueueExists(queueUrl: string): Promise<void> {
         try {
-            await this.sqsClient.getQueueAttributes({QueueUrl: queueUrl, AttributeNames: ['QueueArn']}).promise();
+            await this.sqsClient.getQueueAttributes({QueueUrl: queueUrl, AttributeNames: ['QueueArn']}).promise()
         } catch (err) {
-            throw new Error(tl.loc('QueueDoesNotExist', queueUrl));
+            throw new Error(tl.loc('QueueDoesNotExist', queueUrl))
         }
     }
 
     private async sendMessageToTopic(): Promise<void> {
-        console.log(tl.loc('SendingToTopic', this.taskParameters.topicArn));
+        console.log(tl.loc('SendingToTopic', this.taskParameters.topicArn))
 
         try {
             await this.snsClient.publish({
                 TopicArn: this.taskParameters.topicArn,
                 Message: this.taskParameters.message
-            }).promise();
+            }).promise()
         } catch (err) {
-            throw new Error(tl.loc('SendError', err.message));
+            // tslint:disable-next-line: no-unsafe-any
+            throw new Error(tl.loc('SendError', err.message))
         }
     }
 
@@ -69,16 +64,19 @@ export class TaskOperations {
             const request: SQS.SendMessageRequest = {
                 QueueUrl: this.taskParameters.queueUrl,
                 MessageBody: this.taskParameters.message
-            };
-            if (this.taskParameters.delaySeconds) {
-                request.DelaySeconds = this.taskParameters.delaySeconds;
-                console.log(tl.loc('SendingToQueueWithDelay', this.taskParameters.delaySeconds, this.taskParameters.queueUrl));
-            } else {
-                console.log(tl.loc('SendingToQueue', this.taskParameters.queueUrl));
             }
-            await this.sqsClient.sendMessage(request).promise();
+            if (this.taskParameters.delaySeconds) {
+                request.DelaySeconds = this.taskParameters.delaySeconds
+                console.log(tl.loc('SendingToQueueWithDelay',
+                                   this.taskParameters.delaySeconds,
+                                   this.taskParameters.queueUrl))
+            } else {
+                console.log(tl.loc('SendingToQueue', this.taskParameters.queueUrl))
+            }
+            await this.sqsClient.sendMessage(request).promise()
         } catch (err) {
-            throw new Error(tl.loc('SendError', err.message));
+            // tslint:disable-next-line: no-unsafe-any
+            throw new Error(tl.loc('SendError', err.message))
         }
     }
 }
