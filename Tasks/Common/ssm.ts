@@ -14,7 +14,6 @@ export const readModeSingle = 'single'
 // reading a hierarchy, we pass in the individual parameter name from the collection
 // read by the task.
 export function transformParameterToVariableName(
-    inputParameterName: string,
     taskParameters: {
         parameterName: string,
         variableNameTransform: string,
@@ -22,7 +21,8 @@ export function transformParameterToVariableName(
         caseInsensitiveMatch: boolean,
         replacementPattern: string,
         replacementText: string,
-        customVariableName: string}): string {
+        customVariableName: string},
+    inputParameterName?: string): string {
 
     if (!inputParameterName) {
         inputParameterName = taskParameters.parameterName

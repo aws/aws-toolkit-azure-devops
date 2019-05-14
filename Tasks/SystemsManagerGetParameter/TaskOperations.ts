@@ -36,7 +36,7 @@ export class TaskOperations {
     // Reads a single parameter value and stores it into the supplied variable name. SecureString parameter
     // types are stored as secret variables.
     private async readSingleParameterValue(): Promise<void> {
-        const outputVariableName = transformParameterToVariableName(undefined, this.taskParameters)
+        const outputVariableName = transformParameterToVariableName(this.taskParameters)
 
         let parameterName = this.taskParameters.parameterName
         if (this.taskParameters.parameterVersion) {
@@ -75,7 +75,7 @@ export class TaskOperations {
             }).promise()
 
             for (const p of response.Parameters) {
-                const outputVariableName = transformParameterToVariableName(p.Name, this.taskParameters)
+                const outputVariableName = transformParameterToVariableName(this.taskParameters, p.Name)
                 const isSecret = p.Type === 'SecureString'
                 console.log(tl.loc('SettingVariable', outputVariableName, p.Name, isSecret))
 
