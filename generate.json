@@ -1,11 +1,15 @@
 [
     {
-        "taskName": "SecretsManagerGetSecret",
-        "taskClients": ["SecretsManager"]
-    },
-    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
+    },
+    {
+        "taskName": "SecretsManagerCreateOrUpdateSecret",
+        "taskClient": ["SecretsManager"]
+    },
+    {
+        "taskName": "SecretsManagerGetSecret",
+        "taskClient": ["SecretsManager"]
     },
     {
         "taskName": "SendMessage",
