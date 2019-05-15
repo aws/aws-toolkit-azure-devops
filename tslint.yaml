@@ -22,7 +22,6 @@ linterOptions:
     - Tasks/Common/sdkutils/cloudformationutils.ts
     - Tasks/ECRPushImage/**
     - Tasks/LambdaDeployFunction/**
-    - Tasks/LambdaInvokeFunction/**
     - Tasks/LambdaNETCoreDeploy/**
     - Tasks/SendMessage/**
     - Tasks/SystemsManagerGetParameter/**

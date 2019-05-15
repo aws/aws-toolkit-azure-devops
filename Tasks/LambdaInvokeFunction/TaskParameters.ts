@@ -1,31 +1,29 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task');
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
+import { AWSConnectionParameters, buildConnectionParameters } from 'Tasks/Common/awsConnectionParameters'
+import tl = require('vsts-task-lib/task')
 
-export class TaskParameters extends AWSTaskParametersBase {
-    public functionName: string;
-    public payload: string;
-    public invocationType: string;
-    public logType: string;
-    public outputVariable: string;
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters
+    functionName: string
+    payload: string
+    invocationType: string
+    logType: string
+    outputVariable: string
+}
 
-    constructor() {
-        super();
-        try {
-            this.functionName = tl.getInput('functionName', true);
-            this.payload = tl.getInput('payload', false);
-            this.invocationType = tl.getInput('invocationType', false);
-            this.logType = tl.getInput('logType', false);
-            this.outputVariable = tl.getInput('outputVariable', false);
-        } catch (error) {
-            throw new Error(error.message);
-        }
+export function buildTaskParameters() {
+    const paramters: TaskParameters = {
+        awsConnectionParameters: buildConnectionParameters(),
+        functionName: tl.getInput('functionName', true),
+        payload: tl.getInput('payload', false),
+        invocationType: tl.getInput('invocationType', false),
+        logType: tl.getInput('logType', false),
+        outputVariable: tl.getInput('outputVariable', false)
     }
+
+    return paramters
 }
