@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SystemsManager } from 'aws-sdk'
+import { SSM } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SystemsManagerRunCommand/TaskOperations'
 import { TaskParameters } from '../../../Tasks/SystemsManagerRunCommand/TaskParameters'
@@ -42,4 +42,9 @@ describe('Systems Manager Run Command', () => {
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SecretsManagerGetSecret/task.json')
     })
+
+    test('Creates a TaskOperation', () => {
+        expect(new TaskOperations(new SSM(), defaultTaskParameters)).not.toBeNull()
+    })
+
 })
