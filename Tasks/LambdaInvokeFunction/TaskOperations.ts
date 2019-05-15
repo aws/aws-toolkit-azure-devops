@@ -9,21 +9,17 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import Lambda = require('aws-sdk/clients/lambda');
-import { AWSError } from 'aws-sdk/lib/error';
-import { SdkUtils } from 'sdkutils/sdkutils';
-import { TaskParameters } from './InvokeFunctionTaskParameters';
+import { TaskParameters } from './TaskParameters';
 
 export class TaskOperations {
 
     public constructor(
+        public readonly lambdaClient: Lambda,
         public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
-
-        await this.createServiceClients();
-
         await this.verifyResourcesExist(this.taskParameters.functionName);
 
         console.log(tl.loc('InvokingFunction', this.taskParameters.functionName));
@@ -53,17 +49,6 @@ export class TaskOperations {
             console.error(tl.loc('FunctionInvokeFailed'), err);
             throw err;
         }
-    }
-
-    private lambdaClient: Lambda;
-
-    private async createServiceClients(): Promise<void> {
-
-        const lambdaOpts: Lambda.ClientConfiguration = {
-            apiVersion: '2015-03-31'
-        };
-
-       this.lambdaClient = await SdkUtils.createAndConfigureSdkClient(Lambda, lambdaOpts, this.taskParameters, tl.debug);
     }
 
     private async verifyResourcesExist(functionName: string): Promise<void> {
