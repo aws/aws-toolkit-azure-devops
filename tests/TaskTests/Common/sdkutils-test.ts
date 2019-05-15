@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
+import { SdkUtils } from 'Common/sdkutils'
 
 interface KeyValue {
     Key?: string,
@@ -23,5 +23,18 @@ describe('SdkUtils', () => {
         const parsed: KeyValue[] = SdkUtils.getTags<KeyValue[]>(arr)
         expect(parsed[0].Key).toBe('what')
         expect(parsed[1].Value).toBe('3')
+    })
+
+    test('Get Tags Parses Properly with multiple =', () => {
+        const arr: string[] = ['what=2=2']
+        const parsed: KeyValue[] = SdkUtils.getTags<KeyValue[]>(arr)
+        expect(parsed[0].Key).toBe('what')
+        expect(parsed[0].Value).toBe('2=2')
+    })
+
+    test('Get Tags doesn\t parse wrong things', () => {
+        const arr: string[] = ['=what=2=2']
+        const parsed: KeyValue[] = SdkUtils.getTags<KeyValue[]>(arr)
+        expect(parsed.length).toBe(0)
     })
 })

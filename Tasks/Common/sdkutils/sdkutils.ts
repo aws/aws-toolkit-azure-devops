@@ -202,9 +202,13 @@ export abstract class SdkUtils {
         if (tags && tags.length > 0) {
             arr = [] as T
             tags.forEach((t) => {
-                const kvp = t.split('=')
-                const key = kvp[0].trim()
-                const val = kvp[1].trim()
+                const firstEqualsIndex = t.indexOf('=')
+                // if the tag is invalid, skip it
+                if(firstEqualsIndex < 1) {
+                    return
+                }
+                const key = t.substring(0, firstEqualsIndex).trim()
+                const val = t.substring(firstEqualsIndex + 1)
                 console.log(tl.loc('AddingTag', key, val))
                 arr.push({
                     Key: key,
