@@ -7,9 +7,6 @@ The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to eas
 
 The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
 
-This is an open source project because we want you to be involved. We love issues, feature requests, code reviews, pull
-requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIBUTING.md) guide for how to help, including how to build your own extension.
-
 **Note for Team Foundation Server 2015 Users:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for extra fields in the _AWS_ endpoint type to support _Assume Role_ credentials. These fields, although marked optional, are unfortunately treated as required in TFS 2015 editions.
 
 ## User Guide
@@ -99,6 +96,13 @@ Select the _AWS_ endpoint type and provide the following parameters. Please refe
 **Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
 
 Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
+
+## Build
+
+-   To build for testing purposes, run `npm run build`
+-   To package for installation into VSTS, run `npm run fullBuild publisher=<your-publisher-id-here>`
+
+note: Due to [this bug](https://npm.community/t/npm-install-for-package-with-local-dependency-fails/754/2), Tasks/BeanstalkCreateApplicationVersion has a .npmrc file that disables package lock for this module. Without this, rebuild will not work.
 
 ## Minimum supported environments
 
