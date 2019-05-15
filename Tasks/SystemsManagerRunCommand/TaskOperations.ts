@@ -4,9 +4,8 @@
  */
 
 import SSM = require('aws-sdk/clients/ssm')
-import { SdkUtils } from 'Common/sdkutils'
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './TaskParameters'
+import { fromBuildVariable, fromInstanceIds, fromTags, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -28,16 +27,16 @@ export class TaskOperations {
         }
 
         if (this.taskParameters.documentParameters) {
+            // tslint:disable-next-line: no-unsafe-any
             request.Parameters = JSON.parse(this.taskParameters.documentParameters)
         }
 
         switch (this.taskParameters.instanceSelector) {
-            case TaskParameters.fromInstanceIds: {
+            case fromInstanceIds:
                 request.InstanceIds = this.taskParameters.instanceIds
-            }
-                                                 break
+                break
 
-            case TaskParameters.fromTags: {
+            case fromTags:
                 request.Targets = []
                 this.taskParameters.instanceTags.forEach((it) => {
                     const kv = it.split('=')
@@ -46,10 +45,9 @@ export class TaskOperations {
                     t.Values = kv[1].split(',')
                     request.Targets.push(t)
                 })
-            }
-                                          break
+                break
 
-            case TaskParameters.fromBuildVariable: {
+            case fromBuildVariable:
                 const instanceIds = tl.getVariable(this.taskParameters.instanceBuildVariable)
                 if (instanceIds) {
                     request.InstanceIds = instanceIds.trim().split(',')
@@ -57,7 +55,6 @@ export class TaskOperations {
                     throw new Error(tl.loc('InstanceIdsFromVariableFailed', this.taskParameters.instanceBuildVariable))
                 }
                 break
-            }
         }
 
         if (this.taskParameters.notificationArn) {
