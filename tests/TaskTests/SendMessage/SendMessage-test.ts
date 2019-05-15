@@ -27,7 +27,7 @@ const promiseThrowsResponse = {
     }
 }
 
-const promiseSuceeds = {
+const promiseSucceeds = {
     promise: function() {
         return undefined
     }
@@ -43,7 +43,7 @@ describe('Send Message', () => {
         expect(new TaskOperations(new SNS(), new SQS(), defaultTaskParameters)).not.toBeNull()
     })
 
-    test('Send message to queue when message target is not topic', () => {
+    test('Send message to sqs when message target is not topic', () => {
         expect.assertions(1)
         const sqs = new SQS() as any
         sqs.getQueueAttributes = jest.fn(() => undefined)
@@ -52,7 +52,7 @@ describe('Send Message', () => {
         expect(sqs.getQueueAttributes).toBeCalled()
     })
 
-    test('Send message to queue when message to topic when target is topic', () => {
+    test('Send message to sns when message target is topic', () => {
         expect.assertions(1)
         const taskParams = {...defaultTaskParameters}
         taskParams.messageTarget = 'topic'
@@ -88,8 +88,8 @@ describe('Send Message', () => {
         const taskParams = {...defaultTaskParameters}
         taskParams.messageTarget = 'topic'
         const sns = new SNS() as any
-        sns.getTopicAttributes = jest.fn(() => promiseSuceeds)
-        sns.publish = jest.fn(() => promiseSuceeds)
+        sns.getTopicAttributes = jest.fn(() => promiseSucceeds)
+        sns.publish = jest.fn(() => promiseSucceeds)
         const taskOperations = new TaskOperations(sns, new SQS(), taskParams)
         await taskOperations.execute()
         expect(sns.getTopicAttributes).toBeCalled()
@@ -99,8 +99,8 @@ describe('Send Message', () => {
     test('Send message to queue succeeds', async () => {
         expect.assertions(2)
         const sqs = new SQS() as any
-        sqs.getQueueAttributes = jest.fn(() => promiseSuceeds)
-        sqs.sendMessage = jest.fn(() => promiseSuceeds)
+        sqs.getQueueAttributes = jest.fn(() => promiseSucceeds)
+        sqs.sendMessage = jest.fn(() => promiseSucceeds)
         const taskOperations = new TaskOperations(new SNS(), sqs, defaultTaskParameters)
         await taskOperations.execute()
         expect(sqs.getQueueAttributes).toBeCalled()
