@@ -1,36 +1,35 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task');
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase';
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import tl = require('vsts-task-lib/task')
 
-export class TaskParameters extends AWSTaskParametersBase {
+export const simpleStringType: string = 'String'
+export const stringListType: string = 'StringList'
+export const secureStringType: string = 'SecureString'
 
-    public static readonly simpleStringType: string = 'String';
-    public static readonly stringListType: string = 'StringList';
-    public static readonly secureStringType: string = 'SecureString';
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters
+    parameterName: string
+    parameterType: string
+    parameterValue: string
+    encryptionKeyId: string
+}
 
-    public parameterName: string;
-    public parameterType: string;
-    public parameterValue: string;
-    public encryptionKeyId: string;
-
-    constructor() {
-        super();
-        try {
-            this.parameterName = tl.getInput('parameterName', true);
-            this.parameterType = tl.getInput('parameterType', true);
-            this.parameterValue = tl.getInput('parameterValue', true);
-            if (this.parameterType === TaskParameters.secureStringType) {
-                this.encryptionKeyId = tl.getInput('encryptionKeyId', false);
-            }
-        } catch (error) {
-            throw new Error(error.message);
-        }
+export function buildTaskParameters(): TaskParameters {
+    const parameters: TaskParameters = {
+        awsConnectionParameters: buildConnectionParameters(),
+        parameterName: tl.getInput('parameterName', true),
+        parameterType: tl.getInput('parameterType', true),
+        parameterValue: tl.getInput('parameterValue', true),
+        encryptionKeyId: undefined
     }
+
+    if (parameters.parameterType === secureStringType) {
+        parameters.encryptionKeyId = tl.getInput('encryptionKeyId', false)
+    }
+
+    return parameters
 }
