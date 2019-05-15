@@ -5,11 +5,11 @@
     },
     {
         "taskName": "SecretsManagerCreateOrUpdateSecret",
-        "taskClient": ["SecretsManager"]
+        "taskClients": ["SecretsManager"]
     },
     {
         "taskName": "SecretsManagerGetSecret",
-        "taskClient": ["SecretsManager"]
+        "taskClients": ["SecretsManager"]
     },
     {
         "taskName": "SendMessage",
