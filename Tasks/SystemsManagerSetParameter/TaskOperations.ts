@@ -9,13 +9,12 @@
 import tl = require('vsts-task-lib/task');
 import path = require('path');
 import SSM = require('aws-sdk/clients/ssm');
-import { AWSError } from 'aws-sdk/lib/error';
-import { SdkUtils } from 'sdkutils/sdkutils';
-import { TaskParameters } from './SetParameterTaskParameters';
+import { TaskParameters } from './TaskParameters';
 
 export class TaskOperations {
 
     public constructor(
+        public readonly ssmClient: SSM,
         public readonly taskParameters: TaskParameters
     ) {
     }
@@ -29,16 +28,6 @@ export class TaskOperations {
         await this.createOrUpdateParameter(forceAsSecureString);
 
         console.log(tl.loc('TaskCompleted'));
-    }
-
-    private ssmClient: SSM;
-
-    private async createServiceClients(): Promise<void> {
-
-        const ssmOpts: SSM.ClientConfiguration = {
-            apiVersion: '2014-11-06'
-        };
-        this.ssmClient = await SdkUtils.createAndConfigureSdkClient(SSM, ssmOpts, this.taskParameters, tl.debug);
     }
 
     private async createOrUpdateParameter(forceAsSecureString: boolean): Promise<void> {

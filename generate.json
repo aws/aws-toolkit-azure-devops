@@ -18,5 +18,9 @@
     {
         "taskName": "SystemsManagerGetParameter",
         "taskClients": ["SSM"]
+    },
+    {
+        "taskName": "SystemsManagerSetParameter",
+        "taskClients": ["SSM"]
     }
 ]
