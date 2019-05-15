@@ -94,7 +94,7 @@
         "singleQuote": true,
         "semi": false,
         "bracketSpacing": true,
-        "arrowParens": "always",
+        "arrowParens": "avoid",
         "endOfLine": "lf"
     },
     "husky": {
