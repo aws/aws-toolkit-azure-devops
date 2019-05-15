@@ -195,4 +195,28 @@ export abstract class SdkUtils {
             })
         })
     }
+
+    public static getTags<T extends {Key?: string, Value?: string}[]>(tags: string[]): T {
+        let arr: T
+
+        if (tags && tags.length > 0) {
+            arr = [] as T
+            tags.forEach((t) => {
+                const firstEqualsIndex = t.indexOf('=')
+                // if the tag is invalid, skip it
+                if(firstEqualsIndex < 1) {
+                    return
+                }
+                const key = t.substring(0, firstEqualsIndex).trim()
+                const val = t.substring(firstEqualsIndex + 1)
+                console.log(tl.loc('AddingTag', key, val))
+                arr.push({
+                    Key: key,
+                    Value: val
+                })
+            })
+        }
+
+        return arr
+    }
 }
