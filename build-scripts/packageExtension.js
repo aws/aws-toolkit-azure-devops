@@ -66,11 +66,19 @@ function package(options) {
             fs.copySync(path.join(taskBuildFolder, resourceFile), path.join(taskPackageFolder, resourceFile), {overwrite: true}) 
         }
 
+        var inputFilename
+        try {
+            fs.accessSync(taskName + '.js') 
+            inputFilename = taskName + '.js'
+        } catch (e) {
+            inputFilename = taskName + '.runner.js'
+        }
+
         console.log('packing node-based task')
         const webpackConfig = path.join(folders.repoRoot, 'webpack.config.js')
         const webpackCmd = 'webpack '
                         + '--config ' + webpackConfig + ' '
-                        + taskName + '.js '
+                        + inputFilename + ' '
                         + '--output-path ' + path.join(taskPackageFolder) + ' '
                         + '--output-filename ' + taskName + '.js' + ' '
         console.log(webpackCmd)

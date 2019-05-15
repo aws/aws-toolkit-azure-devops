@@ -7,9 +7,9 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 interface RunnerGenerator {
-    TaskName: string,
-    TaskClient: string,
-    SetResult?: string
+    taskName: string,
+    taskClient: string,
+    successResult?: string
 }
 
 const repoRoot = path.dirname(__dirname)
@@ -56,11 +56,11 @@ run().then((result) =>
 `
 
     const output = header + importStament + runStatement + run
-    fs.writeFileSync(`Tasks/${filename}/${filename}.ts`, output)
+    fs.writeFileSync(`Tasks/${filename}/${filename}.runner.ts`, output)
 }
 
 const generateFile = path.join(repoRoot, 'generate.json')
 const parsedJson = JSON.parse(fs.readFileSync(generateFile).toString()) as RunnerGenerator[]
 for (const json of parsedJson) {
-    generate(json.TaskName, json.TaskClient, json.SetResult)
+    generate(json.taskName, json.taskClient, json.successResult)
 }

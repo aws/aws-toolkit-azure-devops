@@ -7,13 +7,12 @@ import { S3, SecretsManager } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters  } from './awsConnectionParameters'
 
-interface S3ClientConfiguration {
-    awsConnectionParameters: AWSConnectionParameters,
-    forcePathStyleAddressing: boolean
-}
-
 interface GenericClientConfiguration {
     awsConnectionParameters: AWSConnectionParameters
+}
+
+interface S3ClientConfiguration extends GenericClientConfiguration {
+    forcePathStyleAddressing: boolean
 }
 
 export async function createDefaultS3(

@@ -16,4 +16,4 @@ coverage/
 
 # auto generated runners
 Tasks/SecretsManagerGetSecret/SecretsManagerGetSecret.ts
-Tasks/S3Download/S3Download.ts
+Tasks/**/*.runner.ts
