@@ -162,5 +162,4 @@ export class TaskOperations {
 
         this.secretsManagerClient = await SdkUtils.createAndConfigureSdkClient(SecretsManager, opts, this.taskParameters, tl.debug);
     }
-
 }

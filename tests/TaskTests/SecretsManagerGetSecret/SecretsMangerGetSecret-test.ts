@@ -5,8 +5,8 @@
 
 import { SecretsManager } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SecretsManagerGetSecret/GetSecretTaskOperations'
-import { TaskParameters } from '../../../Tasks/SecretsManagerGetSecret/GetSecretTaskParameters'
+import { TaskOperations } from '../../../Tasks/SecretsManagerGetSecret/TaskOperations'
+import { TaskParameters } from '../../../Tasks/SecretsManagerGetSecret/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any

@@ -7,20 +7,32 @@ import { S3, SecretsManager } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters  } from './awsConnectionParameters'
 
-export async function createDefaultS3Client(
-    connectionParams: AWSConnectionParameters,
-    forcePathStyle: boolean,
+interface GenericClientConfiguration {
+    awsConnectionParameters: AWSConnectionParameters
+}
+
+interface S3ClientConfiguration extends GenericClientConfiguration {
+    forcePathStyleAddressing: boolean
+}
+
+export async function createDefaultS3(
+    configuration: S3ClientConfiguration,
     logger: (msg: string) => void): Promise<S3>  {
     const s3Opts: S3.ClientConfiguration = {
         apiVersion: '2006-03-01',
-        s3ForcePathStyle: forcePathStyle
+        s3ForcePathStyle: configuration.forcePathStyleAddressing
     }
 
-    return await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, connectionParams, logger) as S3
+    // tslint:disable-next-line: no-unsafe-any
+    return await SdkUtils.createAndConfigureSdkClient(
+        S3,
+        s3Opts,
+        configuration.awsConnectionParameters,
+        logger) as S3
 }
 
 export async function createDefaultSecretsManager(
-    connectionParams: AWSConnectionParameters,
+    configuration: GenericClientConfiguration,
     logger: (msg: string) => void): Promise<SecretsManager> {
     const opts: SecretsManager.ClientConfiguration = {
         apiVersion: '2017-10-17'
@@ -30,6 +42,6 @@ export async function createDefaultSecretsManager(
     return await SdkUtils.createAndConfigureSdkClient(
         SecretsManager,
         opts,
-        connectionParams,
+        configuration.awsConnectionParameters,
         logger) as SecretsManager
 }

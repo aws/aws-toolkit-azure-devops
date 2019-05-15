@@ -10,7 +10,7 @@ import * as path from 'path'
 import * as tl from 'vsts-task-lib/task'
 
 import { testBucketExists } from 'Common/s3'
-import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './DownloadTaskParameters'
+import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     public constructor(

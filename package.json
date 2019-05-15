@@ -5,7 +5,9 @@
     "private": true,
     "main": "_build/tasks",
     "scripts": {
-        "build": "tsc -p ./",
+        "build": "npm run generateCode && npm run compileTypescript",
+        "generateCode": "ts-node ./build-scripts/generateRunners.ts",
+        "compileTypescript": "tsc -p ./",
         "test": "jest",
         "clean": "node ./build-scripts/clean.js",
         "lint": "tslint --project .",
@@ -43,6 +45,7 @@
         "tfx-cli": "^0.7.5",
         "ts-jest": "^24.0.2",
         "ts-loader": "^6.0.0",
+        "ts-node": "^8.1.0",
         "tslint": "^5.16.0",
         "tslint-eslint-rules": "^5.4.0",
         "tslint-no-circular-imports": "^0.6.1",
