@@ -38,6 +38,7 @@ export class TaskOperations {
 
             case fromTags:
                 request.Targets = []
+                // TODO repalce with getTags when https://github.com/aws/aws-vsts-tools/pull/184 merges
                 this.taskParameters.instanceTags.forEach((it) => {
                     const kv = it.split('=')
                     const t: SSM.Target = {}
