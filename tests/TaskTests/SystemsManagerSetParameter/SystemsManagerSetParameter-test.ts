@@ -6,7 +6,7 @@
 import { SSM } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SystemsManagerSetParameter/TaskOperations'
-import { TaskParameters, secureStringType } from '../../../Tasks/SystemsManagerSetParameter/TaskParameters'
+import { secureStringType, TaskParameters } from '../../../Tasks/SystemsManagerSetParameter/TaskParameters'
 
 const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: undefined,
