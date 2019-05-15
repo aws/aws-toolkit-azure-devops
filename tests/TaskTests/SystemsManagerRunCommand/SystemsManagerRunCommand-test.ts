@@ -6,7 +6,8 @@
 import { SSM } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SystemsManagerRunCommand/TaskOperations'
-import { fromInstanceIds, TaskParameters } from '../../../Tasks/SystemsManagerRunCommand/TaskParameters'
+import { fromBuildVariable, fromInstanceIds, fromTags, TaskParameters }
+       from '../../../Tasks/SystemsManagerRunCommand/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -40,7 +41,7 @@ const systemsManagerFails = {
 describe('Systems Manager Run Command', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SecretsManagerGetSecret/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SystemsManagerRunCommand/task.json')
     })
 
     test('Creates a TaskOperation', () => {
@@ -73,11 +74,30 @@ describe('Systems Manager Run Command', () => {
     })
 
     test('Instance from build variable', () => {
-        return undefined
+        expect.assertions(1)
+        const ssm = new SSM() as any
+        const taskParameters = {...defaultTaskParameters}
+        taskParameters.instanceSelector = fromBuildVariable
+        // Agent ID should always fail, which is fine, we just want to check that it reads from there
+        taskParameters.instanceBuildVariable = 'Agent.Id'
+        const taskOperations = new TaskOperations(ssm, taskParameters)
+        taskOperations.execute().catch((e) => expect(`${e}`).toContain('Failed to retrieve'))
     })
 
     test('Instance from tags', () => {
-        return undefined
+        expect.assertions(2)
+        const ssm = new SSM() as any
+        ssm.sendCommand = jest.fn((args) => {
+            expect(args.InstanceIds).toBe(['watermelon'])
+
+            return systemsManagerFails
+        })
+        const taskParameters = {...defaultTaskParameters}
+        taskParameters.instanceSelector = fromTags
+        taskParameters.instanceIds = ['watermelon']
+        const taskOperations = new TaskOperations(ssm, taskParameters)
+        taskOperations.execute().catch()
+        expect(ssm.sendCommand).toBeCalledTimes(1)
     })
 
     test('Adds notification arn if it exists', () => {
