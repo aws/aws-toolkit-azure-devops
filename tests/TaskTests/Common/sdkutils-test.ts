@@ -32,7 +32,7 @@ describe('SdkUtils', () => {
         expect(parsed[0].Value).toBe('2=2')
     })
 
-    test('Get Tags doesn\t parse wrong things', () => {
+    test(`Get Tags doesn't parse wrong things`, () => {
         const arr: string[] = ['=what=2=2']
         const parsed: KeyValue[] = SdkUtils.getTags<KeyValue[]>(arr)
         expect(parsed.length).toBe(0)
