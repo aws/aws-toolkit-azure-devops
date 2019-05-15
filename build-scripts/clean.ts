@@ -4,7 +4,14 @@
  */
 
 import * as fs from 'fs-extra'
-import * as folders from './scriptUtils'
+import * as path from 'path'
+import * as scriptUtils from './scriptUtils'
 
-fs.remove(folders.buildRoot)
-fs.remove(folders.packageRoot)
+fs.removeSync(scriptUtils.buildRoot)
+fs.removeSync(scriptUtils.packageRoot)
+
+fs.readdirSync(scriptUtils.sourceTasks).forEach((taskName) => {
+    try {
+        fs.removeSync(path.join(scriptUtils.sourceTasks, taskName, `${taskName}.runner.ts`))
+    } catch (e) {}
+})
