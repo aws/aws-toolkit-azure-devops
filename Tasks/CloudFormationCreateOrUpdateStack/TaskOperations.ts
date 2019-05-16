@@ -11,22 +11,29 @@ import fs = require('fs')
 import yaml = require('js-yaml')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
-import { TaskParameters, stackOutputsAsJson, ignoreStackOutputs, usePreviousTemplate } from './TaskParameters'
+import {
+    fileSource,
+    ignoreStackOutputs,
+    s3Source,
+    stackOutputsAsJson,
+    TaskParameters,
+    urlSource,
+    usePreviousTemplate
+} from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
         public readonly cloudFormationClient: CloudFormation,
         public readonly s3Client: S3,
         public readonly taskParameters: TaskParameters
-    ) {
-    }
+    ) {}
 
     public async execute(): Promise<void> {
         let stackId: string = await this.testStackExists(this.taskParameters.stackName)
         if (stackId) {
             console.log(tl.loc('StackExists'))
 
-            if (this.taskParameters.templateSource === TaskParameters.usePreviousTemplate) {
+            if (this.taskParameters.templateSource === usePreviousTemplate) {
                 console.log(tl.loc('UpdatingStackWithPreviousTemplate'))
             }
 
@@ -59,7 +66,8 @@ export class TaskOperations {
                 this.cloudFormationClient,
                 this.taskParameters.stackName,
                 this.taskParameters.captureStackOutputs === stackOutputsAsJson,
-                this.taskParameters.captureAsSecuredVars)
+                this.taskParameters.captureAsSecuredVars
+            )
         } else {
             console.log(tl.loc('SkippingStackOutputsProcessing'))
         }
@@ -67,22 +75,7 @@ export class TaskOperations {
         console.log(tl.loc('TaskCompleted', this.taskParameters.stackName, stackId))
     }
 
-    private async createServiceClients(): Promise<void> {
-
-        const cfnOpts: CloudFormation.ClientConfiguration = {
-            apiVersion: '2010-05-15'
-        }
-        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(
-            CloudFormation, cfnOpts, this.taskParameters, tl.debug)
-
-        const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01'
-        }
-        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug)
-    }
-
     private async createStack(): Promise<string> {
-
         const request: CloudFormation.CreateStackInput = {
             StackName: this.taskParameters.stackName,
             OnFailure: this.taskParameters.onFailure,
@@ -90,25 +83,30 @@ export class TaskOperations {
         }
 
         switch (this.taskParameters.templateSource) {
-            case TaskParameters.fileSource: {
+            case fileSource:
                 if (this.taskParameters.s3BucketName) {
-                    request.TemplateURL = await this.uploadTemplateFile(this.taskParameters.templateFile, this.taskParameters.s3BucketName)
+                    request.TemplateURL = await this.uploadTemplateFile(
+                        this.taskParameters.templateFile,
+                        this.taskParameters.s3BucketName
+                    )
                 } else {
                     request.TemplateBody = await this.loadTemplateFile(this.taskParameters.templateFile)
                 }
-            }
-                                            break
+                break
 
-            case TaskParameters.urlSource: {
+            case urlSource:
                 request.TemplateURL = this.taskParameters.templateUrl
-            }
-                                           break
+                break
 
-            case TaskParameters.s3Source: {
+            case s3Source:
                 // sync call
-                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey)
-            }
-                                          break
+                request.TemplateURL = await SdkUtils.getPresignedUrl(
+                    this.s3Client,
+                    'getObject',
+                    this.taskParameters.s3BucketName,
+                    this.taskParameters.s3ObjectKey
+                )
+                break
         }
 
         request.Parameters = await this.loadTemplateParameters()
@@ -117,7 +115,11 @@ export class TaskOperations {
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs)
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes)
-        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM, this.taskParameters.capabilityAutoExpand)
+        request.Capabilities = this.getCapabilities(
+            this.taskParameters.capabilityIAM,
+            this.taskParameters.capabilityNamedIAM,
+            this.taskParameters.capabilityAutoExpand
+        )
         request.Tags = this.getTags(this.taskParameters.tags)
 
         if (this.taskParameters.monitorRollbackTriggers) {
@@ -128,7 +130,9 @@ export class TaskOperations {
         }
 
         try {
-            const response: CloudFormation.CreateStackOutput = await this.cloudFormationClient.createStack(request).promise()
+            const response: CloudFormation.CreateStackOutput = await this.cloudFormationClient
+                .createStack(request)
+                .promise()
             tl.debug(`Stack id ${response.StackId}`)
             await this.waitForStackCreation(request.StackName)
 
@@ -148,25 +152,36 @@ export class TaskOperations {
         }
 
         switch (this.taskParameters.templateSource) {
-            case TaskParameters.fileSource: {
-                if (this.taskParameters.s3BucketName) {
-                    request.TemplateURL = await this.uploadTemplateFile(this.taskParameters.templateFile, this.taskParameters.s3BucketName)
-                } else {
-                    request.TemplateBody = await this.loadTemplateFile(this.taskParameters.templateFile)
+            case TaskParameters.fileSource:
+                {
+                    if (this.taskParameters.s3BucketName) {
+                        request.TemplateURL = await this.uploadTemplateFile(
+                            this.taskParameters.templateFile,
+                            this.taskParameters.s3BucketName
+                        )
+                    } else {
+                        request.TemplateBody = await this.loadTemplateFile(this.taskParameters.templateFile)
+                    }
                 }
-            }
-                                            break
+                break
 
-            case TaskParameters.urlSource: {
-                request.TemplateURL = this.taskParameters.templateUrl
-            }
-                                           break
+            case TaskParameters.urlSource:
+                {
+                    request.TemplateURL = this.taskParameters.templateUrl
+                }
+                break
 
-            case TaskParameters.s3Source: {
-                // sync call
-                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey)
-            }
-                                          break
+            case TaskParameters.s3Source:
+                {
+                    // sync call
+                    request.TemplateURL = await SdkUtils.getPresignedUrl(
+                        this.s3Client,
+                        'getObject',
+                        this.taskParameters.s3BucketName,
+                        this.taskParameters.s3ObjectKey
+                    )
+                }
+                break
 
             case TaskParameters.usePreviousTemplate: {
                 request.UsePreviousTemplate = true
@@ -178,7 +193,11 @@ export class TaskOperations {
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs)
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes)
-        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM, this.taskParameters.capabilityAutoExpand)
+        request.Capabilities = this.getCapabilities(
+            this.taskParameters.capabilityIAM,
+            this.taskParameters.capabilityNamedIAM,
+            this.taskParameters.capabilityAutoExpand
+        )
         request.Tags = this.getTags(this.taskParameters.tags)
 
         if (this.taskParameters.monitorRollbackTriggers) {
@@ -189,7 +208,9 @@ export class TaskOperations {
         }
 
         try {
-            const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient.updateStack(request).promise()
+            const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient
+                .updateStack(request)
+                .promise()
             await this.waitForStackUpdate(request.StackName)
         } catch (err) {
             if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
@@ -200,8 +221,10 @@ export class TaskOperations {
     }
 
     private async createOrUpdateWithChangeSet(changesetType: string): Promise<string> {
-
-        const changeSetExists = await this.testChangeSetExists(this.taskParameters.changeSetName, this.taskParameters.stackName)
+        const changeSetExists = await this.testChangeSetExists(
+            this.taskParameters.changeSetName,
+            this.taskParameters.stackName
+        )
         if (changeSetExists) {
             await this.deleteExistingChangeSet(this.taskParameters.changeSetName, this.taskParameters.stackName)
         }
@@ -215,38 +238,46 @@ export class TaskOperations {
         }
 
         switch (this.taskParameters.templateSource) {
-            case TaskParameters.fileSource: {
+            case fileSource:
                 if (this.taskParameters.s3BucketName) {
-                    request.TemplateURL = await this.uploadTemplateFile(this.taskParameters.templateFile, this.taskParameters.s3BucketName)
+                    request.TemplateURL = await this.uploadTemplateFile(
+                        this.taskParameters.templateFile,
+                        this.taskParameters.s3BucketName
+                    )
                 } else {
                     request.TemplateBody = await this.loadTemplateFile(this.taskParameters.templateFile)
                 }
-            }
-                                            break
+                break
 
-            case TaskParameters.urlSource: {
+            case urlSource:
                 request.TemplateURL = this.taskParameters.templateUrl
-            }
-                                           break
+                break
 
-            case TaskParameters.s3Source: {
+            case s3Source:
                 // sync call
-                request.TemplateURL = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', this.taskParameters.s3BucketName, this.taskParameters.s3ObjectKey)
-            }
-                                          break
+                request.TemplateURL = await SdkUtils.getPresignedUrl(
+                    this.s3Client,
+                    'getObject',
+                    this.taskParameters.s3BucketName,
+                    this.taskParameters.s3ObjectKey
+                )
+                break
 
             // already validated that stack exists and so this mode is acceptable
-            case TaskParameters.usePreviousTemplate: {
+            case usePreviousTemplate:
                 request.UsePreviousTemplate = true
                 break
-            }
         }
 
         request.Parameters = await this.loadTemplateParameters()
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs)
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes)
-        request.Capabilities = this.getCapabilities(this.taskParameters.capabilityIAM, this.taskParameters.capabilityNamedIAM, this.taskParameters.capabilityAutoExpand)
+        request.Capabilities = this.getCapabilities(
+            this.taskParameters.capabilityIAM,
+            this.taskParameters.capabilityNamedIAM,
+            this.taskParameters.capabilityAutoExpand
+        )
         request.Tags = this.getTags(this.taskParameters.tags)
 
         if (this.taskParameters.monitorRollbackTriggers) {
@@ -260,7 +291,9 @@ export class TaskOperations {
             // note that we can create a change set with no changes, but when we wait for completion it's then
             // that we get a validation failure, which we check for inside waitForChangeSetCreation
             console.log(tl.loc('CreatingChangeSet', changesetType, this.taskParameters.changeSetName))
-            const response: CloudFormation.CreateChangeSetOutput = await this.cloudFormationClient.createChangeSet(request).promise()
+            const response: CloudFormation.CreateChangeSetOutput = await this.cloudFormationClient
+                .createChangeSet(request)
+                .promise()
 
             tl.debug(`Change set id ${response.Id}, stack id ${response.StackId}`)
             const changesToApply = await this.waitForChangeSetCreation(request.ChangeSetName, request.StackName)
@@ -278,7 +311,7 @@ export class TaskOperations {
     private constructRollbackTriggerCollection(rollbackTriggerArns: string[]): CloudFormation.RollbackTrigger[] {
         const triggers: CloudFormation.RollbackTrigger[] = []
 
-        rollbackTriggerArns.forEach((rta) => {
+        rollbackTriggerArns.forEach(rta => {
             console.log(tl.loc('AddingRollbackTrigger', rta))
 
             // currently AWS::CloudWatch::Alarm is the only supported type; in future if this is
@@ -296,10 +329,12 @@ export class TaskOperations {
         console.log(tl.loc('ExecutingChangeSet', changeSetName, stackName))
 
         try {
-            await this.cloudFormationClient.executeChangeSet({
-                ChangeSetName: changeSetName,
-                StackName: stackName
-            }).promise()
+            await this.cloudFormationClient
+                .executeChangeSet({
+                    ChangeSetName: changeSetName,
+                    StackName: stackName
+                })
+                .promise()
 
             if (await this.testStackHasResources(stackName)) {
                 await this.waitForStackUpdate(stackName)
@@ -315,14 +350,15 @@ export class TaskOperations {
     private async deleteExistingChangeSet(changeSetName: string, stackName: string): Promise<void> {
         try {
             console.log(tl.loc('DeletingExistingChangeSet', changeSetName, stackName))
-            await this.cloudFormationClient.deleteChangeSet({ ChangeSetName: changeSetName, StackName: stackName }).promise()
+            await this.cloudFormationClient
+                .deleteChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
+                .promise()
         } catch (err) {
             throw new Error(tl.loc('FailedToDeleteChangeSet', err.message))
         }
     }
 
     private getCapabilities(capabilityIAM: boolean, capabilityNamedIAM: boolean, capabilityAutoExpand: boolean) {
-
         const arr = []
 
         if (capabilityIAM) {
@@ -338,16 +374,15 @@ export class TaskOperations {
             arr.push('CAPABILITY_AUTO_EXPAND')
         }
 
-        return (arr && arr.length > 0) ? arr : null
+        return arr && arr.length > 0 ? arr : null
     }
 
     private getTags(tags: string[]): CloudFormation.Tags {
-
         let arr: CloudFormation.Tags
 
         if (tags && tags.length > 0) {
             arr = []
-            tags.forEach((t) => {
+            tags.forEach(t => {
                 const kvp = t.split('=')
                 const key = kvp[0].trim()
                 const val = kvp[1].trim()
@@ -372,7 +407,7 @@ export class TaskOperations {
         return null
     }
 
-    private getResourceTypes(resourceTypes: string []) {
+    private getResourceTypes(resourceTypes: string[]) {
         // Supplying an empty array is different (to the service) than a null
         // array. When splitting our task parameters, we get an empty array.
         if (resourceTypes && resourceTypes.length > 0) {
@@ -404,11 +439,13 @@ export class TaskOperations {
 
         console.log(tl.loc('UploadingTemplate', templateFile, objectKey, s3BucketName))
         try {
-            await this.s3Client.upload({
-                Bucket: s3BucketName,
-                Key: objectKey,
-                Body: fileBuffer
-            }).promise()
+            await this.s3Client
+                .upload({
+                    Bucket: s3BucketName,
+                    Key: objectKey,
+                    Body: fileBuffer
+                })
+                .promise()
 
             const templateUrl = await SdkUtils.getPresignedUrl(this.s3Client, 'getObject', s3BucketName, objectKey)
 
@@ -419,20 +456,21 @@ export class TaskOperations {
     }
 
     private loadTemplateParameters(): CloudFormation.Parameters {
-
         let parsedParameters: CloudFormation.Parameters
 
         switch (this.taskParameters.templateParametersSource) {
-            case TaskParameters.loadTemplateParametersFromFile: {
-                parsedParameters = this.loadParametersFromFile(this.taskParameters.templateParametersFile)
-            }
-                                                                break
+            case TaskParameters.loadTemplateParametersFromFile:
+                {
+                    parsedParameters = this.loadParametersFromFile(this.taskParameters.templateParametersFile)
+                }
+                break
 
-            case TaskParameters.loadTemplateParametersInline: {
-                console.log(tl.loc('LoadingTemplateParameters'))
-                parsedParameters = this.parseParameters(this.taskParameters.templateParameters)
-            }
-                                                              break
+            case TaskParameters.loadTemplateParametersInline:
+                {
+                    console.log(tl.loc('LoadingTemplateParameters'))
+                    parsedParameters = this.parseParameters(this.taskParameters.templateParameters)
+                }
+                break
         }
 
         if (parsedParameters) {
@@ -461,7 +499,6 @@ export class TaskOperations {
     }
 
     private parseParameters(parameters: string): CloudFormation.Parameters {
-
         let templateParameters
         try {
             tl.debug('Attempting parse as json content')
@@ -496,7 +533,7 @@ export class TaskOperations {
 
         try {
             if (errCodeOrStatus.search(/ValidationError/) !== -1 || errCodeOrStatus.search(/FAILED/) !== -1) {
-                knownNoOpErrorMessages.forEach((element) => {
+                knownNoOpErrorMessages.forEach(element => {
                     if (errMessage.search(element) !== -1) {
                         noWorkToDo = true
                     }
@@ -509,9 +546,8 @@ export class TaskOperations {
 
                 return true
             }
-        // tslint:disable-next-line:no-empty
-        } catch (err) {
-        }
+            // tslint:disable-next-line:no-empty
+        } catch (err) {}
 
         return false
     }
@@ -550,7 +586,9 @@ export class TaskOperations {
             // the caller that no work is needed rather than fail the task. This allows CI pipelines
             // with multiple stacks to be updated when some stacks have no changes.
             // https://github.com/aws/aws-vsts-tools/issues/28
-            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName }).promise()
+            const response = await this.cloudFormationClient
+                .describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
+                .promise()
             if (this.isNoWorkToDoValidationError(response.Status, response.StatusReason)) {
                 return false
             } else {
@@ -562,7 +600,6 @@ export class TaskOperations {
     }
 
     private setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
-
         if (timeout !== TaskParameters.defaultTimeoutInMins) {
             console.log(tl.loc('SettingCustomTimeout', timeout))
         }
@@ -570,7 +607,7 @@ export class TaskOperations {
         const p: any = {
             StackName: stackName,
             $waiter: {
-                maxAttempts: Math.round(timeout * 60 / 30)
+                maxAttempts: Math.round((timeout * 60) / 30)
             }
         }
 
@@ -585,9 +622,11 @@ export class TaskOperations {
         console.log(tl.loc('CheckingForStackExistence', stackName))
 
         try {
-            const response: CloudFormation.DescribeStacksOutput = await this.cloudFormationClient.describeStacks({
-                StackName: stackName
-            }).promise()
+            const response: CloudFormation.DescribeStacksOutput = await this.cloudFormationClient
+                .describeStacks({
+                    StackName: stackName
+                })
+                .promise()
             if (response.Stacks && response.Stacks.length > 0) {
                 return response.Stacks[0].StackId
             }
@@ -606,7 +645,7 @@ export class TaskOperations {
         try {
             const response = await this.cloudFormationClient.describeStackResources({ StackName: stackName }).promise()
 
-            return (response.StackResources && response.StackResources.length > 0)
+            return response.StackResources && response.StackResources.length > 0
         } catch (err) {
             return false
         }
@@ -615,7 +654,9 @@ export class TaskOperations {
     private async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
         try {
             console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName))
-            const response = await this.cloudFormationClient.describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName }).promise()
+            const response = await this.cloudFormationClient
+                .describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
+                .promise()
             console.log(tl.loc('ChangeSetExists', changeSetName, response.Status))
 
             return true
