@@ -8,7 +8,7 @@ import Lambda = require('aws-sdk/clients/lambda')
 import { SdkUtils } from 'Common/sdkutils'
 import { readFileSync } from 'fs'
 import tl = require('vsts-task-lib/task')
-import { TaskParameters, deployCodeOnly, deployCodeAndConfig } from './TaskParameters'
+import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
 
 export class TaskOperations {
 
@@ -59,7 +59,7 @@ export class TaskOperations {
                 FunctionName: this.taskParameters.functionName,
                 Publish: this.taskParameters.publish
             }
-            if (this.taskParameters.codeLocation === TaskParameters.updateFromLocalFile) {
+            if (this.taskParameters.codeLocation === updateFromLocalFile) {
                 updateCodeRequest.ZipFile = readFileSync(this.taskParameters.localZipFile)
             } else {
                 updateCodeRequest.S3Bucket = this.taskParameters.s3Bucket
@@ -132,7 +132,7 @@ export class TaskOperations {
             Timeout: this.taskParameters.timeout,
             Publish: this.taskParameters.publish,
             Runtime: this.taskParameters.runtime,
-            Code: (this.taskParameters.codeLocation === TaskParameters.updateFromLocalFile) ? {
+            Code: (this.taskParameters.codeLocation === updateFromLocalFile) ? {
                 ZipFile: readFileSync(this.taskParameters.localZipFile)
             } : {
                 S3Bucket: this.taskParameters.s3Bucket,
@@ -148,7 +148,8 @@ export class TaskOperations {
         if (this.taskParameters.environment) {
             request.Environment = {}
             // tslint:disable-next-line: no-unsafe-any
-            request.Environment.Variables = this.extractKeyValuesFrom(this.taskParameters.environment)
+            request.Environment.Variables = SdkUtils
+                .getTagsDictonary<Lambda.EnvironmentVariables>(this.taskParameters.environment)
         }
         if (this.taskParameters.tags) {
             request.Tags = {}
