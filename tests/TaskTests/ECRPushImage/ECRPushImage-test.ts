@@ -30,6 +30,25 @@ const defaultDocker: DockerHandler = {
     runDockerCommand: async(s1, s2, s3) => undefined
 }
 
+const ecrFail = {
+    promise: function() {
+        throw new Error('unauthorized!')
+    }
+}
+
+const ecrReturnsToken = {
+    promise: function() {
+        return {
+            authorizationData: [
+                {
+                    authorizationToken: 'TEVUTUVJTgo=',
+                    proxyEndpoint: 'https://example.com'
+                }
+            ]
+        }
+    }
+}
+
 describe('Secrets Manger Get Secret', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -40,23 +59,44 @@ describe('Secrets Manger Get Secret', () => {
         expect(new TaskOperations(new ECR(), defaultDocker, defaultTaskParameters)).not.toBeNull()
     })
 
-    test('Fails when docker executable is failed to be located', () => {
+    test('Fails when docker executable is failed to be located', async () => {
+        expect.assertions(1)
+        const dockerHandler = { ...defaultDocker }
+        dockerHandler.locateDockerExecutable = () => { throw new Error('docker not found') }
+        const taskOperations = new TaskOperations(new ECR(), dockerHandler, defaultTaskParameters)
+        await taskOperations.execute().catch((e) => expect(`${e}`).toContain('docker not found'))
+    })
+
+    test('Fails on failed auth', async () => {
+        expect.assertions(2)
+        const ecr = new ECR() as any
+        ecr.getAuthorizationToken = jest.fn(() => ecrFail)
+        const taskOperations = new TaskOperations(ecr, defaultDocker, defaultTaskParameters)
+        await taskOperations.execute().catch((e) => expect(`${e}`).toContain('Failed to obtain'))
+        expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
+    })
+
+    test('Runs docker commands', async () => {
+        expect.assertions(5)
+        const ecr = new ECR() as any
+        ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
+        const dockerHandler = { ...defaultDocker }
+        const runDockerCommand = jest.fn((thing1, thing2, thing3) => undefined)
+        dockerHandler.runDockerCommand = runDockerCommand
+        const taskOperations = new TaskOperations(ecr, dockerHandler, defaultTaskParameters)
+        await taskOperations.execute()
+        expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
+        expect(runDockerCommand).toBeCalledTimes(3)
+        expect(runDockerCommand.mock.calls[0][1]).toBe('tag')
+        expect(runDockerCommand.mock.calls[1][1]).toBe('login')
+        expect(runDockerCommand.mock.calls[2][1]).toBe('push')
+    })
+
+    test('autocreate creates repository', async () => {
         return undefined
     })
 
-    test('Fails on failed auth', () => {
-        return undefined
-    })
-
-    test('imageNameSource constructs tagged image name', () => {
-        return undefined
-    })
-
-    test('autocreate creates repository', () => {
-        return undefined
-    })
-
-    test('Happy path', () => {
+    test('Happy path', async () => {
         return undefined
     })
 })
