@@ -6,24 +6,23 @@
   * the License.
   */
 
-import path = require('path');
-import { parse, Url } from 'url';
+import { parse } from 'url';
 import base64 = require('base-64');
 import tl = require('vsts-task-lib/task');
 import ECR = require('aws-sdk/clients/ecr');
-import { AWSError } from 'aws-sdk/lib/error';
-import { SdkUtils } from 'sdkutils/sdkutils';
-import { TaskParameters } from './PushImageTaskParameters';
+import { TaskParameters } from './TaskParameters';
 
 export class TaskOperations {
 
+    private dockerPath: string
+
     public constructor(
+        public readonly ecrClient: ECR,
         public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients();
         this.dockerPath = await this.locateDockerExecutable();
 
         let sourceImageRef: string;
@@ -56,16 +55,6 @@ export class TaskOperations {
         }
 
         console.log(tl.loc('TaskCompleted'));
-    }
-
-    private ecrClient: ECR;
-    private dockerPath: string;
-
-    private async createServiceClients(): Promise<void> {
-        const ecrOpts: ECR.ClientConfiguration = {
-            apiVersion: '2015-09-21'
-        };
-        this.ecrClient = await SdkUtils.createAndConfigureSdkClient(ECR, ecrOpts, this.taskParameters, tl.debug);
     }
 
     private constructTaggedImageName(imageName: string, tag: string): string {

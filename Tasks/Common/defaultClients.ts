@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { S3, SecretsManager, SNS, SQS } from 'aws-sdk/clients/all'
+import { S3, SecretsManager, SNS, SQS, ECR } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters  } from './awsConnectionParameters'
 
@@ -13,6 +13,21 @@ interface GenericClientConfiguration {
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
     forcePathStyleAddressing: boolean
+}
+
+export async function createDefaultECR(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void): Promise<ECR> {
+    const ecrOpts: ECR.ClientConfiguration = {
+        apiVersion: '2015-09-21'
+    }
+
+    // tslint:disable-next-line: no-unsafe-any
+    return await SdkUtils.createAndConfigureSdkClient(
+        ECR,
+        ecrOpts,
+        configuration.awsConnectionParameters,
+        logger) as ECR
 }
 
 export async function createDefaultS3(

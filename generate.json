@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "ECRPushImage",
+        "taskClients": ["ECR"]
+    },
+    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
     },
