@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { S3, SecretsManager } from 'aws-sdk/clients/all'
+import { S3, SecretsManager, SNS, SQS } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters  } from './awsConnectionParameters'
 
@@ -44,4 +44,34 @@ export async function createDefaultSecretsManager(
         opts,
         configuration.awsConnectionParameters,
         logger) as SecretsManager
+}
+
+export async function createDefaultSQS(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void): Promise<SQS> {
+    const sqsOpts: SQS.ClientConfiguration = {
+        apiVersion: '2012-11-05'
+    }
+
+    // tslint:disable-next-line: no-unsafe-any
+    return await SdkUtils.createAndConfigureSdkClient(
+        SQS,
+        sqsOpts,
+        configuration.awsConnectionParameters,
+        logger) as SQS
+}
+
+export async function createDefaultSNS(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void): Promise<SNS> {
+    const snsOpts: SNS.ClientConfiguration = {
+        apiVersion: '2010-03-31'
+    }
+
+    // tslint:disable-next-line: no-unsafe-any
+    return await SdkUtils.createAndConfigureSdkClient(
+        SNS,
+        snsOpts,
+        configuration.awsConnectionParameters,
+        logger) as SNS
 }
