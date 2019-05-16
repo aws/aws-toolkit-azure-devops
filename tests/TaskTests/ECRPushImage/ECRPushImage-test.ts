@@ -4,6 +4,7 @@
  */
 
 import { ECR } from 'aws-sdk'
+import { DockerHandler } from 'Common/dockerUtils'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/ECRPushImage/TaskOperations'
 import { TaskParameters } from '../../../Tasks/ECRPushImage/TaskParameters'
@@ -24,6 +25,11 @@ const defaultTaskParameters: TaskParameters = {
     outputVariable: undefined
 }
 
+const defaultDocker: DockerHandler = {
+    locateDockerExecutable: async() => '',
+    runDockerCommand: async(s1, s2, s3) => undefined
+}
+
 describe('Secrets Manger Get Secret', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -31,11 +37,10 @@ describe('Secrets Manger Get Secret', () => {
     })
 
     test('Creates a TaskOperation', () => {
-        expect(new TaskOperations(new ECR(), defaultTaskParameters)).not.toBeNull()
+        expect(new TaskOperations(new ECR(), defaultDocker, defaultTaskParameters)).not.toBeNull()
     })
 
     test('Creates a TaskOperation', () => {
-        const taskOperaitons = new TaskOperations(new ECR(), defaultTaskParameters)
-        taskOperaitons.locateDockerExecutable = async () => ''
+        const taskOperaitons = new TaskOperations(new ECR(), defaultDocker, defaultTaskParameters)
     })
 })

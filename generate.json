@@ -1,7 +1,9 @@
 [
     {
         "taskName": "ECRPushImage",
-        "taskClients": ["ECR"]
+        "taskClients": ["ECR"],
+        "additionalImports": [ "import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'" ],
+        "additionalArguments": [ "{ runDockerCommand: runDockerCommand, locateDockerExecutable: locateDockerExecutable }" ]
     },
     {
         "taskName": "S3Download",

@@ -13,6 +13,7 @@
 
 import ECR = require('aws-sdk/clients/ecr')
 import base64 = require('base-64')
+import { DockerHandler } from 'Common/dockerUtils'
 import { parse } from 'url'
 import tl = require('vsts-task-lib/task')
 import { imageNameSource, TaskParameters } from './TaskParameters'
@@ -23,12 +24,13 @@ export class TaskOperations {
 
     public constructor(
         public readonly ecrClient: ECR,
+        public readonly dockerHandler: DockerHandler,
         public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
-        this.dockerPath = await this.locateDockerExecutable()
+        this.dockerPath = await this.dockerHandler.locateDockerExecutable()
 
         let sourceImageRef: string
         if (this.taskParameters.imageSource === imageNameSource) {
@@ -95,17 +97,20 @@ export class TaskOperations {
     private async loginToRegistry(encodedAuthToken: string, endpoint: string): Promise<void> {
         // tslint:disable-next-line: no-unsafe-any
         const tokens: string[] = (base64.decode(encodedAuthToken)).trim().split(':')
-        await this.runDockerCommand('login', ['-u', tokens[0], '-p', tokens[1], endpoint])
+        await this.dockerHandler.runDockerCommand(
+            this.dockerPath, 'login', ['-u', tokens[0], '-p', tokens[1], endpoint])
     }
 
     private async tagImage(sourceImageRef: string, imageTag: string): Promise<void> {
         console.log(tl.loc('AddingTag', imageTag, sourceImageRef))
-        await this.runDockerCommand('tag', [ sourceImageRef, imageTag])
+        await this.dockerHandler.runDockerCommand(
+            this.dockerPath, 'tag', [ sourceImageRef, imageTag])
     }
 
     private async pushImageToECR(imageRef: string): Promise<void> {
         console.log(tl.loc('PushingImage', imageRef))
-        await this.runDockerCommand('push', [ imageRef ])
+        await this.dockerHandler.runDockerCommand(
+            this.dockerPath, 'push', [ imageRef ])
     }
 
     private async getEcrAuthorizationData(): Promise<ECR.AuthorizationData> {
@@ -117,42 +122,5 @@ export class TaskOperations {
         } catch (err) {
             throw new Error(`Failed to obtain authorization token to log in to ECR, error: ${err}`)
         }
-    }
-
-    private async runDockerCommand(command: string, args: string[]): Promise<void> {
-        console.log(tl.loc('InvokingDockerCommand', this.dockerPath, command))
-
-        const docker = tl.tool(this.dockerPath)
-        docker.arg(command)
-
-        for (const arg of args) {
-            docker.arg(arg)
-        }
-
-        // tslint:disable-next-line: no-unsafe-any
-        await docker.exec()
-    }
-
-    public async locateDockerExecutable(): Promise<string> {
-        const dockerExecutables: string[] = [
-            'docker',
-            'docker.exe'
-        ]
-
-        let dockerPath: string
-        for (const e of dockerExecutables) {
-            try {
-                dockerPath = tl.which(e, true)
-                if (dockerPath) {
-                    break
-                }
-            // tslint:disable-next-line:no-empty
-            } catch (err) {}
-        }
-        if (!dockerPath) {
-            throw new Error('Cannot find docker command line executable')
-        }
-
-        return dockerPath
     }
 }
