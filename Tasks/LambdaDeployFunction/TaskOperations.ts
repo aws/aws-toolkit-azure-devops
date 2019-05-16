@@ -8,14 +8,14 @@ import Lambda = require('aws-sdk/clients/lambda')
 import { SdkUtils } from 'Common/sdkutils'
 import { readFileSync } from 'fs'
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './TaskParameters'
+import { TaskParameters, deployCodeOnly, deployCodeAndConfig } from './TaskParameters'
 
 export class TaskOperations {
 
     public constructor(
-        public readonly taskParameters: TaskParameters,
         public readonly iamClient: IAM,
-        public readonly lambdaClient: Lambda
+        public readonly lambdaClient: Lambda,
+        public readonly taskParameters: TaskParameters
     ) {
     }
 
@@ -23,23 +23,21 @@ export class TaskOperations {
         let functionArn: string
         const functionExists = await this.testFunctionExists(this.taskParameters.functionName)
         switch (this.taskParameters.deploymentMode) {
-            case TaskParameters.deployCodeOnly: {
+            case deployCodeOnly:
                 if (functionExists) {
                     functionArn = await this.updateFunctionCode()
                 } else {
                     throw new Error(tl.loc('FunctionNotFound', this.taskParameters.functionName))
                 }
-            }
-                                                break
+                break
 
-            case TaskParameters.deployCodeAndConfig: {
+            case deployCodeAndConfig:
                 if (functionExists) {
                     functionArn = await this.updateFunction()
                 } else {
                     functionArn = await this.createFunction()
                 }
-            }
-                                                     break
+                break
 
             default:
                 throw new Error(`Unrecognized deployment mode ${this.taskParameters.deploymentMode}`)
@@ -73,7 +71,7 @@ export class TaskOperations {
 
             return response.FunctionArn
         } catch (err) {
-            throw new Error('Error while updating function code: ' + err)
+            throw new Error(`Error while updating function code: ${err}`)
         }
     }
 
@@ -99,7 +97,8 @@ export class TaskOperations {
 
             if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {}
-                updateConfigRequest.Environment.Variables = this.extractKeyValuesFrom(this.taskParameters.environment)
+                updateConfigRequest.Environment.Variables = SdkUtils
+                    .getTagsDictonary<Lambda.EnvironmentVariables>(this.taskParameters.environment)
             }
             if (this.taskParameters.securityGroups) {
                 updateConfigRequest.VpcConfig = {
@@ -117,7 +116,7 @@ export class TaskOperations {
 
             return await this.updateFunctionCode()
         } catch (err) {
-            throw new Error('Error while updating function configuration: ' + err)
+            throw new Error(`Error while updating function configuration: ${err}`)
         }
     }
 
@@ -148,6 +147,7 @@ export class TaskOperations {
 
         if (this.taskParameters.environment) {
             request.Environment = {}
+            // tslint:disable-next-line: no-unsafe-any
             request.Environment.Variables = this.extractKeyValuesFrom(this.taskParameters.environment)
         }
         if (this.taskParameters.tags) {
@@ -174,7 +174,7 @@ export class TaskOperations {
 
             return response.FunctionArn
         } catch (err) {
-            throw new Error('Failed to create function, error ' + err)
+            throw new Error(`Failed to create function, error ${err}`)
         }
     }
 
@@ -188,18 +188,5 @@ export class TaskOperations {
         } catch (err) {
             return false
         }
-    }
-
-    private extractKeyValuesFrom(source: string[]) {
-        return source.reduce((acc: any, ev) => {
-            const firstEqualsCharIndex = ev.indexOf('=')
-            if (firstEqualsCharIndex > 0) {
-                const key = ev.substr(0, firstEqualsCharIndex)
-                const value = ev.substr(firstEqualsCharIndex + 1)
-                acc[`${key.trim()}`] = value.trim()
-            }
-
-            return acc
-        },                   {})
     }
 }
