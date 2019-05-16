@@ -25,7 +25,7 @@ export const stackOutputsAsJson: string = 'asJSON'
 export const defaultTimeoutInMins: number = 60
 
 export interface TaskParameters {
-    awsConnectionParameters: AWSConnectionParameters,
+    awsConnectionParameters: AWSConnectionParameters
     stackName: string
     templateSource: string
     templateFile: string
@@ -141,17 +141,20 @@ export function buildTaskParameters(): TaskParameters {
         const t = tl.getInput('monitoringTimeInMinutes', false)
         if (t) {
             parameters.monitoringTimeInMinutes = parseInt(t, 10)
-            if (parameters.monitoringTimeInMinutes < 0
-                || parameters.monitoringTimeInMinutes > maxTriggerMonitoringTime) {
+            if (
+                parameters.monitoringTimeInMinutes < 0 ||
+                parameters.monitoringTimeInMinutes > maxTriggerMonitoringTime
+            ) {
                 throw new Error(
-                    tl.loc(
-                        'InvalidTriggerMonitoringTime', parameters.monitoringTimeInMinutes, maxTriggerMonitoringTime))
+                    tl.loc('InvalidTriggerMonitoringTime', parameters.monitoringTimeInMinutes, maxTriggerMonitoringTime)
+                )
             }
         }
         parameters.rollbackTriggerARNs = tl.getDelimitedInput('rollbackTriggerARNs', '\n', false)
         if (parameters.rollbackTriggerARNs && parameters.rollbackTriggerARNs.length > maxRollbackTriggers) {
             throw new Error(
-                tl.loc('ExceededMaxRollbackTriggers', parameters.rollbackTriggerARNs.length, maxRollbackTriggers))
+                tl.loc('ExceededMaxRollbackTriggers', parameters.rollbackTriggerARNs.length, maxRollbackTriggers)
+            )
         }
     }
 
