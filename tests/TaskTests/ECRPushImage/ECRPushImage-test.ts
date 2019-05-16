@@ -7,7 +7,7 @@ import { ECR } from 'aws-sdk'
 import { DockerHandler } from 'Common/dockerUtils'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/ECRPushImage/TaskOperations'
-import { TaskParameters } from '../../../Tasks/ECRPushImage/TaskParameters'
+import { imageNameSource, TaskParameters } from '../../../Tasks/ECRPushImage/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -33,6 +33,12 @@ const defaultDocker: DockerHandler = {
 const ecrFail = {
     promise: function() {
         throw new Error('unauthorized!')
+    }
+}
+
+const ecrFailNotFound = {
+    promise: function() {
+        throw { code: 'RepositoryNotFoundException' }
     }
 }
 
@@ -93,10 +99,41 @@ describe('Secrets Manger Get Secret', () => {
     })
 
     test('autocreate creates repository', async () => {
-        return undefined
+        expect.assertions(3)
+        const ecr = new ECR() as any
+        ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
+        ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
+        ecr.createRepository = jest.fn((args) => {
+            expect(args.repositoryName).toBe('name')
+
+            return ecrReturnsToken
+        })
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.autoCreateRepository = true
+        taskParameters.repositoryName = 'name'
+        const taskOperations = new TaskOperations(ecr, defaultDocker, taskParameters)
+        await taskOperations.execute()
+        expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
+        expect(ecr.describeRepositories).toBeCalledTimes(1)
     })
 
     test('Happy path', async () => {
-        return undefined
+        expect.assertions(3)
+        const dockerHandler = { ...defaultDocker }
+        const runDockerCommand = jest.fn((thing1, thing2, thing3) => undefined)
+        dockerHandler.runDockerCommand = runDockerCommand
+        const ecr = new ECR() as any
+        ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
+        ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
+        ecr.createRepository = jest.fn((args) => ecrReturnsToken)
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.autoCreateRepository = true
+        taskParameters.repositoryName = 'name'
+        taskParameters.imageSource = imageNameSource
+        const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
+        await taskOperations.execute()
+        expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
+        expect(ecr.describeRepositories).toBeCalledTimes(1)
+        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual([undefined, 'example.com/name'])
     })
 })
