@@ -6,7 +6,7 @@
 import { IAM, Lambda } from 'aws-sdk'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaDeployFunction/TaskOperations'
-import { TaskParameters, deployCodeOnly, deployCodeAndConfig } from '../../../Tasks/LambdaDeployFunction/TaskParameters'
+import { deployCodeAndConfig, deployCodeOnly, TaskParameters } from '../../../Tasks/LambdaDeployFunction/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
