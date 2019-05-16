@@ -48,4 +48,40 @@ describe('Lambda Deploy Function', () => {
         const taskParameters = baseTaskParameters
         expect(new TaskOperations(new IAM(), new Lambda(), taskParameters)).not.toBeNull()
     })
+
+    test('Unknown deployment mode fails', () => {
+        return undefined
+    })
+
+    test('Fails to update fails', () => {
+        return undefined
+    })
+
+    test('Fails to deploy fails', () => {
+        return undefined
+    })
+
+    test('Deploy only Function does not exist fails', () => {
+        return undefined
+    })
+
+    test('Deploy only Function exists calls update', () => {
+        return undefined
+    })
+
+    test('Deploy and config does not exist calls create', () => {
+        return undefined
+    })
+
+    test('Deploy and config exists calls upate', () => {
+        return undefined
+    })
+
+    test('Create function adds fields if they exist', () => {
+        return undefined
+    })
+
+    test('Update function adds fields if they exist', () => {
+        return undefined
+    })
 })
