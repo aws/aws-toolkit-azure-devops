@@ -40,7 +40,23 @@ describe('Secrets Manger Get Secret', () => {
         expect(new TaskOperations(new ECR(), defaultDocker, defaultTaskParameters)).not.toBeNull()
     })
 
-    test('Creates a TaskOperation', () => {
-        const taskOperaitons = new TaskOperations(new ECR(), defaultDocker, defaultTaskParameters)
+    test('Fails when docker executable is failed to be located', () => {
+        return undefined
+    })
+
+    test('Fails on failed auth', () => {
+        return undefined
+    })
+
+    test('imageNameSource constructs tagged image name', () => {
+        return undefined
+    })
+
+    test('autocreate creates repository', () => {
+        return undefined
+    })
+
+    test('Happy path', () => {
+        return undefined
     })
 })
