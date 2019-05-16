@@ -146,17 +146,12 @@ export class TaskOperations {
         }
 
         if (this.taskParameters.environment) {
-            request.Environment = {}
-            // tslint:disable-next-line: no-unsafe-any
+            request.Environment = { }
             request.Environment.Variables = SdkUtils
                 .getTagsDictonary<Lambda.EnvironmentVariables>(this.taskParameters.environment)
         }
         if (this.taskParameters.tags) {
-            request.Tags = {}
-            this.taskParameters.tags.forEach((tv) => {
-                const parts = tv.split('=')
-                request.Tags[`${parts[0].trim()}`] = parts[1].trim()
-            })
+            request.Tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
         }
         if (this.taskParameters.securityGroups) {
             request.VpcConfig = {

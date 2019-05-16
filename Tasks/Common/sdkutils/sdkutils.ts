@@ -197,7 +197,7 @@ export abstract class SdkUtils {
     }
 
     public static getTagsDictonary<T extends {[key: string]: string}>(tags: string[]): T {
-        let arr: T
+        let arr: T = { } as T
 
         this.getTags(tags).forEach(item => arr[`${item.Key}`] = item.Value)
 
