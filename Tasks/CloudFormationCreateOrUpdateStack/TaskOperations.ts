@@ -11,21 +11,17 @@ import fs = require('fs')
 import yaml = require('js-yaml')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './TaskParameters'
+import { TaskParameters, stackOutputsAsJson, ignoreStackOutputs, usePreviousTemplate } from './TaskParameters'
 
 export class TaskOperations {
-
-    private cloudFormationClient: CloudFormation
-    private s3Client: S3
-
     public constructor(
+        public readonly cloudFormationClient: CloudFormation,
+        public readonly s3Client: S3,
         public readonly taskParameters: TaskParameters
     ) {
     }
 
     public async execute(): Promise<void> {
-        await this.createServiceClients()
-
         let stackId: string = await this.testStackExists(this.taskParameters.stackName)
         if (stackId) {
             console.log(tl.loc('StackExists'))
@@ -42,7 +38,7 @@ export class TaskOperations {
         } else {
             console.log(tl.loc('StackDoesNotExist'))
 
-            if (this.taskParameters.templateSource === TaskParameters.usePreviousTemplate) {
+            if (this.taskParameters.templateSource === usePreviousTemplate) {
                 throw new Error(tl.loc('UsePreviousTemplateIsInvalidWhenCreatingStack'))
             }
 
@@ -58,11 +54,12 @@ export class TaskOperations {
             tl.setVariable(this.taskParameters.outputVariable, stackId)
         }
 
-        if (this.taskParameters.captureStackOutputs !== TaskParameters.ignoreStackOutputs) {
-            await CloudFormationUtils.captureStackOutputs(this.cloudFormationClient,
-                                                          this.taskParameters.stackName,
-                                                          this.taskParameters.captureStackOutputs === TaskParameters.stackOutputsAsJson,
-                                                          this.taskParameters.captureAsSecuredVars)
+        if (this.taskParameters.captureStackOutputs !== ignoreStackOutputs) {
+            await CloudFormationUtils.captureStackOutputs(
+                this.cloudFormationClient,
+                this.taskParameters.stackName,
+                this.taskParameters.captureStackOutputs === stackOutputsAsJson,
+                this.taskParameters.captureAsSecuredVars)
         } else {
             console.log(tl.loc('SkippingStackOutputsProcessing'))
         }
@@ -75,7 +72,8 @@ export class TaskOperations {
         const cfnOpts: CloudFormation.ClientConfiguration = {
             apiVersion: '2010-05-15'
         }
-        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(CloudFormation, cfnOpts, this.taskParameters, tl.debug)
+        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(
+            CloudFormation, cfnOpts, this.taskParameters, tl.debug)
 
         const s3Opts: S3.ClientConfiguration = {
             apiVersion: '2006-03-01'

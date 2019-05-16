@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { S3, SecretsManager, SNS, SQS } from 'aws-sdk/clients/all'
+import { S3, SecretsManager, SNS, SQS, CloudFormation } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters  } from './awsConnectionParameters'
 
@@ -13,6 +13,20 @@ interface GenericClientConfiguration {
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
     forcePathStyleAddressing: boolean
+}
+
+export async function createDefaultCloudFormation(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void): Promise<CloudFormation> {
+    const cfnOpts: CloudFormation.ClientConfiguration = {
+        apiVersion: '2010-05-15'
+    }
+
+    return await SdkUtils.createAndConfigureSdkClient(
+        CloudFormation,
+        cfnOpts,
+        configuration.awsConnectionParameters,
+        logger) as CloudFormation
 }
 
 export async function createDefaultS3(
