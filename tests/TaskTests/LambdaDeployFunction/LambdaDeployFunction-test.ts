@@ -6,7 +6,7 @@
 import { IAM, Lambda } from 'aws-sdk'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaDeployFunction/TaskOperations'
-import { TaskParameters, deployCodeOnly } from '../../../Tasks/LambdaDeployFunction/TaskParameters'
+import { TaskParameters, deployCodeOnly, deployCodeAndConfig } from '../../../Tasks/LambdaDeployFunction/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -54,6 +54,24 @@ const updateFunctionFails = {
     }
 }
 
+const updateFunctionSucceeds = {
+    promise: function() {
+        return {
+            FunctionArn: 'arn:yes'
+        }
+    }
+}
+
+const getIamRoleSucceeds = {
+    promise: function() {
+        return {
+            Role: {
+                Arn: 'arn:yes'
+            }
+        }
+    }
+}
+
 describe('Lambda Deploy Function', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -95,44 +113,123 @@ describe('Lambda Deploy Function', () => {
         expect(lambda.updateFunctionCode).toBeCalledTimes(1)
     })
 
-    test('Fails to deploy fails', async () => {
-        expect.assertions(3)
+    test('Deploy only Function does not exist fails', async () => {
+        expect.assertions(2)
         const taskParameters = {...baseTaskParameters}
         taskParameters.deploymentMode = deployCodeOnly
         taskParameters.roleARN = 'arn:yes'
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionFails)
-        lambda.updateFunctionCode = jest.fn(() => updateFunctionFails)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
         await taskOperations
             .execute()
             .catch((e) => expect(`${e}`)
-            .toContain('Error while updating function code'))
+            .toContain('Function undefined does not exist'))
+        expect(lambda.getFunction).toBeCalledTimes(1)
+    })
+
+    test('Deploy only Function exists calls update', async () => {
+        expect.assertions(2)
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.deploymentMode = deployCodeOnly
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
         expect(lambda.getFunction).toBeCalledTimes(1)
         expect(lambda.updateFunctionCode).toBeCalledTimes(1)
     })
 
-    test('Deploy only Function does not exist fails', () => {
-        return undefined
+    test('Deploy and config does not exist calls create', async () => {
+        expect.assertions(2)
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionFails)
+        lambda.createFunction = jest.fn(() => updateFunctionSucceeds)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.createFunction).toBeCalledTimes(1)
     })
 
-    test('Deploy only Function exists calls update', () => {
-        return undefined
+    test('Deploy and config exists calls update', async () => {
+        expect.assertions(3)
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.updateFunctionCode).toBeCalledTimes(1)
+        expect(lambda.updateFunctionConfiguration).toBeCalledTimes(1)
     })
 
-    test('Deploy and config does not exist calls create', () => {
-        return undefined
+    test('Create function adds fields if they exist', async () => {
+        expect.assertions(4)
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        taskParameters.tracingConfig = 'XRay'
+        taskParameters.securityGroups = ['security']
+        taskParameters.tags = ['tag1=2', 'tag2=22']
+        taskParameters.environment = ['tag1=2', 'tag2=1']
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionFails)
+        lambda.createFunction = jest.fn((args: any) => {
+            expect(args.Environment.Variables).toStrictEqual({tag1: '2', tag2: '1'})
+            expect(args.Tags).toStrictEqual({tag1: '2', tag2: '22'})
+            expect(args.VpcConfig.SecurityGroupIds).toStrictEqual(['security'])
+            expect(args.TracingConfig).toBeUndefined()
+
+            return updateFunctionSucceeds
+        })
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
     })
 
-    test('Deploy and config exists calls upate', () => {
-        return undefined
+    test('Update function adds fields if they exist', async () => {
+        expect.assertions(3)
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        taskParameters.securityGroups = ['security']
+        taskParameters.environment = ['tag1=2', 'tag2=1']
+        taskParameters.tracingConfig = 'XRay'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.updateFunctionConfiguration = jest.fn((args) => {
+            expect(args.Environment.Variables).toStrictEqual({tag1: '2', tag2: '1'})
+            expect(args.VpcConfig.SecurityGroupIds).toStrictEqual(['security'])
+            expect(args.TracingConfig).toBeUndefined()
+
+            return updateFunctionSucceeds
+        })
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
     })
 
-    test('Create function adds fields if they exist', () => {
-        return undefined
-    })
-
-    test('Update function adds fields if they exist', () => {
-        return undefined
+    test('IAM call when no role arn specified works', async () => {
+        expect.assertions(1)
+        const taskParameters = {...baseTaskParameters}
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'name'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionFails)
+        const iam = new IAM() as any
+        iam.getRole = jest.fn(() => getIamRoleSucceeds)
+        const taskOperations = new TaskOperations(iam, lambda, taskParameters)
+        await taskOperations
+            .execute()
+            .catch((e) => undefined)
+        expect(iam.getRole).toBeCalledTimes(1)
     })
 })
