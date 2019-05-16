@@ -133,7 +133,7 @@ export class TaskOperations {
         await docker.exec()
     }
 
-    private async locateDockerExecutable(): Promise<string> {
+    public async locateDockerExecutable(): Promise<string> {
         const dockerExecutables: string[] = [
             'docker',
             'docker.exe'

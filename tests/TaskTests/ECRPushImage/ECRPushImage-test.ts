@@ -33,4 +33,9 @@ describe('Secrets Manger Get Secret', () => {
     test('Creates a TaskOperation', () => {
         expect(new TaskOperations(new ECR(), defaultTaskParameters)).not.toBeNull()
     })
+
+    test('Creates a TaskOperation', () => {
+        const taskOperaitons = new TaskOperations(new ECR(), defaultTaskParameters)
+        taskOperaitons.locateDockerExecutable = async () => ''
+    })
 })
