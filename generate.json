@@ -1,4 +1,8 @@
-[
+[    
+    {
+        "taskName": "CloudFormationCreateOrUpdateStack",
+        "taskClients": ["CloudFormation", "S3"]
+    },
     {
         "taskName": "S3Download",
         "taskClients": ["S3"]
