@@ -12,8 +12,11 @@ import yaml = require('js-yaml')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
 import {
+    defaultTimeoutInMins,
     fileSource,
     ignoreStackOutputs,
+    loadTemplateParametersFromFile,
+    loadTemplateParametersInline,
     s3Source,
     stackOutputsAsJson,
     TaskParameters,
@@ -152,7 +155,7 @@ export class TaskOperations {
         }
 
         switch (this.taskParameters.templateSource) {
-            case TaskParameters.fileSource:
+            case fileSource:
                 {
                     if (this.taskParameters.s3BucketName) {
                         request.TemplateURL = await this.uploadTemplateFile(
@@ -165,13 +168,13 @@ export class TaskOperations {
                 }
                 break
 
-            case TaskParameters.urlSource:
+            case urlSource:
                 {
                     request.TemplateURL = this.taskParameters.templateUrl
                 }
                 break
 
-            case TaskParameters.s3Source:
+            case s3Source:
                 {
                     // sync call
                     request.TemplateURL = await SdkUtils.getPresignedUrl(
@@ -183,7 +186,7 @@ export class TaskOperations {
                 }
                 break
 
-            case TaskParameters.usePreviousTemplate: {
+            case usePreviousTemplate: {
                 request.UsePreviousTemplate = true
                 break
             }
@@ -459,13 +462,13 @@ export class TaskOperations {
         let parsedParameters: CloudFormation.Parameters
 
         switch (this.taskParameters.templateParametersSource) {
-            case TaskParameters.loadTemplateParametersFromFile:
+            case loadTemplateParametersFromFile:
                 {
                     parsedParameters = this.loadParametersFromFile(this.taskParameters.templateParametersFile)
                 }
                 break
 
-            case TaskParameters.loadTemplateParametersInline:
+            case loadTemplateParametersInline:
                 {
                     console.log(tl.loc('LoadingTemplateParameters'))
                     parsedParameters = this.parseParameters(this.taskParameters.templateParameters)
@@ -559,6 +562,7 @@ export class TaskOperations {
             await this.cloudFormationClient.waitFor('stackCreateComplete', parms).promise()
             console.log(tl.loc('StackCreated', stackName))
         } catch (err) {
+            // tslint:disable-next-line: no-unsafe-any
             throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
         }
     }
@@ -570,6 +574,7 @@ export class TaskOperations {
             await this.cloudFormationClient.waitFor('stackUpdateComplete', parms).promise()
             console.log(tl.loc('StackUpdated', stackName))
         } catch (err) {
+            // tslint:disable-next-line: no-unsafe-any
             throw new Error(tl.loc('StackUpdateFailed', stackName, err.message))
         }
     }
@@ -600,7 +605,7 @@ export class TaskOperations {
     }
 
     private setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
-        if (timeout !== TaskParameters.defaultTimeoutInMins) {
+        if (timeout !== defaultTimeoutInMins) {
             console.log(tl.loc('SettingCustomTimeout', timeout))
         }
 
@@ -634,7 +639,7 @@ export class TaskOperations {
             console.log(tl.loc('StackLookupFailed', this.taskParameters.stackName, err))
         }
 
-        return null
+        return undefined
     }
 
     // Stacks 'created' with a change set are not fully realised until the change set
