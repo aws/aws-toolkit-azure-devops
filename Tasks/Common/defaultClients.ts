@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { S3, SecretsManager, SNS, SQS, ECR } from 'aws-sdk/clients/all'
+import { ECR, S3, SecretsManager, SNS, SQS } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters  } from './awsConnectionParameters'
 
