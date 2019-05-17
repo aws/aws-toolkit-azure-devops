@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "CodeDeployDeployApplication",
+        "taskClients": ["CodeDeploy", "S3"]
+    },
+    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
     },
