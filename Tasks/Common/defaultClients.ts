@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { CodeDeploy, S3, SecretsManager, SNS, SQS } from 'aws-sdk/clients/all'
+import { CodeDeploy, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
@@ -64,6 +64,23 @@ export async function createDefaultSecretsManager(
     )) as SecretsManager
 }
 
+export async function createDefaultSNS(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<SNS> {
+    const snsOpts: SNS.ClientConfiguration = {
+        apiVersion: '2010-03-31'
+    }
+
+    // tslint:disable-next-line: no-unsafe-any
+    return (await SdkUtils.createAndConfigureSdkClient(
+        SNS,
+        snsOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as SNS
+}
+
 export async function createDefaultSQS(
     configuration: GenericClientConfiguration,
     logger: (msg: string) => void
@@ -81,19 +98,18 @@ export async function createDefaultSQS(
     )) as SQS
 }
 
-export async function createDefaultSNS(
+export async function createDefaultSSM(
     configuration: GenericClientConfiguration,
     logger: (msg: string) => void
-): Promise<SNS> {
-    const snsOpts: SNS.ClientConfiguration = {
-        apiVersion: '2010-03-31'
+): Promise<SSM> {
+    const ssmOpts: SSM.ClientConfiguration = {
+        apiVersion: '2014-11-06'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
-        SNS,
-        snsOpts,
+        SSM,
+        ssmOpts,
         configuration.awsConnectionParameters,
         logger
-    )) as SNS
+    )) as SSM
 }
