@@ -67,7 +67,7 @@ export async function waitForStackUpdate(cloudFormationClient: CloudFormation, s
     }
 }
 
-export function setWaiterParams(stackName: string, timeout: number, changeSetName: string): any {
+export function setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
     if (timeout !== defaultTimeoutInMins) {
         console.log(tl.loc('SettingCustomTimeout', timeout))
     }
@@ -82,7 +82,7 @@ export function setWaiterParams(stackName: string, timeout: number, changeSetNam
     }
 
     if (changeSetName) {
-        (p as any).ChangeSetName = changeSetName
+        ;(p as any).ChangeSetName = changeSetName
     }
 
     return p

@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {  } from 'Common/cloudformationutils'
+import { setWaiterParams } from 'Common/cloudformationutils'
 
 describe('CloudFormationUtils', () => {
-    test('Get Tags Returns Undefined On Empty Or Null', () => {
-        // tslint:disable-next-line: no-null-keyword
-        expect(SdkUtils.getTags<KeyValue[]>(null)).toBeUndefined()
-        expect(SdkUtils.getTags<KeyValue[]>([])).toBeUndefined()
-        expect(SdkUtils.getTags<KeyValue[]>(undefined)).toBeUndefined()
+    test('Set waiter params conforms to standard', () => {
+        const params = setWaiterParams('stack', 2, 'changeset')
+        expect((params as any).StackName).toBe('stack')
+        expect((params as any).ChangeSetName).toBe('changeset')
+        expect(((params as any).$waiter as any).maxAttempts).toBe(4)
     })
-
 })
