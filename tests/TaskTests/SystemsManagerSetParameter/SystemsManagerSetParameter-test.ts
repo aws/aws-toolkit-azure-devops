@@ -53,14 +53,14 @@ const getParameterSecureString = {
 }
 
 const putParameterSucceeds = {
-    promise: function() { }
+    promise: function() {}
 }
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
-describe('Secrets Manger Get Secret', () => {
+describe('Systems Manager Set Parameter', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SystemsManagerSetParameter/task.json')
@@ -70,18 +70,18 @@ describe('Secrets Manger Get Secret', () => {
         expect(new TaskOperations(new SSM(), defaultTaskParameters)).not.toBeNull()
     })
 
-    test(('fails checking parameter, fails task'), async () => {
+    test('fails checking parameter, fails task', async () => {
         expect.assertions(2)
         const ssm = new SSM() as any
         ssm.getParameter = jest.fn(() => getParameterFails)
         const taskOperation = new TaskOperations(ssm, defaultTaskParameters)
         await taskOperation
             .execute()
-            .catch((e) => expect(`${e}`).toContain('An error occurred while accessing the parameter'))
+            .catch(e => expect(`${e}`).toContain('An error occurred while accessing the parameter'))
         expect(ssm.getParameter).toBeCalledTimes(1)
     })
 
-    test(('fails, fails task'), async () => {
+    test('fails, fails task', async () => {
         expect.assertions(3)
         const ssm = new SSM() as any
         ssm.getParameter = jest.fn(() => getParameterNotFound)
@@ -89,19 +89,19 @@ describe('Secrets Manger Get Secret', () => {
         const taskOperation = new TaskOperations(ssm, defaultTaskParameters)
         await taskOperation
             .execute()
-            .catch((e) => expect(`${e}`).toContain('Create or update of parameter failed with error'))
+            .catch(e => expect(`${e}`).toContain('Create or update of parameter failed with error'))
         expect(ssm.getParameter).toBeCalledTimes(1)
         expect(ssm.putParameter).toBeCalledTimes(1)
     })
 
-    test(('checks if it exists yet, is secure string'), async () => {
+    test('checks if it exists yet, is secure string', async () => {
         expect.assertions(3)
         const ssm = new SSM() as any
         ssm.getParameter = jest.fn(() => getParameterSecureString)
-        ssm.putParameter = jest.fn((argument) => {
-           expect(argument.Type).toBe('SecureString')
+        ssm.putParameter = jest.fn(argument => {
+            expect(argument.Type).toBe('SecureString')
 
-           return putParameterSucceeds
+            return putParameterSucceeds
         })
         const taskOperation = new TaskOperations(ssm, defaultTaskParameters)
         await taskOperation.execute()
@@ -109,15 +109,15 @@ describe('Secrets Manger Get Secret', () => {
         expect(ssm.putParameter).toBeCalledTimes(1)
     })
 
-    test(('checks if it exists yet, is not secure string'), async () => {
+    test('checks if it exists yet, is not secure string', async () => {
         expect.assertions(3)
         const ssm = new SSM() as any
         ssm.getParameter = jest.fn(() => getParameterNotSecureString)
-        ssm.putParameter = jest.fn((argument) => {
+        ssm.putParameter = jest.fn(argument => {
             expect(argument.Type).toBe(undefined)
 
             return putParameterSucceeds
-         })
+        })
         const taskOperation = new TaskOperations(ssm, defaultTaskParameters)
         await taskOperation.execute()
         expect(ssm.getParameter).toBeCalledTimes(1)
