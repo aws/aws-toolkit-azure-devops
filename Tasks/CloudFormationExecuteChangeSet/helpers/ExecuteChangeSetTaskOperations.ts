@@ -38,7 +38,7 @@ export class TaskOperations {
                 .promise()
 
             if (waitForStackUpdate) {
-                await waitForStackUpdate(this.taskParameters.stackName)
+                await waitForStackUpdate(this.cloudFormationClient, this.taskParameters.stackName)
             } else {
                 await this.waitForStackCreation(this.taskParameters.stackName)
             }

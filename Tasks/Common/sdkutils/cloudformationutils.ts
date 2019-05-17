@@ -6,6 +6,8 @@
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import tl = require('vsts-task-lib/task')
 
+export const defaultTimeoutInMins: number = 60
+
 // Retrieves the declared outputs of the stack and posts as either individual variables,
 // using the output member key as variable name, or a json-formatted blob with a variable
 // name of the stack name suffixed with 'Outputs'
@@ -63,4 +65,62 @@ export async function waitForStackUpdate(cloudFormationClient: CloudFormation, s
     } catch (err) {
         throw new Error(tl.loc('StackUpdateFailed', stackName, (err as Error).message))
     }
+}
+
+export function setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
+    if (timeout !== defaultTimeoutInMins) {
+        console.log(tl.loc('SettingCustomTimeout', timeout))
+    }
+
+    const p: any = {
+        StackName: stackName,
+        $waiter: {
+            maxAttempts: Math.round((timeout * 60) / 15)
+        }
+    }
+
+    if (changeSetName) {
+        p.ChangeSetName = changeSetName
+    }
+
+    return p
+}
+
+export async function testStackExists(cloudFormationClient: CloudFormation, stackName: string): Promise<string> {
+    console.log(tl.loc('CheckingForStackExistence', stackName))
+
+    try {
+        const response: CloudFormation.DescribeStacksOutput = await cloudFormationClient
+            .describeStacks({
+                StackName: stackName
+            })
+            .promise()
+        if (response.Stacks && response.Stacks.length > 0) {
+            return response.Stacks[0].StackId
+        }
+    } catch (err) {
+        console.log(tl.loc('StackLookupFailed', stackName, err))
+    }
+
+    return undefined
+}
+
+export async function testChangeSetExists(
+    cloudFormationClient: CloudFormation,
+    changeSetName: string,
+    stackName: string
+): Promise<boolean> {
+    try {
+        console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName))
+        const response = await cloudFormationClient
+            .describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
+            .promise()
+        console.log(tl.loc('ChangeSetExists', changeSetName, response.Status))
+
+        return true
+    } catch (err) {
+        console.log(tl.loc('ChangeSetLookupFailed', changeSetName, (err as Error).message))
+    }
+
+    return false
 }

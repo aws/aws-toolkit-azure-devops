@@ -4,6 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { defaultTimeoutInMins } from 'Common/cloudformationutils'
 import fs = require('fs')
 import tl = require('vsts-task-lib/task')
 
@@ -21,8 +22,6 @@ export const loadTemplateParametersInline: string = 'inline'
 export const ignoreStackOutputs: string = 'ignore'
 export const stackOutputsAsVariables: string = 'asVariables'
 export const stackOutputsAsJson: string = 'asJSON'
-
-export const defaultTimeoutInMins: number = 60
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

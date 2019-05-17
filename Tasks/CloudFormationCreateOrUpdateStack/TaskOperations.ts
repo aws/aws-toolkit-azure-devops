@@ -5,14 +5,18 @@
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import S3 = require('aws-sdk/clients/s3')
-import { captureStackOutputs, testStackHasResources, waitForStackUpdate } from 'Common/cloudformationutils'
+import {
+    captureStackOutputs,
+    setWaiterParams,
+    testStackHasResources,
+    waitForStackUpdate
+} from 'Common/cloudformationutils'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import yaml = require('js-yaml')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
 import {
-    defaultTimeoutInMins,
     fileSource,
     ignoreStackOutputs,
     loadTemplateParametersFromFile,
@@ -558,7 +562,7 @@ export class TaskOperations {
     private async waitForStackCreation(stackName: string): Promise<void> {
         console.log(tl.loc('WaitingForStackCreation', stackName))
         try {
-            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins)
+            const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins)
             await this.cloudFormationClient.waitFor('stackCreateComplete', parms).promise()
             console.log(tl.loc('StackCreated', stackName))
         } catch (err) {
@@ -570,7 +574,7 @@ export class TaskOperations {
     private async waitForChangeSetCreation(changeSetName: string, stackName: string): Promise<boolean> {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName))
         try {
-            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
+            const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
             const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms).promise()
             console.log(tl.loc('ChangeSetValidated'))
         } catch (err) {
@@ -590,59 +594,5 @@ export class TaskOperations {
         }
 
         return true
-    }
-
-    private setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
-        if (timeout !== defaultTimeoutInMins) {
-            console.log(tl.loc('SettingCustomTimeout', timeout))
-        }
-
-        const p: any = {
-            StackName: stackName,
-            $waiter: {
-                maxAttempts: Math.round((timeout * 60) / 30)
-            }
-        }
-
-        if (changeSetName) {
-            p.ChangeSetName = changeSetName
-        }
-
-        return p
-    }
-
-    private async testStackExists(stackName: string): Promise<string> {
-        console.log(tl.loc('CheckingForStackExistence', stackName))
-
-        try {
-            const response: CloudFormation.DescribeStacksOutput = await this.cloudFormationClient
-                .describeStacks({
-                    StackName: stackName
-                })
-                .promise()
-            if (response.Stacks && response.Stacks.length > 0) {
-                return response.Stacks[0].StackId
-            }
-        } catch (err) {
-            console.log(tl.loc('StackLookupFailed', this.taskParameters.stackName, err))
-        }
-
-        return undefined
-    }
-
-    private async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
-        try {
-            console.log(tl.loc('CheckingForExistingChangeSet', changeSetName, stackName))
-            const response = await this.cloudFormationClient
-                .describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
-                .promise()
-            console.log(tl.loc('ChangeSetExists', changeSetName, response.Status))
-
-            return true
-        } catch (err) {
-            console.log(tl.loc('ChangeSetLookupFailed', changeSetName, err.message))
-        }
-
-        return false
     }
 }
