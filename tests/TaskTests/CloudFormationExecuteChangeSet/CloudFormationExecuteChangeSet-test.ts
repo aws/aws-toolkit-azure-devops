@@ -23,7 +23,7 @@ const defaultTaskParameters: TaskParameters = {
 
 // NOTE: these tests are too hard to write, fucntional tests will not work the module as is. We need to break
 // up the moudule so that we can actually test
-describe('Send Message', () => {
+describe('Cloud Formation Execute Change Set', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/CloudFormationExecuteChangeSet/task.json')
@@ -31,5 +31,29 @@ describe('Send Message', () => {
 
     test('Creates a TaskOperation', () => {
         expect(new TaskOperations(new CloudFormation(), defaultTaskParameters)).not.toBeNull()
+    })
+
+    test('Verify resources exist fails, does not check if stack has resources', async () => {
+        return undefined
+    })
+
+    test('Verify resources exist fails, checks if stack has resources', async () => {
+        return undefined
+    })
+
+    test('Execute change set fails, fails task', async () => {
+        return undefined
+    })
+
+    test('Execute and wait for update', async () => {
+        return undefined
+    })
+
+    test('Execute and wait for creation', async () => {
+        return undefined
+    })
+
+    test('Happy path, capure stack output', async () => {
+        return undefined
     })
 })
