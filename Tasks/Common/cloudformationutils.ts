@@ -67,20 +67,22 @@ export async function waitForStackUpdate(cloudFormationClient: CloudFormation, s
     }
 }
 
-export function setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
+export function setWaiterParams(stackName: string, timeout: number, changeSetName: string): any {
     if (timeout !== defaultTimeoutInMins) {
         console.log(tl.loc('SettingCustomTimeout', timeout))
     }
 
     const p: any = {
         StackName: stackName,
+        // The magic number here comes from how often the calls occur, specified by the client
+        // Cloudformation specifies every 30 seconds
         $waiter: {
-            maxAttempts: Math.round((timeout * 60) / 15)
+            maxAttempts: Math.round((timeout * 60) / 30)
         }
     }
 
     if (changeSetName) {
-        ;(p as any).ChangeSetName = changeSetName
+        (p as any).ChangeSetName = changeSetName
     }
 
     return p
