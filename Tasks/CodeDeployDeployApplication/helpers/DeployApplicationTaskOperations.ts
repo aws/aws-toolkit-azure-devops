@@ -14,8 +14,9 @@ import archiver = require('archiver')
 import CodeDeploy = require('aws-sdk/clients/codedeploy')
 import S3 = require('aws-sdk/clients/s3')
 import { AWSError } from 'aws-sdk/lib/error'
-import { SdkUtils } from 'sdkutils/sdkutils'
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskParameters } from './DeployApplicationTaskParameters'
+import { setWaiterParams } from 'Common/cloudformationutils'
 
 export class TaskOperations {
     public constructor(public readonly taskParameters: TaskParameters) {}
@@ -245,7 +246,7 @@ export class TaskOperations {
         return new Promise<void>((resolve, reject) => {
             console.log(tl.loc('WaitingForDeployment'))
 
-            const params: any = this.setWaiterParams(deploymentId, timeout)
+            const params: any = setWaiterParams(deploymentId, timeout)
             this.codeDeployClient.waitFor('deploymentSuccessful', params, function(
                 err: AWSError,
                 data: CodeDeploy.GetDeploymentOutput

@@ -8,6 +8,8 @@ import S3 = require('aws-sdk/clients/s3')
 import {
     captureStackOutputs,
     setWaiterParams,
+    testChangeSetExists,
+    testStackExists,
     testStackHasResources,
     waitForStackUpdate
 } from 'Common/cloudformationutils'
@@ -36,7 +38,7 @@ export class TaskOperations {
     ) {}
 
     public async execute(): Promise<void> {
-        let stackId: string = await this.testStackExists(this.taskParameters.stackName)
+        let stackId: string = await testStackExists(this.cloudFormationClient, this.taskParameters.stackName)
         if (stackId) {
             console.log(tl.loc('StackExists'))
 
@@ -218,7 +220,7 @@ export class TaskOperations {
             const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient
                 .updateStack(request)
                 .promise()
-            await waitForStackUpdate(request.StackName)
+            await waitForStackUpdate(this.cloudFormationClient, request.StackName)
         } catch (err) {
             if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
                 console.error(tl.loc('StackUpdateRequestFailed', err.message), err)
@@ -228,7 +230,8 @@ export class TaskOperations {
     }
 
     private async createOrUpdateWithChangeSet(changesetType: string): Promise<string> {
-        const changeSetExists = await this.testChangeSetExists(
+        const changeSetExists = await testChangeSetExists(
+            this.cloudFormationClient,
             this.taskParameters.changeSetName,
             this.taskParameters.stackName
         )
