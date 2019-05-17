@@ -10,7 +10,7 @@ import tl = require('vsts-task-lib/task')
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import { SdkUtils } from 'sdkutils/sdkutils'
 import { TaskParameters } from './ExecuteChangeSetTaskParameters'
-import { CloudFormationUtils, testStackHasResources } from 'Common/cloudformationutils'
+import { testStackHasResources, waitForStackUpdate } from 'Common/cloudformationutils'
 
 export class TaskOperations {
     public constructor(public readonly taskParameters: TaskParameters) {}
@@ -38,7 +38,7 @@ export class TaskOperations {
                 .promise()
 
             if (waitForStackUpdate) {
-                await this.waitForStackUpdate(this.taskParameters.stackName)
+                await waitForStackUpdate(this.taskParameters.stackName)
             } else {
                 await this.waitForStackCreation(this.taskParameters.stackName)
             }
@@ -101,16 +101,6 @@ export class TaskOperations {
             console.log(tl.loc('StackCreated', stackName))
         } catch (err) {
             throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
-        }
-    }
-
-    private async waitForStackUpdate(stackName: string): Promise<void> {
-        console.log(tl.loc('WaitingForStackUpdate', stackName))
-        try {
-            await this.cloudFormationClient.waitFor('stackUpdateComplete', { StackName: stackName }).promise()
-            console.log(tl.loc('StackUpdated', stackName))
-        } catch (err) {
-            throw new Error(tl.loc('StackUpdateFailed', stackName, err.message))
         }
     }
 }

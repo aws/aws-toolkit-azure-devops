@@ -54,3 +54,13 @@ export async function testStackHasResources(cloudFormationClient: CloudFormation
         return false
     }
 }
+
+export async function waitForStackUpdate(cloudFormationClient: CloudFormation, stackName: string): Promise<void> {
+    console.log(tl.loc('WaitingForStackUpdate', stackName))
+    try {
+        await cloudFormationClient.waitFor('stackUpdateComplete', { StackName: stackName }).promise()
+        console.log(tl.loc('StackUpdated', stackName))
+    } catch (err) {
+        throw new Error(tl.loc('StackUpdateFailed', stackName, (err as Error).message))
+    }
+}

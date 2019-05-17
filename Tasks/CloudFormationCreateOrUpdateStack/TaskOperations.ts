@@ -5,7 +5,7 @@
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import S3 = require('aws-sdk/clients/s3')
-import { captureStackOutputs, testStackHasResources } from 'Common/cloudformationutils'
+import { captureStackOutputs, testStackHasResources, waitForStackUpdate } from 'Common/cloudformationutils'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import yaml = require('js-yaml')
@@ -214,7 +214,7 @@ export class TaskOperations {
             const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient
                 .updateStack(request)
                 .promise()
-            await this.waitForStackUpdate(request.StackName)
+            await waitForStackUpdate(request.StackName)
         } catch (err) {
             if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
                 console.error(tl.loc('StackUpdateRequestFailed', err.message), err)
@@ -340,7 +340,7 @@ export class TaskOperations {
                 .promise()
 
             if (await testStackHasResources(stackName)) {
-                await this.waitForStackUpdate(stackName)
+                await waitForStackUpdate(stackName)
             } else {
                 await this.waitForStackCreation(stackName)
             }
@@ -564,18 +564,6 @@ export class TaskOperations {
         } catch (err) {
             // tslint:disable-next-line: no-unsafe-any
             throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
-        }
-    }
-
-    private async waitForStackUpdate(stackName: string): Promise<void> {
-        console.log(tl.loc('WaitingForStackUpdate', stackName))
-        try {
-            const parms: any = this.setWaiterParams(stackName, this.taskParameters.timeoutInMins)
-            await this.cloudFormationClient.waitFor('stackUpdateComplete', parms).promise()
-            console.log(tl.loc('StackUpdated', stackName))
-        } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
-            throw new Error(tl.loc('StackUpdateFailed', stackName, err.message))
         }
     }
 
