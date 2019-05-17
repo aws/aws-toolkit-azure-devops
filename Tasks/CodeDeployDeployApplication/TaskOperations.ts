@@ -13,10 +13,10 @@ import path = require('path')
 import Q = require('q')
 import tl = require('vsts-task-lib/task')
 import {
+    defaultTimeoutInMins,
     revisionSourceFromS3,
     revisionSourceFromWorkspace,
-    TaskParameters,
-    defaultTimeoutInMins
+    TaskParameters
 } from './TaskParameters'
 
 export class TaskOperations {
@@ -134,7 +134,7 @@ export class TaskOperations {
 
             return key
         } catch (err) {
-            console.error(tl.loc('BundleUploadFailed', err.message), err)
+            console.error(tl.loc('BundleUploadFailed', (err as Error).message), err)
             throw err
         }
     }
@@ -144,9 +144,9 @@ export class TaskOperations {
 
         // echo what we do with Elastic Beanstalk deployments and use time as a version suffix,
         // creating the zip file inside the supplied folder
-        const versionSuffix = '.v' + new Date().getTime()
+        const versionSuffix = `.v${new Date().getTime()}`
         const tempDir = SdkUtils.getTempLocation()
-        const archiveName = path.join(tempDir, applicationName + versionSuffix + '.zip')
+        const archiveName = path.join(tempDir, `${applicationName}${versionSuffix}.zip`)
 
         const output = fs.createWriteStream(archiveName)
         const archive = archiver('zip')
@@ -218,7 +218,7 @@ export class TaskOperations {
 
             return response.deploymentId
         } catch (err) {
-            console.error(tl.loc('DeploymentError', err.message), err)
+            console.error(tl.loc('DeploymentError', (err as Error).message), err)
             throw err
         }
     }
@@ -232,7 +232,7 @@ export class TaskOperations {
             console.log(tl.loc('WaitingForDeployment'))
 
             const params: any = this.setWaiterParams(deploymentId, timeout)
-            this.codeDeployClient.waitFor('deploymentSuccessful', params, function(
+            this.codeDeployClient.waitFor('deploymentSuccessful', params as any, function(
                 err: AWSError,
                 data: CodeDeploy.GetDeploymentOutput
             ) {
