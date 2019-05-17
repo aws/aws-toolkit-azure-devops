@@ -98,7 +98,8 @@ export function setWaiterParams(stackName: string, timeout: number, changeSetNam
     }
 
     if (changeSetName) {
-        ;(p as any).ChangeSetName = changeSetName
+        // tslint:disable-next-line: no-unsafe-any
+        p.ChangeSetName = changeSetName
     }
 
     return p
