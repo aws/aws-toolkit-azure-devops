@@ -28,7 +28,7 @@ const awsResponseThrows = {
 }
 
 const getFunctionSucceeds = {
-    promise: function() { }
+    promise: function() {}
 }
 
 const invokeLambdaSucceeds = {
@@ -39,7 +39,7 @@ const invokeLambdaSucceeds = {
     }
 }
 
-describe('S3 Upload', () => {
+describe('Lambda Invoke', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/LambdaInvokeFunction/task.json')
@@ -54,7 +54,7 @@ describe('S3 Upload', () => {
         const lambda = new Lambda() as any
         lambda.getFunctionConfiguration = jest.fn(() => awsResponseThrows)
         const taskOperations = new TaskOperations(lambda, baseTaskParameters)
-        await taskOperations.execute().catch((e) => expect(`${e}`).toContain('coolfunction does not exist'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('coolfunction does not exist'))
     })
 
     test('Fails when lambda invoke fails', async () => {
@@ -64,12 +64,12 @@ describe('S3 Upload', () => {
         lambda.invoke = jest.fn(() => awsResponseThrows)
         const taskOperations = new TaskOperations(lambda, baseTaskParameters)
         // it re-throws the exception, so we check for that
-        await taskOperations.execute().catch((e) => expect(`${e}`).toContain('function nonexistent'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('function nonexistent'))
     })
 
     test('Happy path, reads function invoke output', async () => {
         expect.assertions(2)
-        const taskParameters = {...baseTaskParameters}
+        const taskParameters = { ...baseTaskParameters }
         taskParameters.outputVariable = 'LambdaInvokeResult'
         const lambda = new Lambda() as any
         lambda.getFunctionConfiguration = jest.fn(() => getFunctionSucceeds)
