@@ -22,8 +22,9 @@ reported the issue. Please try to include as much information as you can. Detail
 1. Clone the repo or your fork with `git clone`
 2. Change to the directory you cloned to, and run `npm install`
 3. At this point you can:
-  - Build for testing purposes. Run `npm run fullBuild`
-  - Package for installation into VSTS. Run `npm run fullBuild publisher=<your-publisher-id-here>` VSTS uses this publisher ID to determine if a plugin can be installed, so make sure it matches the one in your VSTS instance.
+
+-   Build for testing purposes. Run `npm run fullBuild`
+-   Package for installation into VSTS. Run `npm run fullBuild publisher=<your-publisher-id-here>` VSTS uses this publisher ID to determine if a plugin can be installed, so make sure it matches the one in your VSTS instance.
 
 ## Contributing via Pull Requests
 
@@ -37,7 +38,7 @@ To send us a pull request, please:
 
 1. Fork the repository.
 2. Modify the source; please focus on the specific change you are contributing.
-2.a Please follow the instructions in **Building** to ensure your changes will be formatted properly
+    - Please follow the instructions in **Building** to ensure your changes will be formatted properly (`npm install` installs a code formatter)
 3. Ensure local tests pass.
 4. Make sure to add tests to your change
 5. Commit to your fork using clear commit messages.
@@ -49,7 +50,7 @@ GitHub provides additional documentation on [forking a repository](https://help.
 
 ## Testing locally
 
-We are still working out a good way to do this beyond writing tests. 
+We are still working out a good way to do this beyond writing tests.
 
 If you have a test VSTS server, you can upload the packaged plugin from "\_package". Keep in mind that VSTS expects you to bump the version number (located in \_versioninfo.json) every time you upload a new plugin, as well as that your pulibsher ID matches the publisher ID of the plugin already on the server.
 
