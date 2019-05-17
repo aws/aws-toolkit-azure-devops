@@ -11,6 +11,7 @@ import {
     testChangeSetExists,
     testStackExists,
     testStackHasResources,
+    waitForStackCreation,
     waitForStackUpdate
 } from 'Common/cloudformationutils'
 import { SdkUtils } from 'Common/sdkutils'
@@ -143,7 +144,7 @@ export class TaskOperations {
                 .createStack(request)
                 .promise()
             tl.debug(`Stack id ${response.StackId}`)
-            await this.waitForStackCreation(request.StackName)
+            await waitForStackCreation(this.cloudFormationClient, request.StackName, this.taskParameters.timeoutInMins)
 
             return response.StackId
         } catch (err) {
@@ -350,7 +351,7 @@ export class TaskOperations {
             if (await testStackHasResources(this.cloudFormationClient, stackName)) {
                 await waitForStackUpdate(this.cloudFormationClient, stackName)
             } else {
-                await this.waitForStackCreation(stackName)
+                await waitForStackCreation(this.cloudFormationClient, stackName, this.taskParameters.timeoutInMins)
             }
         } catch (err) {
             console.error(tl.loc('ExecuteChangeSetFailed', (err as Error).message), err)
@@ -561,18 +562,6 @@ export class TaskOperations {
         } catch (err) {}
 
         return false
-    }
-
-    private async waitForStackCreation(stackName: string): Promise<void> {
-        console.log(tl.loc('WaitingForStackCreation', stackName))
-        try {
-            const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins)
-            await this.cloudFormationClient.waitFor('stackCreateComplete', parms as any).promise()
-            console.log(tl.loc('StackCreated', stackName))
-        } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
-            throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
-        }
     }
 
     private async waitForChangeSetCreation(changeSetName: string, stackName: string): Promise<boolean> {

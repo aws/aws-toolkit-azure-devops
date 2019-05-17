@@ -10,7 +10,12 @@ import tl = require('vsts-task-lib/task')
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import { SdkUtils } from 'sdkutils/sdkutils'
 import { TaskParameters } from './ExecuteChangeSetTaskParameters'
-import { captureStackOutputs, testStackHasResources, waitForStackUpdate } from 'Common/cloudformationutils'
+import {
+    captureStackOutputs,
+    testStackHasResources,
+    waitForStackCreation,
+    waitForStackUpdate
+} from 'Common/cloudformationutils'
 
 export class TaskOperations {
     public constructor(public readonly taskParameters: TaskParameters) {}
@@ -40,7 +45,7 @@ export class TaskOperations {
             if (waitForUpdate) {
                 await waitForStackUpdate(this.cloudFormationClient, this.taskParameters.stackName)
             } else {
-                await this.waitForStackCreation(this.taskParameters.stackName)
+                await waitForStackCreation(this.cloudFormationClient, this.taskParameters.stackName)
             }
 
             if (this.taskParameters.outputVariable) {
@@ -91,16 +96,6 @@ export class TaskOperations {
             return response.StackId
         } catch (err) {
             throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName))
-        }
-    }
-
-    private async waitForStackCreation(stackName: string): Promise<void> {
-        console.log(tl.loc('WaitingForStackCreation', stackName))
-        try {
-            await this.cloudFormationClient.waitFor('stackCreateComplete', { StackName: stackName }).promise()
-            console.log(tl.loc('StackCreated', stackName))
-        } catch (err) {
-            throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
         }
     }
 }
