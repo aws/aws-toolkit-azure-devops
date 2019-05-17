@@ -47,7 +47,7 @@ const defaultTaskParameters: TaskParameters = {
 
 // NOTE: these tests are too hard to write, fucntional tests will not work the module as is. We need to break
 // up the moudule so that we can actually test
-describe('Send Message', () => {
+describe('Cloud Formation create or update', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SendMessage/task.json')
