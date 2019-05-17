@@ -13,7 +13,6 @@ linterOptions:
         - Tasks/BeanstalkCreateApplicationVersion/**
         - Tasks/BeanstalkDeployApplication/**
         - Tasks/CloudFormationDeleteStack/**
-        - Tasks/CloudFormationExecuteChangeSet/**
         - Tasks/CodeDeployDeployApplication/**
         - Tasks/Common/beanstalkutils/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts

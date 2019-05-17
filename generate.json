@@ -1,7 +1,11 @@
-[    
+[
     {
         "taskName": "CloudFormationCreateOrUpdateStack",
         "taskClients": ["CloudFormation", "S3"]
+    },
+    {
+        "taskName": "CloudFormationExecuteChangeSet",
+        "taskClients": ["CloudFormation"]
     },
     {
         "taskName": "S3Download",
