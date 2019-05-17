@@ -67,6 +67,22 @@ export async function waitForStackUpdate(cloudFormationClient: CloudFormation, s
     }
 }
 
+export async function waitForStackCreation(
+    cloudFormationClient: CloudFormation,
+    stackName: string,
+    timeoutInMins: number = defaultTimeoutInMins
+): Promise<void> {
+    console.log(tl.loc('WaitingForStackCreation', stackName))
+    try {
+        const parms: any = setWaiterParams(stackName, timeoutInMins)
+        await cloudFormationClient.waitFor('stackCreateComplete', parms as any).promise()
+        console.log(tl.loc('StackCreated', stackName))
+    } catch (err) {
+        // tslint:disable-next-line: no-unsafe-any
+        throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
+    }
+}
+
 export function setWaiterParams(stackName: string, timeout: number, changeSetName?: string): any {
     if (timeout !== defaultTimeoutInMins) {
         console.log(tl.loc('SettingCustomTimeout', timeout))
@@ -125,20 +141,4 @@ export async function testChangeSetExists(
     }
 
     return false
-}
-
-export async function waitForStackCreation(
-    cloudFormationClient: CloudFormation,
-    stackName: string,
-    timeoutInMins: number = defaultTimeoutInMins
-): Promise<void> {
-    console.log(tl.loc('WaitingForStackCreation', stackName))
-    try {
-        const parms: any = setWaiterParams(stackName, timeoutInMins)
-        await cloudFormationClient.waitFor('stackCreateComplete', parms as any).promise()
-        console.log(tl.loc('StackCreated', stackName))
-    } catch (err) {
-        // tslint:disable-next-line: no-unsafe-any
-        throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
-    }
 }

@@ -4,7 +4,7 @@
  */
 
 import { CloudFormation } from 'aws-sdk'
-import { setWaiterParams, testStackExists, testStackHasResources } from 'Common/cloudformationutils'
+import { setWaiterParams, testStackExists, testStackHasResources, waitForStackUpdate } from 'Common/cloudformationutils'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -26,14 +26,13 @@ const cloudFormationHasResourcesSucceeds = {
     }
 }
 
-describe('CloudFormationUtils', () => {
-    test('Set waiter params conforms to standard', () => {
-        const params = setWaiterParams('stack', 2, 'changeset')
-        expect(params.StackName).toBe('stack')
-        expect(params.ChangeSetName).toBe('changeset')
-        expect(params.$waiter.maxAttempts).toBe(4)
-    })
+const cloudFormationPromiseThrows = {
+    promise: function() {
+        throw new Error('error')
+    }
+}
 
+describe('CloudFormationUtils', () => {
     test('Test stack has resources', async () => {
         expect.assertions(3)
         const cloudFormation = new CloudFormation() as any
@@ -44,11 +43,37 @@ describe('CloudFormationUtils', () => {
         expect(await testStackHasResources(cloudFormation, 'stack')).toBe(true)
     })
 
+    test('Wait for stack update', async () => {
+        expect.assertions(1)
+        const cloudFormation = new CloudFormation() as any
+        cloudFormation.waitFor = jest.fn(() => cloudFormationPromiseThrows)
+        await waitForStackUpdate(cloudFormation, 'stack').catch(item => {
+            expect(item).toEqual(new Error('StackUpdateFailed stack error'))
+        })
+        cloudFormation.waitFor = jest.fn(() => cloudFormationDescribeStacksSucceeds)
+        await waitForStackUpdate(cloudFormation, 'stack')
+    })
+
+    test('Test wait for stack creation', async () => {
+        return undefined
+    })
+
+    test('Set waiter params conforms to standard', () => {
+        const params = setWaiterParams('stack', 2, 'changeset')
+        expect(params.StackName).toBe('stack')
+        expect(params.ChangeSetName).toBe('changeset')
+        expect(params.$waiter.maxAttempts).toBe(4)
+    })
+
     test('Test stack exists', async () => {
         expect.assertions(2)
         const cloudFormation = new CloudFormation() as any
         expect(await testStackExists(cloudFormation, 'stack')).toBeUndefined()
         cloudFormation.describeStacks = jest.fn(() => cloudFormationDescribeStacksSucceeds)
         expect(await testStackExists(cloudFormation, 'stack')).toBe('yes')
+    })
+
+    test('Test change set exists', async () => {
+        return undefined
     })
 })
