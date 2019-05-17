@@ -5,13 +5,13 @@
 
 import { CloudFormation } from 'aws-sdk'
 import {
+    captureStackOutputs,
     setWaiterParams,
+    testChangeSetExists,
     testStackExists,
     testStackHasResources,
-    waitForStackUpdate,
-    testChangeSetExists,
     waitForStackCreation,
-    captureStackOutputs
+    waitForStackUpdate
 } from 'Common/cloudformationutils'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
