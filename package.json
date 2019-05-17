@@ -71,7 +71,8 @@
         "coverageDirectory": "./coverage/",
         "collectCoverage": true,
         "collectCoverageFrom": [
-            "Tasks/**"
+            "Tasks/**",
+            "!Tasks/**/*.runner.ts"
         ],
         "moduleFileExtensions": [
             "js",
