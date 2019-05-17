@@ -80,7 +80,7 @@ export function setWaiterParams(stackName: string, timeout: number, changeSetNam
     }
 
     if (changeSetName) {
-        p.ChangeSetName = changeSetName
+        ;(p as any).ChangeSetName = changeSetName
     }
 
     return p

@@ -137,9 +137,9 @@ export function buildTaskParameters(): TaskParameters {
     parameters.changeSetName = tl.getInput('changeSetName', parameters.useChangeSet)
 
     if (parameters.monitorRollbackTriggers) {
-        const t = tl.getInput('monitoringTimeInMinutes', false)
-        if (t) {
-            parameters.monitoringTimeInMinutes = parseInt(t, 10)
+        const monitoringTime = tl.getInput('monitoringTimeInMinutes', false)
+        if (monitoringTime) {
+            parameters.monitoringTimeInMinutes = parseInt(monitoringTime, 10)
             if (
                 parameters.monitoringTimeInMinutes < 0 ||
                 parameters.monitoringTimeInMinutes > maxTriggerMonitoringTime
@@ -157,9 +157,9 @@ export function buildTaskParameters(): TaskParameters {
         }
     }
 
-    const t = tl.getInput('timeoutInMins', false)
-    if (t) {
-        const tval = parseInt(t, 10)
+    const timeout = tl.getInput('timeoutInMins', false)
+    if (timeout) {
+        const tval = parseInt(timeout, 10)
         // allow for shorter periods if user wants, but filter out -ve/0 silliness
         if (tval > 0) {
             parameters.timeoutInMins = tval

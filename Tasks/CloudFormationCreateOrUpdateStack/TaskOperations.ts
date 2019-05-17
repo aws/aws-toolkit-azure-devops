@@ -118,7 +118,7 @@ export class TaskOperations {
                 break
         }
 
-        request.Parameters = await this.loadTemplateParameters()
+        request.Parameters = this.loadTemplateParameters()
 
         console.log(tl.loc('CreateStack', this.taskParameters.templateFile))
 
@@ -147,7 +147,7 @@ export class TaskOperations {
 
             return response.StackId
         } catch (err) {
-            console.error(tl.loc('StackCreateRequestFailed', err.message), err)
+            console.error(tl.loc('StackCreateRequestFailed', (err as Error).message), err)
             throw err
         }
     }
@@ -198,7 +198,7 @@ export class TaskOperations {
             }
         }
 
-        request.Parameters = await this.loadTemplateParameters()
+        request.Parameters = this.loadTemplateParameters()
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs)
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes)
@@ -222,8 +222,9 @@ export class TaskOperations {
                 .promise()
             await waitForStackUpdate(this.cloudFormationClient, request.StackName)
         } catch (err) {
+            // tslint:disable-next-line: no-unsafe-any
             if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
-                console.error(tl.loc('StackUpdateRequestFailed', err.message), err)
+                console.error(tl.loc('StackUpdateRequestFailed', (err as Error).message), err)
                 throw err
             }
         }
@@ -279,7 +280,7 @@ export class TaskOperations {
                 break
         }
 
-        request.Parameters = await this.loadTemplateParameters()
+        request.Parameters = this.loadTemplateParameters()
 
         request.NotificationARNs = this.getNotificationArns(this.taskParameters.notificationARNs)
         request.ResourceTypes = this.getResourceTypes(this.taskParameters.resourceTypes)
@@ -313,7 +314,7 @@ export class TaskOperations {
 
             return response.StackId
         } catch (err) {
-            console.error(tl.loc('ChangeSetCreationFailed', err.message), err)
+            console.error(tl.loc('ChangeSetCreationFailed', (err as Error).message), err)
             throw err
         }
     }
@@ -346,13 +347,13 @@ export class TaskOperations {
                 })
                 .promise()
 
-            if (await testStackHasResources(stackName)) {
-                await waitForStackUpdate(stackName)
+            if (await testStackHasResources(this.cloudFormationClient, stackName)) {
+                await waitForStackUpdate(this.cloudFormationClient, stackName)
             } else {
                 await this.waitForStackCreation(stackName)
             }
         } catch (err) {
-            console.error(tl.loc('ExecuteChangeSetFailed', err.message), err)
+            console.error(tl.loc('ExecuteChangeSetFailed', (err as Error).message), err)
             throw err
         }
     }
@@ -364,7 +365,7 @@ export class TaskOperations {
                 .deleteChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
                 .promise()
         } catch (err) {
-            throw new Error(tl.loc('FailedToDeleteChangeSet', err.message))
+            throw new Error(tl.loc('FailedToDeleteChangeSet', (err as Error).message))
         }
     }
 
@@ -384,7 +385,7 @@ export class TaskOperations {
             arr.push('CAPABILITY_AUTO_EXPAND')
         }
 
-        return arr && arr.length > 0 ? arr : null
+        return arr && arr.length > 0 ? arr : undefined
     }
 
     private getTags(tags: string[]): CloudFormation.Tags {
@@ -414,7 +415,7 @@ export class TaskOperations {
             return notificationARNs
         }
 
-        return null
+        return undefined
     }
 
     private getResourceTypes(resourceTypes: string[]) {
@@ -424,7 +425,7 @@ export class TaskOperations {
             return resourceTypes
         }
 
-        return null
+        return undefined
     }
 
     private async loadTemplateFile(templateFile: string): Promise<string> {
@@ -494,7 +495,7 @@ export class TaskOperations {
         if (!parametersFile) {
             console.log(tl.loc('NoParametersFileSpecified'))
 
-            return null
+            return undefined
         }
 
         console.log(tl.loc('LoadingTemplateParametersFile', parametersFile))
@@ -509,14 +510,14 @@ export class TaskOperations {
     }
 
     private parseParameters(parameters: string): CloudFormation.Parameters {
-        let templateParameters
+        let templateParameters: CloudFormation.Parameters
         try {
             tl.debug('Attempting parse as json content')
-            templateParameters = JSON.parse(parameters)
+            templateParameters = JSON.parse(parameters) as CloudFormation.Parameters
         } catch (err) {
             try {
                 tl.debug('Json parse failed, attempting yaml.')
-                templateParameters = yaml.safeLoad(parameters)
+                templateParameters = yaml.safeLoad(parameters) as CloudFormation.Parameters
             } catch (errorYamlLoad) {
                 tl.debug('Yaml parse failed, cannot determine file content format.')
                 throw new Error(tl.loc('ParametersLoadFailed'))
@@ -566,7 +567,7 @@ export class TaskOperations {
         console.log(tl.loc('WaitingForStackCreation', stackName))
         try {
             const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins)
-            await this.cloudFormationClient.waitFor('stackCreateComplete', parms).promise()
+            await this.cloudFormationClient.waitFor('stackCreateComplete', parms as any).promise()
             console.log(tl.loc('StackCreated', stackName))
         } catch (err) {
             // tslint:disable-next-line: no-unsafe-any
@@ -578,7 +579,7 @@ export class TaskOperations {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName))
         try {
             const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
-            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms).promise()
+            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms as any).promise()
             console.log(tl.loc('ChangeSetValidated'))
         } catch (err) {
             // Inspect to see if the error was down to the service reporting (as an exception trapped
@@ -592,7 +593,7 @@ export class TaskOperations {
             if (this.isNoWorkToDoValidationError(response.Status, response.StatusReason)) {
                 return false
             } else {
-                throw new Error(tl.loc('ChangeSetValidationFailed', stackName, changeSetName, err.message))
+                throw new Error(tl.loc('ChangeSetValidationFailed', stackName, changeSetName, (err as Error).message))
             }
         }
 

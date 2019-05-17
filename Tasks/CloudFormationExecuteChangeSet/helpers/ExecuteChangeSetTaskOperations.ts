@@ -10,7 +10,7 @@ import tl = require('vsts-task-lib/task')
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import { SdkUtils } from 'sdkutils/sdkutils'
 import { TaskParameters } from './ExecuteChangeSetTaskParameters'
-import { testStackHasResources, waitForStackUpdate } from 'Common/cloudformationutils'
+import { captureStackOutputs, testStackHasResources, waitForStackUpdate } from 'Common/cloudformationutils'
 
 export class TaskOperations {
     public constructor(public readonly taskParameters: TaskParameters) {}
@@ -22,9 +22,9 @@ export class TaskOperations {
             this.taskParameters.changeSetName,
             this.taskParameters.stackName
         )
-        let waitForStackUpdate: boolean = false
+        let waitForUpdate: boolean = false
         if (stackId) {
-            waitForStackUpdate = await testStackHasResources(this.cloudFormationClient, this.taskParameters.stackName)
+            waitForUpdate = await testStackHasResources(this.cloudFormationClient, this.taskParameters.stackName)
         }
 
         console.log(tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName))
@@ -37,7 +37,7 @@ export class TaskOperations {
                 })
                 .promise()
 
-            if (waitForStackUpdate) {
+            if (waitForUpdate) {
                 await waitForStackUpdate(this.cloudFormationClient, this.taskParameters.stackName)
             } else {
                 await this.waitForStackCreation(this.taskParameters.stackName)
