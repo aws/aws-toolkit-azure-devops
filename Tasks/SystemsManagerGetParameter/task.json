@@ -194,6 +194,7 @@
         "TransformedParameterName": "Transformed input parameter name %s to build variable name %s",
         "UsingParameterNameForVariable": "Using original parameter name %s for build variable",
         "TaskCompleted": "Successfully created variables from parameter value(s).",
-        "InvalidParameterVersion": "%s is not a valid parameter version number. Version numbers should be >= 1"
+        "InvalidParameterVersion": "%s is not a valid parameter version number. Version numbers should be >= 1",
+        "UnknownReadMode": "%s is not a valid paramater for ReadMode. Paramater must be one of \"single\" or \"hierarchy\""
     }
 }

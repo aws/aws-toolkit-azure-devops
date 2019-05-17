@@ -24,9 +24,6 @@ linterOptions:
     - Tasks/LambdaDeployFunction/**
     - Tasks/LambdaInvokeFunction/**
     - Tasks/LambdaNETCoreDeploy/**
-    - Tasks/SecretsManagerCreateOrUpdateSecret/**
-    - Tasks/SendMessage/**
-    - Tasks/SystemsManagerGetParameter/**
     - Tasks/SystemsManagerRunCommand/**
     - Tasks/SystemsManagerSetParameter/**
 

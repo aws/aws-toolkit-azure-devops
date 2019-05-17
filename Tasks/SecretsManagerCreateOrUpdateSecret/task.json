@@ -179,7 +179,7 @@
         "SecretNotFoundAutoCreating": "Specified secret does not exist. 'Create secret if it does not exist' was set true for task - attempting to create a new secret.",
         "SecretCreated": "Successfully created new secret named %s, ARN '%s'.",
         "SecretCreationFailed": "Error creating secret: %s",
-        "SecretUpdateFailed": "Error updading secret: %s",
+        "SecretUpdateFailed": "Error updating secret: %s",
         "AddingTag": "Adding tag key '%s', value '%s'",
         "SettingVersionIdOutputVariable": "Setting version ID for secret into task output variable %s",
         "SettingArnOutputVariable": "Setting ARN for new secret into task output variable %s",
