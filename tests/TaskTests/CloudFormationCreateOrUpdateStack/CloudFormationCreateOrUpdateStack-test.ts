@@ -51,7 +51,11 @@ describe('Send Message', () => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SendMessage/task.json')
     })
 
-    test('Creates a TaskOperation', () => {
-        expect(new TaskOperations(new CloudFormation(), new S3(), defaultTaskParameters)).not.toBeNull()
+    test('Happy path stack exists', () => {
+        return undefined
+    })
+
+    test('Happy path stack does not exist', () => {
+        return undefined
     })
 })

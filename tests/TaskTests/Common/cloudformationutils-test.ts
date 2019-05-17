@@ -27,6 +27,7 @@ describe('CloudFormationUtils', () => {
     })
 
     test('Test stack exists works', async () => {
+        expect.assertions(2)
         const cloudFormation = new CloudFormation() as any
         expect(await testStackExists(cloudFormation, 'stack')).toBeUndefined()
         cloudFormation.describeStacks = jest.fn(() => cloudFormationDescribeStacksSucceeds)
