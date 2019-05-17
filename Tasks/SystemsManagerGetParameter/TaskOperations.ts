@@ -9,12 +9,7 @@ import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-
-    public constructor(
-        public readonly ssmClient: SSM,
-        public readonly taskParameters: TaskParameters
-    ) {
-    }
+    public constructor(public readonly ssmClient: SSM, public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         switch (this.taskParameters.readMode) {
@@ -42,10 +37,12 @@ export class TaskOperations {
         if (this.taskParameters.parameterVersion) {
             parameterName += `:${this.taskParameters.parameterVersion}`
         }
-        const response = await this.ssmClient.getParameter({
-            Name: parameterName,
-            WithDecryption: true
-        }).promise()
+        const response = await this.ssmClient
+            .getParameter({
+                Name: parameterName,
+                WithDecryption: true
+            })
+            .promise()
 
         const isSecret = response.Parameter.Type === 'SecureString'
         console.log(tl.loc('SettingVariable', outputVariableName, parameterName, isSecret))
@@ -67,12 +64,14 @@ export class TaskOperations {
 
         let nextToken: string
         do {
-            const response = await this.ssmClient.getParametersByPath({
-                Path: finalParameterPath,
-                Recursive: this.taskParameters.recursive,
-                WithDecryption: true,
-                NextToken: nextToken
-            }).promise()
+            const response = await this.ssmClient
+                .getParametersByPath({
+                    Path: finalParameterPath,
+                    Recursive: this.taskParameters.recursive,
+                    WithDecryption: true,
+                    NextToken: nextToken
+                })
+                .promise()
 
             for (const p of response.Parameters) {
                 const outputVariableName = transformParameterToVariableName(this.taskParameters, p.Name)
@@ -85,5 +84,4 @@ export class TaskOperations {
             nextToken = response.NextToken
         } while (nextToken)
     }
-
 }

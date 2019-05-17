@@ -42,10 +42,12 @@ const singleParameterResponse = {
 const hierarchyParameterResponse = {
     promise: function() {
         return {
-            Parameters: [{
-                Type: 'type',
-                Value: 'value'
-            }],
+            Parameters: [
+                {
+                    Type: 'type',
+                    Value: 'value'
+                }
+            ],
             NextToken: undefined
         }
     }
@@ -54,10 +56,12 @@ const hierarchyParameterResponse = {
 const hierarchyParameterResponseMultiple = {
     promise: function() {
         return {
-            Parameters: [{
-                Type: 'type',
-                Value: 'value'
-            }],
+            Parameters: [
+                {
+                    Type: 'type',
+                    Value: 'value'
+                }
+            ],
             NextToken: '23'
         }
     }
@@ -76,12 +80,12 @@ describe('Systems Manager Get Parameter', () => {
     test('Read mode unknown throws', async () => {
         expect.assertions(1)
         const taskOperations = new TaskOperations(new SSM(), defaultTaskParameters)
-        taskOperations.execute().catch((e) => expect(e).toContain('is not a valid parameter'))
+        taskOperations.execute().catch(e => expect(e).toContain('is not a valid parameter'))
     })
 
     test('Read mode single reads', async () => {
         expect.assertions(1)
-        const taskParameters = {...defaultTaskParameters}
+        const taskParameters = { ...defaultTaskParameters }
         taskParameters.readMode = 'single'
         taskParameters.variableNameTransform = 'none'
         taskParameters.parameterName = 'yes'
@@ -94,7 +98,7 @@ describe('Systems Manager Get Parameter', () => {
 
     test('Read mode hierarchy reads depth of one', async () => {
         expect.assertions(1)
-        const taskParameters = {...defaultTaskParameters}
+        const taskParameters = { ...defaultTaskParameters }
         taskParameters.readMode = 'hierarchy'
         taskParameters.variableNameTransform = 'none'
         taskParameters.parameterName = 'yes'
@@ -108,19 +112,19 @@ describe('Systems Manager Get Parameter', () => {
 
     test('Read mode hierarchy reads recursively', async () => {
         expect.assertions(1)
-        const taskParameters = {...defaultTaskParameters}
+        const taskParameters = { ...defaultTaskParameters }
         taskParameters.readMode = 'hierarchy'
         taskParameters.variableNameTransform = 'none'
         taskParameters.parameterName = 'yes'
         taskParameters.parameterPath = 'params'
         const ssm = new SSM() as any
-        ssm.getParametersByPath = jest.fn((args) => {
+        ssm.getParametersByPath = jest.fn(args => {
             if (args.NextToken === '23') {
                 return hierarchyParameterResponse
             } else {
                 return hierarchyParameterResponseMultiple
-            }}
-        )
+            }
+        })
         const taskOperations = new TaskOperations(ssm, taskParameters)
         await taskOperations.execute()
         expect(ssm.getParametersByPath).toBeCalledTimes(2)

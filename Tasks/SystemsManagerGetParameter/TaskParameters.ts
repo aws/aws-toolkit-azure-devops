@@ -8,17 +8,17 @@ import { readModeSingle } from 'Common/ssm'
 import tl = require('vsts-task-lib/task')
 
 export interface TaskParameters {
-    awsConnectionParameters: AWSConnectionParameters,
-    readMode: string,
-    parameterName: string,
-    parameterVersion: number,
-    parameterPath: string,
-    recursive: boolean,
-    variableNameTransform: string,
-    customVariableName: string,
-    replacementPattern: string,
-    replacementText: string,
-    globalMatch: boolean,
+    awsConnectionParameters: AWSConnectionParameters
+    readMode: string
+    parameterName: string
+    parameterVersion: number
+    parameterPath: string
+    recursive: boolean
+    variableNameTransform: string
+    customVariableName: string
+    replacementPattern: string
+    replacementText: string
+    globalMatch: boolean
     caseInsensitiveMatch: boolean
 }
 
@@ -42,12 +42,12 @@ export function buildTaskParameters(): TaskParameters {
         parameters.parameterName = tl.getInput('parameterName', true)
         const versionstring = tl.getInput('parameterVersion', false)
         if (versionstring) {
-          const pv = parseInt(versionstring, 10)
-          if (pv > 0) {
-            parameters.parameterVersion = pv
-          } else {
-              throw new Error(tl.loc('InvalidParameterVersion', pv))
-          }
+            const pv = parseInt(versionstring, 10)
+            if (pv > 0) {
+                parameters.parameterVersion = pv
+            } else {
+                throw new Error(tl.loc('InvalidParameterVersion', pv))
+            }
         }
         parameters.variableNameTransform = tl.getInput('singleNameTransform', false)
     } else {
