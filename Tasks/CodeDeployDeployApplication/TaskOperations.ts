@@ -12,7 +12,12 @@ import fs = require('fs')
 import path = require('path')
 import Q = require('q')
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './TaskParameters'
+import {
+    revisionSourceFromS3,
+    revisionSourceFromWorkspace,
+    TaskParameters,
+    defaultTimeoutInMins
+} from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -25,7 +30,7 @@ export class TaskOperations {
         await this.verifyResourcesExist()
 
         let bundleKey: string
-        if (this.taskParameters.deploymentRevisionSource === TaskParameters.revisionSourceFromWorkspace) {
+        if (this.taskParameters.deploymentRevisionSource === revisionSourceFromWorkspace) {
             bundleKey = await this.uploadBundle()
         } else {
             bundleKey = this.taskParameters.bundleKey
@@ -72,7 +77,7 @@ export class TaskOperations {
             )
         }
 
-        if (this.taskParameters.deploymentRevisionSource === TaskParameters.revisionSourceFromS3) {
+        if (this.taskParameters.deploymentRevisionSource === revisionSourceFromS3) {
             try {
                 await this.s3Client
                     .headObject({
@@ -104,7 +109,7 @@ export class TaskOperations {
         let key: string
         const bundleFilename = path.basename(archiveName)
         if (this.taskParameters.bundlePrefix) {
-            key = this.taskParameters.bundlePrefix + '/' + bundleFilename
+            key = `${this.taskParameters.bundlePrefix}/${bundleFilename}`
         } else {
             key = bundleFilename
         }
@@ -241,12 +246,13 @@ export class TaskOperations {
     }
 
     private setWaiterParams(deploymentId: string, timeout: number): any {
-        if (timeout !== TaskParameters.defaultTimeoutInMins) {
+        if (timeout !== defaultTimeoutInMins) {
             console.log(tl.loc('SettingCustomTimeout', timeout))
         }
 
         const p: any = {
             deploymentId,
+            // this magic number comes from the code deploy client attempting every 15 seconds
             $waiter: {
                 maxAttempts: Math.round((timeout * 60) / 15)
             }
