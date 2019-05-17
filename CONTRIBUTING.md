@@ -36,7 +36,8 @@ Contributions via pull requests are much appreciated. Before sending us a pull r
 To send us a pull request, please:
 
 1. Fork the repository.
-2. Modify the source; please focus on the specific change you are contributing. Please follow the instructions in building to install the hook for prettier to make sure your code is formatted like the repo.
+2. Modify the source; please focus on the specific change you are contributing.
+2.a Please follow the instructions in **Building** to ensure your changes will be formatted properly
 3. Ensure local tests pass.
 4. Make sure to add tests to your change
 5. Commit to your fork using clear commit messages.
@@ -54,7 +55,7 @@ If you have a test VSTS server, you can upload the packaged plugin from "\_packa
 
 ## Finding contributions to work on
 
-Looking at the existing issues is a great way to find something to contribute on. Looking at any ['help wanted'](https://github.com/aws/aws-toolkit-jetbrains/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) issues is a great place to start.
+Looking at the existing issues is a great way to find something to contribute on. Looking at any ['help wanted'](https://github.com/aws/aws-vsts-tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) or ['technical debt'](https://github.com/aws/aws-vsts-tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22technical-debt%22)issues is a great place to start.
 
 ## Code of Conduct
 
