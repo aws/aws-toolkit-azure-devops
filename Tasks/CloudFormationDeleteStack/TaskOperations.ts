@@ -12,6 +12,7 @@ export class TaskOperations {
         public readonly cloudFormationClient: CloudFormation,
         public readonly taskParameters: TaskParameters
     ) {}
+
     public async execute(): Promise<void> {
         await this.verifyResourcesExist(this.taskParameters.stackName)
 
@@ -34,7 +35,6 @@ export class TaskOperations {
         }
     }
 
-    // wait for stack deletetion
     private async waitForStackDeletion(stackName: string): Promise<void> {
         console.log(tl.loc('WaitingForStackDeletion', stackName))
         try {
