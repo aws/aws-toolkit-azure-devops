@@ -45,17 +45,15 @@ const defaultTaskParameters: TaskParameters = {
     timeoutInMins: undefined
 }
 
+// NOTE: these tests are too hard to write, fucntional tests will not work the module as is. We need to break
+// up the moudule so that we can actually test
 describe('Send Message', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SendMessage/task.json')
     })
 
-    test('Happy path stack exists', () => {
-        return undefined
-    })
-
-    test('Happy path stack does not exist', () => {
-        return undefined
+    test('Creates a TaskOperation', () => {
+        expect(new TaskOperations(new CloudFormation(), new S3(), defaultTaskParameters)).not.toBeNull()
     })
 })

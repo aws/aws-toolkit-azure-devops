@@ -4,7 +4,7 @@
  */
 
 import { CloudFormation } from 'aws-sdk'
-import { setWaiterParams, testStackExists } from 'Common/cloudformationutils'
+import { setWaiterParams, testStackExists, testStackHasResources } from 'Common/cloudformationutils'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -18,6 +18,14 @@ const cloudFormationDescribeStacksSucceeds = {
     }
 }
 
+const cloudFormationHasResourcesSucceeds = {
+    promise: function() {
+        return {
+            StackResources: [{ StackId: 'yes' }]
+        }
+    }
+}
+
 describe('CloudFormationUtils', () => {
     test('Set waiter params conforms to standard', () => {
         const params = setWaiterParams('stack', 2, 'changeset')
@@ -26,7 +34,17 @@ describe('CloudFormationUtils', () => {
         expect(params.$waiter.maxAttempts).toBe(4)
     })
 
-    test('Test stack exists works', async () => {
+    test('Test stack has resources', async () => {
+        expect.assertions(3)
+        const cloudFormation = new CloudFormation() as any
+        expect(await testStackHasResources(cloudFormation, 'stack')).toBe(false)
+        cloudFormation.describeStackResources = jest.fn(() => cloudFormationDescribeStacksSucceeds)
+        expect(await testStackHasResources(cloudFormation, 'stack')).toBeUndefined()
+        cloudFormation.describeStackResources = jest.fn(() => cloudFormationHasResourcesSucceeds)
+        expect(await testStackHasResources(cloudFormation, 'stack')).toBe(true)
+    })
+
+    test('Test stack exists', async () => {
         expect.assertions(2)
         const cloudFormation = new CloudFormation() as any
         expect(await testStackExists(cloudFormation, 'stack')).toBeUndefined()
