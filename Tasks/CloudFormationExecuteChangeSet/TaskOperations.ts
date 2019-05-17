@@ -11,7 +11,7 @@ import {
     waitForStackUpdate
 } from 'Common/cloudformationutils'
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './TaskParameters'
+import { ignoreStackOutputs, stackOutputsAsJson, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -50,11 +50,11 @@ export class TaskOperations {
                 tl.setVariable(this.taskParameters.outputVariable, stackId)
             }
 
-            if (this.taskParameters.captureStackOutputs !== TaskParameters.ignoreStackOutputs) {
+            if (this.taskParameters.captureStackOutputs !== ignoreStackOutputs) {
                 await captureStackOutputs(
                     this.cloudFormationClient,
                     this.taskParameters.stackName,
-                    this.taskParameters.captureStackOutputs === TaskParameters.stackOutputsAsJson,
+                    this.taskParameters.captureStackOutputs === stackOutputsAsJson,
                     this.taskParameters.captureAsSecuredVars
                 )
             }

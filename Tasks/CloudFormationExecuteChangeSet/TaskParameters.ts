@@ -3,30 +3,31 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSTaskParametersBase } from 'sdkutils/awsTaskParametersBase'
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import tl = require('vsts-task-lib/task')
 
-export class TaskParameters extends AWSTaskParametersBase {
-    public static readonly ignoreStackOutputs: string = 'ignore'
-    public static readonly stackOutputsAsVariables: string = 'asVariables'
-    public static readonly stackOutputsAsJson: string = 'asJSON'
+export const ignoreStackOutputs: string = 'ignore'
+export const stackOutputsAsVariables: string = 'asVariables'
+export const stackOutputsAsJson: string = 'asJSON'
 
-    public changeSetName: string
-    public stackName: string
-    public outputVariable: string
-    public captureStackOutputs: string
-    public captureAsSecuredVars: boolean
+export interface TaskParameters {
+    awsConnectionParameters: AWSConnectionParameters
+    changeSetName: string
+    stackName: string
+    outputVariable: string
+    captureStackOutputs: string
+    captureAsSecuredVars: boolean
+}
 
-    public constructor() {
-        super()
-        try {
-            this.changeSetName = tl.getInput('changeSetName', true)
-            this.stackName = tl.getInput('stackName', true)
-            this.outputVariable = tl.getInput('outputVariable', false)
-            this.captureStackOutputs = tl.getInput('captureStackOutputs', false)
-            this.captureAsSecuredVars = tl.getBoolInput('captureAsSecuredVars', false)
-        } catch (error) {
-            throw new Error(error.message)
-        }
+export function buildTaskParameters(): TaskParameters {
+    const parameters: TaskParameters = {
+        awsConnectionParameters: buildConnectionParameters(),
+        changeSetName: tl.getInput('changeSetName', true),
+        stackName: tl.getInput('stackName', true),
+        outputVariable: tl.getInput('outputVariable', false),
+        captureStackOutputs: tl.getInput('captureStackOutputs', false),
+        captureAsSecuredVars: tl.getBoolInput('captureAsSecuredVars', false)
     }
+
+    return parameters
 }
