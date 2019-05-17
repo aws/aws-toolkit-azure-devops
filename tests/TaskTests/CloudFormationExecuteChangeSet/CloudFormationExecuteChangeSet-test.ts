@@ -6,7 +6,7 @@
 import { CloudFormation, S3 } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/CloudFormationExecuteChangeSet/TaskOperations'
-import { TaskParameters, ignoreStackOutputs } from '../../../Tasks/CloudFormationExecuteChangeSet/TaskParameters'
+import { ignoreStackOutputs, TaskParameters } from '../../../Tasks/CloudFormationExecuteChangeSet/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
