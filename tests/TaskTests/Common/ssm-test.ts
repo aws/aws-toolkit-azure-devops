@@ -16,7 +16,7 @@ const defaultTaskParameters = {
 }
 
 describe('System Manager Common', () => {
-    test('Throws is no transform specified', () => {
+    test('Throws if no transform type specified', () => {
         expect.assertions(1)
         try {
             transformParameterToVariableName(defaultTaskParameters)
@@ -26,7 +26,7 @@ describe('System Manager Common', () => {
     })
 
     test('Uses paramaterName if no inputParamaterName specified', () => {
-        const taskParams = {...defaultTaskParameters}
+        const taskParams = { ...defaultTaskParameters }
         taskParams.variableNameTransform = 'none'
         taskParams.parameterName = 'variable'
         const response = transformParameterToVariableName(taskParams)
@@ -34,7 +34,7 @@ describe('System Manager Common', () => {
     })
 
     test('Leaf transform works properly', () => {
-        const taskParams = {...defaultTaskParameters}
+        const taskParams = { ...defaultTaskParameters }
         taskParams.variableNameTransform = 'leaf'
         taskParams.parameterName = 'variable'
         const response = transformParameterToVariableName(taskParams, 'hello/there/ok/')
@@ -42,7 +42,7 @@ describe('System Manager Common', () => {
     })
 
     test('Substitute transform works properly', () => {
-        const taskParams = {...defaultTaskParameters}
+        const taskParams = { ...defaultTaskParameters }
         taskParams.variableNameTransform = 'substitute'
         taskParams.replacementPattern = 'what'
         taskParams.replacementText = '0000'
@@ -57,7 +57,7 @@ describe('System Manager Common', () => {
     })
 
     test('Custom transform works properly', () => {
-        const taskParams = {...defaultTaskParameters}
+        const taskParams = { ...defaultTaskParameters }
         taskParams.variableNameTransform = 'custom'
         taskParams.parameterName = 'variable'
         taskParams.customVariableName = 'variable 2'
