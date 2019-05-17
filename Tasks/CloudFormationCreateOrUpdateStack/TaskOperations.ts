@@ -5,7 +5,7 @@
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import S3 = require('aws-sdk/clients/s3')
-import { CloudFormationUtils } from 'Common/cloudformationutils'
+import { captureStackOutputs, testStackHasResources } from 'Common/cloudformationutils'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import yaml = require('js-yaml')
@@ -65,7 +65,7 @@ export class TaskOperations {
         }
 
         if (this.taskParameters.captureStackOutputs !== ignoreStackOutputs) {
-            await CloudFormationUtils.captureStackOutputs(
+            await captureStackOutputs(
                 this.cloudFormationClient,
                 this.taskParameters.stackName,
                 this.taskParameters.captureStackOutputs === stackOutputsAsJson,
@@ -339,7 +339,7 @@ export class TaskOperations {
                 })
                 .promise()
 
-            if (await this.testStackHasResources(stackName)) {
+            if (await testStackHasResources(stackName)) {
                 await this.waitForStackUpdate(stackName)
             } else {
                 await this.waitForStackCreation(stackName)
@@ -640,20 +640,6 @@ export class TaskOperations {
         }
 
         return undefined
-    }
-
-    // Stacks 'created' with a change set are not fully realised until the change set
-    // executes, so we inspect whether resources exist in order to know which kind
-    // of 'waiter' to use (create complete, update complete) when running a stack update.
-    // It's not enough to know that the stack exists.
-    private async testStackHasResources(stackName: string): Promise<boolean> {
-        try {
-            const response = await this.cloudFormationClient.describeStackResources({ StackName: stackName }).promise()
-
-            return response.StackResources && response.StackResources.length > 0
-        } catch (err) {
-            return false
-        }
     }
 
     private async testChangeSetExists(changeSetName: string, stackName: string): Promise<boolean> {
