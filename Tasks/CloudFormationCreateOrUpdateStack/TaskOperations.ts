@@ -130,7 +130,7 @@ export class TaskOperations {
             this.taskParameters.capabilityNamedIAM,
             this.taskParameters.capabilityAutoExpand
         )
-        request.Tags = this.getTags(this.taskParameters.tags)
+        request.Tags = SdkUtils.getTags<CloudFormation.Tag[]>(this.taskParameters.tags)
 
         if (this.taskParameters.monitorRollbackTriggers) {
             request.RollbackConfiguration = {
@@ -208,7 +208,7 @@ export class TaskOperations {
             this.taskParameters.capabilityNamedIAM,
             this.taskParameters.capabilityAutoExpand
         )
-        request.Tags = this.getTags(this.taskParameters.tags)
+        request.Tags = SdkUtils.getTags<CloudFormation.Tag[]>(this.taskParameters.tags)
 
         if (this.taskParameters.monitorRollbackTriggers) {
             request.RollbackConfiguration = {
@@ -290,7 +290,7 @@ export class TaskOperations {
             this.taskParameters.capabilityNamedIAM,
             this.taskParameters.capabilityAutoExpand
         )
-        request.Tags = this.getTags(this.taskParameters.tags)
+        request.Tags = SdkUtils.getTags<CloudFormation.Tag[]>(this.taskParameters.tags)
 
         if (this.taskParameters.monitorRollbackTriggers) {
             request.RollbackConfiguration = {
@@ -387,26 +387,6 @@ export class TaskOperations {
         }
 
         return arr && arr.length > 0 ? arr : undefined
-    }
-
-    private getTags(tags: string[]): CloudFormation.Tags {
-        let arr: CloudFormation.Tags
-
-        if (tags && tags.length > 0) {
-            arr = []
-            tags.forEach(t => {
-                const kvp = t.split('=')
-                const key = kvp[0].trim()
-                const val = kvp[1].trim()
-                console.log(tl.loc('AddingTag', key, val))
-                arr.push({
-                    Key: key,
-                    Value: val
-                })
-            })
-        }
-
-        return arr
     }
 
     private getNotificationArns(notificationARNs: string[]) {
