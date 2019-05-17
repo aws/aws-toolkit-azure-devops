@@ -61,7 +61,7 @@ export class TaskOperations {
 
             console.log(tl.loc('TaskCompleted', this.taskParameters.changeSetName))
         } catch (err) {
-            console.error(tl.loc('ExecuteChangeSetFailed', err.message), err)
+            console.error(tl.loc('ExecuteChangeSetFailed', (err as Error).message), err)
             throw err
         }
     }
