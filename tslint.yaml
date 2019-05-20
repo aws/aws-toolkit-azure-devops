@@ -15,7 +15,6 @@ linterOptions:
         - Tasks/CloudFormationDeleteStack/**
         - Tasks/CloudFormationExecuteChangeSet/**
         - Tasks/CodeDeployDeployApplication/**
-        - Tasks/Common/beanstalkutils/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
         - Tasks/Common/sdkutils/cloudformationutils.ts

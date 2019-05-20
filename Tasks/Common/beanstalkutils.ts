@@ -3,4 +3,4 @@
  * SPDX-License-Identifier: MIT
  */
 
-export { SdkUtils } from 'sdkutils/sdkutils'
+export { BeanstalkUtils } from './beanstalkutils/beanstalkutils'
