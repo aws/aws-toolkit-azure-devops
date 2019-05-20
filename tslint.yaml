@@ -10,7 +10,6 @@ linterOptions:
         - Tasks/AWSCLI/**
         - Tasks/AWSPowerShellModuleScript/**
         - Tasks/AWSShellScript/**
-        - Tasks/BeanstalkCreateApplicationVersion/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
         - Tasks/LambdaNETCoreDeploy/**
