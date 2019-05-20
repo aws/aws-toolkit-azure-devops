@@ -6,10 +6,10 @@
 import Beanstalk = require('aws-sdk/clients/elasticbeanstalk')
 import S3 = require('aws-sdk/clients/s3')
 import { BeanstalkUtils } from 'Common/beanstalkutils'
-import path = require('path')
 import { SdkUtils } from 'Common/sdkutils'
+import path = require('path')
 import tl = require('vsts-task-lib/task')
-import { TaskParameters } from './TaskParameters'
+import { applicationTypeAspNetCoreForWindows, applicationTypeS3Archive, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -26,10 +26,10 @@ export class TaskOperations {
         let s3Bucket: string
         let s3Key: string
 
-        if (this.taskParameters.applicationType !== TaskParameters.applicationTypeS3Archive) {
+        if (this.taskParameters.applicationType !== applicationTypeS3Archive) {
             s3Bucket = await BeanstalkUtils.determineS3Bucket(this.beanstalkClient)
             let deploymentBundle: string
-            if (this.taskParameters.applicationType === TaskParameters.applicationTypeAspNetCoreForWindows) {
+            if (this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows) {
                 const tempDirectory = SdkUtils.getTempLocation()
                 deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundle(
                     this.taskParameters.dotnetPublishPath,
@@ -39,13 +39,10 @@ export class TaskOperations {
                 deploymentBundle = this.taskParameters.webDeploymentArchive
             }
 
-            s3Key =
-                this.taskParameters.applicationName +
-                '/' +
-                path.basename(deploymentBundle, '.zip') +
-                '-' +
-                versionLabel +
+            s3Key = `${this.taskParameters.applicationName}/${path.basename(
+                deploymentBundle,
                 '.zip'
+            )}-${versionLabel}.zip`
             await BeanstalkUtils.uploadBundle(this.s3Client, deploymentBundle, s3Bucket, s3Key)
         } else {
             s3Bucket = this.taskParameters.deploymentBundleBucket
