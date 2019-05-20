@@ -30,11 +30,17 @@ export class TaskOperations {
         await this.verifyResourcesExist()
 
         let bundleKey: string
-        if (this.taskParameters.deploymentRevisionSource === revisionSourceFromWorkspace) {
-            bundleKey = await this.uploadBundle()
-        } else {
-            bundleKey = this.taskParameters.bundleKey
+        switch (this.taskParameters.deploymentRevisionSource) {
+            case revisionSourceFromWorkspace:
+                bundleKey = await this.uploadBundle()
+                break
+            case revisionSourceFromS3:
+                bundleKey = this.taskParameters.bundleKey
+                break
+            default:
+                throw new Error(tl.loc('UnknownRevisionSource', this.taskParameters.deploymentRevisionSource))
         }
+
         const deploymentId: string = await this.deployRevision(bundleKey)
 
         if (this.taskParameters.outputVariable) {
