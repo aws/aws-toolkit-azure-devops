@@ -10,10 +10,10 @@ import path = require('path')
 import { SdkUtils } from 'sdkutils/sdkutils'
 import tl = require('vsts-task-lib')
 import {
-    TaskParameters,
     applicationTypeAspNet,
     applicationTypeAspNetCoreForWindows,
-    applicationTypeExistingVersion
+    applicationTypeExistingVersion,
+    TaskParameters
 } from './TaskParameters'
 
 export class TaskOperations {
@@ -204,7 +204,7 @@ export class TaskOperations {
                             continue
                         }
 
-                        console.log(event.EventDate + '   ' + event.Severity + '   ' + event.Message)
+                        console.log(`${event.EventDate}   ${event.Severity}   ${event.Message}`)
 
                         if (event.Message === 'Failed to deploy application.') {
                             success = false
@@ -215,6 +215,7 @@ export class TaskOperations {
                 }
             } catch (err) {
                 // if we are still encountering throttles, increase the poll delay some more
+                // tslint:disable-next-line: no-unsafe-any
                 if (err.code === 'Throttling') {
                     eventPollDelay += Math.floor(Math.random() * randomJitterUpperLimit) + 1
                     console.log(tl.loc('EventPollWaitExtended', eventPollDelay))

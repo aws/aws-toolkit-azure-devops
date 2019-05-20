@@ -12,7 +12,7 @@ interface GenericClientConfiguration {
 }
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
-    forcePathStyleAddressing: boolean
+    forcePathStyleAddressing?: boolean
 }
 
 export async function createDefaultBeanstalk(
@@ -36,8 +36,11 @@ export async function createDefaultS3(
     logger: (msg: string) => void
 ): Promise<S3> {
     const s3Opts: S3.ClientConfiguration = {
-        apiVersion: '2006-03-01',
-        s3ForcePathStyle: configuration.forcePathStyleAddressing
+        apiVersion: '2006-03-01'
+    }
+
+    if (configuration.forcePathStyleAddressing) {
+        s3Opts.s3ForcePathStyle = configuration.forcePathStyleAddressing
     }
 
     // tslint:disable-next-line: no-unsafe-any
