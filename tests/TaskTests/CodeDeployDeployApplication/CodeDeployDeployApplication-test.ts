@@ -4,8 +4,14 @@
  */
 
 import { CodeDeploy, S3 } from 'aws-sdk'
+import fs = require('fs')
+import path = require('path')
 import { TaskOperations } from '../../../Tasks/CodeDeployDeployApplication/TaskOperations'
-import { revisionSourceFromS3, TaskParameters } from '../../../Tasks/CodeDeployDeployApplication/TaskParameters'
+import {
+    revisionSourceFromS3,
+    revisionSourceFromWorkspace,
+    TaskParameters
+} from '../../../Tasks/CodeDeployDeployApplication/TaskParameters'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
@@ -31,6 +37,10 @@ const defaultTaskParameters: TaskParameters = {
 
 const emptyPromise = {
     promise: () => ({})
+}
+
+const codeDeployDeploymentId = {
+    promise: () => ({ deploymentId: 'id' })
 }
 
 describe('CodeDeploy Deploy Application', () => {
@@ -74,31 +84,79 @@ describe('CodeDeploy Deploy Application', () => {
         })
     })
 
-    test('Upload needed, fails, fails task', async () => {
+    test('Wait for deployment, fails, fails task', async () => {
         expect.assertions(1)
-        const s3 = new S3()
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.deploymentRevisionSource = revisionSourceFromS3
+        taskParameters.bundleKey = '/whatever/wahtever'
         const codeDeploy = new CodeDeploy() as any
         codeDeploy.getApplication = jest.fn(() => emptyPromise)
         codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
-        const taskOperations = new TaskOperations(codeDeploy, s3, defaultTaskParameters)
+        codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
+        // the first argument of the callback is error so pass in an "error"
+        codeDeploy.waitFor = jest.fn((arr1, arr2, cb) => cb(new Error('22'), undefined))
+        const s3 = new S3() as any
+        s3.headObject = jest.fn(() => emptyPromise)
+        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
         await taskOperations.execute().catch(err => {
-            expect(`${err}`).toContain('Application undefined does not exist')
+            expect(`${err}`).toContain('Error: Deployment failed undefined 22')
         })
     })
 
-    test('Upload needed, succeeds', () => {
-        return undefined
+    test('Upload needed, packages properly, succeeds', async () => {
+        expect.assertions(4)
+        process.env.TEMP = __dirname
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.deploymentRevisionSource = revisionSourceFromWorkspace
+        taskParameters.revisionBundle = path.join(__dirname, '../../Resources/CodeDeployCode')
+        taskParameters.applicationName = 'test'
+        const s3 = new S3() as any
+        s3.upload = jest.fn(args => {
+            expect(args.Bucket).toBeUndefined()
+            expect(args.Key).toContain('test.v')
+            const dir = fs.readdirSync(__dirname)
+            for (const file of dir) {
+                if (path.extname(file) === '.zip') {
+                    const stats = fs.statSync(path.join(__dirname, file))
+                    const size = stats.size
+                    expect(size).toBe(141)
+                    break
+                }
+            }
+
+            return emptyPromise
+        })
+        const codeDeploy = new CodeDeploy() as any
+        codeDeploy.getApplication = jest.fn(() => emptyPromise)
+        codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
+        codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
+        codeDeploy.waitFor = undefined
+        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
+        // The wait is the last part, the reaosn we catch instead of wait is this was getting an
+        // async timeout, good luck if you want to try to fix this
+        await taskOperations.execute().catch(err => {
+            expect(`${err}`).toContain('this.codeDeployClient.waitFor is not a function')
+        })
     })
 
-    test('Upload not needed, succeeds', () => {
-        return undefined
-    })
-
-    test('Wait for deployment, fails, fails task', () => {
-        return undefined
-    })
-
-    test('Happy path', () => {
-        return undefined
+    test('Upload not needed, succeeds', async () => {
+        expect.assertions(1)
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.deploymentRevisionSource = revisionSourceFromS3
+        taskParameters.applicationName = 'test'
+        taskParameters.bundleKey = path.join(__dirname, '../../Resources/CodeDeployCode.zip')
+        const s3 = new S3() as any
+        s3.headObject = jest.fn(() => emptyPromise)
+        const codeDeploy = new CodeDeploy() as any
+        codeDeploy.getApplication = jest.fn(() => emptyPromise)
+        codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
+        codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
+        codeDeploy.waitFor = undefined
+        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
+        // The wait is the last part, the reaosn we catch instead of wait is this was getting an
+        // async timeout, good luck if you want to try to fix this
+        await taskOperations.execute().catch(err => {
+            expect(`${err}`).toContain('this.codeDeployClient.waitFor is not a function')
+        })
     })
 })
