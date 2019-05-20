@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
+import { ElasticBeanstalk, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
@@ -13,6 +13,21 @@ interface GenericClientConfiguration {
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
     forcePathStyleAddressing: boolean
+}
+
+export async function createDefaultBeanstalk(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<ElasticBeanstalk> {
+    const beanstalkOpts: Beanstalk.ClientConfiguration = {
+        apiVersion: '2010-12-01'
+    }
+    return (await SdkUtils.createAndConfigureSdkClient(
+        ElasticBeanstalk,
+        beanstalkOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as ElasticBeanstalk
 }
 
 export async function createDefaultS3(

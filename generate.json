@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "BeanstalkDeployApplication",
+        "taskClients": ["S3"]
+    },
+    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
     },
