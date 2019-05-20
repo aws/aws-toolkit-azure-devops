@@ -28,8 +28,10 @@ const defaultTaskParameters: TaskParameters = {
     eventPollingDelay: undefined
 }
 
-// NOTE, most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so
-// most of the tests are there
+// NOTE: most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so
+// most of the tests are there,
+// NOTE: these tests are like cloudformation and too hard to write, we should be able to break it up
+// even more which will make it easier to test
 describe('Beanstalk Deploy Application', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -38,13 +40,5 @@ describe('Beanstalk Deploy Application', () => {
 
     test('Creates a TaskOperation', () => {
         expect(new TaskOperations(new ElasticBeanstalk(), new S3(), defaultTaskParameters)).not.toBeNull()
-    })
-
-    test('Verify application exist fails, fails task', () => {
-        return undefined
-    })
-
-    test('Deployment succeeds', () => {
-        return undefined
     })
 })
