@@ -39,12 +39,22 @@ describe('CodeDeploy Deploy Application', () => {
         expect(new TaskOperations(new CodeDeploy(), new S3(), baseTaskParameters)).not.toBeNull()
     })
 
-    test('Verify create resources fails, fails task', () => {
-        return undefined
+    test('Verify create resources fails, fails task', async () => {
+        expect.assertions(1)
+        const taskOperations = new TaskOperations(new CodeDeploy(), new S3(), baseTaskParameters)
+        await taskOperations.execute().catch(err => {
+            expect(`${err}`).toContain('Application undefined does not exist')
+        })
     })
 
-    test('Upload needed, fails, fails task', () => {
-        return undefined
+    test('Upload needed, fails, fails task', async () => {
+        expect.assertions(1)
+        const codeDeploy = new CodeDeploy()
+        const s3 = new S3()
+        const taskOperations = new TaskOperations(codeDeploy, s3, baseTaskParameters)
+        await taskOperations.execute().catch(err => {
+            expect(`${err}`).toContain('Application undefined does not exist')
+        })
     })
 
     test('Upload needed, succeeds', () => {
