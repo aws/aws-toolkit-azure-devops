@@ -3,17 +3,18 @@
  * SPDX-License-Identifier: MIT
  */
 
-import archiver = require('archiver')
 import Beanstalk = require('aws-sdkclients/elasticbeanstalk')
 import S3 = require('aws-sdkclients/s3')
-import { AWSError } from 'aws-sdklib/error'
 import { BeanstalkUtils } from 'beanstalkutils/beanstalkutils'
-import fs = require('fs')
 import path = require('path')
-import Q = require('q')
 import { SdkUtils } from 'sdkutils/sdkutils'
 import tl = require('vsts-task-lib')
-import { TaskParameters } from './TaskParameters'
+import {
+    TaskParameters,
+    applicationTypeAspNet,
+    applicationTypeAspNetCoreForWindows,
+    applicationTypeExistingVersion
+} from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -36,12 +37,12 @@ export class TaskOperations {
         let s3Key: string
 
         if (
-            this.taskParameters.applicationType === TaskParameters.applicationTypeAspNet ||
-            this.taskParameters.applicationType === TaskParameters.applicationTypeAspNetCoreForWindows
+            this.taskParameters.applicationType === applicationTypeAspNet ||
+            this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows
         ) {
             s3Bucket = await BeanstalkUtils.determineS3Bucket(this.beanstalkClient)
             let deploymentBundle: string
-            if (this.taskParameters.applicationType === TaskParameters.applicationTypeAspNetCoreForWindows) {
+            if (this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows) {
                 const tempDirectory = SdkUtils.getTempLocation()
                 deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundle(
                     this.taskParameters.dotnetPublishPath,
@@ -51,15 +52,11 @@ export class TaskOperations {
                 deploymentBundle = this.taskParameters.webDeploymentArchive
             }
 
-            s3Key =
-                this.taskParameters.applicationName +
-                '/' +
-                this.taskParameters.environmentName +
-                '/' +
-                path.basename(deploymentBundle, '.zip') +
-                '-' +
-                versionLabel +
+            s3Key = `${this.taskParameters.applicationName}/${this.taskParameters.environmentName}/${path.basename(
+                deploymentBundle,
                 '.zip'
+            )}-${versionLabel}.zip`
+
             await BeanstalkUtils.uploadBundle(this.s3Client, deploymentBundle, s3Bucket, s3Key)
         } else {
             s3Bucket = this.taskParameters.deploymentBundleBucket
@@ -78,7 +75,7 @@ export class TaskOperations {
             this.taskParameters.environmentName,
             versionLabel,
             this.taskParameters.description,
-            this.taskParameters.applicationType === TaskParameters.applicationTypeExistingVersion
+            this.taskParameters.applicationType === applicationTypeExistingVersion
         )
 
         await this.waitForDeploymentCompletion(
@@ -94,13 +91,6 @@ export class TaskOperations {
         }
 
         console.log(tl.loc('TaskCompleted', this.taskParameters.applicationName))
-    }
-
-    private async constructServiceClients(): Promise<void> {
-        const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01'
-        }
-        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug)
     }
 
     private async updateEnvironment(
@@ -253,7 +243,7 @@ export class TaskOperations {
         return response.Events[0].EventDate
     }
 
-    private sleep(timeout: number): Promise<void> {
+    private async sleep(timeout: number): Promise<void> {
         return new Promise((resolve, reject) => {
             setTimeout(resolve, timeout)
         })

@@ -19,9 +19,10 @@ export async function createDefaultBeanstalk(
     configuration: GenericClientConfiguration,
     logger: (msg: string) => void
 ): Promise<ElasticBeanstalk> {
-    const beanstalkOpts: Beanstalk.ClientConfiguration = {
+    const beanstalkOpts: ElasticBeanstalk.ClientConfiguration = {
         apiVersion: '2010-12-01'
     }
+
     return (await SdkUtils.createAndConfigureSdkClient(
         ElasticBeanstalk,
         beanstalkOpts,
