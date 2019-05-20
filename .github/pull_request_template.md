@@ -4,6 +4,8 @@
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
+- [ ] Added tests
+- [ ] Code cleanup
 
 ## Description
 <!--- Describe your changes in detail -->
@@ -23,7 +25,7 @@
 <!--- Go over all the following points, and put an `x` in all the boxes that apply -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - [ ] I have read the **README** document
-<!-- - [ ] I have read the **CONTRIBUTING** document -->
+- [ ] I have read the **CONTRIBUTING** document
 - [ ] Local run of `npm run fullBuild` succeeds
 - [ ] I have run tslint against my changes using the root tslint.yaml
 - [ ] My code follows the code style of this project
