@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ElasticBeanstalk } from 'aws-sdk'
+import { ElasticBeanstalk, S3 } from 'aws-sdk'
 import { BeanstalkUtils } from 'Common/beanstalkutils'
+import { SdkUtils } from 'Common/sdkutils'
 import path = require('path')
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
@@ -15,7 +16,28 @@ const s3BucketResponse = {
     promise: () => ({ S3Bucket: 'bucket' })
 }
 
+const verifyApplicationExistsResponse = {
+    promise: () => ({ Applications: ['yes'] })
+}
+
+const verifyApplicationExistsDoesNot = {
+    promise: () => ({ Applications: [] })
+}
+
+const verifyEnvironmentsExistsResponse = {
+    promise: () => ({ Environments: ['yes'] })
+}
+
+const verifyAEnvironmentsExistsDoesNot = {
+    promise: () => ({ Environments: [] })
+}
+
 describe('BeanstalkUtils', () => {
+    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    beforeAll(() => {
+        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/BeanstalkDeployApplication/task.json')
+    })
+
     test('DetermineS3Bucket succeds', async () => {
         expect.assertions(1)
         const beanstalk = new ElasticBeanstalk() as any
@@ -35,44 +57,90 @@ describe('BeanstalkUtils', () => {
         })
     })
 
-    test('PrepareAspNet bundle fails, throws', async () => {
-        const tmp = path.join(__dirname, '../../Resources/BeanstalkBundle')
+    test('PrepareAspNet bundle succeeds', async () => {
+        const temp = path.join(__dirname, '../../Resources/BeanstalkBundle')
         const code = path.join(__dirname, '../../Resources/BeanstalkBundle')
-        await BeanstalkUtils.prepareAspNetCoreBundle(tmp, code).catch(err => {
-            expect(`${err}`).toContain('Error: failure')
-        })
+        await BeanstalkUtils.prepareAspNetCoreBundle(temp, code)
     })
 
-    test('PrepareAspNet bundle succeeds, verify output', () => {
-        return undefined
-    })
-
-    test('ConstructVersionLabel succeeds', () => {
+    test('ConstructVersionLabel succeeds', async () => {
         expect(BeanstalkUtils.constructVersionLabel('label')).toBe('label')
         expect(BeanstalkUtils.constructVersionLabel(undefined)).toMatch(new RegExp('^v[0-9]+$'))
     })
 
-    test('UploadBundle throws on failure', () => {
-        return undefined
+    test('UploadBundle throws on failure', async () => {
+        expect.assertions(1)
+        const s3 = new S3() as any
+        s3.upload = jest.fn(() => {
+            throw Error('it failed')
+        })
+        await BeanstalkUtils.uploadBundle(s3, 'path', 'name', 'object').catch(err => {
+            expect(`${err}`).toContain('it failed')
+        })
     })
 
-    test('UploadBundle succeeds', () => {
-        return undefined
+    test('UploadBundle succeeds', async () => {
+        expect.assertions(3)
+        const s3 = new S3() as any
+        s3.upload = jest.fn(args => {
+            expect(args.Bucket).toEqual('name')
+            expect(args.Key).toEqual('object')
+            expect(args.Body.path).toEqual(path.join(__dirname, __filename))
+
+            return s3BucketResponse
+        })
+        await BeanstalkUtils.uploadBundle(s3, path.join(__dirname, __filename), 'name', 'object')
     })
 
-    test('VerifyApplicationExists throws on failure', () => {
-        return undefined
+    test('VerifyApplicationExists throws on failure', async () => {
+        expect.assertions(1)
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsDoesNot)
+        await BeanstalkUtils.verifyApplicationExists(beanstalk, 'nonexistantapplication').catch(err => {
+            expect(`${err}`).toContain('Application nonexistantapplication does not exist')
+        })
     })
 
-    test('VerifyApplicationExists succeeds', () => {
-        return undefined
+    test('VerifyApplicationExists fails on sdk throw', async () => {
+        expect.assertions(1)
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeApplications = jest.fn(() => {
+            throw new Error('OW!')
+        })
+        await BeanstalkUtils.verifyApplicationExists(beanstalk, 'nonexistantapplication').catch(err => {
+            expect(`${err}`).toContain('Application nonexistantapplication does not exist')
+        })
     })
 
-    test('VerifyEnvironmentExists throws on failure', () => {
-        return undefined
+    test('VerifyApplicationExists succeeds', async () => {
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
+        await BeanstalkUtils.verifyApplicationExists(beanstalk, 'existantapplication')
     })
 
-    test('VerifyEnvironmentExists succeeds', () => {
-        return undefined
+    test('VerifyEnvironmentExists throws on failure', async () => {
+        expect.assertions(1)
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeApplications = jest.fn(() => verifyAEnvironmentsExistsDoesNot)
+        await BeanstalkUtils.verifyEnvironmentExists(beanstalk, 'nonexistantapplication', 'yes').catch(err => {
+            expect(`${err}`).toContain('Environment yes does not exist for the application nonexistantapplication')
+        })
+    })
+
+    test('VerifyEnvironmentExists fails on sdk thorw', async () => {
+        expect.assertions(1)
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeApplications = jest.fn(() => {
+            throw new Error('OW!')
+        })
+        await BeanstalkUtils.verifyEnvironmentExists(beanstalk, 'nonexistantapplication', 'yes').catch(err => {
+            expect(`${err}`).toContain('Environment yes does not exist for the application nonexistantapplication')
+        })
+    })
+
+    test('VerifyEnvironmentExists succeeds', async () => {
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeEnvironments = jest.fn(() => verifyEnvironmentsExistsResponse)
+        await BeanstalkUtils.verifyEnvironmentExists(beanstalk, 'existantapplication', 'yes')
     })
 })
