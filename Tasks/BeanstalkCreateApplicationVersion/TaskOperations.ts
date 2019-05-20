@@ -1,22 +1,15 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task')
-import path = require('path')
-import fs = require('fs')
-import Q = require('q')
-import archiver = require('archiver')
 import Beanstalk = require('aws-sdk/clients/elasticbeanstalk')
 import S3 = require('aws-sdk/clients/s3')
-import { AWSError } from 'aws-sdk/lib/error'
-import { SdkUtils } from 'sdkutils/sdkutils'
-import { BeanstalkUtils } from 'beanstalkutils/beanstalkutils'
-import { TaskParameters } from './CreateApplicationVersionTaskParameters'
+import { BeanstalkUtils } from 'Common/beanstalkutils'
+import path = require('path')
+import { SdkUtils } from 'Common/sdkutils'
+import tl = require('vsts-task-lib/task')
+import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -26,8 +19,6 @@ export class TaskOperations {
     ) {}
 
     public async execute(): Promise<void> {
-        await this.constructServiceClients()
-
         await BeanstalkUtils.verifyApplicationExists(this.beanstalkClient, this.taskParameters.applicationName)
 
         const versionLabel = BeanstalkUtils.constructVersionLabel(this.taskParameters.versionLabel)
@@ -95,22 +86,5 @@ export class TaskOperations {
         }
 
         console.log(tl.loc('TaskCompleted'))
-    }
-
-    private async constructServiceClients(): Promise<void> {
-        const beanstalkOpts: Beanstalk.ClientConfiguration = {
-            apiVersion: '2010-12-01'
-        }
-        this.beanstalkClient = await SdkUtils.createAndConfigureSdkClient(
-            Beanstalk,
-            beanstalkOpts,
-            this.taskParameters,
-            tl.debug
-        )
-
-        const s3Opts: S3.ClientConfiguration = {
-            apiVersion: '2006-03-01'
-        }
-        this.s3Client = await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, this.taskParameters, tl.debug)
     }
 }
