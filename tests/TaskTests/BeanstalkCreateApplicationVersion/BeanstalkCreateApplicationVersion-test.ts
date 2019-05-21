@@ -8,13 +8,18 @@ import { ElasticBeanstalk, S3 } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskOperations'
 import {
-    TaskParameters,
-    applicationTypeS3Archive
+    applicationTypeAspNet,
+    applicationTypeS3Archive,
+    TaskParameters
 } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
+
+const s3BucketResponse = {
+    promise: () => ({ S3Bucket: 'bucket' })
+}
 
 const verifyApplicationExistsResponse = {
     promise: () => ({ Applications: ['yes'] })
@@ -34,7 +39,7 @@ const defaultTaskParameters: TaskParameters = {
 }
 
 // NOTE: most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so
-// most of the tests are there,
+// most of the tests are there, ideally all of our tasks will be more like this one in the future
 describe('Beanstalk Create Application Version', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -58,7 +63,7 @@ describe('Beanstalk Create Application Version', () => {
         })
     })
 
-    test('Happy path', async () => {
+    test('Happy path, object already in S3', async () => {
         const beanstalk = new ElasticBeanstalk() as any
         beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
         beanstalk.createApplicationVersion = jest.fn(() => verifyApplicationExistsResponse)
@@ -66,13 +71,17 @@ describe('Beanstalk Create Application Version', () => {
         await taskOperations.execute()
     })
 
-    test('Happy path uploads new object to s3', async () => {
-        const beanstalk = new ElasticBeanstalk() as any
+    test('Happy path, uploads new object to S3', async () => {
         const taskParameters = { ...defaultTaskParameters }
-        taskParameters.applicationType = applicationTypeS3Archive
+        taskParameters.applicationType = applicationTypeAspNet
+        taskParameters.webDeploymentArchive = 'web/web.txt'
+        const s3 = new S3() as any
+        s3.upload = jest.fn(() => s3BucketResponse)
+        const beanstalk = new ElasticBeanstalk() as any
         beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
         beanstalk.createApplicationVersion = jest.fn(() => verifyApplicationExistsResponse)
-        const taskOperations = new TaskOperations(beanstalk, new S3(), taskParameters)
+        beanstalk.createStorageLocation = jest.fn(() => s3BucketResponse)
+        const taskOperations = new TaskOperations(beanstalk, s3, taskParameters)
         await taskOperations.execute()
     })
 })
