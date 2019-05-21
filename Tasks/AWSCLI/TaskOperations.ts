@@ -16,28 +16,24 @@ export class TaskOperations {
     ) {}
 
     public async execute(): Promise<void> {
-        try {
-            await this.configureAwsCli()
-            await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('AWSCLI')
+        this.checkIfAwsCliIsInstalled()
+        await this.configureAwsCli()
+        await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('AWSCLI')
 
-            const awsCliPath = tl.which('aws')
-            const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath)
-            awsCliTool.arg(this.taskParameters.awsCliCommand)
-            awsCliTool.arg(this.taskParameters.awsCliSubCommand)
-            if (this.taskParameters.awsCliParameters !== undefined) {
-                awsCliTool.line(this.taskParameters.awsCliParameters)
-            }
-            const code: number = await awsCliTool
-                .exec({ failOnStdErr: this.taskParameters.failOnStandardError } as any)
-            tl.debug(`return code: ${code}`)
-            if (code !== 0) {
-                tl.setResult(tl.TaskResult.Failed, tl.loc('AwsReturnCode', awsCliTool, code))
-            } else {
-                tl.setResult(tl.TaskResult.Succeeded, tl.loc('AwsReturnCode', awsCliTool, code))
-            }
-        } catch (err) {
-            tl.setResult(tl.TaskResult.Failed, (err as Error).message)
+        const awsCliPath = tl.which('aws')
+        const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath)
+        awsCliTool.arg(this.taskParameters.awsCliCommand)
+        awsCliTool.arg(this.taskParameters.awsCliSubCommand)
+        if (this.taskParameters.awsCliParameters !== undefined) {
+            awsCliTool.line(this.taskParameters.awsCliParameters)
         }
+        const code: number = await awsCliTool
+            .exec({ failOnStdErr: this.taskParameters.failOnStandardError } as any)
+        tl.debug(`return code: ${code}`)
+        if (code !== 0) {
+            throw new Error(tl.loc('AwsReturnCode', awsCliTool, code))
+        }
+        tl.setResult(tl.TaskResult.Succeeded, tl.loc('AwsReturnCode', awsCliTool, code))
     }
 
     // If assume role credentials are in play, make sure the initial generation
@@ -67,11 +63,11 @@ export class TaskOperations {
         }
     }
 
-    public static checkIfAwsCliIsInstalled() {
+    private checkIfAwsCliIsInstalled(): boolean {
         try {
             return !!tl.which('aws', true)
         } catch (error) {
-            tl.setResult(tl.TaskResult.Failed, tl.loc('AWSCLINotInstalled'))
+            throw new Error(`${tl.loc('AWSCLINotInstalled')}\n${error}`)
         }
     }
 }
