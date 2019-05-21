@@ -20,6 +20,10 @@
         "taskClients": ["SSM"]
     },
     {
+        "taskName": "SystemsManagerRunCommand",
+        "taskClients": ["SSM"]
+    },
+    {
         "taskName": "SystemsManagerSetParameter",
         "taskClients": ["SSM"]
     }
