@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
+import { IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
@@ -13,6 +13,23 @@ interface GenericClientConfiguration {
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
     forcePathStyleAddressing: boolean
+}
+
+export async function createDefaultIAM(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<IAM> {
+    const iamOpts: IAM.ClientConfiguration = {
+        apiVersion: '2010-05-08'
+    }
+
+    // tslint:disable-next-line: no-unsafe-any
+    return (await SdkUtils.createAndConfigureSdkClient(
+        IAM,
+        iamOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as IAM
 }
 
 export async function createDefaultLambda(

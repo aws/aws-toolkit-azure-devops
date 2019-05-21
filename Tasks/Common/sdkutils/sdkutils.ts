@@ -196,6 +196,14 @@ export abstract class SdkUtils {
         })
     }
 
+    public static getTagsDictonary<T extends {[key: string]: string}>(tags: string[]): T {
+        let arr: T = { } as T
+
+        this.getTags(tags).forEach(item => arr[`${item.Key}`] = item.Value)
+
+        return arr
+    }
+
     public static getTags<T extends {Key?: string, Value?: string}[]>(tags: string[]): T {
         let arr: T
 
@@ -208,7 +216,7 @@ export abstract class SdkUtils {
                     return
                 }
                 const key = t.substring(0, firstEqualsIndex).trim()
-                const val = t.substring(firstEqualsIndex + 1)
+                const val = t.substring(firstEqualsIndex + 1).trim()
                 console.log(tl.loc('AddingTag', key, val))
                 arr.push({
                     Key: key,

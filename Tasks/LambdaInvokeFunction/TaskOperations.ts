@@ -9,12 +9,7 @@ import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-
-    public constructor(
-        public readonly lambdaClient: Lambda,
-        public readonly taskParameters: TaskParameters
-    ) {
-    }
+    public constructor(public readonly lambdaClient: Lambda, public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         await this.verifyResourcesExist(this.taskParameters.functionName)
@@ -48,7 +43,7 @@ export class TaskOperations {
 
     private async verifyResourcesExist(functionName: string): Promise<void> {
         try {
-            await this.lambdaClient.getFunctionConfiguration({ FunctionName: functionName}).promise()
+            await this.lambdaClient.getFunctionConfiguration({ FunctionName: functionName }).promise()
         } catch (err) {
             throw new Error(tl.loc('FunctionDoesNotExist', functionName))
         }
