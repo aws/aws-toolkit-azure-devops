@@ -9,7 +9,7 @@
         "generateCode": "ts-node ./build-scripts/generateRunners.ts",
         "compileTypescript": "tsc -p ./",
         "test": "jest",
-        "clean": "node ./build-scripts/clean.js",
+        "clean": "ts-node ./build-scripts/clean.ts",
         "lint": "tslint --project .",
         "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
@@ -34,12 +34,16 @@
     "bugs": "https://github.com/aws/aws-vsts-tools/issues",
     "homepage": "https://github.com/aws/aws-vsts-tools",
     "devDependencies": {
+        "@types/fs-extra": "^7.0.0",
         "@types/jest": "^24.0.12",
         "@types/node": "^12.0.0",
         "clean-webpack-plugin": "^2.0.1",
         "fs-extra": "^7.0.1",
+        "husky": "^2.3.0",
         "jest": "^24.7.1",
         "json-query": "^2.2.2",
+        "prettier": "1.17.1",
+        "pretty-quick": "^1.10.0",
         "sync-request": "^6.1.0",
         "terser-webpack-plugin": "^1.2.3",
         "tfx-cli": "^0.7.5",
@@ -68,7 +72,8 @@
         "coverageDirectory": "./coverage/",
         "collectCoverage": true,
         "collectCoverageFrom": [
-            "Tasks/**"
+            "Tasks/**",
+            "!Tasks/**/*.runner.ts"
         ],
         "moduleFileExtensions": [
             "js",
@@ -83,5 +88,20 @@
             "\\.ts$": "ts-jest"
         },
         "testRegex": "/tests/.*\\.ts$"
+    },
+    "prettier": {
+        "printWidth": 120,
+        "trailingComma": "none",
+        "tabWidth": 4,
+        "singleQuote": true,
+        "semi": false,
+        "bracketSpacing": true,
+        "arrowParens": "avoid",
+        "endOfLine": "lf"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "pretty-quick --staged"
+        }
     }
 }

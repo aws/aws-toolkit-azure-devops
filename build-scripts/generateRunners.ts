@@ -7,16 +7,15 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 interface RunnerGenerator {
-    taskName: string,
-    taskClients: string[],
-    additionalImports?: string[],
-    additionalArguments?: string[],
+    taskName: string
+    taskClients: string[]
+    additionalImports?: string[]
+    additionalArguments?: string[]
     successResult?: string
 }
 
 const repoRoot = path.dirname(__dirname)
-const header =
-`
+const header = `
 /*!
  * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
@@ -30,38 +29,40 @@ function generate(
     clientTypes: string[],
     additionalArguments?: string[],
     additionalImports?: string[],
-    successResult?: string) {
-    const importStament =
-`
+    successResult?: string
+) {
+    const importStament = `
 import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'Common/sdkutils'
 
-import { ${clientTypes.map((it) => 'createDefault' + it).join(', ')} } from 'Common/defaultClients'
+import { ${clientTypes.map(it => 'createDefault' + it).join(', ')} } from 'Common/defaultClients'
 import { TaskOperations } from './TaskOperations'
 import { buildTaskParameters } from './TaskParameters'${
-    additionalImports === undefined ? '' : '\n\n' + additionalImports.join('\n        ')}
+        additionalImports === undefined ? '' : '\n\n' + additionalImports.join('\n        ')
+    }
 `
 
-    const runStatement =
-`
+    const runStatement = `
 async function run(): Promise<void> {
     SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
 
     return new TaskOperations(
-        ${clientTypes.map((it) => {
-            // tslint:disable-next-line:prefer-template
-            return 'await createDefault' + it + '(taskParameters, tl.debug),'
-        }).join('\n        ')}${
-            // tslint:disable-next-line:prefer-template
-            additionalArguments === undefined ? '' : '\n        ' + additionalArguments.join(',\n        ') + ','}
+        ${clientTypes
+            .map(it => {
+                // tslint:disable-next-line:prefer-template
+                return 'await createDefault' + it + '(taskParameters, tl.debug),'
+            })
+            .join('\n        ')}${
+        // tslint:disable-next-line:prefer-template
+        additionalArguments === undefined ? '' : '\n        ' + additionalArguments.join(',\n        ') + ','
+    }
         taskParameters).execute()
 }
 `
 
-    const run =
-`
+    const run = `
 run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, ${successResult === undefined ? "''" : successResult})
 ).catch((error) =>
@@ -76,5 +77,5 @@ run().then((result) =>
 const generateFile = path.join(repoRoot, 'generate.json')
 const parsedJson = JSON.parse(fs.readFileSync(generateFile).toString()) as RunnerGenerator[]
 for (const json of parsedJson) {
-    generate(json.taskName, json.taskClients, json.additionalArguments, json.additionalImports, json.successResult )
+    generate(json.taskName, json.taskClients, json.additionalArguments, json.additionalImports, json.successResult)
 }

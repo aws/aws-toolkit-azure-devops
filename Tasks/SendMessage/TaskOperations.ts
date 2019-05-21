@@ -9,13 +9,11 @@ import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-
     public constructor(
         public readonly snsClient: SNS,
         public readonly sqsClient: SQS,
         public readonly taskParameters: TaskParameters
-    ) {
-    }
+    ) {}
 
     public async execute(): Promise<void> {
         if (this.taskParameters.messageTarget === 'topic') {
@@ -31,7 +29,7 @@ export class TaskOperations {
 
     private async verifyTopicExists(topicArn: string): Promise<void> {
         try {
-            await this.snsClient.getTopicAttributes({TopicArn: topicArn}).promise()
+            await this.snsClient.getTopicAttributes({ TopicArn: topicArn }).promise()
         } catch (err) {
             throw new Error(tl.loc('TopicDoesNotExist', topicArn))
         }
@@ -39,7 +37,7 @@ export class TaskOperations {
 
     private async verifyQueueExists(queueUrl: string): Promise<void> {
         try {
-            await this.sqsClient.getQueueAttributes({QueueUrl: queueUrl, AttributeNames: ['QueueArn']}).promise()
+            await this.sqsClient.getQueueAttributes({ QueueUrl: queueUrl, AttributeNames: ['QueueArn'] }).promise()
         } catch (err) {
             throw new Error(tl.loc('QueueDoesNotExist', queueUrl))
         }
@@ -49,10 +47,12 @@ export class TaskOperations {
         console.log(tl.loc('SendingToTopic', this.taskParameters.topicArn))
 
         try {
-            await this.snsClient.publish({
-                TopicArn: this.taskParameters.topicArn,
-                Message: this.taskParameters.message
-            }).promise()
+            await this.snsClient
+                .publish({
+                    TopicArn: this.taskParameters.topicArn,
+                    Message: this.taskParameters.message
+                })
+                .promise()
         } catch (err) {
             // tslint:disable-next-line: no-unsafe-any
             throw new Error(tl.loc('SendError', err.message))
@@ -67,9 +67,9 @@ export class TaskOperations {
             }
             if (this.taskParameters.delaySeconds) {
                 request.DelaySeconds = this.taskParameters.delaySeconds
-                console.log(tl.loc('SendingToQueueWithDelay',
-                                   this.taskParameters.delaySeconds,
-                                   this.taskParameters.queueUrl))
+                console.log(
+                    tl.loc('SendingToQueueWithDelay', this.taskParameters.delaySeconds, this.taskParameters.queueUrl)
+                )
             } else {
                 console.log(tl.loc('SendingToQueue', this.taskParameters.queueUrl))
             }
