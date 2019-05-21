@@ -15,15 +15,16 @@ export const readModeSingle = 'single'
 // read by the task.
 export function transformParameterToVariableName(
     taskParameters: {
-        parameterName: string,
-        variableNameTransform: string,
-        globalMatch: boolean,
-        caseInsensitiveMatch: boolean,
-        replacementPattern: string,
-        replacementText: string,
-        customVariableName: string},
-    inputParameterName?: string): string {
-
+        parameterName: string
+        variableNameTransform: string
+        globalMatch: boolean
+        caseInsensitiveMatch: boolean
+        replacementPattern: string
+        replacementText: string
+        customVariableName: string
+    },
+    inputParameterName?: string
+): string {
     if (inputParameterName === undefined) {
         inputParameterName = taskParameters.parameterName
     }
@@ -45,8 +46,7 @@ export function transformParameterToVariableName(
             }
 
             if (!outputVariableName) {
-                throw new Error(
-                    `Failed to determine leaf component of parameter name ${taskParameters.parameterName}`)
+                throw new Error(`Failed to determine leaf component of parameter name ${taskParameters.parameterName}`)
             }
             break
 
