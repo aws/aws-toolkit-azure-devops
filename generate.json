@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "AWSShellScript",
+        "successResult": "tl.loc('BashReturnCode', result)"
+    },
+    {
         "taskName": "CloudFormationCreateOrUpdateStack",
         "taskClients": ["CloudFormation", "S3"]
     },
@@ -10,6 +14,7 @@
     {
         "taskName": "CloudFormationExecuteChangeSet",
         "taskClients": ["CloudFormation"]
+
     },
     {
         "taskName": "ECRPushImage",

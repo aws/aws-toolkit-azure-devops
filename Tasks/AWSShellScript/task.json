@@ -21,7 +21,7 @@
             "isExpanded": false
         }
     ],
-    "inputs": [
+    "inputs": [ 
         {
             "name": "awsCredentials",
             "type": "connectedService:AWS",

@@ -11,8 +11,8 @@ import path = require('path');
 
 import { SdkUtils } from 'sdkutils/sdkutils';
 
-import { TaskParameters } from './helpers/AWSShellScriptTaskParameters';
-import { TaskOperations } from './helpers/AWSShellScriptTaskOperations';
+import { TaskParameters } from './TaskParameters';
+import { TaskOperations } from './TaskOperations';
 
 function run(): Promise<number> {
 
