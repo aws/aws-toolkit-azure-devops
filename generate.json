@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "LambdaInvokeFunction",
+        "taskClients": ["Lambda"]
+    },
+    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
     },

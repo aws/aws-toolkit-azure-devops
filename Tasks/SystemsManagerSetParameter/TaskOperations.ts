@@ -9,18 +9,14 @@ import tl = require('vsts-task-lib/task')
 import { secureStringType, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-
-    public constructor(
-        public readonly ssmClient: SSM,
-        public readonly taskParameters: TaskParameters
-    ) {
-    }
+    public constructor(public readonly ssmClient: SSM, public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         // to avoid a security breach if someone tries to rewrite a secure string as a plain
         // value, test for existence and type and force a secure update if necessary
         const forceAsSecureString = await this.testParameterExistsAndIsSecureStringType(
-            this.taskParameters.parameterName)
+            this.taskParameters.parameterName
+        )
         await this.createOrUpdateParameter(forceAsSecureString)
 
         console.log(tl.loc('TaskCompleted'))
@@ -28,13 +24,15 @@ export class TaskOperations {
 
     private async createOrUpdateParameter(forceAsSecureString: boolean): Promise<void> {
         try {
-            await this.ssmClient.putParameter({
-                Name: this.taskParameters.parameterName,
-                Type: forceAsSecureString ? 'SecureString' : this.taskParameters.parameterType,
-                Value: this.taskParameters.parameterValue,
-                Overwrite: true,
-                KeyId: this.taskParameters.encryptionKeyId
-            }).promise()
+            await this.ssmClient
+                .putParameter({
+                    Name: this.taskParameters.parameterName,
+                    Type: forceAsSecureString ? 'SecureString' : this.taskParameters.parameterType,
+                    Value: this.taskParameters.parameterValue,
+                    Overwrite: true,
+                    KeyId: this.taskParameters.encryptionKeyId
+                })
+                .promise()
         } catch (error) {
             throw new Error(tl.loc('CreateOrUpdateFailed', error))
         }
@@ -44,9 +42,11 @@ export class TaskOperations {
         let result: boolean = false
 
         try {
-            const response = await this.ssmClient.getParameter({
-                Name: parameterName
-            }).promise()
+            const response = await this.ssmClient
+                .getParameter({
+                    Name: parameterName
+                })
+                .promise()
 
             result = response.Parameter.Type === secureStringType
             if (result) {
