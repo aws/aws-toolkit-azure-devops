@@ -48,10 +48,11 @@ import { buildTaskParameters } from './TaskParameters'${
 
     const runStatement = `
 async function run(): Promise<void> {
-    SdkUtils.readResources() ${
-        additionalSetupStatements === undefined ? '' : '\n' + additionalSetupStatements.join('\n        ')}
+    SdkUtils.readResources()${
+        additionalSetupStatements === undefined ? '' : '\n    ' + additionalSetupStatements.join('\n    ')}
     const taskParameters = buildTaskParameters()
 
+<<<<<<< HEAD
     return new TaskOperations(
         ${clientTypes
             .map(it => {
@@ -62,6 +63,14 @@ async function run(): Promise<void> {
         // tslint:disable-next-line:prefer-template
         additionalArguments === undefined ? '' : '\n        ' + additionalArguments.join(',\n        ') + ','
     }
+=======
+    return new TaskOperations(${clientTypes === undefined ? '' : '\n        ' + clientTypes.map((it) => {
+            // tslint:disable-next-line:prefer-template
+            return 'await createDefault' + it + '(taskParameters, tl.debug),'
+        }).join('\n        ')}${
+            // tslint:disable-next-line:prefer-template
+            additionalArguments === undefined ? '' : '\n        ' + additionalArguments.join(',\n        ') + ','}
+>>>>>>> 0a4133e... working on it
         taskParameters).execute()
 }
 `

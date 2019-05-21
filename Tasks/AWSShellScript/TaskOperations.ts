@@ -25,11 +25,11 @@ export class TaskOperations {
         let scriptPath: string
         try {
             await this.configureAWSContext()
-            await this.taskParameters.configureHttpProxyFromAgentProxyConfiguration('AWSShellScript')
+            await this.taskParameters.awsConnectionParameters.configureHttpProxyFromAgentProxyConfiguration('AWSShellScript')
 
             const bash = tl.tool(tl.which('bash', true))
 
-            if (this.taskParameters.scriptType === TaskParameters.inlineScriptType) {
+            if (this.taskParameters.scriptType === inlineScriptType) {
                 const tempDir = SdkUtils.getTempLocation()
                 const fileName = 'awsshellscript_' + process.pid + '.sh'
                 scriptPath = path.join(tempDir, fileName)
