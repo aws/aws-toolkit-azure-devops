@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSConnectionParameters, buildConnectionParameters } from 'Tasks/Common/awsConnectionParameters'
+import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import tl = require('vsts-task-lib/task')
 
 export interface TaskParameters {
