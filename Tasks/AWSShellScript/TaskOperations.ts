@@ -15,8 +15,7 @@ export class TaskOperations {
 
     public constructor(
         public readonly taskParameters: TaskParameters
-    ) {
-    }
+    ) {}
 
     // based on the VSTS 'ShellScript' task but modified to inject AWS credentials
     // and region into the environment, and to be able to specify the script inline
