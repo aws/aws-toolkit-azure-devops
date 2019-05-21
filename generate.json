@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "AWSCLI",
+        "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-AWSCLI'"]
+    },
+    {
         "taskName": "AWSShellScript",
         "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-AWSShellScript'"],
         "successResult": "tl.loc('BashReturnCode', result)",
