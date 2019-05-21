@@ -57,7 +57,8 @@ export class TaskOperations {
                 failOnStdErr: this.taskParameters.failOnStandardError
             }
 
-            return await bash.exec(execOptions as tr.IExecOptions )
+            // tslint:disable-next-line: no-unsafe-any
+            return await bash.exec(execOptions as tr.IExecOptions)
         } finally {
             if (this.taskParameters.scriptType === inlineScriptType
                 && scriptPath
