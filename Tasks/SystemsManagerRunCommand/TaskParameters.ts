@@ -11,23 +11,23 @@ export const fromTags: string = 'fromTags'
 export const fromBuildVariable: string = 'fromBuildVariable'
 
 export interface TaskParameters {
-    awsConnectionParameters: AWSConnectionParameters,
-    documentName: string,
-    documentParameters: string,
-    serviceRoleARN: string,
-    comment: string,
-    instanceSelector: string,
-    instanceIds: string[],
-    instanceTags: string[],
-    instanceBuildVariable: string,
-    maxConcurrency: string,
-    maxErrors: string,
-    timeout: string,
-    notificationArn: string,
-    notificationEvents: string,
-    notificationType: string,
-    outputS3BucketName: string,
-    outputS3KeyPrefix: string,
+    awsConnectionParameters: AWSConnectionParameters
+    documentName: string
+    documentParameters: string
+    serviceRoleARN: string
+    comment: string
+    instanceSelector: string
+    instanceIds: string[]
+    instanceTags: string[]
+    instanceBuildVariable: string
+    maxConcurrency: string
+    maxErrors: string
+    timeout: string
+    notificationArn: string
+    notificationEvents: string
+    notificationType: string
+    outputS3BucketName: string
+    outputS3KeyPrefix: string
     commandIdOutputVariable: string
 }
 

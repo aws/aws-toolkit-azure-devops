@@ -8,11 +8,7 @@ import tl = require('vsts-task-lib/task')
 import { fromBuildVariable, fromInstanceIds, fromTags, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    public constructor(
-        public readonly ssmClient: SSM,
-        public readonly taskParameters: TaskParameters
-    ) {
-    }
+    public constructor(public readonly ssmClient: SSM, public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         const request: SSM.SendCommandRequest = {
@@ -39,7 +35,7 @@ export class TaskOperations {
             case fromTags:
                 request.Targets = []
                 // TODO repalce with getTags when https://github.com/aws/aws-vsts-tools/pull/184 merges
-                this.taskParameters.instanceTags.forEach((it) => {
+                this.taskParameters.instanceTags.forEach(it => {
                     const kv = it.split('=')
                     const t: SSM.Target = {}
                     t.Key = 'tag:' + kv[0].trim()
@@ -61,7 +57,7 @@ export class TaskOperations {
         if (this.taskParameters.notificationArn) {
             request.NotificationConfig = {
                 NotificationArn: this.taskParameters.notificationArn,
-                NotificationEvents: [ this.taskParameters.notificationEvents ],
+                NotificationEvents: [this.taskParameters.notificationEvents],
                 NotificationType: this.taskParameters.notificationType
             }
         }
