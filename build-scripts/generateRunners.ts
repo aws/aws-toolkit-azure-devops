@@ -7,14 +7,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 interface RunnerGenerator {
-    taskName: string,
-    taskClients: string[],
+    taskName: string
+    taskClients: string[]
     successResult?: string
 }
 
 const repoRoot = path.dirname(__dirname)
-const header =
-`
+const header = `
 /*!
  * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
@@ -24,34 +23,33 @@ const header =
 `
 
 function generate(filename: string, clientTypes: string[], setResult?: string) {
-    const importStament =
-`
+    const importStament = `
 import tl = require('vsts-task-lib/task')
 
 import { SdkUtils } from 'Common/sdkutils'
 
-import { ${clientTypes.map((it) => 'createDefault' + it).join(', ')} } from 'Common/defaultClients'
+import { ${clientTypes.map(it => 'createDefault' + it).join(', ')} } from 'Common/defaultClients'
 import { TaskOperations } from './TaskOperations'
 import { buildTaskParameters } from './TaskParameters'
 `
 
-    const runStatement =
-`
+    const runStatement = `
 async function run(): Promise<void> {
     SdkUtils.readResources()
     const taskParameters = buildTaskParameters()
 
     return new TaskOperations(
-        ${clientTypes.map((it) => {
-            // tslint:disable-next-line:prefer-template
-            return 'await createDefault' + it + '(taskParameters, tl.debug),'
-        }).join('\n        ')}
+        ${clientTypes
+            .map(it => {
+                // tslint:disable-next-line:prefer-template
+                return 'await createDefault' + it + '(taskParameters, tl.debug),'
+            })
+            .join('\n        ')}
         taskParameters).execute()
 }
 `
 
-    const run =
-`
+    const run = `
 run().then((result) =>
     tl.setResult(tl.TaskResult.Succeeded, ${setResult === undefined ? "''" : setResult})
 ).catch((error) =>

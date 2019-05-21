@@ -4,6 +4,10 @@
         "taskClients": ["IAM", "Lambda"]
     },
     {
+        "taskName": "LambdaInvokeFunction",
+        "taskClients": ["Lambda"]
+    },
+    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
     },
@@ -18,5 +22,17 @@
     {
         "taskName": "SendMessage",
         "taskClients": ["SNS", "SQS"]
+    },
+    {
+        "taskName": "SystemsManagerGetParameter",
+        "taskClients": ["SSM"]
+    },
+    {
+        "taskName": "SystemsManagerRunCommand",
+        "taskClients": ["SSM"]
+    },
+    {
+        "taskName": "SystemsManagerSetParameter",
+        "taskClients": ["SSM"]
     }
 ]
