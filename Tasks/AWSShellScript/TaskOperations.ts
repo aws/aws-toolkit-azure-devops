@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import fs = require('fs')
 import path = require('path')
 import { SdkUtils } from 'sdkutils/sdkutils'
 import tl = require('vsts-task-lib/task')
 import tr = require('vsts-task-lib/toolrunner')
-import { TaskParameters } from './TaskParameters'
+import { inlineScriptType, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
 
@@ -25,13 +26,13 @@ export class TaskOperations {
         let scriptPath: string
         try {
             await this.configureAWSContext()
-            await this.taskParameters.awsConnectionParameters.configureHttpProxyFromAgentProxyConfiguration('AWSShellScript')
+            await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('AWSShellScript')
 
             const bash = tl.tool(tl.which('bash', true))
 
             if (this.taskParameters.scriptType === inlineScriptType) {
                 const tempDir = SdkUtils.getTempLocation()
-                const fileName = 'awsshellscript_' + process.pid + '.sh'
+                const fileName = `awsshellscript_${process.pid}.sh'`
                 scriptPath = path.join(tempDir, fileName)
                 tl.writeFile(scriptPath, this.taskParameters.inlineScript)
             } else {
@@ -52,14 +53,14 @@ export class TaskOperations {
                 bash.line(this.taskParameters.arguments)
             }
 
-            const execOptions = <tr.IExecOptions> {
+            const execOptions = {
                 env: process.env,
                 failOnStdErr: this.taskParameters.failOnStandardError
             }
 
-            return await bash.exec(execOptions)
+            return await bash.exec(execOptions as tr.IExecOptions )
         } finally {
-            if (this.taskParameters.scriptType === TaskParameters.inlineScriptType
+            if (this.taskParameters.scriptType === inlineScriptType
                 && scriptPath
                 && tl.exist(scriptPath)) {
                 fs.unlinkSync(scriptPath)
@@ -76,7 +77,7 @@ export class TaskOperations {
     private async configureAWSContext() {
         const env = process.env
 
-        const credentials = await this.taskParameters.getCredentials()
+        const credentials = await getCredentials(this.taskParameters.awsConnectionParameters)
         if (credentials) {
             await credentials.getPromise()
             tl.debug('configure credentials into environment variables')
@@ -87,7 +88,7 @@ export class TaskOperations {
             }
         }
 
-        const region = await this.taskParameters.getRegion()
+        const region = await getRegion()
         if (region) {
             tl.debug('configure region into environment variable')
             env.AWS_REGION = region
