@@ -58,6 +58,7 @@ export class BeanstalkUtils {
             console.log(tl.loc('AddingManifest'))
         }
 
+        // tslint:disable-next-line: no-floating-promises
         archive.finalize()
         await defer.promise
 
