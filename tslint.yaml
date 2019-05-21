@@ -23,9 +23,6 @@ linterOptions:
         - Tasks/ECRPushImage/**
         - Tasks/LambdaDeployFunction/**
         - Tasks/LambdaNETCoreDeploy/**
-        - Tasks/SystemsManagerGetParameter/**
-        - Tasks/SystemsManagerRunCommand/**
-        - Tasks/SystemsManagerSetParameter/**
 
 rules:
     # TypeScript-specific
