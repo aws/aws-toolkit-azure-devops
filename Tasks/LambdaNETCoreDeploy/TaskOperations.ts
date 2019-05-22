@@ -10,11 +10,7 @@ import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-
-    public constructor(
-        public readonly taskParameters: TaskParameters
-    ) {
-    }
+    public constructor(public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         const cwd = this.determineProjectDirectory(this.taskParameters.lambdaProjectPath)
@@ -71,7 +67,8 @@ export class TaskOperations {
                     this.taskParameters.functionTimeout,
                     this.taskParameters.packageOnly,
                     this.taskParameters.packageOutputFile,
-                    this.taskParameters.additionalArgs)
+                    this.taskParameters.additionalArgs
+                )
                 break
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'))
@@ -82,24 +79,22 @@ export class TaskOperations {
                     this.taskParameters.s3Prefix,
                     this.taskParameters.packageOnly,
                     this.taskParameters.packageOutputFile,
-                    this.taskParameters.additionalArgs)
+                    this.taskParameters.additionalArgs
+                )
                 break
 
             default:
-            throw new Error(tl.loc('UnknownDeploymentTypeError', this.taskParameters.command))
+                throw new Error(tl.loc('UnknownDeploymentTypeError', this.taskParameters.command))
         }
 
         if (this.taskParameters.packageOnly) {
             console.log(tl.loc('PackageOnlyTaskCompleted'))
-
         } else {
             console.log(tl.loc('PackageAndDeployTaskCompleted'))
-
         }
     }
 
     private determineProjectDirectory(specifedLambdaProject: string): string {
-
         // should have already verified existence when reading parameters, but defense in
         // depth
         if (!fs.existsSync(specifedLambdaProject)) {

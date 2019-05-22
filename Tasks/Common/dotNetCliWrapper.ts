@@ -7,10 +7,7 @@ import tl = require('vsts-task-lib/task')
 import tr = require('vsts-task-lib/toolrunner')
 
 export class DotNetCliWrapper {
-    public constructor(
-        private readonly cwd: string,
-        private readonly env: any) {
-    }
+    public constructor(private readonly cwd: string, private readonly env: any) {}
 
     public async restoreAsync(): Promise<void> {
         return this.executeAsync(['restore'], undefined)
@@ -23,8 +20,8 @@ export class DotNetCliWrapper {
         s3Prefix: string,
         packageOnly: boolean,
         packageOutputFile: string,
-        additionalArgs: string): Promise<void>  {
-
+        additionalArgs: string
+    ): Promise<void> {
         const args = Array<string>()
 
         args.push('lambda')
@@ -72,7 +69,8 @@ export class DotNetCliWrapper {
         functionTimeout: number,
         packageOnly: boolean,
         packageOutputFile: string,
-        additionalArgs: string): Promise<void>  {
+        additionalArgs: string
+    ): Promise<void> {
         const args = Array<string>()
 
         args.push('lambda')
@@ -130,8 +128,8 @@ export class DotNetCliWrapper {
         dotnet.line(additionalArgs)
 
         const execOptions = {
-            cwd : this.cwd,
-            env : this.env
+            cwd: this.cwd,
+            env: this.env
         }
 
         // tslint:disable-next-line: no-unsafe-any

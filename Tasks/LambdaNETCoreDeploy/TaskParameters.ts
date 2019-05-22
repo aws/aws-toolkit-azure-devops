@@ -8,7 +8,7 @@ import tl = require('vsts-task-lib/task')
 
 // option values for the 'deploymentType' property
 export const deployFunction: string = 'deployFunction'
-export const  deployServerless: string = 'deployServerless'
+export const deployServerless: string = 'deployServerless'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
