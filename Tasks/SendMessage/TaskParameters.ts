@@ -7,11 +7,11 @@ import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsCo
 import tl = require('vsts-task-lib/task')
 
 export interface TaskParameters {
-    awsConnectionParameters: AWSConnectionParameters,
-    messageTarget: string,
-    message: string,
-    topicArn: string,
-    queueUrl: string,
+    awsConnectionParameters: AWSConnectionParameters
+    messageTarget: string
+    message: string
+    topicArn: string
+    queueUrl: string
     delaySeconds: number
 }
 
