@@ -1,0 +1,397 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "stackName": { "value": "", "allowOverride": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Create stack, use output vars",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "CloudFormationCreateOrUpdateStack_1",
+                        "task": {
+                            "id": "7ef7cdfa-aa45-42c5-93c8-d7603643dd99",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackName)",
+                            "templateSource": "file",
+                            "templateFile": "cfntemplates/StackOutputsTest/StackOutputsTest/cloudformation.template",
+                            "s3BucketName": "",
+                            "s3ObjectKey": "",
+                            "templateUrl": "",
+                            "templateParametersSource": "inline",
+                            "templateParametersFile": "",
+                            "templateParameters": "[\n { \"ParameterKey\": \"Param1\", \"ParameterValue\": \"Output1Value1\" },\n { \"ParameterKey\": \"Param2\", \"ParameterValue\": \"Output2Value1\" },\n]",
+                            "useChangeSet": "false",
+                            "changeSetName": "",
+                            "description": "",
+                            "autoExecuteChangeSet": "true",
+                            "capabilityIAM": "true",
+                            "capabilityNamedIAM": "true",
+                            "roleARN": "",
+                            "resourceTypes": "",
+                            "notificationARNs": "",
+                            "tags": "",
+                            "monitorRollbackTriggers": "false",
+                            "monitoringTimeInMinutes": "0",
+                            "rollbackTriggerARNs": "",
+                            "onFailure": "ROLLBACK",
+                            "disableRollback": "false",
+                            "warnWhenNoWorkNeeded": "true",
+                            "outputVariable": "",
+                            "captureStackOutputs": "asVariables",
+                            "captureAsSecuredVars": "false",
+                            "timeoutInMins": "60",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PowerShell_2",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "scriptType": "inlineScript",
+                            "scriptName": "",
+                            "arguments": "\"$(Output1)\" \"Output1Value1\" \"$(Output2)\" \"Output2Value1\"",
+                            "workingFolder": "",
+                            "inlineScript": "Param ([string]$outvar1, [string]$expected1, [string]$outvar2, [string]$expected2)\n\nif ($outVar1 -eq $expected1) { \n Write-Host \"PASS stack output Output1 set as expected\" \n} else { \n throw \"FAIL!, stack output Output1 not as expected\" \n}\n\nif ($outVar2 -eq $expected2) { \n Write-Host \"PASS stack output Output2 set as expected\" \n} else { \n throw \"FAIL!, stack output Output2 not as expected\" \n}\n ",
+                            "failOnStandardError": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Delete Stack",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "CloudFormationDeleteStack_3",
+                        "task": {
+                            "id": "089bda61-367d-4d7c-a06b-88f7e2f20f22",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackName)",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Create stack with fixed creds, use output blob",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "CloudFormationCreateOrUpdateStack_4",
+                        "task": {
+                            "id": "7ef7cdfa-aa45-42c5-93c8-d7603643dd99",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "",
+                            "stackName": "$(stackName)",
+                            "templateSource": "file",
+                            "templateFile": "cfntemplates/StackOutputsTest/StackOutputsTest/cloudformation.template",
+                            "s3BucketName": "",
+                            "s3ObjectKey": "",
+                            "templateUrl": "",
+                            "templateParametersSource": "inline",
+                            "templateParametersFile": "",
+                            "templateParameters": "[\n { \"ParameterKey\": \"Param1\", \"ParameterValue\": \"Output1Value2\" },\n { \"ParameterKey\": \"Param2\", \"ParameterValue\": \"Output2Value2\" },\n]",
+                            "useChangeSet": "false",
+                            "changeSetName": "",
+                            "description": "",
+                            "autoExecuteChangeSet": "true",
+                            "capabilityIAM": "true",
+                            "capabilityNamedIAM": "true",
+                            "roleARN": "",
+                            "resourceTypes": "",
+                            "notificationARNs": "",
+                            "tags": "",
+                            "monitorRollbackTriggers": "false",
+                            "monitoringTimeInMinutes": "0",
+                            "rollbackTriggerARNs": "",
+                            "onFailure": "ROLLBACK",
+                            "disableRollback": "false",
+                            "warnWhenNoWorkNeeded": "true",
+                            "outputVariable": "",
+                            "captureStackOutputs": "asJSON",
+                            "captureAsSecuredVars": "false",
+                            "timeoutInMins": "60",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PowerShell_5",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "scriptType": "inlineScript",
+                            "scriptName": "",
+                            "arguments": "'$($(stackName)Outputs)' @(\"Output1\",\"Output2\") @(\"Output1Value2\",\"Output2Value2\")",
+                            "workingFolder": "",
+                            "inlineScript": "Param ([string]$jsonBlob, [string[]]$keys, [string[]]$values)\n\n$o = ConvertFrom-Json -InputObject $jsonBlob\nfor ($i = 0; $i -lt $keys.Length; $i++) {\n $k = $keys[$i]\n Write-Host \"Validating for $k\"\n if ($o[$i].OutputKey -ne $k) { throw \"FAIL!, index $i does not map to key $k\" }\n\n if ($o[$i].OutputValue -ne $values[$i]) { throw \"FAIL! value for index $k not expected\" }\n}\n\nWrite-Host \"PASS!\"",
+                            "failOnStandardError": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Delete Stack",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "CloudFormationDeleteStack_6",
+                        "task": {
+                            "id": "089bda61-367d-4d7c-a06b-88f7e2f20f22",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackName)",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Create stack for additional update",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "CloudFormationCreateOrUpdateStack_7",
+                        "task": {
+                            "id": "7ef7cdfa-aa45-42c5-93c8-d7603643dd99",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackName)",
+                            "templateSource": "file",
+                            "templateFile": "cfntemplates/StackOutputsTest/StackOutputsTest/cloudformation.template",
+                            "s3BucketName": "",
+                            "s3ObjectKey": "",
+                            "templateUrl": "",
+                            "templateParametersSource": "inline",
+                            "templateParametersFile": "",
+                            "templateParameters": "[\n { \"ParameterKey\": \"Param1\", \"ParameterValue\": \"Output1Value3\" },\n { \"ParameterKey\": \"Param2\", \"ParameterValue\": \"Output2Value3\" },\n]",
+                            "useChangeSet": "false",
+                            "changeSetName": "",
+                            "description": "",
+                            "autoExecuteChangeSet": "true",
+                            "capabilityIAM": "true",
+                            "capabilityNamedIAM": "true",
+                            "roleARN": "",
+                            "resourceTypes": "",
+                            "notificationARNs": "",
+                            "tags": "",
+                            "monitorRollbackTriggers": "false",
+                            "monitoringTimeInMinutes": "0",
+                            "rollbackTriggerARNs": "",
+                            "onFailure": "ROLLBACK",
+                            "disableRollback": "false",
+                            "warnWhenNoWorkNeeded": "true",
+                            "outputVariable": "",
+                            "captureStackOutputs": "ignore",
+                            "captureAsSecuredVars": "true",
+                            "timeoutInMins": "60",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Update stack params",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "CloudFormationCreateOrUpdateStack_8",
+                        "task": {
+                            "id": "7ef7cdfa-aa45-42c5-93c8-d7603643dd99",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackName)",
+                            "templateSource": "usePrevious",
+                            "templateFile": "",
+                            "s3BucketName": "",
+                            "s3ObjectKey": "",
+                            "templateUrl": "",
+                            "templateParametersSource": "inline",
+                            "templateParametersFile": "",
+                            "templateParameters": "[\n { \"ParameterKey\": \"Param1\", \"ParameterValue\": \"Output1Value4\" },\n { \"ParameterKey\": \"Param2\", \"ParameterValue\": \"Output2Value4\" },\n]",
+                            "useChangeSet": "false",
+                            "changeSetName": "",
+                            "description": "",
+                            "autoExecuteChangeSet": "true",
+                            "capabilityIAM": "true",
+                            "capabilityNamedIAM": "true",
+                            "roleARN": "",
+                            "resourceTypes": "",
+                            "notificationARNs": "",
+                            "tags": "",
+                            "monitorRollbackTriggers": "false",
+                            "monitoringTimeInMinutes": "0",
+                            "rollbackTriggerARNs": "",
+                            "onFailure": "ROLLBACK",
+                            "disableRollback": "false",
+                            "warnWhenNoWorkNeeded": "true",
+                            "outputVariable": "",
+                            "captureStackOutputs": "asVariables",
+                            "captureAsSecuredVars": "false",
+                            "timeoutInMins": "60",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "PowerShell ScriptValidate update changed params",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PowerShell_9",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "scriptType": "inlineScript",
+                            "scriptName": "",
+                            "arguments": "\"$(Output1)\" \"Output1Value4\" \"$(Output2)\" \"Output2Value4\"",
+                            "workingFolder": "",
+                            "inlineScript": "Param ([string]$outvar1, [string]$expected1, [string]$outvar2, [string]$expected2)\n\nif ($outVar1 -eq $expected1) { \n Write-Host \"PASS stack output Output1 set as expected\" \n} else { \n throw \"FAIL!, stack output Output1 not as expected\" \n}\n\nif ($outVar2 -eq $expected2) { \n Write-Host \"PASS stack output Output2 set as expected\" \n} else { \n throw \"FAIL!, stack output Output2 not as expected\" \n}\n ",
+                            "failOnStandardError": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Delete Stack",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "CloudFormationDeleteStack_10",
+                        "task": {
+                            "id": "089bda61-367d-4d7c-a06b-88f7e2f20f22",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackName)",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 39,
+    "name": "cfn-createupdate-stack-outputs",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 5,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

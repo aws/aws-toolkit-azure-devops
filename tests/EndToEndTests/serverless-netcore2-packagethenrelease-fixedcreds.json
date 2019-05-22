@@ -1,0 +1,138 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "stackName": { "value": "", "allowOverride": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Create package",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "LambdaNETCoreDeploy_1",
+                        "task": {
+                            "id": "0c632a66-60d4-498a-88c8-1c69cc057ef1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "command": "deployServerless",
+                            "packageOnly": "true",
+                            "packageOutputFile": "$(Build.ArtifactStagingDirectory)\\serverless.template",
+                            "lambdaProjectPath": "netcore2.0\\S3ServerlessApp\\S3ServerlessApp",
+                            "functionName": "",
+                            "functionRole": "",
+                            "functionHandler": "",
+                            "functionMemory": "",
+                            "functionTimeout": "",
+                            "stackName": "",
+                            "s3Bucket": "$(bucketName)",
+                            "s3Prefix": "serverless-NetCore2-PackageThenRelease-fixedCreds",
+                            "additionalArgs": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate package",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PowerShell_2",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "scriptType": "inlineScript",
+                            "scriptName": "",
+                            "arguments": "\"$(Build.ArtifactStagingDirectory)\\serverless.template\"",
+                            "workingFolder": "",
+                            "inlineScript": "Param (\n [string]$packageOutput\n)\n\nWrite-Host \"Validating package output created\"\n$exists = Test-Path $packageOutput\nif (!$exists)\n{\n throw \"FAIL! expected package output $packageOutput not found\"\n}\n\nWrite-Host \"PASS!\"",
+                            "failOnStandardError": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Publish Artifact: template",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PublishBuildArtifacts_3",
+                        "task": {
+                            "id": "2ff763a7-ce83-4e1f-bc89-0ae63477cebe",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "PathtoPublish": "$(Build.ArtifactStagingDirectory)\\serverless.template",
+                            "ArtifactName": "template",
+                            "ArtifactType": "Container",
+                            "TargetPath": "\\\\my\\share\\$(Build.DefinitionName)\\$(Build.BuildNumber)"
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 37,
+    "name": "serverless-netcore2-packagethenrelease-fixedcreds",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 4,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

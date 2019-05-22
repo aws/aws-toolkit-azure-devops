@@ -1,0 +1,281 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "simpleStringParameterName": { "value": "simpleStringParameterFixedCreds", "allowOverride": true },
+        "simpleStringParameterValue": { "value": "my simple string parameter", "allowOverride": true },
+        "secureStringParameterName": { "value": "secureStringParameterFixedCreds", "allowOverride": true },
+        "secureStringParameterValue": { "value": null, "allowOverride": true, "isSecret": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Set Simple String Parameter",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "SystemsManagerSetParameter_1",
+                        "task": {
+                            "id": "3c47544d-0c9b-49e1-89a4-3c94d0586c89",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "parameterName": "$(simpleStringParameterName)",
+                            "parameterType": "String",
+                            "parameterValue": "$(simpleStringParameterValue)",
+                            "encryptionKeyId": "",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Get Simple String Parameter",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "SystemsManagerGetParameter_2",
+                        "task": {
+                            "id": "57ef2af4-cd99-4298-bf77-2feb5dc51863",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "readMode": "single",
+                            "parameterName": "$(simpleStringParameterName)",
+                            "parameterVersion": "",
+                            "parameterPath": "",
+                            "recursive": "false",
+                            "singleNameTransform": "custom",
+                            "hierarchyNameTransform": "none",
+                            "customVariableName": "outputSimpleStringParameter",
+                            "replacementPattern": "",
+                            "replacementText": "",
+                            "globalMatch": "true",
+                            "caseInsensitiveMatch": "true",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PowerShell_3",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "scriptType": "inlineScript",
+                            "scriptName": "",
+                            "arguments": "\"$(simpleStringParameterValue)\" \"$(outputSimpleStringParameter)\"",
+                            "workingFolder": "",
+                            "inlineScript": "Param (\n [string]$expected,\n [string]$actual\n)\n\nif ($expected -eq $actual)\n{\n Write-Host \"PASS! Expected matches actual value\"\n}\nelse\n{\n throw \"FAIL! Expected: $expected, actual: $actual\"\n}\n",
+                            "failOnStandardError": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Cleanup",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "AWSPowerShellModuleScript_4",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "arguments": "$(simpleStringParameterName)",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$parameterName\n)\n\nWrite-Host \"Removing parameter $parameterName\"\nRemove-SSMParameter -Name $parameterName -Force\n",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Set Secure String Parameter",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "SystemsManagerSetParameter_5",
+                        "task": {
+                            "id": "3c47544d-0c9b-49e1-89a4-3c94d0586c89",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "parameterName": "$(secureStringParameterName)",
+                            "parameterType": "SecureString",
+                            "parameterValue": "$(secureStringParameterValue)",
+                            "encryptionKeyId": "",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Get Secure String Parameter",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "SystemsManagerGetParameter_6",
+                        "task": {
+                            "id": "57ef2af4-cd99-4298-bf77-2feb5dc51863",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "readMode": "single",
+                            "parameterName": "$(secureStringParameterName)",
+                            "parameterVersion": "",
+                            "parameterPath": "",
+                            "recursive": "false",
+                            "singleNameTransform": "custom",
+                            "hierarchyNameTransform": "none",
+                            "customVariableName": "outputSecureStringParameter",
+                            "replacementPattern": "",
+                            "replacementText": "",
+                            "globalMatch": "true",
+                            "caseInsensitiveMatch": "true",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PowerShell_7",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "scriptType": "inlineScript",
+                            "scriptName": "",
+                            "arguments": "\"$(secureStringParameterValue)\" \"$(outputSecureStringParameter)\"",
+                            "workingFolder": "",
+                            "inlineScript": "Param (\n [string]$expected,\n [string]$actual\n)\n\nif ($expected -eq $actual)\n{\n Write-Host \"PASS! Expected matches actual value\"\n}\nelse\n{\n # this should not echo the values - but how to test?\n throw \"FAIL! Expected: $expected does not match actual: $actual\"\n}\n",
+                            "failOnStandardError": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Cleanup",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "AWSPowerShellModuleScript_8",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "arguments": "$(secureStringParameterName)",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$parameterName\n)\n\nWrite-Host \"Removing parameter $parameterName\"\nRemove-SSMParameter -Name $parameterName -Force\n",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "true",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 35,
+    "name": "ssm-setandgetparameter-fixedcreds",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 2,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}
