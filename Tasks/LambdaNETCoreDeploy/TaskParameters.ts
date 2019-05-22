@@ -32,7 +32,7 @@ export interface TaskParameters {
 
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
-        awsConnectionParameters = buildConnectionParameters(),
+        awsConnectionParameters: buildConnectionParameters(),
         command: tl.getInput('command', true),
         packageOnly: tl.getBoolInput('packageOnly', true),
         lambdaProjectPath: tl.getPathInput('lambdaProjectPath', true, true),

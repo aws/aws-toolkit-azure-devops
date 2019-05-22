@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { DotNetCliWrapper } from 'Common/dotNetCliWrapper'
+import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
@@ -22,12 +24,14 @@ export class TaskOperations {
             console.log(tl.loc('ReadingDefaultSettingsFile'))
             let content = fs.readFileSync(defaultsFilePath, 'utf8')
             const json = JSON.parse(content)
+            // tslint:disable: no-unsafe-any
             if (json.profile) {
                 console.log(tl.loc('ClearingProfileCredentials', json.profile))
                 json.profile = ''
                 content = JSON.stringify(json)
                 fs.writeFileSync(defaultsFilePath, content)
             }
+            // tslint:enable: no-unsafe-any
         }
 
         const env = process.env
@@ -35,7 +39,7 @@ export class TaskOperations {
         // If assume role credentials are in play, make sure the initial generation
         // of temporary credentials has been performed. If no credentials were defined
         // for the task, we assume they are already set in the host environment.
-        const credentials = await this.taskParameters.getCredentials()
+        const credentials = await getCredentials(this.taskParameters.awsConnectionParameters)
         if (credentials) {
             await credentials.getPromise()
             tl.debug('configure credentials into environment variables')
@@ -46,9 +50,9 @@ export class TaskOperations {
             }
         }
 
-        const region = await this.taskParameters.getRegion()
+        const region = await getRegion()
 
-        await this.taskParameters.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy')
+        await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy')
 
         const wrapper = new DotNetCliWrapper(cwd, env)
 
