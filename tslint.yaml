@@ -11,7 +11,6 @@ linterOptions:
         - Tasks/AWSPowerShellModuleScript/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
-        - Tasks/LambdaNETCoreDeploy/**
 
 rules:
     # TypeScript-specific
