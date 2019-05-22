@@ -12,57 +12,57 @@ import { TaskParameters } from '../../../Tasks/S3Upload/TaskParameters'
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
+const baseTaskParameters: TaskParameters = {
+    awsConnectionParameters: undefined,
+    bucketName: '',
+    sourceFolder: '',
+    targetFolder: '',
+    flattenFolders: false,
+    overwrite: false,
+    globExpressions: [],
+    filesAcl: '',
+    createBucket: false,
+    contentType: '',
+    contentEncoding: '',
+    forcePathStyleAddressing: false,
+    storageClass: '',
+    keyManagement: '',
+    encryptionAlgorithm: '',
+    kmsMasterKeyId: '',
+    customerKey: Buffer.from([])
+}
+
+const connectionParameters = {
+    proxyConfiguration: '',
+    logRequestData: true,
+    logResponseData: true,
+    AssumeRoleARN: '',
+    awsEndpointAuth: undefined
+}
+
+const headBucketResponse = {
+    promise: function() {}
+}
+
+const headBucketResponseFails = {
+    promise: function() {
+        throw new Error("doesn't exist")
+    }
+}
+
+const createBucketResponse = {
+    promise: function() {
+        throw new Error('create called')
+    }
+}
+
+const validateUpload = {
+    promise: function() {
+        return undefined
+    }
+}
+
 describe('S3 Upload', () => {
-    const baseTaskParameters: TaskParameters = {
-        awsConnectionParameters: undefined,
-        bucketName: '',
-        sourceFolder: '',
-        targetFolder: '',
-        flattenFolders: false,
-        overwrite: false,
-        globExpressions: [],
-        filesAcl: '',
-        createBucket: false,
-        contentType: '',
-        contentEncoding: '',
-        forcePathStyleAddressing: false,
-        storageClass: '',
-        keyManagement: '',
-        encryptionAlgorithm: '',
-        kmsMasterKeyId: '',
-        customerKey: Buffer.from([])
-    }
-
-    const connectionParameters = {
-        proxyConfiguration: '',
-        logRequestData: true,
-        logResponseData: true,
-        AssumeRoleARN: '',
-        awsEndpointAuth: undefined
-    }
-
-    const headBucketResponse = {
-        promise: function() {}
-    }
-
-    const headBucketResponseFails = {
-        promise: function() {
-            throw new Error("doesn't exist")
-        }
-    }
-
-    const createBucketResponse = {
-        promise: function() {
-            throw new Error('create called')
-        }
-    }
-
-    const validateUpload = {
-        promise: function() {
-            return undefined
-        }
-    }
-
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/S3Upload/task.json')
