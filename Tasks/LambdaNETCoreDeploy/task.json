@@ -195,5 +195,5 @@
         "CreatingFunctionPackageOnly": "Performing package-only build of function, output package will be placed in %s",
         "PackageAndDeployTaskCompleted": "Completed packaging and deployment of the project",
         "PackageOnlyTaskCompleted": "Completed packaging of the project"
-    }
+    } 
 }
