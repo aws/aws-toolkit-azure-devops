@@ -75,7 +75,7 @@ describe('S3 Upload', () => {
 
     test('Handles bucket not existing (and not being able to create one)', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
-        s3.headBucket = jest.fn()((params: any, cb: any) => headBucketResponseFails)
+        s3.headBucket = jest.fn()(() => headBucketResponseFails)
         const taskParameters = baseTaskParameters
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         expect.assertions(1)
@@ -86,8 +86,8 @@ describe('S3 Upload', () => {
 
     test('Tries and fails to create bucket when told to', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
-        s3.headBucket = jest.fn((params: any, cb: any) => headBucketResponseFails)
-        s3.createBucket = jest.fn((params: any, cb: any) => createBucketResponse)
+        s3.headBucket = jest.fn(() => headBucketResponseFails)
+        s3.createBucket = jest.fn(() => createBucketResponse)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
@@ -113,8 +113,8 @@ describe('S3 Upload', () => {
 
     test('Happy path uplaods a found file', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
-        s3.headBucket = jest.fn((params: any, cb: any) => headBucketResponse)
-        s3.upload = jest.fn((params: S3.PutObjectRequest, cb: any) => {
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
             expect(params.Bucket).toBe('potato')
             expect(params.Key).toContain('ts')
 
