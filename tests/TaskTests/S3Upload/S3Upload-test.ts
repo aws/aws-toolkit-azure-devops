@@ -5,8 +5,8 @@
 
 import { S3 } from 'aws-sdk'
 import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
-import { TaskOperations } from '../../../Tasks/S3Upload/UploadTaskOperations'
-import { TaskParameters } from '../../../Tasks/S3Upload/UploadTaskParameters'
+import { TaskOperations } from '../../../Tasks/S3Upload/TaskOperations'
+import { TaskParameters } from '../../../Tasks/S3Upload/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -42,19 +42,25 @@ describe('S3 Upload', () => {
     }
 
     const headBucketResponse = {
-        promise: function() { }
+        promise: function() {}
     }
 
     const headBucketResponseFails = {
-        promise: function() { throw new Error('doesn\'t exist') }
+        promise: function() {
+            throw new Error("doesn't exist")
+        }
     }
 
     const createBucketResponse = {
-        promise: function() { throw new Error('create called') }
+        promise: function() {
+            throw new Error('create called')
+        }
     }
 
     const validateUpload = {
-        promise: function() { return undefined }
+        promise: function() {
+            return undefined
+        }
     }
 
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
@@ -73,28 +79,32 @@ describe('S3 Upload', () => {
         const taskParameters = baseTaskParameters
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         expect.assertions(1)
-        await taskOperation.execute().catch((e) => { expect(e.message).toContain('not exist') })
+        await taskOperation.execute().catch(e => {
+            expect(e.message).toContain('not exist')
+        })
     })
 
     test('Tries and fails to create bucket when told to', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn((params: any, cb: any) => headBucketResponseFails)
-        s3.createBucket = jest.fn((params: any, cb: any ) => createBucketResponse)
-        const taskParameters = {...baseTaskParameters}
+        s3.createBucket = jest.fn((params: any, cb: any) => createBucketResponse)
+        const taskParameters = { ...baseTaskParameters }
         taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
         taskParameters.bucketName = 'potato'
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         expect.assertions(1)
-        await taskOperation.execute().catch((e) => { expect(e.message).toContain('create called') })
+        await taskOperation.execute().catch(e => {
+            expect(e.message).toContain('create called')
+        })
     })
 
     test('Finds matching files', () => {
         const s3 = new S3({ region: 'us-east-1' })
-        const taskParameters = {...baseTaskParameters}
+        const taskParameters = { ...baseTaskParameters }
         taskParameters.bucketName = 'potato'
         taskParameters.sourceFolder = __dirname
-        taskParameters.globExpressions = [ '*.ts' ]
+        taskParameters.globExpressions = ['*.ts']
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         const results = taskOperation.findMatchingFiles(taskParameters)
         // expect it to find this file only
@@ -110,12 +120,12 @@ describe('S3 Upload', () => {
 
             return validateUpload
         })
-        const taskParameters = {...baseTaskParameters}
+        const taskParameters = { ...baseTaskParameters }
         taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
         taskParameters.bucketName = 'potato'
         taskParameters.sourceFolder = __dirname
-        taskParameters.globExpressions = [ '*.ts' ]
+        taskParameters.globExpressions = ['*.ts']
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         expect.assertions(3)
         await taskOperation.execute()

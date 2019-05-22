@@ -6,7 +6,7 @@
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import tl = require('vsts-task-lib/task')
 
-    // options for Server-side encryption Key Management; 'none' disables SSE
+// options for Server-side encryption Key Management; 'none' disables SSE
 export const noKeyManagementValue: string = 'none'
 export const awsKeyManagementValue: string = 'awsManaged'
 export const customerKeyManagementValue: string = 'customerManaged'
