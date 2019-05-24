@@ -42,7 +42,6 @@ export abstract class SdkUtils {
             const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
                 this.userAgentSuffix
             }-${taskManifest.name}`
-
             ;(AWS as any).util.userAgent = () => {
                 return userAgentString
             }

@@ -18,7 +18,6 @@ linterOptions:
         - Tasks/Common/beanstalkutils/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
-        - Tasks/ECRPushImage/**
         - Tasks/LambdaNETCoreDeploy/**
 
 rules:
