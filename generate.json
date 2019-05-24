@@ -20,6 +20,12 @@
         "taskClients": ["S3"]
     },
     {
+        "taskName": "S3Upload",
+        "additionalImports": ["import { getRegion } from 'Common/awsConnectionParameters'"],
+        "additionalArguments": ["await getRegion()"],
+        "taskClients": ["S3"]
+    },
+    {
         "taskName": "SecretsManagerCreateOrUpdateSecret",
         "taskClients": ["SecretsManager"]
     },
