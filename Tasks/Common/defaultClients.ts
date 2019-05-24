@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
+import { ECR, IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
@@ -47,6 +47,23 @@ export async function createDefaultLambda(
         configuration.awsConnectionParameters,
         logger
     )) as Lambda
+}
+
+export async function createDefaultECR(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<ECR> {
+    const ecrOpts: ECR.ClientConfiguration = {
+        apiVersion: '2015-09-21'
+    }
+
+    // tslint:disable-next-line: no-unsafe-any
+    return (await SdkUtils.createAndConfigureSdkClient(
+        ECR,
+        ecrOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as ECR
 }
 
 export async function createDefaultS3(

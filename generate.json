@@ -1,5 +1,13 @@
 [
     {
+        "taskName": "ECRPushImage",
+        "taskClients": ["ECR"],
+        "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],
+        "additionalArguments": [
+            "{ runDockerCommand: runDockerCommand, locateDockerExecutable: locateDockerExecutable }"
+        ]
+    },
+    {
         "taskName": "LambdaDeployFunction",
         "taskClients": ["IAM", "Lambda"]
     },
