@@ -1,28 +1,25 @@
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
+/*!
+ * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
 
-import tl = require('vsts-task-lib/task')
 import CloudFormation = require('aws-sdk/clients/cloudformation')
-import { SdkUtils } from 'sdkutils/sdkutils'
-import { TaskParameters } from './ExecuteChangeSetTaskParameters'
 import {
     captureStackOutputs,
     testStackHasResources,
     waitForStackCreation,
     waitForStackUpdate
 } from 'Common/cloudformationutils'
+import tl = require('vsts-task-lib/task')
+import { ignoreStackOutputs, stackOutputsAsJson, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    public constructor(public readonly taskParameters: TaskParameters) {}
+    public constructor(
+        public readonly cloudFormationClient: CloudFormation,
+        public readonly taskParameters: TaskParameters
+    ) {}
 
     public async execute(): Promise<void> {
-        await this.createServiceClients()
-
         const stackId = await this.verifyResourcesExist(
             this.taskParameters.changeSetName,
             this.taskParameters.stackName
@@ -53,34 +50,20 @@ export class TaskOperations {
                 tl.setVariable(this.taskParameters.outputVariable, stackId)
             }
 
-            if (this.taskParameters.captureStackOutputs !== TaskParameters.ignoreStackOutputs) {
+            if (this.taskParameters.captureStackOutputs !== ignoreStackOutputs) {
                 await captureStackOutputs(
                     this.cloudFormationClient,
                     this.taskParameters.stackName,
-                    this.taskParameters.captureStackOutputs === TaskParameters.stackOutputsAsJson,
+                    this.taskParameters.captureStackOutputs === stackOutputsAsJson,
                     this.taskParameters.captureAsSecuredVars
                 )
             }
 
             console.log(tl.loc('TaskCompleted', this.taskParameters.changeSetName))
         } catch (err) {
-            console.error(tl.loc('ExecuteChangeSetFailed', err.message), err)
+            console.error(tl.loc('ExecuteChangeSetFailed', (err as Error).message), err)
             throw err
         }
-    }
-
-    private cloudFormationClient: CloudFormation
-
-    private async createServiceClients(): Promise<void> {
-        const cfnOpts: CloudFormation.ClientConfiguration = {
-            apiVersion: '2010-05-15'
-        }
-        this.cloudFormationClient = await SdkUtils.createAndConfigureSdkClient(
-            CloudFormation,
-            cfnOpts,
-            this.taskParameters,
-            tl.debug
-        )
     }
 
     private async verifyResourcesExist(changeSetName: string, stackName: string): Promise<string> {
@@ -93,6 +76,7 @@ export class TaskOperations {
             }
 
             const response = await this.cloudFormationClient.describeChangeSet(request).promise()
+
             return response.StackId
         } catch (err) {
             throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName))

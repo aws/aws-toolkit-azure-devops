@@ -8,6 +8,10 @@
         "taskClients": ["CloudFormation"]
     },
     {
+        "taskName": "CloudFormationExecuteChangeSet",
+        "taskClients": ["CloudFormation"]
+    },
+    {
         "taskName": "ECRPushImage",
         "taskClients": ["ECR"],
         "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],
