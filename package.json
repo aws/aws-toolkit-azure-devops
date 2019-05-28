@@ -9,7 +9,7 @@
         "generateCode": "ts-node ./build-scripts/generateRunners.ts",
         "compileTypescript": "tsc -p ./",
         "test": "jest",
-        "clean": "node ./build-scripts/clean.js",
+        "clean": "ts-node ./build-scripts/clean.ts",
         "lint": "tslint --project .",
         "generateResources": "node ./build-scripts/generateResources.js",
         "copyResources": "node ./build-scripts/copyResources.js",
@@ -34,6 +34,7 @@
     "bugs": "https://github.com/aws/aws-vsts-tools/issues",
     "homepage": "https://github.com/aws/aws-vsts-tools",
     "devDependencies": {
+        "@types/fs-extra": "^7.0.0",
         "@types/jest": "^24.0.12",
         "@types/js-yaml": "^3.12.1",
         "@types/node": "^12.0.0",
@@ -72,7 +73,8 @@
         "coverageDirectory": "./coverage/",
         "collectCoverage": true,
         "collectCoverageFrom": [
-            "Tasks/**"
+            "Tasks/**",
+            "!Tasks/**/*.runner.ts"
         ],
         "moduleFileExtensions": [
             "js",

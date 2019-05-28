@@ -3,14 +3,9 @@
     "version": "1.1.8",
     "description": "Run a command remotely on a fleet of EC2 instances and/or on-premise machines.",
     "main": "SystemsManagerRunCommand.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "author": "",
     "license": "MIT",
     "dependencies": {
-        "aws-sdk": "2.279.1",
-        "sdkutils": "file:../../_build/Tasks/Common/sdkutils",
-        "vsts-task-lib": "^2.0.6"
+        "sdkutils": "file:../../_build/Tasks/Common/sdkutils"
     }
 }
