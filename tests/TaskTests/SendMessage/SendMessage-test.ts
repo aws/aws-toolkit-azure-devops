@@ -54,7 +54,7 @@ describe('Send Message', () => {
 
     test('Send message to sns when message target is topic', () => {
         expect.assertions(1)
-        const taskParams = {...defaultTaskParameters}
+        const taskParams = { ...defaultTaskParameters }
         taskParams.messageTarget = 'topic'
         const sns = new SNS() as any
         sns.getTopicAttributes = jest.fn(() => undefined)
@@ -65,12 +65,12 @@ describe('Send Message', () => {
 
     test('Verify topic exists fails, fails task', async () => {
         expect.assertions(2)
-        const taskParams = {...defaultTaskParameters}
+        const taskParams = { ...defaultTaskParameters }
         taskParams.messageTarget = 'topic'
         const sns = new SNS() as any
         sns.getTopicAttributes = jest.fn(() => promiseThrowsResponse)
         const taskOperations = new TaskOperations(sns, new SQS(), taskParams)
-        await taskOperations.execute().catch((e) => expect(e.message).toContain('no'))
+        await taskOperations.execute().catch(e => expect(e.message).toContain('no'))
         expect(sns.getTopicAttributes).toBeCalled()
     })
 
@@ -79,13 +79,13 @@ describe('Send Message', () => {
         const sqs = new SQS() as any
         sqs.getQueueAttributes = jest.fn(() => promiseThrowsResponse)
         const taskOperations = new TaskOperations(new SNS(), sqs, defaultTaskParameters)
-        taskOperations.execute().catch((e) => expect(e.message).toContain('no'))
+        taskOperations.execute().catch(e => expect(e.message).toContain('no'))
         expect(sqs.getQueueAttributes).toBeCalled()
     })
 
     test('Send message to topic succeeds', async () => {
         expect.assertions(2)
-        const taskParams = {...defaultTaskParameters}
+        const taskParams = { ...defaultTaskParameters }
         taskParams.messageTarget = 'topic'
         const sns = new SNS() as any
         sns.getTopicAttributes = jest.fn(() => promiseSucceeds)

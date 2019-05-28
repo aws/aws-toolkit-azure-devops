@@ -3,14 +3,9 @@
     "version": "1.1.8",
     "description": "Create an AWS CloudFormation stacks",
     "main": "CloudFormationCreateStack.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "author": "",
     "license": "MIT",
     "dependencies": {
-        "aws-sdk": "2.279.1",
-        "sdkutils": "file:../../_build/Tasks/Common/sdkutils",
-        "vsts-task-lib": "^2.0.6"
+        "sdkutils": "file:../../_build/Tasks/Common/sdkutils"
     }
 }

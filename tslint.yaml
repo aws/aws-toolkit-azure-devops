@@ -11,19 +11,10 @@ linterOptions:
         - Tasks/AWSPowerShellModuleScript/**
         - Tasks/AWSShellScript/**
         - Tasks/BeanstalkCreateApplicationVersion/**
-        - Tasks/CloudFormationCreateOrUpdateStack/**
-        - Tasks/CloudFormationDeleteStack/**
-        - Tasks/CloudFormationExecuteChangeSet/**
         - Tasks/CodeDeployDeployApplication/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
-        - Tasks/Common/sdkutils/cloudformationutils.ts
-        - Tasks/ECRPushImage/**
-        - Tasks/LambdaDeployFunction/**
-        - Tasks/LambdaInvokeFunction/**
         - Tasks/LambdaNETCoreDeploy/**
-        - Tasks/SystemsManagerRunCommand/**
-        - Tasks/SystemsManagerSetParameter/**
 
 rules:
     # TypeScript-specific
