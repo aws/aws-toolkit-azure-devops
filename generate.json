@@ -4,6 +4,10 @@
         "taskClients": ["CloudFormation", "S3"]
     },
     {
+        "taskName": "CloudFormationDeleteStack",
+        "taskClients": ["CloudFormation"]
+    },
+    {
         "taskName": "ECRPushImage",
         "taskClients": ["ECR"],
         "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],

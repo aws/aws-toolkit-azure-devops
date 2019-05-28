@@ -12,7 +12,6 @@ linterOptions:
         - Tasks/AWSShellScript/**
         - Tasks/BeanstalkCreateApplicationVersion/**
         - Tasks/BeanstalkDeployApplication/**
-        - Tasks/CloudFormationDeleteStack/**
         - Tasks/CloudFormationExecuteChangeSet/**
         - Tasks/CodeDeployDeployApplication/**
         - Tasks/Common/beanstalkutils/**

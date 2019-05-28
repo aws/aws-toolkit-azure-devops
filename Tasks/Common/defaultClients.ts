@@ -39,7 +39,6 @@ export async function createDefaultECR(
         apiVersion: '2015-09-21'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         ECR,
         ecrOpts,
@@ -56,7 +55,6 @@ export async function createDefaultIAM(
         apiVersion: '2010-05-08'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         IAM,
         iamOpts,
@@ -73,7 +71,6 @@ export async function createDefaultLambda(
         apiVersion: '2015-03-31'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         Lambda,
         lambdaOpts,
@@ -94,7 +91,6 @@ export async function createDefaultS3(
         s3Opts.s3ForcePathStyle = configuration.forcePathStyleAddressing
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, configuration.awsConnectionParameters, logger)) as S3
 }
 
@@ -106,7 +102,6 @@ export async function createDefaultSecretsManager(
         apiVersion: '2017-10-17'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         SecretsManager,
         opts,
@@ -123,7 +118,6 @@ export async function createDefaultSNS(
         apiVersion: '2010-03-31'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         SNS,
         snsOpts,
@@ -140,7 +134,6 @@ export async function createDefaultSQS(
         apiVersion: '2012-11-05'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         SQS,
         sqsOpts,
