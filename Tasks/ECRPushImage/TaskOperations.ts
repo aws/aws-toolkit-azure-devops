@@ -19,23 +19,23 @@ import tl = require('vsts-task-lib/task')
 import { imageNameSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-
     private dockerPath: string
 
     public constructor(
         public readonly ecrClient: ECR,
         public readonly dockerHandler: DockerHandler,
         public readonly taskParameters: TaskParameters
-    ) {
-    }
+    ) {}
 
     public async execute(): Promise<void> {
         this.dockerPath = await this.dockerHandler.locateDockerExecutable()
 
         let sourceImageRef: string
         if (this.taskParameters.imageSource === imageNameSource) {
-            sourceImageRef = this
-                .constructTaggedImageName(this.taskParameters.sourceImageName, this.taskParameters.sourceImageTag)
+            sourceImageRef = this.constructTaggedImageName(
+                this.taskParameters.sourceImageName,
+                this.taskParameters.sourceImageTag
+            )
             console.log(tl.loc('PushImageWithName', sourceImageRef))
         } else {
             sourceImageRef = this.taskParameters.sourceImageId
@@ -49,8 +49,10 @@ export class TaskOperations {
             await this.createRepositoryIfNeeded(this.taskParameters.repositoryName)
         }
 
-        const targetImageName = this
-            .constructTaggedImageName(this.taskParameters.repositoryName, this.taskParameters.pushTag)
+        const targetImageName = this.constructTaggedImageName(
+            this.taskParameters.repositoryName,
+            this.taskParameters.pushTag
+        )
         const targetImageRef = `${endpoint}/${targetImageName}`
         await this.tagImage(sourceImageRef, targetImageRef)
 
@@ -78,16 +80,20 @@ export class TaskOperations {
         console.log(tl.loc('TestingForRepository', repository))
 
         try {
-            await this.ecrClient.describeRepositories({
-                repositoryNames: [ repository ]
-            }).promise()
+            await this.ecrClient
+                .describeRepositories({
+                    repositoryNames: [repository]
+                })
+                .promise()
         } catch (err) {
             // tslint:disable-next-line: no-unsafe-any
             if (err.code === 'RepositoryNotFoundException') {
                 console.log(tl.loc('CreatingRepository'))
-                await this.ecrClient.createRepository({
-                    repositoryName: repository
-                }).promise()
+                await this.ecrClient
+                    .createRepository({
+                        repositoryName: repository
+                    })
+                    .promise()
             } else {
                 throw new Error(`Error testing for repository existence: ${err}`)
             }
@@ -96,21 +102,27 @@ export class TaskOperations {
 
     private async loginToRegistry(encodedAuthToken: string, endpoint: string): Promise<void> {
         // tslint:disable-next-line: no-unsafe-any
-        const tokens: string[] = (base64.decode(encodedAuthToken)).trim().split(':')
-        await this.dockerHandler.runDockerCommand(
-            this.dockerPath, 'login', ['-u', tokens[0], '-p', tokens[1], endpoint])
+        const tokens: string[] = base64
+            .decode(encodedAuthToken)
+            .trim()
+            .split(':')
+        await this.dockerHandler.runDockerCommand(this.dockerPath, 'login', [
+            '-u',
+            tokens[0],
+            '-p',
+            tokens[1],
+            endpoint
+        ])
     }
 
     private async tagImage(sourceImageRef: string, imageTag: string): Promise<void> {
         console.log(tl.loc('AddingTag', imageTag, sourceImageRef))
-        await this.dockerHandler.runDockerCommand(
-            this.dockerPath, 'tag', [ sourceImageRef, imageTag])
+        await this.dockerHandler.runDockerCommand(this.dockerPath, 'tag', [sourceImageRef, imageTag])
     }
 
     private async pushImageToECR(imageRef: string): Promise<void> {
         console.log(tl.loc('PushingImage', imageRef))
-        await this.dockerHandler.runDockerCommand(
-            this.dockerPath, 'push', [ imageRef ])
+        await this.dockerHandler.runDockerCommand(this.dockerPath, 'push', [imageRef])
     }
 
     private async getEcrAuthorizationData(): Promise<ECR.AuthorizationData> {

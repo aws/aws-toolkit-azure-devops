@@ -26,8 +26,8 @@ const defaultTaskParameters: TaskParameters = {
 }
 
 const defaultDocker: DockerHandler = {
-    locateDockerExecutable: async() => '',
-    runDockerCommand: async(s1, s2, s3) => undefined
+    locateDockerExecutable: async () => '',
+    runDockerCommand: async (s1, s2, s3) => undefined
 }
 
 const ecrFail = {
@@ -68,9 +68,11 @@ describe('Secrets Manger Get Secret', () => {
     test('Fails when docker executable is failed to be located', async () => {
         expect.assertions(1)
         const dockerHandler = { ...defaultDocker }
-        dockerHandler.locateDockerExecutable = () => { throw new Error('docker not found') }
+        dockerHandler.locateDockerExecutable = () => {
+            throw new Error('docker not found')
+        }
         const taskOperations = new TaskOperations(new ECR(), dockerHandler, defaultTaskParameters)
-        await taskOperations.execute().catch((e) => expect(`${e}`).toContain('docker not found'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('docker not found'))
     })
 
     test('Fails on failed auth', async () => {
@@ -78,7 +80,7 @@ describe('Secrets Manger Get Secret', () => {
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrFail)
         const taskOperations = new TaskOperations(ecr, defaultDocker, defaultTaskParameters)
-        await taskOperations.execute().catch((e) => expect(`${e}`).toContain('Failed to obtain'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('Failed to obtain'))
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
     })
 
@@ -103,7 +105,7 @@ describe('Secrets Manger Get Secret', () => {
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
-        ecr.createRepository = jest.fn((args) => {
+        ecr.createRepository = jest.fn(args => {
             expect(args.repositoryName).toBe('name')
 
             return ecrReturnsToken
@@ -125,7 +127,7 @@ describe('Secrets Manger Get Secret', () => {
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
-        ecr.createRepository = jest.fn((args) => ecrReturnsToken)
+        ecr.createRepository = jest.fn(args => ecrReturnsToken)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.autoCreateRepository = true
         taskParameters.repositoryName = 'name'

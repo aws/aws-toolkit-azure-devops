@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "CloudFormationCreateOrUpdateStack",
+        "taskClients": ["CloudFormation", "S3"]
+    },
+    {
         "taskName": "ECRPushImage",
         "taskClients": ["ECR"],
         "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],

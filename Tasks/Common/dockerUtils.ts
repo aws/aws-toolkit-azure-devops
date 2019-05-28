@@ -11,10 +11,7 @@ export interface DockerHandler {
 }
 
 export async function locateDockerExecutable(): Promise<string> {
-    const dockerExecutables: string[] = [
-        'docker',
-        'docker.exe'
-    ]
+    const dockerExecutables: string[] = ['docker', 'docker.exe']
 
     let dockerPath: string
     for (const e of dockerExecutables) {
@@ -23,7 +20,7 @@ export async function locateDockerExecutable(): Promise<string> {
             if (dockerPath) {
                 break
             }
-        // tslint:disable-next-line:no-empty
+            // tslint:disable-next-line:no-empty
         } catch (err) {}
     }
     if (!dockerPath) {
