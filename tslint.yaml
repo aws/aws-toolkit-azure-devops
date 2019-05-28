@@ -12,18 +12,11 @@ linterOptions:
         - Tasks/AWSShellScript/**
         - Tasks/BeanstalkCreateApplicationVersion/**
         - Tasks/BeanstalkDeployApplication/**
-        - Tasks/CloudFormationDeleteStack/**
         - Tasks/CodeDeployDeployApplication/**
         - Tasks/Common/beanstalkutils/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
-        - Tasks/ECRPushImage/**
-        - Tasks/LambdaDeployFunction/**
-        - Tasks/LambdaInvokeFunction/**
         - Tasks/LambdaNETCoreDeploy/**
-        - Tasks/SystemsManagerGetParameter/**
-        - Tasks/SystemsManagerRunCommand/**
-        - Tasks/SystemsManagerSetParameter/**
 
 rules:
     # TypeScript-specific
