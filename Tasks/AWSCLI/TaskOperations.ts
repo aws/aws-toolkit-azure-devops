@@ -27,6 +27,7 @@ export class TaskOperations {
         if (this.taskParameters.awsCliParameters !== undefined) {
             awsCliTool.line(this.taskParameters.awsCliParameters)
         }
+        // tslint:disable-next-line: no-unsafe-any
         const code: number = await awsCliTool
             .exec({ failOnStdErr: this.taskParameters.failOnStandardError } as any)
         tl.debug(`return code: ${code}`)
