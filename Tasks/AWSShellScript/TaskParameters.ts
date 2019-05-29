@@ -10,7 +10,7 @@ export const inlineScriptType: string = 'inline'
 export const fileScriptType: string = 'filePath'
 
 export interface TaskParameters {
-    awsConnectionParameters: AWSConnectionParameters,
+    awsConnectionParameters: AWSConnectionParameters
     arguments: string
     scriptType: string
     filePath: string

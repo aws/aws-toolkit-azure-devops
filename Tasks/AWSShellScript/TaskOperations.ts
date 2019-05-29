@@ -12,16 +12,12 @@ import tr = require('vsts-task-lib/toolrunner')
 import { inlineScriptType, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-
-    public constructor(
-        public readonly taskParameters: TaskParameters
-    ) {}
+    public constructor(public readonly taskParameters: TaskParameters) {}
 
     // based on the VSTS 'ShellScript' task but modified to inject AWS credentials
     // and region into the environment, and to be able to specify the script inline
     // or from a file
     public async execute(): Promise<number> {
-
         let scriptPath: string
         try {
             await this.configureAWSContext()
@@ -60,9 +56,7 @@ export class TaskOperations {
             // tslint:disable-next-line: no-unsafe-any
             return await bash.exec(execOptions as tr.IExecOptions)
         } finally {
-            if (this.taskParameters.scriptType === inlineScriptType
-                && scriptPath
-                && tl.exist(scriptPath)) {
+            if (this.taskParameters.scriptType === inlineScriptType && scriptPath && tl.exist(scriptPath)) {
                 fs.unlinkSync(scriptPath)
             }
         }

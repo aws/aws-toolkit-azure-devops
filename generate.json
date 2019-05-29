@@ -16,7 +16,6 @@
     {
         "taskName": "CloudFormationExecuteChangeSet",
         "taskClients": ["CloudFormation"]
-
     },
     {
         "taskName": "ECRPushImage",
