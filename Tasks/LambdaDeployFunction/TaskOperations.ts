@@ -95,9 +95,7 @@ export class TaskOperations {
 
             if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {}
-                updateConfigRequest.Environment.Variables = SdkUtils.getTagsDictonary<Lambda.EnvironmentVariables>(
-                    this.taskParameters.environment
-                )
+                updateConfigRequest.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
             }
             if (this.taskParameters.securityGroups) {
                 updateConfigRequest.VpcConfig = {
@@ -149,12 +147,10 @@ export class TaskOperations {
 
         if (this.taskParameters.environment) {
             request.Environment = {}
-            request.Environment.Variables = SdkUtils.getTagsDictonary<Lambda.EnvironmentVariables>(
-                this.taskParameters.environment
-            )
+            request.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
         }
         if (this.taskParameters.tags) {
-            request.Tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
+            request.Tags = SdkUtils.getTagsDictonary(this.taskParameters.tags)
         }
         if (this.taskParameters.securityGroups) {
             request.VpcConfig = {
