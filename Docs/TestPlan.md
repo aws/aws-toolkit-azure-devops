@@ -46,4 +46,42 @@ with one object/resource (typically functions), functional tests for each projec
 -   Beanstalk Create Application
     -   Deploy asp.net application
     -   Deploy asp.net core
--
+-   Cloud Formation Create or Update
+    -   Upload to s3 then update from s3
+    -   Redeploy with a change
+    -   Redeploy with no changes
+-   Cloud Formation Delete
+    -   Create then delete stack (done in 4 tasks)
+-   Cloud Formation Execute Change Set
+    -   **untested**
+-   Code deploy deploy
+    -   Build solution then deploy from workspace
+    -   **deploy from s3 untested**
+-   ECR push image
+    -   **untested**
+-   Lambda Deploy Function
+    -   **untested**
+-   Lambda Invoke Function
+    -   Run in every deploy synchronously
+-   Lambda NETCore Deploy
+    -   Package then deploy
+    -   Deploy .NETcore 2.1 application
+    -   Deploy .NETcore 1 application
+-   S3 Download
+    -   Download from an s3 bucket (with normal and instance credentials)
+-   S3 Upload
+    -   Upload a file (with fixed and instance credentials)
+    -   Upload a file with a set content encoding
+-   Secrets Manager Create Secret
+    -   Combined test with get (instance and fixed credentials), creates and updates
+-   Secrets Manager Get Secret
+    -   Combined test with create/update (instance and fixed credentials)
+-   Send SQS/SNS Message
+    -   Send SQS (instance and fixed credentials)
+    -   Send SNS (instance and fixed credentials)
+-   Systems Manager Get Parameter
+    -   yes
+-   Systems Manager Run Command
+    -   yes
+-   Systems Manager Set Parameter
+    -   yes
