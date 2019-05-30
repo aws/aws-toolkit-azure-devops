@@ -16,58 +16,6 @@ requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIB
 
 The [User Guide](https://docs.aws.amazon.com/vsts/latest/userguide/welcome.html) contains additional instructions for getting up and running with the extension.
 
-## Highlighted Features
-
-### Transfer Files to and from Amazon S3 Buckets
-
-Upload files to an Amazon Simple Storage Service (S3) Bucket with the AWS S3 Upload task or download from a bucket with the AWS S3 Download task.
-
-![s3 upload](images/AWSS3Upload.png)
-
-### Deploy .NET Core serverless applications or standalone functions to AWS Lambda
-
-![lambda appdeploy](images/AWSLambdaDeploy.png)
-
-### Invoke an AWS Lambda Function
-
-Invoke Lambda functions from within the build or release pipeline.
-
-![CLI](images/AWSLambdaFunction.png)
-
-### Create/update AWS CloudFormation stacks
-
-Create new AWS CloudFormation stacks or update an existing stack.
-
-![CloudFormation](images/AWSCloudFormation.png)
-
-### Deploy to AWS Elastic Beanstalk
-
-Deploy ASP.NET or ASP.NET Core applications to Elastic Beanstalk environments.
-
-![Beanstalk](images/AWSElasticBeanstalk.png)
-
-### Deploy to Amazon EC2 with AWS CodeDeploy
-
-Deploy applications to EC2 instances using CodeDeploy.
-
-![CodeDeploy](images/AWSCodeDeploy.png)
-
-### Send a message to an Simple Notification Service Topic or Simple Queue Service Queue
-
-![SNSTopic](images/AWSSendMessage.png)
-
-### Run AWS Tools for Windows PowerShell scripts
-
-Run scripts using cmdlets from the AWS Tools for Windows PowerShell (AWSPowerShell) module, optionally installing the module before use.
-
-![AWSPowerShell](images/AWSPowerShellScript.png)
-
-### Run AWS CLI commands
-
-Run AWS CLI commands against an AWS connection.
-
-![AWSCLI](images/AWSCLI.png)
-
 ## Credentials Handling for AWS Services
 
 To enable tasks to call AWS services when run as part of your build or release pipelines AWS credentials need to have been configured for the tasks or be available in the host process for the build agent. Note that the credentials are used specifically by the tasks when run in a build agent process, they are not related to end-user logins to your VSTS or TFS instance.
@@ -94,16 +42,20 @@ Select the _AWS_ endpoint type and provide the following parameters. Please refe
 -   AWS Access Key ID
 -   AWS Secret Access Key
 
-![aws endpoint](images/AWSEndpoint.png)
-
 **Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
 
 Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
 
-## Minimum supported environments
+## Highlighted list of supported services
 
--   Visual Studio Team Services
+## Supported environments
+
+-   Azure Devops
 -   Team Foundation Server 2015 Update 3 (or higher)
+
+## License
+
+The project is licenced under the MIT license
 
 ## Contributors
 
