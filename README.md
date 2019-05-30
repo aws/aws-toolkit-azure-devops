@@ -10,7 +10,7 @@ AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://mar
 This is an open source project because we want you to be involved. We love issues, feature requests, code reviews, pull
 requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIBUTING.md) guide for how to help, including how to build your own extension.
 
-## Highlighted list of supported services
+## Highlighted Features
 
 -   AWSCLI - Interact with the AWSCLI (Windows hosts only for now)
 -   AWS Powershell Module - Interact with AWS through powershell (Windows hosts only)
