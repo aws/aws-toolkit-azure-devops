@@ -14,22 +14,21 @@ We have three categories of tests in the project
 -   Functional Tests - Functional tests make up a majority of the tests in the project. They work by running the `execute` function of each of the tasks, and feeding it different combinations of mocked AWS objects and settings objects.
 -   End to End Tests - End to end tests are handled with VSTS build definitions running on an on prem VSTS server and a deticated AWS account. We run tasks, then validate the result by querying AWS or the local filesystem. The tasks we run are available in tests/EndToEndTests.
 
-#### Strategy
+#### Testing
 
-The strategy we have adopted for tests is the following: unit tests for operations that interact
-with one object/resource (typically functions), functional tests for each project
+```
+||>>??chart\
+```
 
 ## Unit Tests
 
-### CloudFormationUtils
-
-### SdkUtils
+Unit test coverage is limited, but CloudFormationUtils, SdkUtils, and BeanstalkUtils have
+unit tests testing good and bad scenarios for every function contained in them.
 
 ## Functional Tests
 
-### AWSCli
-
-### AWSPowerShell
+All modules except for "CloudFormation Create Or Update", "Beanstalk Create Application", "AWS Powershell", and "AWS CLI"
+have functional tests of some description
 
 ## End to End Tests
 
