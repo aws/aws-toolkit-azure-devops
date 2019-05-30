@@ -80,8 +80,8 @@ with one object/resource (typically functions), functional tests for each projec
     -   Send SQS (instance and fixed credentials)
     -   Send SNS (instance and fixed credentials)
 -   Systems Manager Get Parameter
-    -   yes
+    -   Set and Get combined into one (instance and fixed creds)
 -   Systems Manager Run Command
-    -   yes
+    -   **untested**
 -   Systems Manager Set Parameter
-    -   yes
+    -   Set and Get combined into one (instance and fixed creds)
