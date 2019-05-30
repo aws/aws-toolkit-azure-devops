@@ -101,7 +101,6 @@ export class TaskOperations {
                 }
             }
 
-            const targetDir = path.dirname(targetPath)
             targetPath = targetPath.replace(/\\/g, '/')
             const stats = fs.lstatSync(matchedFile)
             if (!stats.isDirectory()) {
@@ -126,6 +125,11 @@ export class TaskOperations {
                         ContentType: contentType,
                         StorageClass: this.taskParameters.storageClass
                     }
+
+                    if (this.taskParameters.contentEncoding) {
+                        request.ContentEncoding = this.taskParameters.contentEncoding
+                    }
+
                     switch (this.taskParameters.keyManagement) {
                         case noKeyManagementValue:
                             break
