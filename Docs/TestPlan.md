@@ -16,8 +16,67 @@ We have three categories of tests in the project
 
 #### Testing
 
+The project is split into Tasks, under the `Tasks` folder, like CloudFormationCreateOrUpdate as an example.
+Each Task looks like:
+
 ```
-||>>??chart\
+           System environment
++------+        ^
+| Task |        |  Reads from
++------+--------------------------------------------------------+
+|               |                                               |
+|               |                    +---------------------+    |
+|               |                    | Utils (like CFUtils)|    |
+|               |                    +--------^------------+    |
+|         +-----+--------------+              |  Calls          |
+|         |   Task Parameters  |              |                 |
+|         +-----+--------------+          +---+-------------+   |
+|               ^                         | Task Operations |   |
+|   Constructs  |                         +-------^---------+   |
+|               |                                 |             |
+|               |       +-----------------+       |             |
+|               +-------+    Task Runner  +-------+ Runs        |
+|                       |  (generated)    |                     |
+|                       +------^----------+                     |
+|                              |                                |
++---------------------------------------------------------------+
+                               |
+                         Runs  |
+                               |
+                               |
+                    VSTS Agent |
+                               +
+```
+
+And this is how each category of tests hooks into each task
+
+```
+           System environment
++------+        ^
+| Task |        |  Reads from
++------+--------------------------------------------------------+
+|               |                                               |
+|               |                    +---------------------+    |
+|               |                    | Utils (like CFUtils)<--------- Unit Tests
+|               |                    +--------^------------+    |
+|         +-----+--------------+              |  Calls          |
+|         |   Task Parameters  |              |                 |
+|         +-----+--------------+          +---+-------------+   |
+|               ^                         | Task Operations <---------- Functional Tests
+|   Constructs  |                         +-------^---------+   |
+|               |                                 |             |
+|               |       +-----------------+       |             |
+|               +-------+    Task Runner  +-------+ Runs        |
+|                       |  (generated)    |                     |
+|                       +------^----------+                     |
+|                              |                                |
++---------------------------------------------------------------+
+                               |
+                         Runs  |
+                               |
+                               | <--------------------------------- End to end tests
+                    VSTS Agent |
+                               +
 ```
 
 ## Unit Tests
