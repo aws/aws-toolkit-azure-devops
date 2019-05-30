@@ -243,9 +243,10 @@ export class TaskOperations {
                 data: CodeDeploy.GetDeploymentOutput
             ) {
                 if (err) {
-                    throw new Error(tl.loc('DeploymentFailed', applicationName, err.message))
+                    reject(new Error(tl.loc('DeploymentFailed', applicationName, err.message)))
                 } else {
                     console.log(tl.loc('WaitConditionSatisifed'))
+                    resolve()
                 }
             })
         })

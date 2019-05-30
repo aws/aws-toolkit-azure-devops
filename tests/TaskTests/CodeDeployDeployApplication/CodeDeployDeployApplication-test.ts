@@ -104,7 +104,7 @@ describe('CodeDeploy Deploy Application', () => {
     })
 
     test('Upload needed, packages properly, succeeds', async () => {
-        expect.assertions(4)
+        expect.assertions(3)
         process.env.TEMP = __dirname
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.deploymentRevisionSource = revisionSourceFromWorkspace
@@ -130,17 +130,16 @@ describe('CodeDeploy Deploy Application', () => {
         codeDeploy.getApplication = jest.fn(() => emptyPromise)
         codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
         codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
-        codeDeploy.waitFor = undefined
-        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
-        // The wait is the last part, the reaosn we catch instead of wait is this was getting an
-        // async timeout, good luck if you want to try to fix this
-        await taskOperations.execute().catch(err => {
-            expect(`${err}`).toContain('this.codeDeployClient.waitFor is not a function')
+        codeDeploy.waitFor = jest.fn((thing, thing2, cb) => {
+            cb()
+
+            return { promise: () => undefined }
         })
+        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
+        await taskOperations.execute()
     })
 
     test('Upload not needed, succeeds', async () => {
-        expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.deploymentRevisionSource = revisionSourceFromS3
         taskParameters.applicationName = 'test'
@@ -151,12 +150,12 @@ describe('CodeDeploy Deploy Application', () => {
         codeDeploy.getApplication = jest.fn(() => emptyPromise)
         codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
         codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
-        codeDeploy.waitFor = undefined
-        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
-        // The wait is the last part, the reaosn we catch instead of wait is this was getting an
-        // async timeout, good luck if you want to try to fix this
-        await taskOperations.execute().catch(err => {
-            expect(`${err}`).toContain('this.codeDeployClient.waitFor is not a function')
+        codeDeploy.waitFor = jest.fn((thing, thing2, cb) => {
+            cb()
+
+            return { promise: () => undefined }
         })
+        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
+        await taskOperations.execute()
     })
 })
