@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "BeanstalkDeployApplication",
+        "taskClients": ["Beanstalk", "S3"]
+    },
+    {
         "taskName": "CodeDeployDeployApplication",
         "taskClients": ["CodeDeploy", "S3"]
     },
