@@ -126,6 +126,11 @@ export class TaskOperations {
                         ContentType: contentType,
                         StorageClass: this.taskParameters.storageClass
                     }
+
+                    if (this.taskParameters.contentEncoding) {
+                        request.ContentEncoding = this.taskParameters.contentEncoding
+                    }
+
                     switch (this.taskParameters.keyManagement) {
                         case noKeyManagementValue:
                             break
