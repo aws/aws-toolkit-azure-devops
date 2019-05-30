@@ -14,6 +14,9 @@
 **/.DS_Store
 coverage/
 
+**/*.zip
+
+.idea
+
 # auto generated runners
-Tasks/SecretsManagerGetSecret/SecretsManagerGetSecret.ts
 Tasks/**/*.runner.ts

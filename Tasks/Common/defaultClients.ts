@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { CloudFormation, ECR, IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
+import { CloudFormation, CodeDeploy, ECR, IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
@@ -13,6 +13,22 @@ interface GenericClientConfiguration {
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
     forcePathStyleAddressing?: boolean
+}
+
+export async function createDefaultCodeDeploy(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<CodeDeploy> {
+    const codeDeployOpts: CodeDeploy.ClientConfiguration = {
+        apiVersion: '2014-10-06'
+    }
+
+    return (await SdkUtils.createAndConfigureSdkClient(
+        CodeDeploy,
+        codeDeployOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as CodeDeploy
 }
 
 export async function createDefaultCloudFormation(
