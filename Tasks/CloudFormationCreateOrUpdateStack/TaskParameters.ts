@@ -105,6 +105,10 @@ export function buildTaskParameters(): TaskParameters {
             parameters.s3ObjectKey = tl.getInput('s3ObjectKey', true)
             break
 
+        case usePreviousTemplate:
+            // No more parameters are needed
+            break
+
         default:
             throw new Error(`Unrecognized template source: ${parameters.templateSource}`)
     }
