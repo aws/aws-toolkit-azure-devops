@@ -8,24 +8,23 @@ import { knownMimeTypes, testBucketExists } from 'Common/s3'
 import fs = require('fs')
 import path = require('path')
 import tl = require('vsts-task-lib/task')
-import { awsKeyManagementValue,
-        customerKeyManagementValue,
-        noKeyManagementValue,
-        TaskParameters } from './UploadTaskParameters'
+import {
+    awsKeyManagementValue,
+    customerKeyManagementValue,
+    noKeyManagementValue,
+    TaskParameters
+} from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
         public readonly s3Client: S3,
         public readonly region: string,
         public readonly taskParameters: TaskParameters
-    ) {
-    }
+    ) {}
 
     public async execute(): Promise<void> {
         if (this.taskParameters.createBucket) {
-            await this.createBucketIfNotExist(
-                this.taskParameters.bucketName,
-                this.region)
+            await this.createBucketIfNotExist(this.taskParameters.bucketName, this.region)
         } else {
             const exists = await testBucketExists(this.s3Client, this.taskParameters.bucketName)
             if (!exists) {
@@ -40,14 +39,12 @@ export class TaskOperations {
     public findMatchingFiles(taskParameters: TaskParameters): string[] {
         console.log(`Searching ${taskParameters.sourceFolder} for files to upload`)
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder)
-        const allPaths = tl.find(taskParameters.sourceFolder) // default find options (follow sym links)
+        // Follows sym links, but is currently broken: https://github.com/aws/aws-vsts-tools/issues/178
+        const allPaths = tl.find(taskParameters.sourceFolder)
         tl.debug(tl.loc('AllPaths', allPaths))
-        const matchedPaths = tl.match(
-            allPaths,
-            taskParameters.globExpressions,
-            taskParameters.sourceFolder) // default match options
+        const matchedPaths = tl.match(allPaths, taskParameters.globExpressions, taskParameters.sourceFolder)
         tl.debug(tl.loc('MatchedPaths', matchedPaths))
-        const matchedFiles = matchedPaths.filter((itemPath) => !tl.stats(itemPath).isDirectory())
+        const matchedFiles = matchedPaths.filter(itemPath => !tl.stats(itemPath).isDirectory())
         tl.debug(tl.loc('MatchedFiles', matchedFiles))
         tl.debug(tl.loc('FoundNFiles', matchedFiles.length))
 
@@ -71,18 +68,15 @@ export class TaskOperations {
     }
 
     private async uploadFiles() {
-
         let msgTarget: string
         if (this.taskParameters.targetFolder) {
             msgTarget = this.taskParameters.targetFolder
         } else {
             msgTarget = '/'
         }
-        console.log(tl.loc(
-            'UploadingFiles',
-            this.taskParameters.sourceFolder,
-            msgTarget,
-            this.taskParameters.bucketName))
+        console.log(
+            tl.loc('UploadingFiles', this.taskParameters.sourceFolder, msgTarget, this.taskParameters.bucketName)
+        )
 
         const matchedFiles = this.findMatchingFiles(this.taskParameters)
         for (const matchedFile of matchedFiles) {
@@ -107,7 +101,6 @@ export class TaskOperations {
                 }
             }
 
-            const targetDir = path.dirname(targetPath)
             targetPath = targetPath.replace(/\\/g, '/')
             const stats = fs.lstatSync(matchedFile)
             if (!stats.isDirectory()) {
@@ -132,6 +125,11 @@ export class TaskOperations {
                         ContentType: contentType,
                         StorageClass: this.taskParameters.storageClass
                     }
+
+                    if (this.taskParameters.contentEncoding) {
+                        request.ContentEncoding = this.taskParameters.contentEncoding
+                    }
+
                     switch (this.taskParameters.keyManagement) {
                         case noKeyManagementValue:
                             break
@@ -158,5 +156,4 @@ export class TaskOperations {
             }
         }
     }
-
 }

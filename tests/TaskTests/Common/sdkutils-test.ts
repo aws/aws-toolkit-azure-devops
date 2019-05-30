@@ -6,7 +6,7 @@
 import { SdkUtils } from 'Common/sdkutils'
 
 interface KeyValue {
-    Key?: string,
+    Key?: string
     Value?: string
 }
 
@@ -40,8 +40,8 @@ describe('SdkUtils', () => {
 
     test('Get Tags Dictonary returns properly', () => {
         const arr: string[] = ['what=2=2', 'yes=1']
-        const parsed: any = SdkUtils.getTagsDictonary<{}>(arr)
-// tslint:disable-next-line: no-unsafe-any
-        expect(parsed).toStrictEqual({what: '2=2', yes: '1'})
+        const parsed: any = SdkUtils.getTagsDictonary(arr)
+        // tslint:disable-next-line: no-unsafe-any
+        expect(parsed).toStrictEqual({ what: '2=2', yes: '1' })
     })
 })

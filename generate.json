@@ -1,5 +1,29 @@
 [
     {
+        "taskName": "CodeDeployDeployApplication",
+        "taskClients": ["CodeDeploy", "S3"]
+    },
+    {
+        "taskName": "CloudFormationCreateOrUpdateStack",
+        "taskClients": ["CloudFormation", "S3"]
+    },
+    {
+        "taskName": "CloudFormationDeleteStack",
+        "taskClients": ["CloudFormation"]
+    },
+    {
+        "taskName": "CloudFormationExecuteChangeSet",
+        "taskClients": ["CloudFormation"]
+    },
+    {
+        "taskName": "ECRPushImage",
+        "taskClients": ["ECR"],
+        "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],
+        "additionalArguments": [
+            "{ runDockerCommand: runDockerCommand, locateDockerExecutable: locateDockerExecutable }"
+        ]
+    },
+    {
         "taskName": "LambdaDeployFunction",
         "taskClients": ["IAM", "Lambda"]
     },
@@ -9,6 +33,12 @@
     },
     {
         "taskName": "S3Download",
+        "taskClients": ["S3"]
+    },
+    {
+        "taskName": "S3Upload",
+        "additionalImports": ["import { getRegion } from 'Common/awsConnectionParameters'"],
+        "additionalArguments": ["await getRegion()"],
         "taskClients": ["S3"]
     },
     {
