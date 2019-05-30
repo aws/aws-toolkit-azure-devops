@@ -5,7 +5,7 @@
 
 import Beanstalk = require('aws-sdk/clients/elasticbeanstalk')
 import S3 = require('aws-sdk/clients/s3')
-import { BeanstalkUtils } from 'Common/beanstalkutils'
+import { BeanstalkUtils } from 'Common/beanstalkUtils'
 import { SdkUtils } from 'Common/sdkutils'
 import path = require('path')
 import tl = require('vsts-task-lib/task')
