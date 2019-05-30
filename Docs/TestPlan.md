@@ -4,9 +4,20 @@
 
 This document covers what we currently test, and how we test it. This document can be used to see what tested quickly without having to dig into the code and VSTS build definitions.
 
-### High level overview
+## Overview
 
-#### Categories of tests
+### How we test
+
+-   We use [Jest](https://jestjs.io/) to run unit/functional tests, and VSTS build definitions to run end to end tests
+-   Tests are in the `tests` folder
+    -   `TaskTests` Holds unit tests and functional tests
+        -   `TaskTests/Common` Holds all of our unit tests
+        -   `TaskTests/<anythingelse>` Holds all of our functional tests
+    -   `EndToEndTests` Holds end to end build definitions
+    -   `Resources` Holds test resources used by the functional and unit tests
+-   New modules mean new tests!
+
+### Categories of tests
 
 We have three categories of tests in the project
 
@@ -14,7 +25,7 @@ We have three categories of tests in the project
 -   Functional Tests - Functional tests make up a majority of the tests in the project. They work by running the `execute` function of each of the tasks, and feeding it different combinations of mocked AWS objects and settings objects.
 -   End to End Tests - End to end tests are handled with VSTS build definitions running on an on prem VSTS server and a deticated AWS account. We run tasks, then validate the result by querying AWS or the local filesystem. The tasks we run are available in tests/EndToEndTests.
 
-#### Testing
+### Testing
 
 Each test hooks into a task like so:
 
@@ -50,17 +61,27 @@ Each test hooks into a task like so:
 \*"Utils" and "Operations" both use AWS service clients and access the system environment as well,
 however most of these calls are to objects that are injected into Operations
 
-## Unit Tests
+## Current tests
+
+### Unit Tests
 
 Unit test coverage is limited, but CloudFormationUtils, SdkUtils, and BeanstalkUtils have
 unit tests testing good and bad scenarios for every function contained in them.
 
-## Functional Tests
+### Functional Tests
 
 All modules except for "CloudFormation Create Or Update", "Beanstalk Create Application", "AWS Powershell", and "AWS CLI"
-have functional tests of some description
+have functional tests of some description.
 
-## End to End Tests
+All of the functional tests follow the pattern:
+
+1. Create a `TaskParameters` object for the task
+2. Modify `TaskParameters` to make it go throguh the desired code path
+3. Create mocked service clients
+4. Run `TaskName.execute()`
+5. Verify service calls/failures on tasks that are supposed to fail
+
+### End to End Tests
 
 -   AWSCLI
     -   Runs S3 ls
