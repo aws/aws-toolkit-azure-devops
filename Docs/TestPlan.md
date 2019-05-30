@@ -16,39 +16,7 @@ We have three categories of tests in the project
 
 #### Testing
 
-The project is split into Tasks, under the `Tasks` folder, like CloudFormationCreateOrUpdate as an example.
-Each Task looks like:
-
-```
-           System environment
-+------+        ^
-| Task |        |  Reads from
-+------+--------------------------------------------------------+
-|               |                                               |
-|               |                    +---------------------+    |
-|               |                    | Utils (like CFUtils)|    |
-|               |                    +--------^------------+    |
-|         +-----+--------------+              |  Calls          |
-|         |   Task Parameters  |              |                 |
-|         +-----+--------------+          +---+-------------+   |
-|               ^                         | Task Operations |   |
-|   Constructs  |                         +-------^---------+   |
-|               |                                 |             |
-|               |       +-----------------+       |             |
-|               +-------+    Task Runner  +-------+ Runs        |
-|                       |  (generated)    |                     |
-|                       +------^----------+                     |
-|                              |                                |
-+---------------------------------------------------------------+
-                               |
-                         Runs  |
-                               |
-                               |
-                    VSTS Agent |
-                               +
-```
-
-And this is how each category of tests hooks into each task
+Each test hooks into a task like so:
 
 ```
            System environment
@@ -62,7 +30,7 @@ And this is how each category of tests hooks into each task
 |         +-----+--------------+              |  Calls          |
 |         |   Task Parameters  |              |                 |
 |         +-----+--------------+          +---+-------------+   |
-|               ^                         | Task Operations <---------- Functional Tests
+|               ^                         | Task Operations <-------- Functional Tests
 |   Constructs  |                         +-------^---------+   |
 |               |                                 |             |
 |               |       +-----------------+       |             |
@@ -74,10 +42,13 @@ And this is how each category of tests hooks into each task
                                |
                          Runs  |
                                |
-                               | <--------------------------------- End to end tests
+                               | <----------------------------------- End to end tests
                     VSTS Agent |
                                +
 ```
+
+\*"Utils" and "Operations" both use AWS service clients and access the system environment as well,
+however most of these calls are to objects that are injected into Operations
 
 ## Unit Tests
 
