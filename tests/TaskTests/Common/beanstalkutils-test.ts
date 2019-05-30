@@ -28,7 +28,7 @@ const verifyEnvironmentsExistsResponse = {
     promise: () => ({ Environments: ['yes'] })
 }
 
-const verifyAEnvironmentsExistsDoesNot = {
+const verifyEnvironmentsExistsDoesNot = {
     promise: () => ({ Environments: [] })
 }
 
@@ -121,7 +121,7 @@ describe('BeanstalkUtils', () => {
     test('VerifyEnvironmentExists throws on failure', async () => {
         expect.assertions(1)
         const beanstalk = new ElasticBeanstalk() as any
-        beanstalk.describeApplications = jest.fn(() => verifyAEnvironmentsExistsDoesNot)
+        beanstalk.describeApplications = jest.fn(() => verifyEnvironmentsExistsDoesNot)
         await BeanstalkUtils.verifyEnvironmentExists(beanstalk, 'nonexistantapplication', 'yes').catch(err => {
             expect(`${err}`).toContain('Environment yes does not exist for the application nonexistantapplication')
         })
