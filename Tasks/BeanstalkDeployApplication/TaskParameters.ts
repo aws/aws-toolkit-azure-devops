@@ -11,8 +11,8 @@ export const applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows'
 export const applicationTypeS3Archive: string = 's3'
 export const applicationTypeExistingVersion: string = 'version'
 
-export const defaultEventPollingDelay: number = 5 // seconds
-export const maxEventPollingDelay: number = 300 // seconds, 5 mins
+export const defaultEventPollingDelaySeconds: number = 5
+export const maxEventPollingDelaySeconds: number = 300
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
@@ -42,7 +42,7 @@ export function buildTaskParameters(): TaskParameters {
         deploymentBundleKey: undefined,
         description: tl.getInput('description', false),
         outputVariable: tl.getInput('outputVariable', false),
-        eventPollingDelay: defaultEventPollingDelay
+        eventPollingDelay: defaultEventPollingDelaySeconds
     }
 
     console.log(tl.loc('DisplayApplicationType', parameters.applicationType))
@@ -70,15 +70,17 @@ export function buildTaskParameters(): TaskParameters {
 
     const pollDelay = tl.getInput('eventPollingDelay', false)
     if (pollDelay) {
-        try {
-            const pollDelayValue = parseInt(pollDelay, 10)
-            if (pollDelayValue >= defaultEventPollingDelay && pollDelayValue <= maxEventPollingDelay) {
-                parameters.eventPollingDelay = pollDelayValue
-            } else {
-                throw new Error()
-            }
-        } catch {
-            console.log(tl.loc('InvalidEventPollDelay', pollDelay, defaultEventPollingDelay, maxEventPollingDelay))
+        const pollDelayValue = parseInt(pollDelay, 10)
+        if (
+            isNaN(pollDelayValue) ||
+            pollDelayValue < defaultEventPollingDelaySeconds ||
+            pollDelayValue > maxEventPollingDelaySeconds
+        ) {
+            console.log(
+                tl.loc('InvalidEventPollDelay', pollDelay, defaultEventPollingDelaySeconds, maxEventPollingDelaySeconds)
+            )
+        } else {
+            parameters.eventPollingDelay = pollDelayValue
         }
     }
 

@@ -127,7 +127,7 @@ describe('BeanstalkUtils', () => {
         })
     })
 
-    test('VerifyEnvironmentExists fails on sdk thorw', async () => {
+    test('VerifyEnvironmentExists fails on sdk throw', async () => {
         expect.assertions(1)
         const beanstalk = new ElasticBeanstalk() as any
         beanstalk.describeApplications = jest.fn(() => {
