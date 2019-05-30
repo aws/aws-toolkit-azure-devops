@@ -112,11 +112,14 @@ describe('S3 Upload', () => {
     })
 
     test('Happy path uplaods a found file', async () => {
+        expect.assertions(5)
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
         s3.upload = jest.fn((params: S3.PutObjectRequest) => {
             expect(params.Bucket).toBe('potato')
             expect(params.Key).toContain('ts')
+            expect(params.ContentEncoding).toBe('gzip')
+            expect(params.ContentType).toBe('application/json')
 
             return validateUpload
         })
@@ -126,8 +129,9 @@ describe('S3 Upload', () => {
         taskParameters.bucketName = 'potato'
         taskParameters.sourceFolder = __dirname
         taskParameters.globExpressions = ['*.ts']
+        taskParameters.contentEncoding = 'gzip'
+        taskParameters.contentType = 'application/json'
         const taskOperation = new TaskOperations(s3, '', taskParameters)
-        expect.assertions(3)
         await taskOperation.execute()
         expect(s3.upload.mock.calls.length).toBe(1)
     })
