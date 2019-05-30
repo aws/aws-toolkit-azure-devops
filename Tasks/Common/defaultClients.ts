@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
+import { CloudFormation, ECR, IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
@@ -12,7 +12,39 @@ interface GenericClientConfiguration {
 }
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
-    forcePathStyleAddressing: boolean
+    forcePathStyleAddressing?: boolean
+}
+
+export async function createDefaultCloudFormation(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<CloudFormation> {
+    const cfnOpts: CloudFormation.ClientConfiguration = {
+        apiVersion: '2010-05-15'
+    }
+
+    return (await SdkUtils.createAndConfigureSdkClient(
+        CloudFormation,
+        cfnOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as CloudFormation
+}
+
+export async function createDefaultECR(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<ECR> {
+    const ecrOpts: ECR.ClientConfiguration = {
+        apiVersion: '2015-09-21'
+    }
+
+    return (await SdkUtils.createAndConfigureSdkClient(
+        ECR,
+        ecrOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as ECR
 }
 
 export async function createDefaultIAM(
@@ -23,7 +55,6 @@ export async function createDefaultIAM(
         apiVersion: '2010-05-08'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         IAM,
         iamOpts,
@@ -40,7 +71,6 @@ export async function createDefaultLambda(
         apiVersion: '2015-03-31'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         Lambda,
         lambdaOpts,
@@ -54,11 +84,13 @@ export async function createDefaultS3(
     logger: (msg: string) => void
 ): Promise<S3> {
     const s3Opts: S3.ClientConfiguration = {
-        apiVersion: '2006-03-01',
-        s3ForcePathStyle: configuration.forcePathStyleAddressing
+        apiVersion: '2006-03-01'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
+    if (configuration.forcePathStyleAddressing) {
+        s3Opts.s3ForcePathStyle = configuration.forcePathStyleAddressing
+    }
+
     return (await SdkUtils.createAndConfigureSdkClient(S3, s3Opts, configuration.awsConnectionParameters, logger)) as S3
 }
 
@@ -70,7 +102,6 @@ export async function createDefaultSecretsManager(
         apiVersion: '2017-10-17'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         SecretsManager,
         opts,
@@ -87,7 +118,6 @@ export async function createDefaultSNS(
         apiVersion: '2010-03-31'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         SNS,
         snsOpts,
@@ -104,7 +134,6 @@ export async function createDefaultSQS(
         apiVersion: '2012-11-05'
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     return (await SdkUtils.createAndConfigureSdkClient(
         SQS,
         sqsOpts,

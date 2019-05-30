@@ -11,13 +11,11 @@ import tl = require('vsts-task-lib/task')
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
 
 export class TaskOperations {
-
     public constructor(
         public readonly iamClient: IAM,
         public readonly lambdaClient: Lambda,
         public readonly taskParameters: TaskParameters
-    ) {
-    }
+    ) {}
 
     public async execute(): Promise<void> {
         let functionArn: string
@@ -97,8 +95,7 @@ export class TaskOperations {
 
             if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {}
-                updateConfigRequest.Environment.Variables = SdkUtils
-                    .getTagsDictonary<Lambda.EnvironmentVariables>(this.taskParameters.environment)
+                updateConfigRequest.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
             }
             if (this.taskParameters.securityGroups) {
                 updateConfigRequest.VpcConfig = {
@@ -132,13 +129,16 @@ export class TaskOperations {
             Timeout: this.taskParameters.timeout,
             Publish: this.taskParameters.publish,
             Runtime: this.taskParameters.runtime,
-            Code: (this.taskParameters.codeLocation === updateFromLocalFile) ? {
-                ZipFile: readFileSync(this.taskParameters.localZipFile)
-            } : {
-                S3Bucket: this.taskParameters.s3Bucket,
-                S3Key: this.taskParameters.s3ObjectKey,
-                S3ObjectVersion: this.taskParameters.s3ObjectVersion
-            },
+            Code:
+                this.taskParameters.codeLocation === updateFromLocalFile
+                    ? {
+                          ZipFile: readFileSync(this.taskParameters.localZipFile)
+                      }
+                    : {
+                          S3Bucket: this.taskParameters.s3Bucket,
+                          S3Key: this.taskParameters.s3ObjectKey,
+                          S3ObjectVersion: this.taskParameters.s3ObjectVersion
+                      },
             DeadLetterConfig: {
                 TargetArn: this.taskParameters.deadLetterARN
             },
@@ -146,12 +146,11 @@ export class TaskOperations {
         }
 
         if (this.taskParameters.environment) {
-            request.Environment = { }
-            request.Environment.Variables = SdkUtils
-                .getTagsDictonary<Lambda.EnvironmentVariables>(this.taskParameters.environment)
+            request.Environment = {}
+            request.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
         }
         if (this.taskParameters.tags) {
-            request.Tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
+            request.Tags = SdkUtils.getTagsDictonary(this.taskParameters.tags)
         }
         if (this.taskParameters.securityGroups) {
             request.VpcConfig = {
@@ -176,9 +175,11 @@ export class TaskOperations {
 
     private async testFunctionExists(functionName: string): Promise<boolean> {
         try {
-            const response = await this.lambdaClient.getFunction({
-                FunctionName: functionName
-            }).promise()
+            const response = await this.lambdaClient
+                .getFunction({
+                    FunctionName: functionName
+                })
+                .promise()
 
             return true
         } catch (err) {
