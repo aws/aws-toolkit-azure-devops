@@ -130,9 +130,7 @@ function attemptEndpointCredentialConfiguration(
         const customDuration = parseInt(customDurationVariable, 10)
         if (isNaN(customDuration) || customDuration < minDuration || customDuration > maxduration) {
             console.warn(
-                `Invalid credential duration '${customDurationVariable}', minimum is ${this.minDuration} seconds, max ${
-                    this.maxduration
-                } seconds`
+                `Invalid credential duration '${customDurationVariable}', minimum is ${minDuration}, max ${maxduration}`
             )
         } else {
             duration = customDuration
