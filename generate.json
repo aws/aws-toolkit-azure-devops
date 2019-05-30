@@ -4,6 +4,10 @@
         "taskClients": ["Beanstalk", "S3"]
     },
     {
+        "taskName": "CodeDeployDeployApplication",
+        "taskClients": ["CodeDeploy", "S3"]
+    },
+    {
         "taskName": "CloudFormationCreateOrUpdateStack",
         "taskClients": ["CloudFormation", "S3"]
     },

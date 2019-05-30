@@ -4,6 +4,7 @@
  */
 
 import {
+    CodeDeploy,
     CloudFormation,
     ECR,
     ElasticBeanstalk,
@@ -40,6 +41,22 @@ export async function createDefaultBeanstalk(
         configuration.awsConnectionParameters,
         logger
     )) as ElasticBeanstalk
+}
+
+export async function createDefaultCodeDeploy(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<CodeDeploy> {
+    const codeDeployOpts: CodeDeploy.ClientConfiguration = {
+        apiVersion: '2014-10-06'
+    }
+
+    return (await SdkUtils.createAndConfigureSdkClient(
+        CodeDeploy,
+        codeDeployOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as CodeDeploy
 }
 
 export async function createDefaultCloudFormation(
