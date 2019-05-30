@@ -1,5 +1,9 @@
 [
     {
+        "taskName": "BeanstalkCreateApplicationVersion",
+        "taskClients": ["Beanstalk", "S3"]
+    },
+    {
         "taskName": "BeanstalkDeployApplication",
         "taskClients": ["Beanstalk", "S3"]
     },
