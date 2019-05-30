@@ -101,7 +101,6 @@ export class TaskOperations {
                 }
             }
 
-            const targetDir = path.dirname(targetPath)
             targetPath = targetPath.replace(/\\/g, '/')
             const stats = fs.lstatSync(matchedFile)
             if (!stats.isDirectory()) {
