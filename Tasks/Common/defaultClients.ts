@@ -4,8 +4,8 @@
  */
 
 import {
-    CodeDeploy,
     CloudFormation,
+    CodeDeploy,
     ECR,
     ElasticBeanstalk,
     IAM,

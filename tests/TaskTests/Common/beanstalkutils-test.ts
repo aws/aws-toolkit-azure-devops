@@ -4,7 +4,7 @@
  */
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
-import { BeanstalkUtils } from 'Common/beanstalkutils'
+import { BeanstalkUtils } from 'Common/beanstalkUtils'
 import { SdkUtils } from 'Common/sdkutils'
 import path = require('path')
 

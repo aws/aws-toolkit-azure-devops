@@ -171,6 +171,7 @@ export class TaskOperations {
         archive.pipe(output)
 
         archive.directory(bundleFolder, false)
+        // tslint:disable-next-line: no-floating-promises
         archive.finalize()
         await defer.promise
 
