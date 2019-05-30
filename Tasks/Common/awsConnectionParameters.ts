@@ -94,8 +94,8 @@ export function buildConnectionParameters(): AWSConnectionParameters {
 // Unpacks credentials from the specified endpoint configuration, if defined
 function attemptEndpointCredentialConfiguration(
     awsparams: AWSConnectionParameters,
-    endpointName: string): AWS.Credentials {
-
+    endpointName: string
+): AWS.Credentials {
     if (!endpointName) {
         return undefined
     }
@@ -127,18 +127,15 @@ function attemptEndpointCredentialConfiguration(
 
     const customDurationVariable = tl.getVariable(roleCredentialMaxDurationVariableName)
     if (customDurationVariable) {
-        try {
-            const customDuration = parseInt(customDurationVariable, 10)
-            if (customDuration >= minDuration && customDuration <= maxduration) {
-                throw new RangeError(
-                   `Invalid credential duration '${customDurationVariable}',` +
-                   ` minimum is ${minDuration}seconds, max ${maxduration}seconds`)
-            } else {
-                duration = customDuration
-            }
-        } catch (err) {
+        const customDuration = parseInt(customDurationVariable, 10)
+        if (isNaN(customDuration) || customDuration < minDuration || customDuration > maxduration) {
             console.warn(
-                `...ignoring invalid custom ${roleCredentialMaxDurationVariableName} setting due to error: ${err}`)
+                `Invalid credential duration '${customDurationVariable}', minimum is ${this.minDuration} seconds, max ${
+                    this.maxduration
+                } seconds`
+            )
+        } else {
+            duration = customDuration
         }
     }
 
@@ -171,9 +168,10 @@ function attemptCredentialConfigurationFromVariables(): AWS.Credentials {
 
     const secretKey = tl.getVariable(awsSecretAccessKeyVariable)
     if (!secretKey) {
-        throw new Error (
-            'AWS access key ID present in task variables but secret key value is missing; '
-            + 'cannot configure task credentials.')
+        throw new Error(
+            'AWS access key ID present in task variables but secret key value is missing; ' +
+                'cannot configure task credentials.'
+        )
     }
 
     const token = tl.getVariable(awsSessionTokenVariable)
@@ -194,19 +192,20 @@ function attemptCredentialConfigurationFromVariables(): AWS.Credentials {
 // environment variables on the build host (or, if the build host is
 // an EC2 instance, in instance metadata).
 export async function getCredentials(awsParams: AWSConnectionParameters): Promise<AWS.Credentials> {
-
     console.log('Configuring credentials for task')
 
-    const credentials = attemptEndpointCredentialConfiguration(awsParams, tl.getInput('awsCredentials', false))
-                     || attemptCredentialConfigurationFromVariables()
+    const credentials =
+        attemptEndpointCredentialConfiguration(awsParams, tl.getInput('awsCredentials', false)) ||
+        attemptCredentialConfigurationFromVariables()
     if (credentials) {
         return credentials
     }
 
     // at this point user either has to have credentials in environment vars or
     // ec2 instance metadata
-    console.log('No credentials configured.' +
-    'The task will attempt to use credentials found in the build host environment.')
+    console.log(
+        'No credentials configured.' + 'The task will attempt to use credentials found in the build host environment.'
+    )
 
     return undefined
 }
@@ -218,25 +217,24 @@ async function queryRegionFromMetadata(): Promise<string> {
         const metadataService = new AWS.MetadataService()
         metadataService.httpOptions.timeout = 5000
         metadataService.request('/latest/dynamic/instance-identity/document', (err, data) => {
-                try {
-                    if (err) {
-                        throw err
-                    }
-
-                    console.log('...received instance identity document from metadata')
-                    const identity = JSON.parse(data)
-                    // tslint:disable-next-line: no-unsafe-any
-                    if (identity.region) {
-                        // tslint:disable-next-line: no-unsafe-any
-                        resolve(identity.region)
-                    } else {
-                        throw new Error('...region value not found in instance identity metadata')
-                    }
-                } catch (err) {
-                    reject(err)
+            try {
+                if (err) {
+                    throw err
                 }
+
+                console.log('...received instance identity document from metadata')
+                const identity = JSON.parse(data)
+                // tslint:disable-next-line: no-unsafe-any
+                if (identity.region) {
+                    // tslint:disable-next-line: no-unsafe-any
+                    resolve(identity.region)
+                } else {
+                    throw new Error('...region value not found in instance identity metadata')
+                }
+            } catch (err) {
+                reject(err)
             }
-        )
+        })
     })
 }
 
