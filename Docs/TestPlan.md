@@ -53,20 +53,22 @@ Each test hooks into a task like so:
                                |
                          Runs  |
                                |
-                               | <----------------------------------- End to end tests
+                               | <----------<-----------<------------ End to end tests
                     VSTS Agent |
                                +
 ```
 
 \*"Utils" and "Operations" both use AWS service clients and access the system environment as well,
-however most of these calls are to objects that are injected into Operations
+however most of these calls are to objects that are injected by way of the TaskOperations constructor.
 
-## Current tests
+## Tests as they exist today
 
 ### Unit Tests
 
-Unit test coverage is limited, but CloudFormationUtils, SdkUtils, and BeanstalkUtils have
-unit tests testing good and bad scenarios for every function contained in them.
+Unit test coverage is limited.
+
+Currently, CloudFormationUtils, SdkUtils, and BeanstalkUtils have unit tests testing success
+and failure paths for every function contained in them.
 
 ### Functional Tests
 
