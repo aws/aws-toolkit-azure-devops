@@ -12,7 +12,7 @@ requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIB
 
 ## Highlighted Features
 
--   AWSCLI - Interact with the AWSCLI (Windows hosts only for now)
+-   AWSCLI - Interact with the AWSCLI (Windows hosts only)
 -   AWS Powershell Module - Interact with AWS through powershell (Windows hosts only)
 -   Beanstalk - Deploy ElasticBeanstalk applications
 -   CodeDeploy - Deploy with CodeDeploy
