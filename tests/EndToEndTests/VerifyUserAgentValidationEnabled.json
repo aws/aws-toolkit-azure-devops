@@ -1,0 +1,85 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "validateUserAgentEnvVariable": { "value": "AWSVSTSTesting_ValidateUserAgent", "allowOverride": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "PowerShell Script",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "PowerShell_1",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "scriptType": "inlineScript",
+                            "scriptName": "",
+                            "arguments": "$(validateUserAgentEnvVariable)",
+                            "workingFolder": "",
+                            "inlineScript": "Param(\n [string]$varName # the name of the environment variable controlling whether we perform agent string validation\n)\n\nWrite-Host \"Validating that User-Agent in requests is set correctly\"\n\ntry \n{\n # value doesn't matter, enough that the variable is set\n Get-Item Env:$varName\n Write-Host \"PASS! Environment variable $varName is set, user agent validation is being performed\"\n}\ncatch\n{\n throw \"FAIL! Environment variable $varName to control user agent validation is NOT set!\"\n}",
+                            "failOnStandardError": "true"
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "true",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 1,
+    "name": "VerifyUserAgentValidationEnabled",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 4,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

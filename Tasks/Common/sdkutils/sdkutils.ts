@@ -8,6 +8,7 @@ import S3 = require('aws-sdk/clients/s3')
 import AWS = require('aws-sdk/global')
 import fs = require('fs')
 import path = require('path')
+import { parse, format } from 'url';
 import tl = require('vsts-task-lib/task')
 import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
 
@@ -233,5 +234,35 @@ export abstract class SdkUtils {
         }
 
         return arr
+    }
+
+    // For tasks that do not use the AWS SDK for Node.js, tests for the preferred
+    // Agent.ProxyUrl and related settings being set and configures the HTTP(S)_PROXY
+    // variables depending on the indicated protocol. Tasks that use the SDK are
+    // configured automatically in the constructor above.
+    // Note: some users rely on HTTP(S)_PROXY in their environment and do not set
+    // their agents up as noted in https://github.com/Microsoft/vsts-agent/blob/master/docs/start/proxyconfig.md.
+    // Therefore this task only updates the HTTP(s)_ environment variables if the task
+    // returns proxy configuration data read from Agent.ProxyUrl et al.
+    public static async configureHttpProxyFromAgentProxyConfiguration(taskName: string): Promise<void> {
+        const proxyConfig = tl.getHttpProxyConfiguration();
+        if (!proxyConfig) {
+            return;
+        }
+
+        const proxy = parse(proxyConfig.proxyUrl);
+        if (proxyConfig.proxyUsername || proxyConfig.proxyPassword) {
+            proxy.auth = `${proxyConfig.proxyUsername}:${proxyConfig.proxyPassword}`;
+        }
+        const proxyUrl = format(proxy);
+        // in case a user has HTTPS_ set, and not HTTP_ (or vice versa)
+        // only set the specific variable corresponding to the protocol
+        if (proxy.protocol === 'https:') {
+            tl.debug(`${taskName} setting HTTPS_PROXY to host ${proxy.host}`);
+            process.env.HTTPS_PROXY = proxyUrl;
+        } else {
+            tl.debug(`${taskName} setting HTTP_PROXY to host ${proxy.host}`);
+            process.env.HTTP_PROXY = proxyUrl;
+        }
     }
 }

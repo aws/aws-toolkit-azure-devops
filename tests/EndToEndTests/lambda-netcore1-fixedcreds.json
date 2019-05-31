@@ -1,0 +1,201 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "functionName": { "value": "TFS2017-lambda-netcore1-toupper-fixedcreds", "allowOverride": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Deploy",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "LambdaNETCoreDeploy_1",
+                        "task": {
+                            "id": "0c632a66-60d4-498a-88c8-1c69cc057ef1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "command": "deployFunction",
+                            "packageOnly": "false",
+                            "packageOutputFile": "",
+                            "lambdaProjectPath": "netcore1.0/LambdaToUpper/LambdaToUpper",
+                            "functionName": "$(functionName)",
+                            "functionRole": "LambdaExecReadOnly",
+                            "functionHandler": "LambdaToUpper::LambdaToUpper.Function::FunctionHandler",
+                            "functionMemory": "",
+                            "functionTimeout": "",
+                            "stackName": "",
+                            "s3Bucket": "",
+                            "s3Prefix": "",
+                            "additionalArgs": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate deployment",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_2",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "arguments": "$(functionName)",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$functionName\n)\n\nWrite-Host \"Retrieving deployed function details\"\n$fnCfg = Get-LMFunctionConfiguration -FunctionName $functionName\nif (!$fnCfg) \n{\n throw \"FAIL! Could not retrieve configuration for function $functionName\"\n}\n\nWrite-Host \"Inspecting function configuration\"\nif ($fnCfg.FunctionName -ne $functionName)\n{\n throw \"FAIL! retrieved configuration has function name $fnCfg.FunctionName, expected $functionName\"\n}\n\nWrite-Host \"PASS!\"",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Test invoke",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "LambdaInvokeFunction_3",
+                        "task": {
+                            "id": "c9e49f96-6c7d-4420-97f1-5e0dfd816354",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "functionName": "$(functionName)",
+                            "payload": "hello",
+                            "invocationType": "RequestResponse",
+                            "outputVariable": "functionOutput",
+                            "logType": "None",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate invoke",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_4",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "arguments": "\"HELLO\" $(functionOutput)",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$expected,\n [string]$actual\n)\n\nif ($expected -ne $actual)\n{\n throw \"FAIL! expected output = $expected, actual = $actual\"\n}\n\nWrite-Host \"PASS!\"\n\n",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Cleanup",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "AWSPowerShellModuleScript_5",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "arguments": "$(functionName)",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$functionName\n)\n\nRemove-LMFunction -FunctionName $functionName -Force",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 14,
+    "name": "lambda-netcore1-fixedcreds",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 5,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

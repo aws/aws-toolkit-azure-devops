@@ -1,0 +1,143 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "stackName": { "value": "", "allowOverride": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Deploy",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "LambdaNETCoreDeploy_1",
+                        "task": {
+                            "id": "0c632a66-60d4-498a-88c8-1c69cc057ef1",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "command": "deployServerless",
+                            "packageOnly": "false",
+                            "packageOutputFile": "",
+                            "lambdaProjectPath": "netcore2.0\\S3ServerlessApp\\S3ServerlessApp",
+                            "functionName": "",
+                            "functionRole": "",
+                            "functionHandler": "",
+                            "functionMemory": "",
+                            "functionTimeout": "",
+                            "stackName": "$(stackName)",
+                            "s3Bucket": "$(bucketName)",
+                            "s3Prefix": "serverless-NetCore2-fixedCreds",
+                            "additionalArgs": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_2",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "arguments": "$(stackName)",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$stackName\n)\n\nWrite-Host \"Retrieving deployed stack details\"\n$stack = Get-CFNStack -StackName $stackName\nif (!$stack) \n{\n throw \"FAIL! Could not retrieve configuration for stack $stackName\"\n}\n\nWrite-Host \"Inspecting stack configuration\"\n$status = $stack.StackStatus.ToString()\nif ($status -ne 'CREATE_COMPLETE')\n{\n throw \"FAIL! retrieved stack configuration shows stack at state $status, expected CREATE_COMPLETE\"\n}\n\nWrite-Host \"PASS!\"",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Cleanup",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "CloudFormationDeleteStack_3",
+                        "task": {
+                            "id": "089bda61-367d-4d7c-a06b-88f7e2f20f22",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "stackName": "$(stackName)",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 33,
+    "name": "serverless-netcore2-fixedcreds",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 3,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

@@ -1,0 +1,276 @@
+{
+    "options": [
+        {
+            "enabled": true,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "BuildConfiguration": { "value": "release", "allowOverride": true },
+        "BuildPlatform": { "value": "any cpu", "allowOverride": true },
+        "applicationName": { "value": "aspnetcore-instancecreds", "allowOverride": true },
+        "bundleKey": { "value": "beanstalk_assets/AspNetCoreWebApplication.zip", "allowOverride": true },
+        "stackNamePrefix": { "value": "", "allowOverride": true }
+    },
+    "buildNumberFormat": "$(date:yyyyMMdd)$(rev:.r)",
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Create test infrastructure",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "CloudFormationCreateOrUpdateStack_1",
+                        "task": {
+                            "id": "7ef7cdfa-aa45-42c5-93c8-d7603643dd99",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackNamePrefix)-$(applicationName)",
+                            "templateSource": "file",
+                            "templateFile": "testinfrastructure/BeanstalkTasksTestEnvironment/BeanstalkTasksTestEnvironment.template",
+                            "s3BucketName": "$(bucketName)",
+                            "s3ObjectKey": "",
+                            "templateUrl": "",
+                            "templateParametersSource": "inline",
+                            "templateParametersFile": "",
+                            "templateParameters": "[\n { \"ParameterKey\" : \"EBApplicationName\", \"ParameterValue\" : \"$(applicationName)\" },\n { \"ParameterKey\" : \"EBEnvironmentName\", \"ParameterValue\" : \"$(applicationName)-dev\" },\n { \"ParameterKey\" : \"DeploymentBundleBucket\", \"ParameterValue\" : \"$(bucketName)\" },\n { \"ParameterKey\" : \"DeploymentBundleKey\", \"ParameterValue\" : \"$(bundleKey)\" }\n]",
+                            "useChangeSet": "false",
+                            "changeSetName": "",
+                            "description": "",
+                            "autoExecuteChangeSet": "true",
+                            "capabilityIAM": "true",
+                            "capabilityNamedIAM": "true",
+                            "roleARN": "",
+                            "resourceTypes": "",
+                            "notificationARNs": "",
+                            "tags": "",
+                            "monitorRollbackTriggers": "false",
+                            "monitoringTimeInMinutes": "0",
+                            "rollbackTriggerARNs": "",
+                            "onFailure": "ROLLBACK",
+                            "disableRollback": "false",
+                            "warnWhenNoWorkNeeded": "true",
+                            "outputVariable": "",
+                            "timeoutInMins": "60",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Restore",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "DotNetCoreCLI_2",
+                        "task": {
+                            "id": "5541a522-603c-47ad-91fc-a4b1d163081b",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "command": "restore",
+                            "publishWebProjects": "true",
+                            "projects": "$(Parameters.RestoreBuildProjects)",
+                            "arguments": "",
+                            "zipAfterPublish": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Build",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "DotNetCoreCLI_3",
+                        "task": {
+                            "id": "5541a522-603c-47ad-91fc-a4b1d163081b",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "command": "build",
+                            "publishWebProjects": "true",
+                            "projects": "$(Parameters.RestoreBuildProjects)",
+                            "arguments": "--configuration $(BuildConfiguration)",
+                            "zipAfterPublish": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Publish",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "DotNetCoreCLI_4",
+                        "task": {
+                            "id": "5541a522-603c-47ad-91fc-a4b1d163081b",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "command": "publish",
+                            "publishWebProjects": "false",
+                            "projects": "asp.netcore/AspNetCoreWebApplication/AspNetCoreWebApplication/AspNetCoreWebApplication.csproj",
+                            "arguments": "--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)",
+                            "zipAfterPublish": "true"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Deploy",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "BeanstalkDeployApplication_5",
+                        "task": {
+                            "id": "1399d161-270d-4ee9-b913-78b177165406",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "applicationName": "$(applicationName)",
+                            "environmentName": "$(applicationName)-dev",
+                            "applicationType": "aspnetCoreWindows",
+                            "webDeploymentArchive": "",
+                            "dotnetPublishPath": "$(Build.ArtifactStagingDirectory)\\AspNetCoreWebApplication.zip",
+                            "deploymentBundleBucket": "",
+                            "deploymentBundleKey": "",
+                            "versionLabel": "$(Build.BuildNumber)",
+                            "description": "",
+                            "outputVariable": "",
+                            "eventPollingDelay": "10",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_6",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "arguments": "$(applicationName) $(applicationName)-dev $(Build.BuildNumber)",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$appName,\n [string]$appEnv,\n [string]$appVersion\n)\n\nWrite-Host \"Validating version was received by Beanstalk\"\n$version = Get-EBApplicationVersion -ApplicationName $appName -VersionLabel $appVersion\nif (!$version)\n{\n throw \"FAIL! Could not find version $appVersion for app $appName\"\n}\n\nWrite-Host \"Validating version running on environment\"\n$runningVersion = (Get-EBEnvironment -ApplicationName $appName -EnvironmentName $appEnv).VersionLabel | select -First 1\nif ($appVersion -ne $runningVersion)\n{\n throw \"FAIL! Environment is running version $runningVersion, not the expected $appVersion)\"\n}\n\nWrite-Host \"PASS!\"\n",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": true,
+                        "displayName": "Delete test infrastructure",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeededOrFailed()",
+                        "refName": "CloudFormationDeleteStack_7",
+                        "task": {
+                            "id": "089bda61-367d-4d7c-a06b-88f7e2f20f22",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "stackName": "$(stackNamePrefix)-$(applicationName)",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {
+        "inputs": [
+            {
+                "options": {},
+                "properties": {},
+                "name": "RestoreBuildProjects",
+                "label": "Project(s) to restore and build",
+                "defaultValue": "asp.netcore/AspNetCoreWebApplication/AspNetCoreWebApplication/*.csproj",
+                "type": "multiline",
+                "helpMarkDown": "Relative path of the .csproj file(s) from repo root. Wildcards can be used. For example, **/*.csproj for all .csproj files in all the subfolders.",
+                "visibleRule": "",
+                "groupName": ""
+            }
+        ]
+    },
+    "quality": 1,
+    "drafts": [],
+    "id": 6,
+    "name": "beanstalk-aspnetcore-instancecreds",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 4,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}
