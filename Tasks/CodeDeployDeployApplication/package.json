@@ -3,15 +3,10 @@
     "version": "1.1.8",
     "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
     "main": "CodeDeployDeployApplication.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "author": "",
     "license": "MIT",
     "dependencies": {
         "archiver": "^2.0.0",
-        "aws-sdk": "2.279.1",
-        "sdkutils": "file:../../_build/Tasks/Common/sdkutils",
-        "vsts-task-lib": "^2.0.6"
+        "sdkutils": "file:../../_build/Tasks/Common/sdkutils"
     }
 }

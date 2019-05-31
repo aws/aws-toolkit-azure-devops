@@ -1,5 +1,23 @@
 [
     {
+        "taskName": "AWSShellScript",
+        "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-AWSShellScript'"],
+        "successResult": "tl.loc('BashReturnCode', result)",
+        "returnType": "number"
+    },
+    {
+        "taskName": "BeanstalkCreateApplicationVersion",
+        "taskClients": ["Beanstalk", "S3"]
+    },
+    {
+        "taskName": "BeanstalkDeployApplication",
+        "taskClients": ["Beanstalk", "S3"]
+    },
+    {
+        "taskName": "CodeDeployDeployApplication",
+        "taskClients": ["CodeDeploy", "S3"]
+    },
+    {
         "taskName": "CloudFormationCreateOrUpdateStack",
         "taskClients": ["CloudFormation", "S3"]
     },
