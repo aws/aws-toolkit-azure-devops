@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -10,10 +10,7 @@ import tr = require('vsts-task-lib/toolrunner')
 import Parameters = require('./TaskParameters')
 
 export class TaskOperations {
-
-    public constructor(
-        public readonly taskParameters: Parameters.TaskParameters
-    ) {}
+    public constructor(public readonly taskParameters: Parameters.TaskParameters) {}
 
     public async execute(): Promise<void> {
         this.checkIfAwsCliIsInstalled()
@@ -28,8 +25,7 @@ export class TaskOperations {
             awsCliTool.line(this.taskParameters.awsCliParameters)
         }
         // tslint:disable-next-line: no-unsafe-any
-        const code: number = await awsCliTool
-            .exec({ failOnStdErr: this.taskParameters.failOnStandardError } as any)
+        const code: number = await awsCliTool.exec({ failOnStdErr: this.taskParameters.failOnStandardError } as any)
         tl.debug(`return code: ${code}`)
         if (code !== 0) {
             throw new Error(tl.loc('AwsReturnCode', awsCliTool, code))
