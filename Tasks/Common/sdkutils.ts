@@ -42,10 +42,10 @@ export abstract class SdkUtils {
             const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
             const version = taskManifest.version
             const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
-                this.userAgentSuffix
-            }-${taskManifest.name}`
-            // tslint:disable-next-line: no-unsafe-any
-            ;(AWS as any).util.userAgent = () => {
+                    this.userAgentSuffix
+                }-${taskManifest.name}`
+                // tslint:disable-next-line:align
+            ;((AWS as any).util as any).userAgent = () => {
                 return userAgentString
             }
         } else {
@@ -64,6 +64,10 @@ export abstract class SdkUtils {
 
         return tempDirectory
     }
+
+    // This next block has a huge amount of unsafe any. This is needed because it does a bunch of
+    // hacking around with the prototype. I'm scared to touch it so I will not.
+    // tslint:disable: no-unsafe-any
 
     // Returns a new instance of a service client, having attached request handlers
     // to enable tracing of request/response data if the task is so configured. The
@@ -140,9 +144,9 @@ export abstract class SdkUtils {
         // instance metadata
         if (awsServiceOpts) {
             if (!awsServiceOpts.credentials) {
-                const credentials = await await getCredentials(taskParams)
-                if (credentials) {
-                    awsServiceOpts.credentials = await credentials.getPromise()
+                const creds = await getCredentials(taskParams)
+                if (creds) {
+                    awsServiceOpts.credentials = await creds.getPromise()
                 }
             }
             if (!awsServiceOpts.region) {
@@ -159,6 +163,8 @@ export abstract class SdkUtils {
             region: await getRegion()
         })
     }
+
+    // tslint:enable: no-unsafe-any
 
     public static async roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {
         if (roleName.startsWith('arn:')) {

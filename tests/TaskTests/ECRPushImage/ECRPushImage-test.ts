@@ -58,7 +58,7 @@ const ecrReturnsToken = {
 describe('Secrets Manger Get Secret', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/ECRPushImage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/ECRPushImage/task.json')
     })
 
     test('Creates a TaskOperation', () => {

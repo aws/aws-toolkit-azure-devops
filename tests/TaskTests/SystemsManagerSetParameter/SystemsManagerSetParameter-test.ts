@@ -63,7 +63,7 @@ jest.mock('aws-sdk')
 describe('Systems Manager Set Parameter', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/SystemsManagerSetParameter/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SystemsManagerSetParameter/task.json')
     })
 
     test('Creates a TaskOperation', () => {

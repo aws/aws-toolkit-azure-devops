@@ -75,7 +75,7 @@ const getIamRoleSucceeds = {
 describe('Lambda Deploy Function', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../../_build/Tasks/LambdaDeployFunction/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/LambdaDeployFunction/task.json')
     })
 
     test('Creates a TaskOperation', () => {
