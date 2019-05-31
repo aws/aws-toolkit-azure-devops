@@ -6,11 +6,12 @@
 import IAM = require('aws-sdk/clients/iam')
 import S3 = require('aws-sdk/clients/s3')
 import AWS = require('aws-sdk/global')
+import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
+import { VSTSTaskManifest } from 'Common/vstsUtils'
 import fs = require('fs')
 import path = require('path')
-import { parse, format } from 'url'
+import { format, parse } from 'url'
 import tl = require('vsts-task-lib/task')
-import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
 
 export abstract class SdkUtils {
     private static readonly agentTempDirectoryVariable: string = 'Agent.TempDirectory'
@@ -38,11 +39,12 @@ export abstract class SdkUtils {
     // sdk so usage metrics can be tied to the tools.
     public static setSdkUserAgentFromManifest(taskManifestFilePath: string): void {
         if (fs.existsSync(taskManifestFilePath)) {
-            const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8'))
+            const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
             const version = taskManifest.version
             const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
                 this.userAgentSuffix
             }-${taskManifest.name}`
+            // tslint:disable-next-line: no-unsafe-any
             ;(AWS as any).util.userAgent = () => {
                 return userAgentString
             }
@@ -151,6 +153,7 @@ export abstract class SdkUtils {
         }
 
         const credentials = await getCredentials(taskParams)
+
         return new awsService({
             credentials: credentials ? credentials.getPromise() : undefined,
             region: await getRegion()
@@ -205,7 +208,8 @@ export abstract class SdkUtils {
     }
 
     public static getTagsDictonary<T, K extends keyof T>(tags: string[]): T[K] {
-        let arr: T[K] = {} as T[K]
+        // tslint:disable-next-line:no-object-literal-type-assertion
+        const arr: T[K] = {} as T[K]
 
         this.getTags(tags).forEach(item => (arr[`${item.Key}`] = item.Value))
 
