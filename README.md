@@ -3,70 +3,31 @@
 Build: ![TravisCI Build Status - master branch](https://travis-ci.org/aws/aws-vsts-tools.svg?branch=master)
 Coverage: [![codecov](https://codecov.io/gh/aws/aws-vsts-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/aws/aws-vsts-tools)
 
-The AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
+AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
 
-The AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
+AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
 
 This is an open source project because we want you to be involved. We love issues, feature requests, code reviews, pull
 requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIBUTING.md) guide for how to help, including how to build your own extension.
 
-**Note for Team Foundation Server 2015 Users:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for extra fields in the _AWS_ endpoint type to support _Assume Role_ credentials. These fields, although marked optional, are unfortunately treated as required in TFS 2015 editions.
+## Highlighted Features
+
+-   AWSCLI - Interact with the AWSCLI (Windows hosts only)
+-   AWS Powershell Module - Interact with AWS through powershell (Windows hosts only)
+-   Beanstalk - Deploy ElasticBeanstalk applications
+-   CodeDeploy - Deploy with CodeDeploy
+-   CloudFormation - Create/Delete/Update CloudFormation stacks
+-   ECR - Push an image to an ECR repository
+-   Lambda - Deploy from S3, .net core applications, or any other language that builds on VSTS
+-   S3 - Upload/Download to/from S3 buckets
+-   Secrets Manager - Create and retrieve secrets
+-   SQS - Send SQS messages
+-   SNS - Send SNS messages
+-   Systems manager - Get/set parameters and run commands
 
 ## User Guide
 
 The [User Guide](https://docs.aws.amazon.com/vsts/latest/userguide/welcome.html) contains additional instructions for getting up and running with the extension.
-
-## Highlighted Features
-
-### Transfer Files to and from Amazon S3 Buckets
-
-Upload files to an Amazon Simple Storage Service (S3) Bucket with the AWS S3 Upload task or download from a bucket with the AWS S3 Download task.
-
-![s3 upload](images/AWSS3Upload.png)
-
-### Deploy .NET Core serverless applications or standalone functions to AWS Lambda
-
-![lambda appdeploy](images/AWSLambdaDeploy.png)
-
-### Invoke an AWS Lambda Function
-
-Invoke Lambda functions from within the build or release pipeline.
-
-![CLI](images/AWSLambdaFunction.png)
-
-### Create/update AWS CloudFormation stacks
-
-Create new AWS CloudFormation stacks or update an existing stack.
-
-![CloudFormation](images/AWSCloudFormation.png)
-
-### Deploy to AWS Elastic Beanstalk
-
-Deploy ASP.NET or ASP.NET Core applications to Elastic Beanstalk environments.
-
-![Beanstalk](images/AWSElasticBeanstalk.png)
-
-### Deploy to Amazon EC2 with AWS CodeDeploy
-
-Deploy applications to EC2 instances using CodeDeploy.
-
-![CodeDeploy](images/AWSCodeDeploy.png)
-
-### Send a message to an Simple Notification Service Topic or Simple Queue Service Queue
-
-![SNSTopic](images/AWSSendMessage.png)
-
-### Run AWS Tools for Windows PowerShell scripts
-
-Run scripts using cmdlets from the AWS Tools for Windows PowerShell (AWSPowerShell) module, optionally installing the module before use.
-
-![AWSPowerShell](images/AWSPowerShellScript.png)
-
-### Run AWS CLI commands
-
-Run AWS CLI commands against an AWS connection.
-
-![AWSCLI](images/AWSCLI.png)
 
 ## Credentials Handling for AWS Services
 
@@ -94,16 +55,20 @@ Select the _AWS_ endpoint type and provide the following parameters. Please refe
 -   AWS Access Key ID
 -   AWS Secret Access Key
 
-![aws endpoint](images/AWSEndpoint.png)
-
 **Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
 
 Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and one hour (3600 seconds).
 
-## Minimum supported environments
+## Supported environments
 
--   Visual Studio Team Services
+-   Azure Devops
 -   Team Foundation Server 2015 Update 3 (or higher)
+
+**Note for Team Foundation Server 2015 Users:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for extra fields in the _AWS_ endpoint type to support _Assume Role_ credentials. These fields, although marked optional, are unfortunately treated as required in TFS 2015 editions.
+
+## License
+
+The project is licenced under the MIT license
 
 ## Contributors
 
