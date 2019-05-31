@@ -9,7 +9,6 @@ linterOptions:
         # TODO remove these as modules are fixed https://github.com/aws/aws-vsts-tools/issues/183
         - Tasks/AWSCLI/**
         - Tasks/AWSPowerShellModuleScript/**
-        - Tasks/AWSShellScript/**
         - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
         - Tasks/LambdaNETCoreDeploy/**

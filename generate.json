@@ -1,5 +1,11 @@
 [
     {
+        "taskName": "AWSShellScript",
+        "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-AWSShellScript'"],
+        "successResult": "tl.loc('BashReturnCode', result)",
+        "returnType": "number"
+    },
+    {
         "taskName": "BeanstalkCreateApplicationVersion",
         "taskClients": ["Beanstalk", "S3"]
     },
