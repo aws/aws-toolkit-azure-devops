@@ -44,7 +44,7 @@ export abstract class SdkUtils {
             const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
                     this.userAgentSuffix
                 }-${taskManifest.name}`
-                // tslint:disable-next-line:align
+                // tslint:disable-next-line:whitespace align
             ;((AWS as any).util as any).userAgent = () => {
                 return userAgentString
             }
