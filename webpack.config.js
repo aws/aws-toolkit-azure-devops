@@ -1,5 +1,4 @@
 var webpack = require('webpack')
-var nodeExternals = require('webpack-node-externals')
 var path = require('path')
 var TerserPlugin = require('terser-webpack-plugin')
 
@@ -12,7 +11,6 @@ module.exports = {
     resolve: {
         alias: {
             'aws-sdk': path.resolve(__dirname, 'node_modules/aws-sdk'),
-            sdkutils: path.resolve(__dirname, '_build/Tasks/Common/sdkutils'),
             Common: path.resolve(__dirname, '_build/Tasks/Common')
         }
     },

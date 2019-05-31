@@ -10,7 +10,6 @@
 **/*.taskkey
 **/*/*.loc.json
 **/*/resources.resjson
-**/package-lock.json
 **/.DS_Store
 coverage/
 
