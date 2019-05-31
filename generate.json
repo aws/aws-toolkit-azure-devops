@@ -50,6 +50,10 @@
         "taskClients": ["Lambda"]
     },
     {
+        "taskName": "LambdaNETCoreDeploy",
+        "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-LambdaNETCoreDeploy'"]
+    },
+    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
     },
