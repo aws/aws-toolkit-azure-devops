@@ -108,7 +108,7 @@ describe('CodeDeploy Deploy Application', () => {
         process.env.TEMP = __dirname
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.deploymentRevisionSource = revisionSourceFromWorkspace
-        taskParameters.revisionBundle = path.join(__dirname, '../../Resources/CodeDeployCode')
+        taskParameters.revisionBundle = path.join(__dirname, '../../resources/codeDeployCode')
         taskParameters.applicationName = 'test'
         const s3 = new S3() as any
         s3.upload = jest.fn(args => {
@@ -143,7 +143,7 @@ describe('CodeDeploy Deploy Application', () => {
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.deploymentRevisionSource = revisionSourceFromS3
         taskParameters.applicationName = 'test'
-        taskParameters.bundleKey = path.join(__dirname, '../../Resources/CodeDeployCode.zip')
+        taskParameters.bundleKey = path.join(__dirname, '../../resources/codeDeployCode.zip')
         const s3 = new S3() as any
         s3.headObject = jest.fn(() => emptyPromise)
         const codeDeploy = new CodeDeploy() as any
