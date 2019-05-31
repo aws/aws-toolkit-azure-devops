@@ -8,7 +8,6 @@ linterOptions:
         - '**/*.json'
         # TODO remove these as modules are fixed https://github.com/aws/aws-vsts-tools/issues/183
         - Tasks/AWSPowerShellModuleScript/**
-        - Tasks/Common/sdkutils/awsTaskParametersBase.ts
         - Tasks/Common/sdkutils/sdkutils.ts
 
 rules:
@@ -132,7 +131,7 @@ rules:
     file-header:
         options:
             - "Copyright \\d{4} Amazon.com, Inc. or its affiliates. All Rights Reserved.\\r?\\n \\* SPDX-License-Identifier: MIT"
-            - "Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.\nSPDX-License-Identifier: MIT"
+            - "Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.\nSPDX-License-Identifier: MIT"
     file-name-casing:
         options:
             - camel-case

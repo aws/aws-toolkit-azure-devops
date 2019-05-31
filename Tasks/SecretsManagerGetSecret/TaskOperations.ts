@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -12,8 +12,7 @@ export class TaskOperations {
     public constructor(
         public readonly secretsManagerClient: SecretsManager,
         public readonly taskParameters: TaskParameters
-     ) {
-     }
+    ) {}
 
     public async execute(): Promise<void> {
         console.log(tl.loc('RetrievingSecret', this.taskParameters.secretIdOrName))

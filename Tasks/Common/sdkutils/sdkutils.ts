@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -8,7 +8,7 @@ import S3 = require('aws-sdk/clients/s3')
 import AWS = require('aws-sdk/global')
 import fs = require('fs')
 import path = require('path')
-import { parse, format } from 'url';
+import { parse, format } from 'url'
 import tl = require('vsts-task-lib/task')
 import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
 
@@ -245,24 +245,24 @@ export abstract class SdkUtils {
     // Therefore this task only updates the HTTP(s)_ environment variables if the task
     // returns proxy configuration data read from Agent.ProxyUrl et al.
     public static async configureHttpProxyFromAgentProxyConfiguration(taskName: string): Promise<void> {
-        const proxyConfig = tl.getHttpProxyConfiguration();
+        const proxyConfig = tl.getHttpProxyConfiguration()
         if (!proxyConfig) {
-            return;
+            return
         }
 
-        const proxy = parse(proxyConfig.proxyUrl);
+        const proxy = parse(proxyConfig.proxyUrl)
         if (proxyConfig.proxyUsername || proxyConfig.proxyPassword) {
-            proxy.auth = `${proxyConfig.proxyUsername}:${proxyConfig.proxyPassword}`;
+            proxy.auth = `${proxyConfig.proxyUsername}:${proxyConfig.proxyPassword}`
         }
-        const proxyUrl = format(proxy);
+        const proxyUrl = format(proxy)
         // in case a user has HTTPS_ set, and not HTTP_ (or vice versa)
         // only set the specific variable corresponding to the protocol
         if (proxy.protocol === 'https:') {
-            tl.debug(`${taskName} setting HTTPS_PROXY to host ${proxy.host}`);
-            process.env.HTTPS_PROXY = proxyUrl;
+            tl.debug(`${taskName} setting HTTPS_PROXY to host ${proxy.host}`)
+            process.env.HTTPS_PROXY = proxyUrl
         } else {
-            tl.debug(`${taskName} setting HTTP_PROXY to host ${proxy.host}`);
-            process.env.HTTP_PROXY = proxyUrl;
+            tl.debug(`${taskName} setting HTTP_PROXY to host ${proxy.host}`)
+            process.env.HTTP_PROXY = proxyUrl
         }
     }
 }

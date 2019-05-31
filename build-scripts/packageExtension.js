@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -12,18 +12,9 @@ const folders = require('./scriptUtils')
 const timeMessage = 'Packaged extension'
 const manifestFile = 'vss-extension.json'
 
-const ignoredFolders = [
-    'Common',
-    '.DS_Store'
-]
+const ignoredFolders = ['Common', '.DS_Store']
 
-const vstsFiles = [
-    'task.json',
-    'task.loc.json',
-    'package.json',
-    'icon.png',
-    'Strings'
-]
+const vstsFiles = ['task.json', 'task.loc.json', 'package.json', 'icon.png', 'Strings']
 
 function findMatchingFiles(directory) {
     return fs.readdirSync(directory)
@@ -32,12 +23,16 @@ function findMatchingFiles(directory) {
 function package(options) {
     fs.mkdirpSync(folders.packageRoot)
 
-    fs.copySync(path.join(folders.repoRoot, 'LICENSE'), path.join(folders.packageRoot, 'LICENSE'), {overwrite: true})
-    fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.packageRoot, 'README.md'), {overwrite: true})
-    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.packageRoot, manifestFile), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'LICENSE'), path.join(folders.packageRoot, 'LICENSE'), { overwrite: true })
+    fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.packageRoot, 'README.md'), {
+        overwrite: true
+    })
+    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.packageRoot, manifestFile), {
+        overwrite: true
+    })
 
     // stage manifest images
-    fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.packageRoot, 'images'), {overwrite: true})
+    fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.packageRoot, 'images'), { overwrite: true })
 
     fs.mkdirpSync(folders.packageTasks)
 
@@ -45,7 +40,11 @@ function package(options) {
     findMatchingFiles(folders.sourceTasks).forEach(function(taskName) {
         console.log('Processing task ' + taskName)
 
-        if(ignoredFolders.some((folderName) => { return folderName === taskName})) {
+        if (
+            ignoredFolders.some(folderName => {
+                return folderName === taskName
+            })
+        ) {
             console.log('Skpping task ' + taskName)
             return
         }
@@ -62,8 +61,10 @@ function package(options) {
             return
         }
         shell.cd(taskBuildFolder)
-        for( const resourceFile of vstsFiles) {
-            fs.copySync(path.join(taskBuildFolder, resourceFile), path.join(taskPackageFolder, resourceFile), {overwrite: true}) 
+        for (const resourceFile of vstsFiles) {
+            fs.copySync(path.join(taskBuildFolder, resourceFile), path.join(taskPackageFolder, resourceFile), {
+                overwrite: true
+            })
         }
 
         // Here we grab either TASKNAME.js or TASKNAME.runner.js depending on which one exists
@@ -72,7 +73,7 @@ function package(options) {
         // TODO https://github.com/aws/aws-vsts-tools/issues/187 when this is done, remove the check
         var inputFilename
         try {
-            fs.accessSync(taskName + '.js') 
+            fs.accessSync(taskName + '.js')
             inputFilename = taskName + '.js'
         } catch (e) {
             inputFilename = taskName + '.runner.js'
@@ -80,16 +81,24 @@ function package(options) {
 
         console.log('packing node-based task')
         const webpackConfig = path.join(folders.repoRoot, 'webpack.config.js')
-        const webpackCmd = 'webpack '
-                        + '--config ' + webpackConfig + ' '
-                        + inputFilename + ' '
-                        + '--output-path ' + path.join(taskPackageFolder) + ' '
-                        + '--output-filename ' + taskName + '.js' + ' '
+        const webpackCmd =
+            'webpack ' +
+            '--config ' +
+            webpackConfig +
+            ' ' +
+            inputFilename +
+            ' ' +
+            '--output-path ' +
+            path.join(taskPackageFolder) +
+            ' ' +
+            '--output-filename ' +
+            taskName +
+            '.js' +
+            ' '
         console.log(webpackCmd)
         try {
-            ncp.execSync(webpackCmd, {stdio: 'pipe'})
-        }
-        catch (err) {
+            ncp.execSync(webpackCmd, { stdio: 'pipe' })
+        } catch (err) {
             console.error(err.output ? err.output.toString() : err.message)
             process.exit(1)
         }
@@ -97,10 +106,9 @@ function package(options) {
         shell.cd(taskPackageFolder)
         var npmCmd = 'npm install vsts-task-lib --only=production'
         try {
-            output = ncp.execSync(npmCmd, {stdio: 'pipe'})
+            output = ncp.execSync(npmCmd, { stdio: 'pipe' })
             console.log(output)
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err.output ? err.output.toString() : err.message)
             process.exit(1)
         }
@@ -109,21 +117,27 @@ function package(options) {
     })
 
     console.log('Creating deployment vsix')
-    var tfxcmd = 'tfx extension create --root ' + folders.packageRoot + ' --output-path ' + folders.packageRoot + ' --manifests ' + path.join(folders.packageRoot, manifestFile)
+    var tfxcmd =
+        'tfx extension create --root ' +
+        folders.packageRoot +
+        ' --output-path ' +
+        folders.packageRoot +
+        ' --manifests ' +
+        path.join(folders.packageRoot, manifestFile)
     if (options.publisher) {
         tfxcmd += ' --publisher ' + options.publisher
     }
 
     console.log('Packaging with:' + tfxcmd)
 
-    ncp.execSync(tfxcmd, {stdio: 'pipe'})
+    ncp.execSync(tfxcmd, { stdio: 'pipe' })
 
     console.log('Packaging successful')
 }
 
 console.time(timeMessage)
 var options = process.argv.slice(2)
-if(options.length > 0 && options[0].split('=')[0] === 'publisher') {
+if (options.length > 0 && options[0].split('=')[0] === 'publisher') {
     options.publisher = options[0].split('=')[1]
 }
 package(options)

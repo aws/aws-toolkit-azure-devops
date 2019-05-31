@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -29,17 +29,17 @@ describe('S3 Download', () => {
     }
 
     const headBucketResponse = {
-        promise: function() { }
+        promise: function() {}
     }
 
     const listObjectsResponse = {
         promise: function() {
-            return { NextMarker: undefined, Contents: undefined}
+            return { NextMarker: undefined, Contents: undefined }
         }
     }
     const listObjectsResponseWithContents = {
         promise: function() {
-            return { NextMarker: undefined, Contents: [{Key: 'test', Value: 'value'}]}
+            return { NextMarker: undefined, Contents: [{ Key: 'test', Value: 'value' }] }
         }
     }
     const getObjectWithContents = {
@@ -66,11 +66,15 @@ describe('S3 Download', () => {
 
     test('Handles not being able to connect to a bucket', async () => {
         const s3 = new S3({ region: 'us-east-1' })
-        s3.headBucket = jest.fn()((params: any, cb: any) => { throw new Error('doesn\'t exist dummy') })
+        s3.headBucket = jest.fn()((params: any, cb: any) => {
+            throw new Error("doesn't exist dummy")
+        })
         const taskParameters = baseTaskParameters
         const taskOperation = new TaskOperations(s3, taskParameters)
         expect.assertions(1)
-        await taskOperation.execute().catch((e) => { expect(e.message).toContain('not exist') })
+        await taskOperation.execute().catch(e => {
+            expect(e.message).toContain('not exist')
+        })
     })
 
     test('Deals with null list objects succeeds', async () => {
@@ -87,8 +91,12 @@ describe('S3 Download', () => {
     })
 
     test('Happy path matches all', async () => {
-        try {fs.unlinkSync(targetFolder + '2/test') } catch (e) {}
-        try {fs.rmdirSync(targetFolder + '2') } catch (e) {}
+        try {
+            fs.unlinkSync(targetFolder + '2/test')
+        } catch (e) {}
+        try {
+            fs.rmdirSync(targetFolder + '2')
+        } catch (e) {}
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjects = jest.fn((params, cb) => listObjectsResponseWithContents)
@@ -103,8 +111,14 @@ describe('S3 Download', () => {
 
     afterAll(() => {
         // cleanup created folders
-        try {fs.rmdirSync(targetFolder) } catch (e) {}
-        try {fs.unlinkSync(targetFolder + '2/test') } catch (e) {}
-        try {fs.rmdirSync(targetFolder + '2') } catch (e) {}
+        try {
+            fs.rmdirSync(targetFolder)
+        } catch (e) {}
+        try {
+            fs.unlinkSync(targetFolder + '2/test')
+        } catch (e) {}
+        try {
+            fs.rmdirSync(targetFolder + '2')
+        } catch (e) {}
     })
 })

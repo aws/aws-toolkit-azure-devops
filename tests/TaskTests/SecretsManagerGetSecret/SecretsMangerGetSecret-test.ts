@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -21,19 +21,27 @@ const defaultTaskParameters: TaskParameters = {
 }
 
 const secretsManagerFails = {
-    promise: function() { throw new Error('doesn\'t exist') }
+    promise: function() {
+        throw new Error("doesn't exist")
+    }
 }
 
 const secretsManagerReturnsString = {
-    promise: function() { return {SecretString: 'string'} }
+    promise: function() {
+        return { SecretString: 'string' }
+    }
 }
 
 const secretsManagerReturnsBadBase64 = {
-    promise: function() { return {SecretBinary: 'strOo0ing'} }
+    promise: function() {
+        return { SecretBinary: 'strOo0ing' }
+    }
 }
 
 const secretsManagerReturnsValidBase64 = {
-    promise: function() { return {SecretBinary: 'YWJjCg=='} }
+    promise: function() {
+        return { SecretBinary: 'YWJjCg==' }
+    }
 }
 
 describe('Secrets Manger Get Secret', () => {
@@ -50,14 +58,16 @@ describe('Secrets Manger Get Secret', () => {
         const badSecretsManager = new SecretsManager() as any
         badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerFails)
         const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
-        await taskOperations.execute().catch((e) => { expect(e.message).toContain('doesn\'t exist') })
+        await taskOperations.execute().catch(e => {
+            expect(e.message).toContain("doesn't exist")
+        })
     })
 
     test('Fails on bad base64', async () => {
         const badSecretsManager = new SecretsManager() as any
         badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsBadBase64)
         const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
-        await taskOperations.execute().catch((e) => {
+        await taskOperations.execute().catch(e => {
             expect(e.message).toContain('the string to be decoded is not correctly encoded')
         })
     })
@@ -83,7 +93,7 @@ describe('Secrets Manger Get Secret', () => {
     })
 
     test('Prioritizes version id', async () => {
-        const taskParametersWithExtraFields = {...defaultTaskParameters}
+        const taskParametersWithExtraFields = { ...defaultTaskParameters }
         taskParametersWithExtraFields.versionId = 'abc'
         taskParametersWithExtraFields.versionStage = 'def'
         const secretsManager = new SecretsManager() as any
