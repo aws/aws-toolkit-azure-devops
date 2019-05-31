@@ -68,7 +68,7 @@ Tasks can also use assumed role credentials by adding the Amazon Resource name (
 
 ## License
 
-The project is licenced under the MIT license
+The project is licensed under the MIT license
 
 ## Contributors
 
