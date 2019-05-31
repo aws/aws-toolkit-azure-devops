@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -13,11 +13,7 @@ import { testBucketExists } from 'Common/s3'
 import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    public constructor(
-        public readonly s3Client: S3,
-        public readonly taskParameters: TaskParameters
-    ) {
-    }
+    public constructor(public readonly s3Client: S3, public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         const exists = await testBucketExists(this.s3Client, this.taskParameters.bucketName)
@@ -31,18 +27,15 @@ export class TaskOperations {
     }
 
     private async downloadFiles() {
-
         let msgSource: string
         if (this.taskParameters.sourceFolder) {
             msgSource = this.taskParameters.sourceFolder
         } else {
             msgSource = '/'
         }
-        console.log(tl.loc(
-            'DownloadingFiles',
-            msgSource,
-            this.taskParameters.bucketName,
-            this.taskParameters.targetFolder))
+        console.log(
+            tl.loc('DownloadingFiles', msgSource, this.taskParameters.bucketName, this.taskParameters.targetFolder)
+        )
 
         if (!fs.existsSync(this.taskParameters.targetFolder)) {
             tl.mkdirP(this.taskParameters.targetFolder)
@@ -87,7 +80,6 @@ export class TaskOperations {
 
     private async downloadFile(s3Params: S3.GetObjectRequest, dest: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-
             const dir: string = path.dirname(dest)
             if (!fs.existsSync(dir)) {
                 tl.mkdirP(dir)
@@ -104,10 +96,9 @@ export class TaskOperations {
 
     private async fetchAllObjectKeys(): Promise<string[]> {
         if (this.taskParameters.sourceFolder) {
-            console.log(tl.loc(
-                'ListingKeysFromPrefix',
-                this.taskParameters.sourceFolder,
-                this.taskParameters.bucketName))
+            console.log(
+                tl.loc('ListingKeysFromPrefix', this.taskParameters.sourceFolder, this.taskParameters.bucketName)
+            )
         } else {
             console.log(tl.loc('ListingKeysFromRoot', this.taskParameters.bucketName))
         }
@@ -125,7 +116,7 @@ export class TaskOperations {
                 const s3Data = await this.s3Client.listObjects(params).promise()
                 nextToken = s3Data.NextMarker
                 if (s3Data.Contents) {
-                    s3Data.Contents.forEach((s3object) => {
+                    s3Data.Contents.forEach(s3object => {
                         // AWS IDE toolkits can cause 0 byte 'folder markers' to be in the bucket,
                         // filter those out
                         if (!s3object.Key.endsWith('_$folder$')) {
@@ -153,7 +144,7 @@ export class TaskOperations {
 
         const matcher = new mm.Minimatch(glob)
         const matchedKeys: string[] = []
-        allKeys.forEach((key) => {
+        allKeys.forEach(key => {
             const keyToTest: string = key.substring(sourcePrefixLen)
             if (matcher.match(keyToTest)) {
                 tl.debug(tl.loc('MatchedKey', key))

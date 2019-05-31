@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -40,7 +40,7 @@ export function buildTaskParameters(): TaskParameters {
         secretValueSource: tl.getInput('secretValueSource', true),
         secretValue: undefined,
         secretValueFile: undefined,
-        autoCreateSecret:  tl.getBoolInput('autoCreateSecret', false),
+        autoCreateSecret: tl.getBoolInput('autoCreateSecret', false),
         tags: undefined,
         arnOutputVariable: tl.getInput('arnOutputVariable', false),
         versionIdOutputVariable: tl.getInput('versionIdOutputVariable', false)
