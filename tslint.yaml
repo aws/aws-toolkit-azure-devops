@@ -6,9 +6,6 @@ linterOptions:
     exclude:
         - node_modules/**
         - '**/*.json'
-        # TODO remove these as modules are fixed https://github.com/aws/aws-vsts-tools/issues/183
-        - Tasks/AWSPowerShellModuleScript/**
-        - Tasks/Common/sdkutils/sdkutils.ts
 
 rules:
     # TypeScript-specific
