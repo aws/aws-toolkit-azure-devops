@@ -4,9 +4,9 @@
  */
 
 import { S3 } from 'aws-sdk'
+import { SdkUtils } from 'Common/sdkutils'
 import * as fs from 'fs'
 import { Readable as ReadableStream } from 'stream'
-import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Download/TaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Download/TaskParameters'
 

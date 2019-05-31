@@ -4,9 +4,9 @@
  */
 
 import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
+import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
-import { SdkUtils } from 'sdkutils/sdkutils'
 import tl = require('vsts-task-lib/task')
 import tr = require('vsts-task-lib/toolrunner')
 import { inlineScriptType, TaskParameters } from './TaskParameters'

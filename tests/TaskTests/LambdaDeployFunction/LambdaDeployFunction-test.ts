@@ -4,7 +4,7 @@
  */
 
 import { IAM, Lambda } from 'aws-sdk'
-import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaDeployFunction/TaskOperations'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters } from '../../../Tasks/LambdaDeployFunction/TaskParameters'
 

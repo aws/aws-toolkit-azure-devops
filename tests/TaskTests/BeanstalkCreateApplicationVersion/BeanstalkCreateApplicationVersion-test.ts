@@ -5,7 +5,7 @@
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
 
-import { SdkUtils } from 'Common/sdkutils/sdkutils'
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskOperations'
 import {
     applicationTypeAspNet,

@@ -5,9 +5,9 @@
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
 
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/BeanstalkDeployApplication/TaskOperations'
 import { TaskParameters } from '../../../Tasks/BeanstalkDeployApplication/TaskParameters'
-import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any

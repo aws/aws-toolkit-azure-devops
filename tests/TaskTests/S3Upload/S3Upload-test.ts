@@ -4,7 +4,7 @@
  */
 
 import { S3 } from 'aws-sdk'
-import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Upload/TaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Upload/TaskParameters'
 

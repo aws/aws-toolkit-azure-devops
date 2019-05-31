@@ -4,6 +4,7 @@
  */
 
 import { CodeDeploy, S3 } from 'aws-sdk'
+import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
 import { TaskOperations } from '../../../Tasks/CodeDeployDeployApplication/TaskOperations'
@@ -12,7 +13,6 @@ import {
     revisionSourceFromWorkspace,
     TaskParameters
 } from '../../../Tasks/CodeDeployDeployApplication/TaskParameters'
-import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any

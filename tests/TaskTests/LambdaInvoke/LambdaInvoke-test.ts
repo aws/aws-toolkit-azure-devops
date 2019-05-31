@@ -4,7 +4,7 @@
  */
 
 import { Lambda } from 'aws-sdk'
-import { SdkUtils } from '../../../Tasks/Common/sdkutils/sdkutils'
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaInvokeFunction/TaskOperations'
 import { TaskParameters } from '../../../Tasks/LambdaInvokeFunction/TaskParameters'
 
