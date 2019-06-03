@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Beanstalk = require('aws-sdkclients/elasticbeanstalk')
-import S3 = require('aws-sdkclients/s3')
+import * as tl from 'vsts-task-lib/task'
+
+import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import { BeanstalkUtils } from 'Common/beanstalkUtils'
 import { SdkUtils } from 'Common/sdkutils'
-import path = require('path')
-import tl = require('vsts-task-lib')
+import { basename } from 'path'
 import {
     applicationTypeAspNet,
     applicationTypeAspNetCoreForWindows,
@@ -18,7 +18,7 @@ import {
 
 export class TaskOperations {
     public constructor(
-        public readonly beanstalkClient: Beanstalk,
+        public readonly beanstalkClient: ElasticBeanstalk,
         public readonly s3Client: S3,
         public readonly taskParameters: TaskParameters
     ) {}
@@ -52,7 +52,7 @@ export class TaskOperations {
                 deploymentBundle = this.taskParameters.webDeploymentArchive
             }
 
-            s3Key = `${this.taskParameters.applicationName}/${this.taskParameters.environmentName}/${path.basename(
+            s3Key = `${this.taskParameters.applicationName}/${this.taskParameters.environmentName}/${basename(
                 deploymentBundle,
                 '.zip'
             )}-${versionLabel}.zip`
@@ -103,12 +103,12 @@ export class TaskOperations {
         isExistingVersion: boolean
     ): Promise<void> {
         if (!isExistingVersion) {
-            const sourceBundle: Beanstalk.S3Location = {
+            const sourceBundle: ElasticBeanstalk.S3Location = {
                 S3Bucket: bucketName,
                 S3Key: key
             }
 
-            const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
+            const versionRequest: ElasticBeanstalk.CreateApplicationVersionMessage = {
                 ApplicationName: application,
                 VersionLabel: versionLabel,
                 SourceBundle: sourceBundle,
@@ -132,7 +132,7 @@ export class TaskOperations {
             console.log(tl.loc('DeployingExistingVersion', versionLabel))
         }
 
-        const request: Beanstalk.UpdateEnvironmentMessage = {
+        const request: ElasticBeanstalk.UpdateEnvironmentMessage = {
             ApplicationName: application,
             EnvironmentName: environment,
             VersionLabel: versionLabel
@@ -152,12 +152,12 @@ export class TaskOperations {
         // auto-retry ability
         const randomJitterUpperLimit: number = 5
 
-        const requestEnvironment: Beanstalk.DescribeEnvironmentsMessage = {
+        const requestEnvironment: ElasticBeanstalk.DescribeEnvironmentsMessage = {
             ApplicationName: applicationName,
             EnvironmentNames: [environmentName]
         }
 
-        const requestEvents: Beanstalk.DescribeEventsMessage = {
+        const requestEvents: ElasticBeanstalk.DescribeEventsMessage = {
             ApplicationName: applicationName,
             EnvironmentName: environmentName,
             StartTime: startingEventDate
@@ -171,7 +171,7 @@ export class TaskOperations {
         console.log(tl.loc('EventsComing'))
 
         let success = true
-        let environment: Beanstalk.EnvironmentDescription
+        let environment: ElasticBeanstalk.EnvironmentDescription
 
         // delay the event poll by a random amount, up to 5 seconds, so that if multiple
         // deployments run in parallel they don't all start querying at the same time and
@@ -231,7 +231,7 @@ export class TaskOperations {
     }
 
     private async getLatestEventDate(applicationName: string, environmentName: string): Promise<Date> {
-        const requestEvents: Beanstalk.DescribeEventsMessage = {
+        const requestEvents: ElasticBeanstalk.DescribeEventsMessage = {
             ApplicationName: applicationName,
             EnvironmentName: environmentName
         }

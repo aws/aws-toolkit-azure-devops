@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: MIT
  */
 
+import * as tl from 'vsts-task-lib/task'
+
 import archiver = require('archiver')
-import Beanstalk = require('aws-sdk/clients/elasticbeanstalk')
-import S3 = require('aws-sdk/clients/s3')
+import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import fs = require('fs')
 import path = require('path')
 import Q = require('q')
-import tl = require('vsts-task-lib/task')
 
 export class BeanstalkUtils {
-    public static async determineS3Bucket(beanstalkClient: Beanstalk): Promise<string> {
+    public static async determineS3Bucket(beanstalkClient: ElasticBeanstalk): Promise<string> {
         const response = await beanstalkClient.createStorageLocation().promise()
         console.log(tl.loc('DeterminedBucket', response.S3Bucket))
 
@@ -120,7 +120,10 @@ export class BeanstalkUtils {
         }
     }
 
-    public static async verifyApplicationExists(beanstalkClient: Beanstalk, applicationName: string): Promise<void> {
+    public static async verifyApplicationExists(
+        beanstalkClient: ElasticBeanstalk,
+        applicationName: string
+    ): Promise<void> {
         let appExists: boolean = false
 
         try {
@@ -142,7 +145,7 @@ export class BeanstalkUtils {
     }
 
     public static async verifyEnvironmentExists(
-        beanstalkClient: Beanstalk,
+        beanstalkClient: ElasticBeanstalk,
         applicationName: string,
         environmentName: string
     ): Promise<void> {

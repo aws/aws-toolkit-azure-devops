@@ -1,4 +1,3 @@
-var webpack = require('webpack')
 var path = require('path')
 var TerserPlugin = require('terser-webpack-plugin')
 
