@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Beanstalk = require('aws-sdkclients/elasticbeanstalk')
-import S3 = require('aws-sdkclients/s3')
+import { debug, loc, setVariable } from 'vsts-task-lib'
+
+import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import { BeanstalkUtils } from 'Common/beanstalkUtils'
 import { SdkUtils } from 'Common/sdkutils'
-import path = require('path')
-import tl = require('vsts-task-lib')
+import { basename } from 'path'
 import {
     applicationTypeAspNet,
     applicationTypeAspNetCoreForWindows,
@@ -18,7 +18,7 @@ import {
 
 export class TaskOperations {
     public constructor(
-        public readonly beanstalkClient: Beanstalk,
+        public readonly beanstalkClient: ElasticBeanstalk,
         public readonly s3Client: S3,
         public readonly taskParameters: TaskParameters
     ) {}
@@ -52,7 +52,7 @@ export class TaskOperations {
                 deploymentBundle = this.taskParameters.webDeploymentArchive
             }
 
-            s3Key = `${this.taskParameters.applicationName}/${this.taskParameters.environmentName}/${path.basename(
+            s3Key = `${this.taskParameters.applicationName}/${this.taskParameters.environmentName}/${basename(
                 deploymentBundle,
                 '.zip'
             )}-${versionLabel}.zip`
@@ -86,11 +86,11 @@ export class TaskOperations {
         )
 
         if (this.taskParameters.outputVariable) {
-            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, versionLabel))
-            tl.setVariable(this.taskParameters.outputVariable, versionLabel)
+            console.log(loc('SettingOutputVariable', this.taskParameters.outputVariable, versionLabel))
+            setVariable(this.taskParameters.outputVariable, versionLabel)
         }
 
-        console.log(tl.loc('TaskCompleted', this.taskParameters.applicationName))
+        console.log(loc('TaskCompleted', this.taskParameters.applicationName))
     }
 
     private async updateEnvironment(
@@ -103,12 +103,12 @@ export class TaskOperations {
         isExistingVersion: boolean
     ): Promise<void> {
         if (!isExistingVersion) {
-            const sourceBundle: Beanstalk.S3Location = {
+            const sourceBundle: ElasticBeanstalk.S3Location = {
                 S3Bucket: bucketName,
                 S3Key: key
             }
 
-            const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
+            const versionRequest: ElasticBeanstalk.CreateApplicationVersionMessage = {
                 ApplicationName: application,
                 VersionLabel: versionLabel,
                 SourceBundle: sourceBundle,
@@ -118,7 +118,7 @@ export class TaskOperations {
             await this.beanstalkClient.createApplicationVersion(versionRequest).promise()
             if (description) {
                 console.log(
-                    tl.loc(
+                    loc(
                         'CreatedApplicationVersionWithDescription',
                         versionRequest.VersionLabel,
                         description,
@@ -126,19 +126,19 @@ export class TaskOperations {
                     )
                 )
             } else {
-                console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel, application))
+                console.log(loc('CreatedApplicationVersion', versionRequest.VersionLabel, application))
             }
         } else {
-            console.log(tl.loc('DeployingExistingVersion', versionLabel))
+            console.log(loc('DeployingExistingVersion', versionLabel))
         }
 
-        const request: Beanstalk.UpdateEnvironmentMessage = {
+        const request: ElasticBeanstalk.UpdateEnvironmentMessage = {
             ApplicationName: application,
             EnvironmentName: environment,
             VersionLabel: versionLabel
         }
         await this.beanstalkClient.updateEnvironment(request).promise()
-        console.log(tl.loc('StartingApplicationDeployment', request.VersionLabel))
+        console.log(loc('StartingApplicationDeployment', request.VersionLabel))
     }
 
     private async waitForDeploymentCompletion(
@@ -152,12 +152,12 @@ export class TaskOperations {
         // auto-retry ability
         const randomJitterUpperLimit: number = 5
 
-        const requestEnvironment: Beanstalk.DescribeEnvironmentsMessage = {
+        const requestEnvironment: ElasticBeanstalk.DescribeEnvironmentsMessage = {
             ApplicationName: applicationName,
             EnvironmentNames: [environmentName]
         }
 
-        const requestEvents: Beanstalk.DescribeEventsMessage = {
+        const requestEvents: ElasticBeanstalk.DescribeEventsMessage = {
             ApplicationName: applicationName,
             EnvironmentName: environmentName,
             StartTime: startingEventDate
@@ -165,13 +165,13 @@ export class TaskOperations {
 
         let lastPrintedEventDate = startingEventDate
 
-        console.log(tl.loc('WaitingForDeployment'))
-        console.log(tl.loc('ConfiguredEventPollDelay', eventPollDelay))
+        console.log(loc('WaitingForDeployment'))
+        console.log(loc('ConfiguredEventPollDelay', eventPollDelay))
 
-        console.log(tl.loc('EventsComing'))
+        console.log(loc('EventsComing'))
 
         let success = true
-        let environment: Beanstalk.EnvironmentDescription
+        let environment: ElasticBeanstalk.EnvironmentDescription
 
         // delay the event poll by a random amount, up to 5 seconds, so that if multiple
         // deployments run in parallel they don't all start querying at the same time and
@@ -180,7 +180,7 @@ export class TaskOperations {
         await this.sleep(initialStartDelay * 1000)
 
         do {
-            tl.debug(`...event poll sleep for ${eventPollDelay}s`)
+            debug(`...event poll sleep for ${eventPollDelay}s`)
             await this.sleep(eventPollDelay * 1000)
 
             // if any throttling exception escapes the sdk's default retry logic,
@@ -190,7 +190,7 @@ export class TaskOperations {
                     .describeEnvironments(requestEnvironment)
                     .promise()
                 if (responseEnvironments.Environments.length === 0) {
-                    throw new Error(tl.loc('FailedToFindEnvironment'))
+                    throw new Error(loc('FailedToFindEnvironment'))
                 }
                 environment = responseEnvironments.Environments[0]
 
@@ -218,7 +218,7 @@ export class TaskOperations {
                 // tslint:disable-next-line: no-unsafe-any
                 if (err.code === 'Throttling') {
                     eventPollDelay += Math.floor(Math.random() * randomJitterUpperLimit) + 1
-                    console.log(tl.loc('EventPollWaitExtended', eventPollDelay))
+                    console.log(loc('EventPollWaitExtended', eventPollDelay))
                 } else {
                     throw err
                 }
@@ -226,12 +226,12 @@ export class TaskOperations {
         } while (environment.Status === 'Launching' || environment.Status === 'Updating')
 
         if (!success) {
-            throw new Error(tl.loc('FailedToDeploy'))
+            throw new Error(loc('FailedToDeploy'))
         }
     }
 
     private async getLatestEventDate(applicationName: string, environmentName: string): Promise<Date> {
-        const requestEvents: Beanstalk.DescribeEventsMessage = {
+        const requestEvents: ElasticBeanstalk.DescribeEventsMessage = {
             ApplicationName: applicationName,
             EnvironmentName: environmentName
         }
