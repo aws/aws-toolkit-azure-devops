@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import IAM = require('aws-sdk/clients/iam')
-import S3 = require('aws-sdk/clients/s3')
-import AWS = require('aws-sdk/global')
+import * as tl from 'vsts-task-lib/task'
+
+import { IAM, S3 } from 'aws-sdk/clients/all'
+import * as AWS from 'aws-sdk/global'
 import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { VSTSTaskManifest } from 'Common/vstsUtils'
-import fs = require('fs')
-import path = require('path')
+import * as fs from 'fs'
+import * as path from 'path'
 import { format, parse } from 'url'
-import tl = require('vsts-task-lib/task')
 
 export abstract class SdkUtils {
     private static readonly agentTempDirectoryVariable: string = 'Agent.TempDirectory'

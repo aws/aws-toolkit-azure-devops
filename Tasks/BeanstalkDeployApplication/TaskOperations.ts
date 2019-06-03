@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { debug, loc, setVariable } from 'vsts-task-lib'
+import * as tl from 'vsts-task-lib/task'
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import { BeanstalkUtils } from 'Common/beanstalkUtils'
@@ -86,11 +86,11 @@ export class TaskOperations {
         )
 
         if (this.taskParameters.outputVariable) {
-            console.log(loc('SettingOutputVariable', this.taskParameters.outputVariable, versionLabel))
-            setVariable(this.taskParameters.outputVariable, versionLabel)
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, versionLabel))
+            tl.setVariable(this.taskParameters.outputVariable, versionLabel)
         }
 
-        console.log(loc('TaskCompleted', this.taskParameters.applicationName))
+        console.log(tl.loc('TaskCompleted', this.taskParameters.applicationName))
     }
 
     private async updateEnvironment(
@@ -118,7 +118,7 @@ export class TaskOperations {
             await this.beanstalkClient.createApplicationVersion(versionRequest).promise()
             if (description) {
                 console.log(
-                    loc(
+                    tl.loc(
                         'CreatedApplicationVersionWithDescription',
                         versionRequest.VersionLabel,
                         description,
@@ -126,10 +126,10 @@ export class TaskOperations {
                     )
                 )
             } else {
-                console.log(loc('CreatedApplicationVersion', versionRequest.VersionLabel, application))
+                console.log(tl.loc('CreatedApplicationVersion', versionRequest.VersionLabel, application))
             }
         } else {
-            console.log(loc('DeployingExistingVersion', versionLabel))
+            console.log(tl.loc('DeployingExistingVersion', versionLabel))
         }
 
         const request: ElasticBeanstalk.UpdateEnvironmentMessage = {
@@ -138,7 +138,7 @@ export class TaskOperations {
             VersionLabel: versionLabel
         }
         await this.beanstalkClient.updateEnvironment(request).promise()
-        console.log(loc('StartingApplicationDeployment', request.VersionLabel))
+        console.log(tl.loc('StartingApplicationDeployment', request.VersionLabel))
     }
 
     private async waitForDeploymentCompletion(
@@ -165,10 +165,10 @@ export class TaskOperations {
 
         let lastPrintedEventDate = startingEventDate
 
-        console.log(loc('WaitingForDeployment'))
-        console.log(loc('ConfiguredEventPollDelay', eventPollDelay))
+        console.log(tl.loc('WaitingForDeployment'))
+        console.log(tl.loc('ConfiguredEventPollDelay', eventPollDelay))
 
-        console.log(loc('EventsComing'))
+        console.log(tl.loc('EventsComing'))
 
         let success = true
         let environment: ElasticBeanstalk.EnvironmentDescription
@@ -180,7 +180,7 @@ export class TaskOperations {
         await this.sleep(initialStartDelay * 1000)
 
         do {
-            debug(`...event poll sleep for ${eventPollDelay}s`)
+            tl.debug(`...event poll sleep for ${eventPollDelay}s`)
             await this.sleep(eventPollDelay * 1000)
 
             // if any throttling exception escapes the sdk's default retry logic,
@@ -190,7 +190,7 @@ export class TaskOperations {
                     .describeEnvironments(requestEnvironment)
                     .promise()
                 if (responseEnvironments.Environments.length === 0) {
-                    throw new Error(loc('FailedToFindEnvironment'))
+                    throw new Error(tl.loc('FailedToFindEnvironment'))
                 }
                 environment = responseEnvironments.Environments[0]
 
@@ -218,7 +218,7 @@ export class TaskOperations {
                 // tslint:disable-next-line: no-unsafe-any
                 if (err.code === 'Throttling') {
                     eventPollDelay += Math.floor(Math.random() * randomJitterUpperLimit) + 1
-                    console.log(loc('EventPollWaitExtended', eventPollDelay))
+                    console.log(tl.loc('EventPollWaitExtended', eventPollDelay))
                 } else {
                     throw err
                 }
@@ -226,7 +226,7 @@ export class TaskOperations {
         } while (environment.Status === 'Launching' || environment.Status === 'Updating')
 
         if (!success) {
-            throw new Error(loc('FailedToDeploy'))
+            throw new Error(tl.loc('FailedToDeploy'))
         }
     }
 

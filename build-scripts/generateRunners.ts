@@ -36,7 +36,7 @@ function generate(
     returnType?: string
 ) {
     const importStament = `
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 
 import { SdkUtils } from 'Common/sdkutils'
 ${
