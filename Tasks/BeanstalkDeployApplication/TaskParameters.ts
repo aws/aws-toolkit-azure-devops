@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+import * as tl from 'vsts-task-lib/task'
+
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib')
 
 export const applicationTypeAspNet: string = 'aspnet'
 export const applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows'
