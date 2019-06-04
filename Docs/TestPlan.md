@@ -134,6 +134,6 @@ All of the functional tests follow the pattern:
 -   Systems Manager Get Parameter
     -   Set and Get combined into one (instance and fixed creds)
 -   Systems Manager Run Command
-    -   **untested**
+    -   Run one SSM command (AWS-ListWindowsInventory)
 -   Systems Manager Set Parameter
     -   Set and Get combined into one (instance and fixed creds)
