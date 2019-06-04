@@ -113,7 +113,8 @@ All of the functional tests follow the pattern:
     -   Run test in environment without docker
     -   **no happy path tests**
 -   Lambda Deploy Function
-    -   **untested**
+    -   Deploy is part of LambdaNetCoreDeploy 2.1 fixedcreds
+    -   **Deploy from s3 untested**
 -   Lambda Invoke Function
     -   Run in every deploy synchronously
 -   Lambda NETCore Deploy
