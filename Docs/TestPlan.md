@@ -110,7 +110,8 @@ All of the functional tests follow the pattern:
     -   Build solution then deploy from workspace
     -   **deploy from s3 untested**
 -   ECR push image
-    -   **untested**
+    -   Run test in environment without docker
+    -   **no happy path tests**
 -   Lambda Deploy Function
     -   **untested**
 -   Lambda Invoke Function
