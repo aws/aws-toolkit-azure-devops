@@ -16,7 +16,7 @@ import { format, parse } from 'url'
 export abstract class SdkUtils {
     private static readonly agentTempDirectoryVariable: string = 'Agent.TempDirectory'
     private static readonly userAgentPrefix: string = 'AWS-VSTS'
-    private static readonly userAgentSuffix: string = 'exec-env/VSTS'
+    private static readonly userAgentSuffix: string = 'exec-env/VSTS.'
     private static readonly userAgentHeader: string = 'User-Agent'
 
     // set on the integration test server so we validate the agent is set
@@ -42,9 +42,9 @@ export abstract class SdkUtils {
             const agentVersion = process.env.AGENT_VERSION
             const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
             const version = taskManifest.version
-            const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
+            const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch}-${
                     this.userAgentSuffix
-                }${agentVersion}-${taskManifest.name}`
+                }${agentVersion}/${taskManifest.name}`
                 // tslint:disable-next-line:whitespace align
             ;((AWS as any).util as any).userAgent = () => {
                 return userAgentString
