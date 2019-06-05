@@ -1,7 +1,7 @@
 {
     "id": "7ef7cdfa-aa45-42c5-93c8-d7603643dd99",
     "name": "CloudFormationCreateOrUpdateStack",
-    "friendlyName": "AWS CloudFormation Create Stack/Update Stack",
+    "friendlyName": "AWS CloudFormation Create/Update Stack",
     "description": "Creates a new AWS CloudFormation stack or updates the stack if it exists.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more details on working with AWS CloudFormation.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/cloudformation-create-update.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* cloudformation:CreateChangeSet\n* cloudformation:CreateStack\n* cloudformation:DeleteChangeSet\n* cloudformation:DescribeChangeSet\n* cloudformation:DescribeStacks\n* cloudformation:DescribeStackResources\n* cloudformation:ExecuteChangeSet\n* cloudformation:UpdateStack\n\nThe task may also require permissions to upload your application template to the specified Amazon S3 bucket.",
