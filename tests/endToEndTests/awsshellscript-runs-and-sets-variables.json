@@ -1,0 +1,86 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": { "system.debug": { "value": "true", "allowOverride": true } },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "AWS Shell Script",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "task": {
+                            "id": "3aea39d2-803c-43c7-b8d6-8e71b670f816",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-east-2",
+                            "arguments": "",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "# test all of the variables that are supposed to be set are set and non empty\necho ${AWS_ACCESS_KEY_ID:?\"Need to set DEST non-empty\"}\necho ${AWS_SECRET_ACCESS_KEY:?\"Need to set DEST non-empty\"}\necho ${AWS_SESSION_TOKEN?\"Need to set DEST non-empty\"}\necho ${AWS_REGION:?\"Need to set DEST non-empty\"}\n\n\n",
+                            "disableAutoCwd": "false",
+                            "cwd": "",
+                            "failOnStandardError": "false"
+                        }
+                    }
+                ],
+                "name": "Agent job 1",
+                "refName": "Phase_1",
+                "condition": "succeeded()",
+                "target": { "executionOptions": { "type": 0 }, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 1,
+                "jobCancelTimeoutInMinutes": 1
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 51,
+    "name": "AWS-shell-script-runs-and-sets-variables",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 10,
+    "project": { "name": "VstsTesting", "state": 1, "visibility": 0 }
+}
