@@ -92,9 +92,10 @@ All of the functional tests follow the pattern:
     -   Uninstall then install AWS PowerShell module by running any command
     -   **There are a ton of modules in here, currently untested, large gap**
 -   AWS Shell script
-    -   **untested**
+    -   Test running an inline and existing script, and tests changing the directory the script is run in
 -   Beanstalk Create Application Version
-    -   **untested**
+    -   Tested along with beanstalk aspnetcore fixedcreds withagentvalidationlogging by uploading the most recent version
+        and tagging it with a different number
 -   Beanstalk Create Application
     -   Deploy asp.net application
     -   Deploy asp.net core
