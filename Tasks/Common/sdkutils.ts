@@ -102,7 +102,15 @@ export abstract class SdkUtils {
                         const agent: string = httpRequest.headers[this.userAgentHeader]
                         if (
                             agent.startsWith(`${this.userAgentPrefix}/`) &&
-                            agent.includes(`${this.userAgentSuffix}-`)
+                            agent.includes(`${this.userAgentSuffix}`) &&
+                            agent.includes(`${process.env.AGENT_VERSION}`) &&
+                            agent.endsWith(
+                                `${
+                                    (JSON.parse(
+                                        fs.readFileSync(path.join(__dirname, 'task.json'), 'utf8')
+                                    ) as VSTSTaskManifest).name
+                                }`
+                            )
                         ) {
                             // Note: only displays if system.debug variable set true on the build
                             logger(`User-Agent ${agent} validated successfully`)
