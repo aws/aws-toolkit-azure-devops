@@ -29,18 +29,27 @@ export class TaskOperations {
                 const tempDir = SdkUtils.getTempLocation()
                 const fileName = `awsshellscript_${process.pid}.sh'`
                 scriptPath = path.join(tempDir, fileName)
-                tl.writeFile(scriptPath, this.taskParameters.inlineScript)
+                fs.writeFileSync(scriptPath, this.taskParameters.inlineScript, { encoding: 'utf-8' })
             } else {
                 scriptPath = this.taskParameters.filePath
             }
 
-            let cwd = this.taskParameters.cwd
-            if (!cwd && !this.taskParameters.disableAutoCwd) {
-                cwd = path.dirname(scriptPath)
+            let workingDirectory: string
+            if (this.taskParameters.disableAutoCwd) {
+                workingDirectory = this.taskParameters.workingDirectory
+            } else {
+                workingDirectory = path.dirname(scriptPath)
             }
 
-            tl.mkdirP(cwd)
-            tl.cd(cwd)
+            // The solution to this not working on windows comes from doing it like it's done in
+            // the ms task: https://github.com/microsoft/azure-pipelines-tasks/blob/master/Tasks/BashV3/bash.ts
+            // Thanks to the ms team opensourcing their tasks for the solution logic
+            if (process.platform === 'win32') {
+                scriptPath =
+                    (await this.translateWindowsPath(path.dirname(scriptPath))) + `/${path.basename(scriptPath)}`
+            }
+
+            tl.mkdirP(workingDirectory)
 
             bash.arg(scriptPath)
 
@@ -49,17 +58,47 @@ export class TaskOperations {
             }
 
             const execOptions = {
+                cwd: workingDirectory,
                 env: process.env,
+                errStream: process.stdout,
+                outStream: process.stdout,
                 failOnStdErr: this.taskParameters.failOnStandardError
             }
 
-            // tslint:disable-next-line: no-unsafe-any
-            return await bash.exec(execOptions as tr.IExecOptions)
+            return await bash.exec((execOptions as unknown) as tr.IExecOptions)
         } finally {
             if (this.taskParameters.scriptType === inlineScriptType && scriptPath && tl.exist(scriptPath)) {
                 fs.unlinkSync(scriptPath)
             }
         }
+    }
+
+    private async translateWindowsPath(windowsPath: string): Promise<string> {
+        const pwd = tl
+            .tool(tl.which('bash', true))
+            .arg('--noprofile')
+            .arg('--norc')
+            .arg('-c')
+            .arg('pwd')
+
+        const options = {
+            cwd: windowsPath,
+            errStream: process.stdout,
+            outStream: process.stdout,
+            failOnStdErr: true,
+            ignoreReturnCode: false
+        }
+        let unixPath = ''
+        // tslint:disable-next-line: no-unsafe-any
+        pwd.on('stdout', c => (unixPath += c.toString()))
+        await pwd.exec((options as unknown) as tr.IExecOptions)
+        unixPath = unixPath.trim()
+
+        if (!unixPath) {
+            throw new Error(tl.loc('BashUnableToFindScript', windowsPath))
+        }
+
+        return unixPath
     }
 
     // If assume role credentials are in play, make sure the initial generation

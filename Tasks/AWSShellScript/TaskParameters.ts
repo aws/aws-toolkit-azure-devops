@@ -16,7 +16,7 @@ export interface TaskParameters {
     filePath: string
     inlineScript: string
     disableAutoCwd: boolean
-    cwd: string
+    workingDirectory: string
     failOnStandardError: boolean
 }
 
@@ -28,7 +28,7 @@ export function buildTaskParameters(): TaskParameters {
         filePath: undefined,
         inlineScript: undefined,
         disableAutoCwd: tl.getBoolInput('disableAutoCwd', false),
-        cwd: undefined,
+        workingDirectory: undefined,
         failOnStandardError: tl.getBoolInput('failOnStandardError', false)
     }
 
@@ -38,7 +38,9 @@ export function buildTaskParameters(): TaskParameters {
         parameters.inlineScript = tl.getInput('inlineScript', true)
     }
 
-    parameters.cwd = tl.getPathInput('cwd', parameters.disableAutoCwd, false)
+    if (parameters.disableAutoCwd) {
+        parameters.workingDirectory = tl.getPathInput('workingDirectory', true, false)
+    }
 
     return parameters
 }
