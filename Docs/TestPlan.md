@@ -12,7 +12,7 @@ This document covers what we currently test, and how we test it. This document c
 -   Tests are in the `tests` folder
     -   `TaskTests` Holds unit tests and functional tests
         -   `TaskTests/Common` Holds all of our unit tests
-        -   `TaskTests/<anythingelse>` Holds all of our functional tests
+        -   `TaskTests/<anything-else>` Holds all of our functional tests
     -   `EndToEndTests` Holds end to end build definitions
     -   `Resources` Holds test resources used by the functional and unit tests
 -   New modules mean new tests!
@@ -23,7 +23,7 @@ We have three categories of tests in the project
 
 -   Unit Tests - Unit tests are used to test the various things in `Common`, including `cloudformationutils`, `sdkutils`, etc. They all test individual functions/small groups of functions.
 -   Functional Tests - Functional tests work by running the `execute` function of each of the tasks, and feeding it different combinations of mocked AWS objects and settings objects.
--   End to End Tests - End to end tests are handled with VSTS build definitions running on an on prem VSTS server and a deticated AWS account. We run tasks, then validate the result by querying AWS or the local filesystem. The tasks we run are available in tests/EndToEndTests.
+-   End to End Tests - End to end tests are handled with VSTS build definitions running on an on-prem VSTS server and a dedicated AWS account. We run tasks, then validate the result by querying AWS or the local filesystem. The tasks we run are available in tests/EndToEndTests.
 
 ### Testing
 
@@ -65,7 +65,7 @@ however most of these calls are to objects that are injected by way of the TaskO
 
 ### Unit Tests
 
-Unit tests are for testing invidiual units. This project does use a lot of classes, because
+Unit tests are for testing individual units. This project does use a lot of classes, because
 it is more like a collection of build scripts, so unit tests mostly test a file that has a theme.
 Unit tests are the most important thing to add to the project when adding code because they allow
 better branch coverage with less setup than the functional tests. As the project is developed further,
@@ -85,8 +85,8 @@ to work. In general, the point of functional tests is to make sure all of the un
 make sure that each Task is interacting properly with the service clients and settings. This is accomplished by passing in
 carefully crafted settings, and mocked implementations of service clients.
 
-For small tasks, the functional tests have great branch coverage without being too complciated, but for larger tasks like
-Beanstalk and CloudFormation, The tests are much longer. Therefore, it is perferable to grow the number of unit
+For small tasks, the functional tests have great branch coverage without being too complicated, but for larger tasks like
+Beanstalk and CloudFormation, The tests are much longer. Therefore, it is preferable to grow the number of unit
 tests over the number of functional tests as they currently serve the purpose of both making sure units work and function well
 together.
 
@@ -96,7 +96,7 @@ have functional tests of some description.
 All of the functional tests follow the pattern:
 
 1. Create a `TaskParameters` object for the task
-2. Modify `TaskParameters` to make it go throguh the desired code path
+2. Modify `TaskParameters` to make it go through the desired code path
 3. Create mocked service clients
 4. Run `TaskName.execute()`
 5. Verify service calls/failures on tasks that are supposed to fail
@@ -115,7 +115,7 @@ With this in mind, the goal for functional tests is to at least run every task (
 credentials and static credentials at least once, and to test all of as many code paths of tasks like aws shell script as
 possible.
 
-Here is the current list of tasks and how funcitonal tests currently test them, gaps are in **bold**:
+Here is the current list of tasks and how functional tests currently test them, gaps are in **bold**:
 
 -   AWSCLI
     -   Runs S3 ls
