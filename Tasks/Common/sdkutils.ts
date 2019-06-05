@@ -42,9 +42,9 @@ export abstract class SdkUtils {
             const agentVersion = process.env.AGENT_VERSION
             const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
             const version = taskManifest.version
-            const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch}-${
+            const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
                     this.userAgentSuffix
-                }${agentVersion}/${taskManifest.name}`
+                }${agentVersion} ${taskManifest.name}`
                 // tslint:disable-next-line:whitespace align
             ;((AWS as any).util as any).userAgent = () => {
                 return userAgentString
