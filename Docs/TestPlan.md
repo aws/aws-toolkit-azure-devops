@@ -100,6 +100,9 @@ Beanstalk and CloudFormation, The tests are much longer. Therefore, it is prefer
 tests over the number of functional tests as they currently serve the purpose of both making sure units work and function well
 together.
 
+Looking back at past releases that had issues, the second most common reason for issues was bad handling of parameters. The
+functional tests are great at catching this category of problem.
+
 All of the functional tests follow the pattern:
 
 1. Create a `TaskParameters` object for the task
@@ -133,9 +136,12 @@ test every code path, but to make sure we can:
 -   Any task that does heavy build/filesystem work is tested more heavily here (Lambda, Cloudformation, and beanstalk tasks)
 -   Anything that relies on the real environment is tested (like the aws shell script task or the powershell scripts)
 
-With this in mind, the goal for functional tests is to at least run every task (to see if they work at all), test instance
+With this in mind, the goals for functional tests are: to run every task (to see if they work at all), test instance
 credentials and static credentials at least once, and to test all of as many code paths of tasks like aws shell script as
 possible.
+
+Looking back at past releases that had issues, the most common issue was a task not running at all, so
+the first goal is by far the most important.
 
 Here is the current list of tasks and how functional tests currently test them, gaps are in **bold** (unlike the previous sections
 in a seperate section):
