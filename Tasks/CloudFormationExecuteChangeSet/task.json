@@ -2,18 +2,13 @@
     "id": "019b0650-1f0e-4376-ad37-1498abef311e",
     "name": "CloudFormationExecuteChangeSet",
     "friendlyName": "AWS CloudFormation Execute Change Set",
-    "description": "Executes an AWS CloudFormation change set to create or update a stack.",
+    "description": "Executes a AWS CloudFormation change set to create or update a stack.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) for more information on working with AWS CloudFormation.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/cloudformation-execute-changeset.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* cloudformation:DescribeStacks\n* cloudformation:DescribeChangeSet\n* cloudformation:DescribeStackResources\n* cloudformation:ExecuteChangeSet",
     "category": "Deploy",
-    "visibility": [
-        "Build",
-        "Release"
-    ],
+    "visibility": ["Build", "Release"],
     "demands": [],
-    "runsOn": [
-        "Agent"
-    ],
+    "runsOn": ["Agent"],
     "minimumAgentVersion": "1.91.0",
     "groups": [
         {
@@ -44,7 +39,7 @@
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
-            "options": { },
+            "options": {},
             "properties": {
                 "EditableOptions": "True"
             }

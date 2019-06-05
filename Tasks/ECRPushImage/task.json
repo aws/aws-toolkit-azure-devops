@@ -1,15 +1,12 @@
 {
     "id": "467d1870-1a00-4755-b00d-9642129fe759",
     "name": "ECRPushImage",
-    "friendlyName": "AWS Elastic Container Registry Push",
-    "description": "Push a local Docker image to AWS Elastic Container Registry",
+    "friendlyName": "AWS ECR Push",
+    "description": "Push a Docker image to AWS Elastic Container Registry",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/) documentation for working with this service.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/ecr-pushimage.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* ecr:DescribeRepositories\n* ecr:CreateRepository\n* ecr:GetAuthorizationToken",
     "category": "Deploy",
-    "visibility": [
-        "Build",
-        "Release"
-    ],
+    "visibility": ["Build", "Release"],
     "demands": [],
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Push Image: ",
@@ -41,7 +38,7 @@
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
-            "options": { },
+            "options": {},
             "properties": {
                 "EditableOptions": "True"
             }
