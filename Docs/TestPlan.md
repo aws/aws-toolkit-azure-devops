@@ -65,14 +65,30 @@ however most of these calls are to objects that are injected by way of the TaskO
 
 ### Unit Tests
 
-Unit test coverage is limited.
+Unit tests are for testing invidiual units. This project does use a lot of classes, because
+it is more like a collection of build scripts, so unit tests mostly test a file that has a theme.
+Unit tests are the most important thing to add to the project when adding code because they allow
+better branch coverage with less setup than the functional tests. As the project is developed further,
+there needs to be an effort to break things into units that can have unit tests added.
+
+Unit test coverage is limited. Some tasks do not have much opportunity to break up their usage into
+something that could be called a unit as they only interact with services directly using parameters,
+but for most other tasks unit testing should be able to be improved greatly.
 
 Currently, CloudFormationUtils, SdkUtils, and BeanstalkUtils have unit tests testing success
 and failure paths for every function contained in them.
 
 ### Functional Tests
 
-Fucntional tests
+Functional tests make up the majority of tests in the project. They test how a task and all of its components come together
+to work. In general, the point of functional tests is to make sure all of the units work together, and in this project they
+make sure that each Task is interacting properly with the service clients and settings. This is accomplished by passing in
+carefully crafted settings, and mocked implementations of service clients.
+
+For small tasks, the functional tests have great branch coverage without being too complciated, but for larger tasks like
+Beanstalk and CloudFormation, The tests are much longer. Therefore, it is perferable to grow the number of unit
+tests over the number of functional tests as they currently serve the purpose of both making sure units work and function well
+together.
 
 All modules except for "CloudFormation Create Or Update", "Beanstalk Create Application", "AWS Powershell", and "AWS CLI"
 have functional tests of some description.
