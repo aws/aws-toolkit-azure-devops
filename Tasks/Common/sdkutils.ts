@@ -103,14 +103,7 @@ export abstract class SdkUtils {
                         if (
                             agent.startsWith(`${this.userAgentPrefix}/`) &&
                             agent.includes(`${this.userAgentSuffix}`) &&
-                            agent.includes(`${process.env.AGENT_VERSION}`) &&
-                            agent.endsWith(
-                                `${
-                                    (JSON.parse(
-                                        fs.readFileSync(path.join(__dirname, 'task.json'), 'utf8')
-                                    ) as VSTSTaskManifest).name
-                                }`
-                            )
+                            agent.includes(`${process.env.AGENT_VERSION}`)
                         ) {
                             // Note: only displays if system.debug variable set true on the build
                             logger(`User-Agent ${agent} validated successfully`)
