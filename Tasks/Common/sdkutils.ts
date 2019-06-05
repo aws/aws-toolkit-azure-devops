@@ -27,32 +27,29 @@ export abstract class SdkUtils {
     public static readResources(): void {
         const taskManifestFile = path.join(__dirname, 'task.json')
         tl.setResourcePath(taskManifestFile)
-        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile)
     }
 
     public static readResourcesFromRelativePath(relativeResourcePath: string): void {
         const taskManifestFile = path.join(__dirname, relativeResourcePath)
         tl.setResourcePath(taskManifestFile)
-        SdkUtils.setSdkUserAgentFromManifest(taskManifestFile)
     }
 
     // Injects a custom user agent conveying extension version and task being run into the
     // sdk so usage metrics can be tied to the tools.
-    public static setSdkUserAgentFromManifest(taskManifestFilePath: string): void {
-        if (fs.existsSync(taskManifestFilePath)) {
-            const agentVersion = process.env.AGENT_VERSION
-            const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
-            const version = taskManifest.version
-            const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
-                    this.userAgentSuffix
-                }${agentVersion}-${taskManifest.name}`
-                // tslint:disable-next-line:whitespace align
-            ;((AWS as any).util as any).userAgent = () => {
-                return userAgentString
-            }
-        } else {
+    public static getCustomUserAgentFromManifest(taskManifestFilePath: string): string {
+        if (!fs.existsSync(taskManifestFilePath)) {
             console.warn(`Task manifest ${taskManifestFilePath} not found, cannot set custom user agent!`)
+
+            return undefined
         }
+        const agentVersion = process.env.AGENT_VERSION
+        const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
+        const version = taskManifest.version
+        const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
+            this.userAgentSuffix
+        }${agentVersion}-${taskManifest.name}`
+
+        return userAgentString
     }
 
     // prefer Agent.TempDirectory but if not available due to use of a lower agent version
@@ -153,6 +150,13 @@ export abstract class SdkUtils {
 
         if (!awsServiceOpts.region) {
             awsServiceOpts.region = await getRegion()
+        }
+
+        if (!awsServiceOpts.customUserAgent) {
+            const userAgent = SdkUtils.getCustomUserAgentFromManifest(path.join(__dirname, 'task.json'))
+            if (userAgent) {
+                awsServiceOpts.customUserAgent = userAgent
+            }
         }
 
         return new awsService(awsServiceOpts)
