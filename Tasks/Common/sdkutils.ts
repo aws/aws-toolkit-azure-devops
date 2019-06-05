@@ -7,6 +7,7 @@ import * as tl from 'vsts-task-lib/task'
 
 import { IAM, S3 } from 'aws-sdk/clients/all'
 import * as AWS from 'aws-sdk/global'
+import { ServiceConfigurationOptions } from 'aws-sdk/lib/service'
 import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { VSTSTaskManifest } from 'Common/vstsUtils'
 import * as fs from 'fs'
@@ -76,7 +77,7 @@ export abstract class SdkUtils {
     // to the task log.
     public static async createAndConfigureSdkClient(
         awsService: any,
-        awsServiceOpts: any,
+        awsServiceOpts: ServiceConfigurationOptions,
         taskParams: AWSConnectionParameters,
         logger: (msg: string) => void
     ): Promise<any> {
@@ -143,26 +144,18 @@ export abstract class SdkUtils {
         // region into the service options. If credentials remain undefined, the sdk
         // will attempt to auto-infer from the host environment variables or, if EC2,
         // instance metadata
-        if (awsServiceOpts) {
-            if (!awsServiceOpts.credentials) {
-                const creds = await getCredentials(taskParams)
-                if (creds) {
-                    awsServiceOpts.credentials = await creds.getPromise()
-                }
+        if (!awsServiceOpts.credentials) {
+            const creds = await getCredentials(taskParams)
+            if (creds) {
+                awsServiceOpts.credentials = creds
             }
-            if (!awsServiceOpts.region) {
-                awsServiceOpts.region = await getRegion()
-            }
-
-            return new awsService(awsServiceOpts)
         }
 
-        const credentials = await getCredentials(taskParams)
+        if (!awsServiceOpts.region) {
+            awsServiceOpts.region = await getRegion()
+        }
 
-        return new awsService({
-            credentials: credentials ? credentials.getPromise() : undefined,
-            region: await getRegion()
-        })
+        return new awsService(awsServiceOpts)
     }
 
     // tslint:enable: no-unsafe-any
