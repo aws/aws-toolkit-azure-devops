@@ -27,7 +27,7 @@ export class TaskOperations {
 
             if (this.taskParameters.scriptType === inlineScriptType) {
                 const tempDir = SdkUtils.getTempLocation()
-                const fileName = `awsshellscript_${process.pid}.sh'`
+                const fileName = `awsshellscript_${process.pid}.sh`
                 scriptPath = path.join(tempDir, fileName)
                 fs.writeFileSync(scriptPath, this.taskParameters.inlineScript, { encoding: 'utf-8' })
             } else {
