@@ -75,8 +75,18 @@ Unit test coverage is limited. Some tasks do not have much opportunity to break 
 something that could be called a unit as they only interact with services directly using parameters,
 but for most other tasks unit testing should be able to be improved greatly.
 
+#### Current tests
+
 Currently, CloudFormationUtils, SdkUtils, and BeanstalkUtils have unit tests testing success
 and failure paths for every function contained in them.
+
+As they exist today, the current Unit Tests do not have any obvious gaps. Every part of the project that is unit testable has tests
+that are meant to succeed and fail, and they have high (>80%) branch coverage.
+
+#### Testing Gaps
+
+The biggest gap in unit testing is that more modules need to be refactored so unit tests can be added: only a small
+percentage of the project has any unit tests.
 
 ### Functional Tests
 
@@ -90,9 +100,6 @@ Beanstalk and CloudFormation, The tests are much longer. Therefore, it is prefer
 tests over the number of functional tests as they currently serve the purpose of both making sure units work and function well
 together.
 
-All modules except for "CloudFormation Create Or Update", "Beanstalk Create Application", "AWS Powershell", and "AWS CLI"
-have functional tests of some description.
-
 All of the functional tests follow the pattern:
 
 1. Create a `TaskParameters` object for the task
@@ -100,6 +107,21 @@ All of the functional tests follow the pattern:
 3. Create mocked service clients
 4. Run `TaskName.execute()`
 5. Verify service calls/failures on tasks that are supposed to fail
+
+#### Testing Gaps
+
+The following modules do not have any functional tests:
+
+-   CloudFormation Create Or Update
+-   Beanstalk Create Application
+
+The following modules do not have functional tests, but it would make no sense to add them:
+
+-   AWS Powershell
+-   AWS CLI
+
+The other major gap is most functional tests only have ~50% branch coverage. This can be improved by improving our unit tests
+instead.
 
 ### End to End Tests
 
@@ -115,7 +137,8 @@ With this in mind, the goal for functional tests is to at least run every task (
 credentials and static credentials at least once, and to test all of as many code paths of tasks like aws shell script as
 possible.
 
-Here is the current list of tasks and how functional tests currently test them, gaps are in **bold**:
+Here is the current list of tasks and how functional tests currently test them, gaps are in **bold** (unlike the previous sections
+in a seperate section):
 
 -   AWSCLI
     -   Runs S3 ls
