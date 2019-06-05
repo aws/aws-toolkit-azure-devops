@@ -11,7 +11,10 @@
             "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
         }
     ],
-    "variables": { "system.debug": { "value": "true", "allowOverride": true } },
+    "variables": {
+        "system.debug": { "value": "true", "allowOverride": true },
+        "tempDir": { "value": "C:\\TfsAgents\\Local5\\_work\\_temp" }
+    },
     "jobAuthorizationScope": 1,
     "jobTimeoutInMinutes": 60,
     "jobCancelTimeoutInMinutes": 5,
@@ -24,7 +27,7 @@
                         "enabled": true,
                         "continueOnError": false,
                         "alwaysRun": false,
-                        "displayName": "AWS Shell Script",
+                        "displayName": "Test variables are set properly",
                         "timeoutInMinutes": 0,
                         "condition": "succeeded()",
                         "task": {
@@ -38,10 +41,110 @@
                             "arguments": "",
                             "scriptType": "inline",
                             "filePath": "",
-                            "inlineScript": "# test all of the variables that are supposed to be set are set and non empty\necho ${AWS_ACCESS_KEY_ID:?\"Need to set DEST non-empty\"}\necho ${AWS_SECRET_ACCESS_KEY:?\"Need to set DEST non-empty\"}\necho ${AWS_SESSION_TOKEN?\"Need to set DEST non-empty\"}\necho ${AWS_REGION:?\"Need to set DEST non-empty\"}\n\n\n",
+                            "inlineScript": "# test all of the variables that are supposed to be set are set and non empty\necho ${AWS_ACCESS_KEY_ID:?\"Need to set AWS_ACCESS_KEY_ID non-empty\"}\necho ${AWS_SECRET_ACCESS_KEY:?\"Need to set AWS_SECRET_ACCESS_KEY non-empty\"}\necho ${AWS_REGION:?\"Need to set AWS_REGION non-empty\"}\n\n\n",
                             "disableAutoCwd": "false",
                             "cwd": "",
                             "failOnStandardError": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Write temporary script",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "2.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "targetType": "inline",
+                            "filePath": "",
+                            "arguments": "",
+                            "script": "# ascii because utf8 adds byte order mark (BOM)\necho true | Out-File -FilePath $Env:tempDir\\echo.sh -Encoding ascii",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "pwsh": "false",
+                            "workingDirectory": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Test run existing script",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "task": {
+                            "id": "3aea39d2-803c-43c7-b8d6-8e71b670f816",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-east-2",
+                            "arguments": "",
+                            "scriptType": "filePath",
+                            "filePath": "$(tempDir)/echo.sh",
+                            "inlineScript": "",
+                            "disableAutoCwd": "false",
+                            "cwd": "",
+                            "failOnStandardError": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Test run existing script different directory",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "task": {
+                            "id": "3aea39d2-803c-43c7-b8d6-8e71b670f816",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-east-2",
+                            "arguments": "",
+                            "scriptType": "filePath",
+                            "filePath": "$(tempDir)/echo.sh",
+                            "inlineScript": "",
+                            "disableAutoCwd": "true",
+                            "cwd": "C:\\",
+                            "failOnStandardError": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": true,
+                        "alwaysRun": false,
+                        "displayName": "Cleanup",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "task": {
+                            "id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+                            "versionSpec": "2.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "targetType": "inline",
+                            "filePath": "",
+                            "arguments": "",
+                            "script": "Remove-Item –path $Env:tempDir\\echo.sh",
+                            "errorActionPreference": "silentlyContinue",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "pwsh": "false",
+                            "workingDirectory": ""
                         }
                     }
                 ],
@@ -81,6 +184,6 @@
     "path": "\\",
     "type": 2,
     "queueStatus": 0,
-    "revision": 10,
+    "revision": 30,
     "project": { "name": "VstsTesting", "state": 1, "visibility": 0 }
 }
