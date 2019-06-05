@@ -106,7 +106,8 @@ All of the functional tests follow the pattern:
 -   Cloud Formation Delete
     -   Create then delete stack (done in 4 tasks)
 -   Cloud Formation Execute Change Set
-    -   **untested**
+    -   Fail on purpose by running on nonexistant stack
+    -   **no happy path tests**
 -   Code deploy deploy
     -   Build solution then deploy from workspace
     -   **deploy from s3 untested**
