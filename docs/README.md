@@ -11,4 +11,3 @@ The [User Guide](https://docs.aws.amazon.com/vsts/latest/userguide/welcome.html)
 **NOTE:** The user-guide source content that used to live in this folder has been moved to its own [GitHub repository](https://github.com/awsdocs/aws-tools-ado-vsts-user-guide).
 
 ## Project Documentation
-
