@@ -1,11 +1,8 @@
 {
     "name": "lambdainvokefunction",
     "version": "1.1.8",
-    "description": "Invokes an AWS Lambda function with a JSON payload.",
+    "description": "Invokes an AWS Lambda function with an arbitrary payload.",
     "main": "LambdaInvokeFunction.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "author": "",
     "license": "MIT",
     "dependencies": {

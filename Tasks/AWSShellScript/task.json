@@ -2,7 +2,7 @@
     "id": "3aea39d2-803c-43c7-b8d6-8e71b670f816",
     "name": "AWSShellScript",
     "friendlyName": "AWS Shell Script",
-    "description": "Run a shell script using Bash with AWS credentials",
+    "description": "Run a shell script using Bash with AWS credentials as environment variables",
     "author": "Amazon Web Services",
     "helpMarkDown": "Runs a shell script in Bash, setting AWS credentials and region information into the shell environment using the standard environment keys _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_, _AWS_SESSION_TOKEN_ and _AWS_REGION_.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/awsshell.html).\n\n####Task Permissions\nPermissions for this task to call AWS service APIs depend on the activities in the supplied script.",
     "category": "Utility",
