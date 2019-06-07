@@ -1,8 +1,8 @@
 {
     "id": "3a219265-181c-4ed2-9a51-75a7f308f0d5",
     "name": "S3Upload",
-    "friendlyName": "AWS S3 Upload",
-    "description": "Upload file and folder content to an Amazon Simple Storage Service (S3) Bucket",
+    "friendlyName": "Amazon S3 Upload",
+    "description": "Upload file and folder content to an Amazon Simple Storage Service (S3) Bucket on AWS",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html) for more information on working with Amazon S3.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/s3-upload.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* s3:CreateBucket\n* s3:HeadBucket\n\nContent uploads are performed using S3's PutObject API and/or the multi-part upload APIs. The specific APIs used depend on the size of the individual files being uploaded.",
     "category": "Deploy",
