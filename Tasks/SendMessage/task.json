@@ -2,7 +2,7 @@
     "id": "67d18db7-e637-48f8-80b3-91f440db4931",
     "name": "SendMessage",
     "friendlyName": "AWS Send SNS or SQS Message",
-    "description": "Sends a message to a Simple Notification Service topic or Simple Query Service queue",
+    "description": "Sends a message to an Amazon Simple Notification Service topic or Amazon Simple Query Service queue",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Amazon Simple Queue Service](https://aws.amazon.com/documentation/sqs/) and [Amazon Simple Notification Service](https://aws.amazon.com/documentation/sns/) documentation for working with these services.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/send-message.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* sns:GetTopicAttributes\n* sns:Publish\n* sqs:GetQueueAttributes\n* sqs:SendMessage",
     "category": "Deploy",

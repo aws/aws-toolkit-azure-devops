@@ -2,7 +2,7 @@
     "id": "bc6233ad-6a33-41c0-b2af-9d71898008d0",
     "name": "SystemsManagerRunCommand",
     "friendlyName": "AWS SSM Run Command",
-    "description": "Run a Systems Manger command remotely on a fleet of EC2 instances and/or on-premise machines.",
+    "description": "Run a Systems Manger command remotely on a fleet of Amazon EC2 instances and/or on-premise machines.",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Systems Manager Run Command](https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html) for more information.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/systemsmanager-runcommand.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* ssm:SendCommand",
     "category": "Deploy",

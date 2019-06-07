@@ -2,14 +2,11 @@
     "id": "081ccf10-2f14-48dd-9bd0-892b8975d24f",
     "name": "AWSCLI",
     "friendlyName": "AWS CLI",
-    "description": "Run an AWS CLI command",
+    "description": "Run an AWS Command Line Interface CLI command",
     "author": "Amazon Web Services",
     "helpMarkDown": "The AWS Command Line Interface (CLI) is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts. __Note__: the AWS CLI must be already installed on the build host in order to use this task. See [Installing the AWS Command Line Interface](https://docs.aws.amazon.com/cli/latest/userguide/installing.html) for more details.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/aws-cli.html).\n\n####Task Permissions\nPermissions for this task to call AWS service APIs depend on the configured command.",
     "category": "Deploy",
-    "visibility": [
-        "Build",
-        "Release"
-    ],
+    "visibility": ["Build", "Release"],
     "demands": [],
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS CLI: $(awsCommand)",
@@ -36,7 +33,7 @@
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
-            "options": { },
+            "options": {},
             "properties": {
                 "EditableOptions": "True"
             }

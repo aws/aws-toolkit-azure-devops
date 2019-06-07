@@ -1,7 +1,7 @@
 {
     "id": "0c632a66-60d4-498a-88c8-1c69cc057ef1",
     "name": "LambdaNETCoreDeploy",
-    "friendlyName": "AWS Lambda .NET Core Deployment",
+    "friendlyName": "AWS Lambda .NET Core",
     "description": "Builds, packages and deploys a .NET Core AWS Lambda function or serverless application. Optionally, the task can create a deployment package for subsequent deployment in another build or release pipeline",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/lambda-netcore-deploy.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* lambda:CreateFunction\n* lambda:UpdateFunctionCode\n* lambda:GetFunctionConfiguration\n* cloudformation:CreateChangeSet\n* cloudformation:ExecuteChangeSet\n* cloudformation:DescribeStackEvents\n* cloudformation:DeleteStack\n* cloudformation:DescribeChangeSet\n* cloudformation:DescribeStacks\n* s3:CreateBucket\n* s3:GetBucketLocation\n\nThe task also requires permissions to upload your Lambda function or serverless application content to the specified Amazon S3 bucket. Depending on the size of the application bundle, either putObject or the S3 multi-part upload APIs may be used.",
