@@ -2,7 +2,7 @@
     "id": "467d1870-1a00-4755-b00d-9642129fe759",
     "name": "ECRPushImage",
     "friendlyName": "AWS ECR Push",
-    "description": "Push a Docker image to AWS Elastic Container Registry",
+    "description": "Push a Docker image to an AWS Elastic Container Registry",
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [Amazon Elastic Container Registry](https://docs.aws.amazon.com/AmazonECR/latest/userguide/) documentation for working with this service.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/ecr-pushimage.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* ecr:DescribeRepositories\n* ecr:CreateRepository\n* ecr:GetAuthorizationToken",
     "category": "Deploy",
