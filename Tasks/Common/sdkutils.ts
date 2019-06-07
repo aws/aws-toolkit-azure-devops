@@ -39,12 +39,11 @@ export abstract class SdkUtils {
     // sdk so usage metrics can be tied to the tools.
     public static setSdkUserAgentFromManifest(taskManifestFilePath: string): void {
         if (fs.existsSync(taskManifestFilePath)) {
-            const agentVersion = process.env.AGENT_VERSION
             const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
             const version = taskManifest.version
             const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
                     this.userAgentSuffix
-                }${agentVersion}-${taskManifest.name}`
+                }-${taskManifest.name}`
                 // tslint:disable-next-line:whitespace align
             ;((AWS as any).util as any).userAgent = () => {
                 return userAgentString
