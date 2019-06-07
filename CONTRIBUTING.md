@@ -26,6 +26,43 @@ reported the issue. Please try to include as much information as you can. Detail
 -   Build for testing purposes. Run `npm run fullBuild`
 -   Package for installation into VSTS. Run `npm run fullBuild publisher=<your-publisher-id-here>` VSTS uses this publisher ID to determine if a plugin can be installed, so make sure it matches the one in your VSTS instance.
 
+## Project Architecture
+
+The project is split into Tasks, under the `Tasks` folder, like CloudFormationCreateOrUpdate as an example.
+Each Task looks like:
+
+```
+           System environment
++------+        ^
+| Task |        |  Reads from
++------+--------------------------------------------------------+
+|               |                                               |
+|               |                    +---------------------+    |
+|               |                    | Utils (like CFUtils)|    |
+|               |                    +--------^------------+    |
+|         +-----+--------------+              |  Calls          |
+|         |   Task Parameters  |              |                 |
+|         +-----+--------------+          +---+-------------+   |
+|               ^                         | Task Operations |   |
+|   Constructs  |                         +-------^---------+   |
+|               |                                 |             |
+|               |       +-----------------+       |             |
+|               +-------+    Task Runner  +-------+ Runs        |
+|                       |  (generated)    |                     |
+|                       +------^----------+                     |
+|                              |                                |
++---------------------------------------------------------------+
+                               |
+                         Runs  |
+                               |
+                               |
+                    VSTS Agent |
+                               +
+```
+
+Each task is specified in `vss-extension.json` with a description, as well as information about the
+extension itself.
+
 ## Contributing via Pull Requests
 
 Contributions via pull requests are much appreciated. Before sending us a pull request, please ensure that:

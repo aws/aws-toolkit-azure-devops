@@ -16,7 +16,7 @@ import { format, parse } from 'url'
 export abstract class SdkUtils {
     private static readonly agentTempDirectoryVariable: string = 'Agent.TempDirectory'
     private static readonly userAgentPrefix: string = 'AWS-VSTS'
-    private static readonly userAgentSuffix: string = 'exec-env/VSTS.'
+    private static readonly userAgentSuffix: string = 'exec-env/VSTS'
     private static readonly userAgentHeader: string = 'User-Agent'
 
     // set on the integration test server so we validate the agent is set
@@ -39,12 +39,11 @@ export abstract class SdkUtils {
     // sdk so usage metrics can be tied to the tools.
     public static setSdkUserAgentFromManifest(taskManifestFilePath: string): void {
         if (fs.existsSync(taskManifestFilePath)) {
-            const agentVersion = process.env.AGENT_VERSION
             const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
             const version = taskManifest.version
             const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
                     this.userAgentSuffix
-                }${agentVersion} ${taskManifest.name}`
+                }-${taskManifest.name}`
                 // tslint:disable-next-line:whitespace align
             ;((AWS as any).util as any).userAgent = () => {
                 return userAgentString
@@ -102,8 +101,7 @@ export abstract class SdkUtils {
                         const agent: string = httpRequest.headers[this.userAgentHeader]
                         if (
                             agent.startsWith(`${this.userAgentPrefix}/`) &&
-                            agent.includes(`${this.userAgentSuffix}`) &&
-                            agent.includes(`${process.env.AGENT_VERSION}`)
+                            agent.includes(`${this.userAgentSuffix}-`)
                         ) {
                             // Note: only displays if system.debug variable set true on the build
                             logger(`User-Agent ${agent} validated successfully`)
