@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -38,14 +38,14 @@ function fetchLatestRegions() {
         var partition = allEndpoints.partitions[p]
 
         var regionKeys = Object.keys(partition.regions)
-        regionKeys.forEach((rk) => {
+        regionKeys.forEach(rk => {
             availableRegions[rk] = `${partition.regions[rk].description} [${rk.toString()}]`
         })
     }
     return availableRegions
 }
 
-var validateTask = function (task) {
+var validateTask = function(task) {
     if (!task.id || !validate.isUUID(task.id)) {
         console.error('Validation failure, id is a required guid for task:\n' + task)
         process.exit(1)
@@ -78,7 +78,7 @@ function generateTaskLoc(taskLoc, taskPath) {
     }
 
     if (taskLoc.hasOwnProperty('groups')) {
-        taskLoc.groups.forEach(function (group) {
+        taskLoc.groups.forEach(function(group) {
             if (group.hasOwnProperty('name')) {
                 group.displayName = 'ms-resource:loc.group.displayName.' + group.name
             }
@@ -86,7 +86,7 @@ function generateTaskLoc(taskLoc, taskPath) {
     }
 
     if (taskLoc.hasOwnProperty('inputs')) {
-        taskLoc.inputs.forEach(function (input) {
+        taskLoc.inputs.forEach(function(input) {
             if (input.hasOwnProperty('name')) {
                 input.label = 'ms-resource:loc.input.label.' + input.name
 
@@ -98,7 +98,7 @@ function generateTaskLoc(taskLoc, taskPath) {
     }
 
     if (taskLoc.hasOwnProperty('messages')) {
-        Object.keys(taskLoc.messages).forEach(function (key) {
+        Object.keys(taskLoc.messages).forEach(function(key) {
             taskLoc.messages[key] = 'ms-resource:loc.messages.' + key
         })
     }
@@ -106,7 +106,7 @@ function generateTaskLoc(taskLoc, taskPath) {
     fs.writeFileSync(path.join(folders.buildTasks, taskPath, taskLocJson), JSON.stringify(taskLoc, null, 2))
 }
 
-var createResjson = function (task, taskPath) {
+var createResjson = function(task, taskPath) {
     var resources = {}
     if (task.hasOwnProperty('friendlyName')) {
         resources['loc.friendlyName'] = task.friendlyName
@@ -129,7 +129,7 @@ var createResjson = function (task, taskPath) {
     }
 
     if (task.hasOwnProperty('groups')) {
-        task.groups.forEach(function (group) {
+        task.groups.forEach(function(group) {
             if (group.hasOwnProperty('name')) {
                 resources['loc.group.displayName.' + group.name] = group.displayName
             }
@@ -137,7 +137,7 @@ var createResjson = function (task, taskPath) {
     }
 
     if (task.hasOwnProperty('inputs')) {
-        task.inputs.forEach(function (input) {
+        task.inputs.forEach(function(input) {
             if (input.hasOwnProperty('name')) {
                 resources['loc.input.label.' + input.name] = input.label
 
@@ -149,12 +149,19 @@ var createResjson = function (task, taskPath) {
     }
 
     if (task.hasOwnProperty('messages')) {
-        Object.keys(task.messages).forEach(function (key) {
+        Object.keys(task.messages).forEach(function(key) {
             resources['loc.messages.' + key] = task.messages[key]
         })
     }
 
-    var resjsonPath = path.join(folders.buildTasks, taskPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson')
+    var resjsonPath = path.join(
+        folders.buildTasks,
+        taskPath,
+        'Strings',
+        'resources.resjson',
+        'en-US',
+        'resources.resjson'
+    )
     mkdir('-p', path.dirname(resjsonPath))
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2))
 }
@@ -179,7 +186,7 @@ function writeTask(task, taskPath) {
     fs.writeFileSync(path.join(folders.buildTasks, taskPath, taskJson), JSON.stringify(task, null, 2))
 }
 
-var createResjson = function (task, taskPath) {
+var createResjson = function(task, taskPath) {
     var resources = {}
     if (task.hasOwnProperty('friendlyName')) {
         resources['loc.friendlyName'] = task.friendlyName
@@ -202,7 +209,7 @@ var createResjson = function (task, taskPath) {
     }
 
     if (task.hasOwnProperty('groups')) {
-        task.groups.forEach(function (group) {
+        task.groups.forEach(function(group) {
             if (group.hasOwnProperty('name')) {
                 resources['loc.group.displayName.' + group.name] = group.displayName
             }
@@ -210,7 +217,7 @@ var createResjson = function (task, taskPath) {
     }
 
     if (task.hasOwnProperty('inputs')) {
-        task.inputs.forEach(function (input) {
+        task.inputs.forEach(function(input) {
             if (input.hasOwnProperty('name')) {
                 resources['loc.input.label.' + input.name] = input.label
 
@@ -222,19 +229,30 @@ var createResjson = function (task, taskPath) {
     }
 
     if (task.hasOwnProperty('messages')) {
-        Object.keys(task.messages).forEach(function (key) {
+        Object.keys(task.messages).forEach(function(key) {
             resources['loc.messages.' + key] = task.messages[key]
         })
     }
 
-    var resjsonPath = path.join(folders.buildTasks, taskPath, 'Strings', 'resources.resjson', 'en-US', 'resources.resjson')
+    var resjsonPath = path.join(
+        folders.buildTasks,
+        taskPath,
+        'Strings',
+        'resources.resjson',
+        'en-US',
+        'resources.resjson'
+    )
     fs.mkdirpSync(path.dirname(resjsonPath))
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, null, 2))
 }
 
 function generateTaskResources(taskPath, knownRegions, versionInfo) {
     var taskJsonPath = path.join(folders.sourceTasks, taskPath, taskJson)
-    try {fs.accessSync(taskJsonPath) } catch (e) { return }
+    try {
+        fs.accessSync(taskJsonPath)
+    } catch (e) {
+        return
+    }
 
     var task = JSON.parse(fs.readFileSync(taskJsonPath))
     validateTask(task)
@@ -247,7 +265,7 @@ function generateTaskResources(taskPath, knownRegions, versionInfo) {
 
 function addVersionToVssExtension(versionInfo) {
     var vss = JSON.parse(fs.readFileSync(vssPath))
-    vss.version = "" + versionInfo.Major + "." + versionInfo.Minor + "." + versionInfo.Patch
+    vss.version = '' + versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch
     fs.writeFileSync(vssBuildPath, JSON.stringify(vss, null, 2))
 }
 
@@ -255,10 +273,8 @@ console.time(timeMessage)
 var versionInfoFile = path.join(folders.repoRoot, masterVersionFile)
 var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile))
 const knownRegions = fetchLatestRegions()
-findMatchingFiles(folders.sourceTasks).forEach((path) =>
-    {
-        generateTaskResources(path, knownRegions, versionInfo)
-    }
-)
+findMatchingFiles(folders.sourceTasks).forEach(path => {
+    generateTaskResources(path, knownRegions, versionInfo)
+})
 addVersionToVssExtension(versionInfo)
 console.timeEnd(timeMessage)

@@ -6,13 +6,8 @@
     "author": "Amazon Web Services",
     "helpMarkDown": "Runs a shell script in Bash, setting AWS credentials and region information into the shell environment using the standard environment keys _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_, _AWS_SESSION_TOKEN_ and _AWS_REGION_.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/awsshell.html).\n\n####Task Permissions\nPermissions for this task to call AWS service APIs depend on the activities in the supplied script.",
     "category": "Utility",
-    "visibility": [
-        "Build",
-        "Release"
-    ],
-    "demands": [
-        "sh"
-    ],
+    "visibility": ["Build", "Release"],
+    "demands": ["sh"],
     "instanceNameFormat": "AWS Shell Script",
     "groups": [
         {
@@ -37,7 +32,7 @@
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
-            "options": { },
+            "options": {},
             "properties": {
                 "EditableOptions": "True"
             }
@@ -95,7 +90,7 @@
             "groupName": "advanced"
         },
         {
-            "name": "cwd",
+            "name": "workingDirectory",
             "type": "filePath",
             "label": "Working Directory",
             "defaultValue": "",
@@ -122,6 +117,7 @@
     },
     "messages": {
         "BashReturnCode": "Bash exited with return code: %d",
-        "BashFailed": "Bash failed with error: %s"
+        "BashFailed": "Bash failed with error: %s",
+        "BashUnableToFindScript": "Bash was unable to find script at location: %s"
     }
 }

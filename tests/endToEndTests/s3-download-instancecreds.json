@@ -1,0 +1,119 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "targetFolder": { "value": "s3/downloadContent", "allowOverride": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Download",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "S3Download_1",
+                        "task": {
+                            "id": "30f6a876-1d27-450c-b2bb-9f390a592082",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "bucketName": "$(bucketName)",
+                            "sourceFolder": "$(targetFolder)",
+                            "globExpressions": "**",
+                            "targetFolder": "$(Build.ArtifactStagingDirectory)",
+                            "keyManagement": "noneOrAWSManaged",
+                            "customerKey": "",
+                            "overwrite": "true",
+                            "forcePathStyleAddressing": "false",
+                            "flattenFolders": "false",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_2",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "arguments": "\"$(Build.ArtifactStagingDirectory)\\$(targetFolder)\"",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$outputFolder\n)\n\n$expectedFiles = @(\n'WebApplication1.sln'\n'WebApplication1/Scripts/jquery.validate.unobtrusive.min.js'\n'WebApplication1/packages.config'\n'packages/System.Diagnostics.DiagnosticSource.4.4.1/lib/portable-net45%2Bwin8%2Bwpa81/System.Diagnostics.DiagnosticSource.xml'\n'packages/bootstrap.3.3.7/content/fonts/glyphicons-halflings-regular.eot'\n'packages/jQuery.Validation.1.17.0/Content/Scripts/jquery.validate-vsdoc.js'\n)\n\nWrite-Host \"Validating output folder contains expected files\"\n$files = Get-ChildItem -Path $outputFolder -Recurse \n\nif ($files)\n{\n Write-Host \"PASS! Found downloaded content at expected location\"\n\n Write-Host \"...checking for expected files\"\n $expectedFiles | % {\n $file = Join-Path $outputFolder $_\n if (!(Test-Path $file))\n {\n throw \"FAIL! Expected file $_ not present\"\n }\n }\n\n Write-Host \"PASS! All expected files present\"\n}\nelse\n{\n throw \"FAIL! No content was found at $outputFolder\"\n}",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "true",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 20,
+    "name": "s3-download-instancecreds",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 4,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

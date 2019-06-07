@@ -93,7 +93,7 @@ If you have a test VSTS server, you can upload the packaged plugin from "\_packa
 
 ## Finding contributions to work on
 
-Looking at the existing issues is a great way to find something to contribute on. Looking at any ['help wanted'](https://github.com/aws/aws-vsts-tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) or ['technical debt'](https://github.com/aws/aws-vsts-tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22technical-debt%22)issues is a great place to start.
+Looking at the existing issues is a great way to find something to contribute on. Looking at any ['help wanted'](https://github.com/aws/aws-vsts-tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) or ['technical debt'](https://github.com/aws/aws-vsts-tools/issues?q=is%3Aissue+is%3Aopen+label%3A%22technical-debt%22) issues is a great place to start.
 
 ## Code of Conduct
 

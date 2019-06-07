@@ -1,0 +1,115 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "system.debug": { "value": "false", "allowOverride": true },
+        "messageBody": { "value": "sendmessage-sqs-fixedcreds-$(Build.BuildNumber)", "allowOverride": true }
+    },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Send Message",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "SendMessage_1",
+                        "task": {
+                            "id": "67d18db7-e637-48f8-80b3-91f440db4931",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "messageTarget": "queue",
+                            "message": "$(messageBody)",
+                            "topicArn": "",
+                            "queueUrl": "$(queueUrl)",
+                            "delaySeconds": "",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_2",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "arguments": "$(queueUrl) \"$(messageBody)\"",
+                            "scriptType": "filePath",
+                            "filePath": "validationscripts/ValidateMsgInSQSQueue.ps1",
+                            "inlineScript": "Param ([string]$queueUrl, [string]$expectedMsg)\n\nStart-Sleep -Seconds 5\n\n$found = $false\nwhile (!($found)) {\n Write-Host \"Reading messages from queue $queueUrl\"\n $messages = Receive-SQSMessage -QueueUrl $queueUrl -MessageCount 10\n\n $messages | % {\n $body = $_.Body\n # sns tests get a json body, sqs tests get simple string\n try {\n $msg = (ConvertFrom-Json -InputObject $body).Message\n } catch {\n $msg = $body\n }\n\n Write-Host \"...inspecting message: $msg against expected: $expectedMsg\"\n if ($msg -eq $expectedMsg) {\n $found = $true\n }\n }\n}\n\nif ($found) {\n Write-Host \"PASS! Message found in queue\"\n} else {\n throw \"FAIL! Did not find message text in queue\"\n}\n",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 31,
+    "name": "sendmessage-sqs-fixedcreds",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 14,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

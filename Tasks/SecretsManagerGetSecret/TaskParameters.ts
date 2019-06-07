@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -7,10 +7,10 @@ import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsCo
 import tl = require('vsts-task-lib/task')
 
 export interface TaskParameters {
-    awsConnectionParameters: AWSConnectionParameters,
-    secretIdOrName: string,
-    variableName: string,
-    versionId: string,
+    awsConnectionParameters: AWSConnectionParameters
+    secretIdOrName: string
+    variableName: string
+    versionId: string
     versionStage: string
 }
 

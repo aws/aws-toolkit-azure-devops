@@ -1,9 +1,21 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
-import { CloudFormation, CodeDeploy, ECR, IAM, Lambda, S3, SecretsManager, SNS, SQS, SSM } from 'aws-sdk/clients/all'
+import {
+    CloudFormation,
+    CodeDeploy,
+    ECR,
+    ElasticBeanstalk,
+    IAM,
+    Lambda,
+    S3,
+    SecretsManager,
+    SNS,
+    SQS,
+    SSM
+} from 'aws-sdk/clients/all'
 import { SdkUtils } from 'Common/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
@@ -13,6 +25,22 @@ interface GenericClientConfiguration {
 
 interface S3ClientConfiguration extends GenericClientConfiguration {
     forcePathStyleAddressing?: boolean
+}
+
+export async function createDefaultBeanstalk(
+    configuration: GenericClientConfiguration,
+    logger: (msg: string) => void
+): Promise<ElasticBeanstalk> {
+    const beanstalkOpts: ElasticBeanstalk.ClientConfiguration = {
+        apiVersion: '2010-12-01'
+    }
+
+    return (await SdkUtils.createAndConfigureSdkClient(
+        ElasticBeanstalk,
+        beanstalkOpts,
+        configuration.awsConnectionParameters,
+        logger
+    )) as ElasticBeanstalk
 }
 
 export async function createDefaultCodeDeploy(

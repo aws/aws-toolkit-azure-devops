@@ -1,0 +1,187 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": { "system.debug": { "value": "false", "allowOverride": true } },
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Upload with gzip encoding",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "S3Upload_1",
+                        "task": {
+                            "id": "3a219265-181c-4ed2-9a51-75a7f308f0d5",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "bucketName": "$(bucketName)",
+                            "sourceFolder": "node/serverless",
+                            "globExpressions": "**",
+                            "targetFolder": "content_encoding_gzip",
+                            "filesAcl": "private",
+                            "createBucket": "false",
+                            "keyManagement": "none",
+                            "encryptionAlgorithm": "KMS",
+                            "kmsMasterKeyId": "",
+                            "customerKey": "",
+                            "overwrite": "true",
+                            "flattenFolders": "false",
+                            "contentType": "",
+                            "contentEncoding": "gzip",
+                            "storageClass": "STANDARD",
+                            "forcePathStyleAddressing": "false",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_2",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "arguments": "\"$(bucketName)\" \"content_encoding_gzip/index.js\" \"gzip\"",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$bucketName,\n [string]$key,\n [string]$expectedEncoding\n)\n\n$objMeta = Get-S3ObjectMetadata -BucketName $bucketName -Key $key\nif ($objMeta.Headers.ContentEncoding -eq $expectedEncoding) {\n Write-Host \"PASS!\"\n} else {\n throw \"FAIL! Object has encoding $($objMeta.Headers.ContentEncoding), expected $expectedEncoding\"\n}",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "S3 Upload: Upload no encoding (default)",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "S3Upload_3",
+                        "task": {
+                            "id": "3a219265-181c-4ed2-9a51-75a7f308f0d5",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "bucketName": "$(bucketName)",
+                            "sourceFolder": "testinfrastructure/BeanstalkTasksTestEnvironment",
+                            "globExpressions": "**",
+                            "targetFolder": "content_encoding_default",
+                            "filesAcl": "private",
+                            "createBucket": "false",
+                            "keyManagement": "none",
+                            "encryptionAlgorithm": "KMS",
+                            "kmsMasterKeyId": "",
+                            "customerKey": "",
+                            "overwrite": "true",
+                            "flattenFolders": "false",
+                            "contentType": "",
+                            "contentEncoding": "",
+                            "storageClass": "STANDARD",
+                            "forcePathStyleAddressing": "false",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Validate",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "AWSPowerShellModuleScript_4",
+                        "task": {
+                            "id": "37dda93c-8427-4372-9b7b-9b6e10f3f744",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "",
+                            "arguments": "\"$(bucketName)\" \"content_encoding_default/BeanstalkTasksTestEnvironment.cfproj\"",
+                            "scriptType": "inline",
+                            "filePath": "",
+                            "inlineScript": "Param (\n [string]$bucketName,\n [string]$key\n)\n\n$objMeta = Get-S3ObjectMetadata -BucketName $bucketName -Key $key\nif ($objMeta.Headers.ContentEncoding -eq $null) {\n Write-Host \"PASS!\"\n} else {\n throw \"FAIL! Object has encoding $($objMeta.Headers.ContentEncoding), expected null\"\n}",
+                            "errorActionPreference": "stop",
+                            "failOnStderr": "false",
+                            "ignoreLASTEXITCODE": "false",
+                            "workingDirectory": ""
+                        }
+                    }
+                ],
+                "name": null,
+                "refName": "Phase_1",
+                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 0
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "false",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 40,
+    "name": "s3-content-encoding",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 11,
+    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+}

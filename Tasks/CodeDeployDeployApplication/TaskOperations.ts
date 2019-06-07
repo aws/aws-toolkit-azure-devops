@@ -1,5 +1,5 @@
 /*!
- * Copyright 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: MIT
  */
 
@@ -171,6 +171,7 @@ export class TaskOperations {
         archive.pipe(output)
 
         archive.directory(bundleFolder, false)
+        // tslint:disable-next-line: no-floating-promises
         archive.finalize()
         await defer.promise
 
