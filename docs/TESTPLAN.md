@@ -2,26 +2,15 @@
 
 ## Introduction
 
-This document covers what we currently test, and how we test it. This document can be used to see what tested quickly without having to dig into the code and VSTS build definitions.
+This document covers what we currently test, and how we test it. This document can be used to see what is tested without having to dig into the code and VSTS build definitions.
 
 ## Overview
-
-### How we test
-
--   We use [Jest](https://jestjs.io/) to run unit/functional tests, and VSTS build definitions to run end to end tests
--   Tests are in the `tests` folder
-    -   `TaskTests` Holds unit tests and functional tests
-        -   `TaskTests/Common` Holds all of our unit tests
-        -   `TaskTests/<anything-else>` Holds all of our functional tests
-    -   `EndToEndTests` Holds end to end build definitions
-    -   `Resources` Holds test resources used by the functional and unit tests
--   New modules mean new tests!
 
 ### Categories of tests
 
 We have three categories of tests in the project
 
--   Unit Tests - Unit tests are used to test the various things in `Common`, including `cloudformationutils`, `sdkutils`, etc. They all test individual functions/small groups of functions.
+-   Unit Tests - Unit tests are used to test the various modules in `tasks/common`, including `cloudformationutils`, `sdkutils`, etc. They all test individual functions/small groups of functions.
 -   Functional Tests - Functional tests work by running the `execute` function of each of the tasks, and feeding it different combinations of mocked AWS objects and settings objects.
 -   End to End Tests - End to end tests are handled with VSTS build definitions running on an on-prem VSTS server and a dedicated AWS account. We run tasks, then validate the result by querying AWS or the local filesystem. The tasks we run are available in tests/EndToEndTests.
 
@@ -58,8 +47,19 @@ Each test hooks into a task like so:
                                +
 ```
 
-\*"Utils" and "Operations" both use AWS service clients and access the system environment as well,
-however most of these calls are to objects that are injected by way of the TaskOperations constructor.
+-   "Utils" and "Operations" both use AWS service clients and access the system environment as well,
+    however most of these calls are to objects that are injected by way of the TaskOperations constructor.
+
+### How we test
+
+-   We use [Jest](https://jestjs.io/) to run unit/functional tests, and VSTS build definitions to run end to end tests
+-   Tests are in the `tests` folder
+    -   `taskTests` Holds unit tests and functional tests
+        -   `taskTests/common` Holds all of our unit tests
+        -   `taskTests/<anything-else>` Holds all of our functional tests
+    -   `endToEndTests` Holds end to end build definitions
+    -   `resources` Holds test resources used by the functional and unit tests
+-   New modules mean new tests!
 
 ## Tests as they exist today
 
@@ -115,8 +115,8 @@ All of the functional tests follow the pattern:
 
 The following modules do not have any functional tests:
 
--   CloudFormation Create Or Update
--   Beanstalk Create Application
+-   CloudFormation Create Or Update [issue #238](https://github.com/aws/aws-vsts-tools/issues/238)
+-   Beanstalk Create Application [issue #239](https://github.com/aws/aws-vsts-tools/issues/239)
 
 The following modules do not have functional tests, but it would make no sense to add them:
 
@@ -136,15 +136,16 @@ test every code path, but to make sure we can:
 -   Any task that does heavy build/filesystem work is tested more heavily here (Lambda, Cloudformation, and beanstalk tasks)
 -   Anything that relies on the real environment is tested (like the aws shell script task or the powershell scripts)
 
-With this in mind, the goals for functional tests are: to run every task (to see if they work at all), test instance
-credentials and static credentials at least once, and to test all of as many code paths of tasks like aws shell script as
-possible.
+With this in mind, the goals for end to end tests are:
+
+1. To run every task (to see if they work at all)
+2. To test instance credentials and static credentials at least once
+3. To test as many code paths of tasks that lack functional test coverage as possible (tasks like aws shell script)
 
 Looking back at past releases that had issues, the most common issue was a task not running at all, so
 the first goal is by far the most important.
 
-Here is the current list of tasks and how functional tests currently test them, gaps are in **bold** (unlike the previous sections
-in a seperate section):
+Here is the current list of tasks and how end to end tests currently test them. Gaps are in **bold**.
 
 -   AWSCLI
     -   Runs S3 ls
