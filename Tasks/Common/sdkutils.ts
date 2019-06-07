@@ -99,7 +99,8 @@ export abstract class SdkUtils {
                     if (process.env[this.validateUserAgentEnvVariable]) {
                         const agent: string = httpRequest.headers[this.userAgentHeader]
                         if (
-                            agent.startsWith(`${this.userAgentPrefix}/`) &&
+                            agent.startsWith('aws-sdk-nodejs') &&
+                            agent.includes(`${this.userAgentPrefix}/`) &&
                             agent.includes(`${this.userAgentSuffix}`) &&
                             agent.includes(`${process.env.AGENT_VERSION}`)
                         ) {
