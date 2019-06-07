@@ -12,8 +12,8 @@
         }
     ],
     "variables": {
-        "system.debug": { "value": "false", "allowOverride": true },
-        "functionName": { "value": "TFS2017-lambda-netcore21-toupper-fixedcreds", "allowOverride": true }
+        "functionName": { "value": "TFS2017-lambda-netcore21-toupper-fixedcreds", "allowOverride": true },
+        "system.debug": { "value": "false", "allowOverride": true }
     },
     "jobAuthorizationScope": 1,
     "jobTimeoutInMinutes": 60,
@@ -138,6 +138,48 @@
                         "environment": {},
                         "enabled": true,
                         "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Test regular deploy",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "task": {
+                            "id": "ec87c253-756f-4a7a-be91-4f1c60f9d8fe",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "649d8e1b-d788-4d2f-9491-654ff2700e68",
+                            "regionName": "us-west-2",
+                            "deploymentMode": "codeonly",
+                            "functionName": "$(functionName)",
+                            "description": "",
+                            "functionHandler": "",
+                            "runtime": "",
+                            "codeLocation": "localfile",
+                            "localZipFile": "netcore2.1/LambdaToUpper/LambdaToUpper/bin/Release/netcoreapp2.1/LambdaToUpper.zip",
+                            "s3Bucket": "",
+                            "s3ObjectKey": "",
+                            "s3ObjectVersion": "",
+                            "roleARN": "",
+                            "memorySize": "128",
+                            "timeout": "3",
+                            "publish": "true",
+                            "deadLetterARN": "",
+                            "kmsKeyARN": "",
+                            "environment": "",
+                            "tags": "",
+                            "securityGroups": "",
+                            "subnets": "",
+                            "tracingConfig": "XRay",
+                            "outputVariable": "",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    },
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
                         "alwaysRun": true,
                         "displayName": "Cleanup",
                         "timeoutInMinutes": 0,
@@ -162,10 +204,12 @@
                         }
                     }
                 ],
-                "name": null,
+                "name": "Agent job 1",
                 "refName": "Phase_1",
-                "target": { "executionOptions": null, "allowScriptsAuthAccessOption": false, "type": 1 },
-                "jobAuthorizationScope": 0
+                "condition": "succeeded()",
+                "target": { "executionOptions": { "type": 0 }, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 1,
+                "jobCancelTimeoutInMinutes": 1
             }
         ],
         "type": 1
@@ -196,6 +240,6 @@
     "path": "\\",
     "type": 2,
     "queueStatus": 0,
-    "revision": 3,
-    "project": { "name": "VstsTesting", "state": "wellFormed", "visibility": 0 }
+    "revision": 4,
+    "project": { "name": "VstsTesting", "state": 1, "visibility": 0 }
 }
