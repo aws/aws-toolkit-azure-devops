@@ -46,7 +46,8 @@ export class TaskOperations {
             // Thanks to the ms team opensourcing their tasks for the solution logic
             if (process.platform === 'win32') {
                 scriptPath =
-                    (await this.translateWindowsPath(path.dirname(scriptPath))) + `/${path.basename(scriptPath)}`
+                    (await this.translateWindowsPath(path.dirname(scriptPath))) +
+                    `${path.posix.sep}${path.basename(scriptPath)}`
             }
 
             tl.mkdirP(workingDirectory)
