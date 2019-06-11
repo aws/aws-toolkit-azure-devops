@@ -1,5 +1,6 @@
 ### Next Release
 
+-   Issue #195, Fix Lambda Invoke printing output when not outputting to an outputVariable
 -   Issue #220, Update task names and descriptions to make sure every task can be found with either the full official name of the service or the official acronym
 -   Issue #215, Update icons to the new AWS style
 -   Issue #215, Fix aws.rolecredential.maxduration being set incorrectly when it is overwritten
