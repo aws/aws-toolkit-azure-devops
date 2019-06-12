@@ -1,5 +1,9 @@
 ### Next Release
 
+### 1.3.0 (2019-06-11)
+
+-   Issue #251, Hotfix credentilas not working
+
 ### 1.2.0 (2019-06-11)
 
 -   Issue #195, Fix Lambda Invoke printing output when not outputting to an outputVariable
