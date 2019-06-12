@@ -2,7 +2,7 @@
 
 ### 1.3.0 (2019-06-11)
 
--   Issue #251, Hotfix credentilas not working
+-   Issue #251, Hotfix credentials not working
 
 ### 1.2.0 (2019-06-11)
 
