@@ -146,7 +146,7 @@ export abstract class SdkUtils {
             if (!awsServiceOpts.credentials) {
                 const creds = await getCredentials(taskParams)
                 if (creds) {
-                    awsServiceOpts.credentials = await creds.getPromise()
+                    awsServiceOpts.credentials = creds
                 }
             }
             if (!awsServiceOpts.region) {
