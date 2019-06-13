@@ -54,6 +54,6 @@ describe('SdkUtils', () => {
     test('Get Tags Dictonary returns undefined when empty input', () => {
         const arr: string[] = []
         const parsed: any = SdkUtils.getTagsDictonary(arr)
-        expect(parsed).toStrictEqual(undefined)
+        expect(parsed).toBeUndefined()
     })
 })
