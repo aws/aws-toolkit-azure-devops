@@ -44,4 +44,16 @@ describe('SdkUtils', () => {
         // tslint:disable-next-line: no-unsafe-any
         expect(parsed).toStrictEqual({ what: '2=2', yes: '1' })
     })
+
+    test('Get Tags Dictonary returns undefined when undefined input', () => {
+        const arr: string[] = undefined
+        const parsed: any = SdkUtils.getTagsDictonary(arr)
+        expect(parsed).toBeUndefined()
+    })
+
+    test('Get Tags Dictonary returns undefined when empty input', () => {
+        const arr: string[] = []
+        const parsed: any = SdkUtils.getTagsDictonary(arr)
+        expect(parsed).toStrictEqual(undefined)
+    })
 })

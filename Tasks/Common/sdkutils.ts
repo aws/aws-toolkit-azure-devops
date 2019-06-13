@@ -165,7 +165,6 @@ export abstract class SdkUtils {
     }
 
     // tslint:enable: no-unsafe-any
-
     public static async roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {
         if (roleName.startsWith('arn:')) {
             return roleName
@@ -213,11 +212,16 @@ export abstract class SdkUtils {
         })
     }
 
-    public static getTagsDictonary<T, K extends keyof T>(tags: string[]): T[K] {
+    public static getTagsDictonary<T, K extends keyof T>(tags: string[]): T[K] | undefined {
         // tslint:disable-next-line:no-object-literal-type-assertion
         const arr: T[K] = {} as T[K]
 
-        this.getTags(tags).forEach(item => (arr[`${item.Key}`] = item.Value))
+        const parsed = this.getTags(tags)
+        if (!parsed) {
+            return undefined
+        }
+
+        parsed.forEach(item => (arr[`${item.Key}`] = item.Value))
 
         return arr
     }
