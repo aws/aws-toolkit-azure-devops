@@ -10,8 +10,8 @@ export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
     secretIdOrName: string
     variableName: string
-    versionId: string
-    versionStage: string
+    versionId: string | undefined
+    versionStage: string | undefined
 }
 
 export function buildTaskParameters(): TaskParameters {
