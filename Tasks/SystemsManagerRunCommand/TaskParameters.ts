@@ -48,9 +48,9 @@ export function buildTaskParameters(): TaskParameters {
         outputS3BucketName: tl.getInput('outputS3BucketName', false),
         outputS3KeyPrefix: tl.getInput('outputS3KeyPrefix', false),
         commandIdOutputVariable: tl.getInput('commandIdOutputVariable', false),
-        instanceIds: undefined,
-        instanceTags: undefined,
-        instanceBuildVariable: undefined
+        instanceIds: [],
+        instanceTags: [],
+        instanceBuildVariable: ''
     }
 
     switch (parameters.instanceSelector) {
