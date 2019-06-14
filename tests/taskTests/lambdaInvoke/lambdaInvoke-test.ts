@@ -7,18 +7,19 @@ import { Lambda } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaInvokeFunction/TaskOperations'
 import { TaskParameters } from '../../../Tasks/LambdaInvokeFunction/TaskParameters'
+import { emptyConnectionParameters } from '../testcommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const baseTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
     functionName: 'coolfunction',
-    payload: undefined,
-    invocationType: undefined,
-    logType: undefined,
-    outputVariable: undefined
+    payload: '',
+    invocationType: '',
+    logType: '',
+    outputVariable: ''
 }
 
 const awsResponseThrows = {
