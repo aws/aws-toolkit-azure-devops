@@ -92,6 +92,10 @@
         "transform": {
             "\\.ts$": "ts-jest"
         },
+        "testPathIgnorePatterns": [
+            "/node_modules/",
+            "testCommon.ts"
+        ],
         "testRegex": "/tests/.*\\.ts$"
     },
     "prettier": {
