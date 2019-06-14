@@ -24,10 +24,10 @@ export interface TaskParameters {
     secretValueSource: string
     secretValue: string
     secretValueFile: string
-    autoCreateSecret: boolean
+    autoCreateSecret: boolean | undefined
     tags: string[]
-    arnOutputVariable: string
-    versionIdOutputVariable: string
+    arnOutputVariable: string | undefined
+    versionIdOutputVariable: string | undefined
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -38,10 +38,10 @@ export function buildTaskParameters(): TaskParameters {
         kmsKeyId: tl.getInput('kmsKeyId', false),
         secretValueType: tl.getInput('secretValueType', true),
         secretValueSource: tl.getInput('secretValueSource', true),
-        secretValue: undefined,
-        secretValueFile: undefined,
+        secretValue: '',
+        secretValueFile: '',
         autoCreateSecret: tl.getBoolInput('autoCreateSecret', false),
-        tags: undefined,
+        tags: [],
         arnOutputVariable: tl.getInput('arnOutputVariable', false),
         versionIdOutputVariable: tl.getInput('versionIdOutputVariable', false)
     }
