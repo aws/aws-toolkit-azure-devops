@@ -25,10 +25,10 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         arguments: tl.getInput('arguments', false),
         scriptType: tl.getInput('scriptType', true),
-        filePath: undefined,
-        inlineScript: undefined,
+        filePath: '',
+        inlineScript: '',
         disableAutoCwd: tl.getBoolInput('disableAutoCwd', false),
-        workingDirectory: undefined,
+        workingDirectory: '',
         failOnStandardError: tl.getBoolInput('failOnStandardError', false)
     }
 

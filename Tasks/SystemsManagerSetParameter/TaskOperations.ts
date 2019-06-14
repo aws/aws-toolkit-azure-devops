@@ -4,7 +4,6 @@
  */
 
 import SSM = require('aws-sdk/clients/ssm')
-import path = require('path')
 import tl = require('vsts-task-lib/task')
 import { secureStringType, TaskParameters } from './TaskParameters'
 
@@ -24,15 +23,16 @@ export class TaskOperations {
 
     private async createOrUpdateParameter(forceAsSecureString: boolean): Promise<void> {
         try {
-            await this.ssmClient
-                .putParameter({
-                    Name: this.taskParameters.parameterName,
-                    Type: forceAsSecureString ? 'SecureString' : this.taskParameters.parameterType,
-                    Value: this.taskParameters.parameterValue,
-                    Overwrite: true,
-                    KeyId: this.taskParameters.encryptionKeyId
-                })
-                .promise()
+            const parameters: SSM.PutParameterRequest = {
+                Name: this.taskParameters.parameterName,
+                Type: forceAsSecureString ? 'SecureString' : this.taskParameters.parameterType,
+                Value: this.taskParameters.parameterValue,
+                Overwrite: true
+            }
+            if (this.taskParameters.encryptionKeyId !== '') {
+                parameters.KeyId = this.taskParameters.encryptionKeyId
+            }
+            await this.ssmClient.putParameter(parameters).promise()
         } catch (error) {
             throw new Error(tl.loc('CreateOrUpdateFailed', error))
         }
@@ -48,7 +48,10 @@ export class TaskOperations {
                 })
                 .promise()
 
-            result = response.Parameter.Type === secureStringType
+            if (response.Parameter) {
+                result = response.Parameter.Type === secureStringType
+            }
+
             if (result) {
                 console.log(tl.loc('ParameterExistsAndIsSecureString', parameterName))
             } else {

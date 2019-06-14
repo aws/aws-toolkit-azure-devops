@@ -7,13 +7,14 @@ import { CloudFormation } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/CloudFormationDeleteStack/TaskOperations'
 import { TaskParameters } from '../../../Tasks/CloudFormationDeleteStack/TaskParameters'
+import { emptyConnectionParameters } from '../testcommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
     stackName: 'name'
 }
 

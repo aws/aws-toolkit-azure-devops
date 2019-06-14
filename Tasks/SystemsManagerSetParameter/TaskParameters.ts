@@ -24,7 +24,7 @@ export function buildTaskParameters(): TaskParameters {
         parameterName: tl.getInput('parameterName', true),
         parameterType: tl.getInput('parameterType', true),
         parameterValue: tl.getInput('parameterValue', true),
-        encryptionKeyId: undefined
+        encryptionKeyId: ''
     }
 
     if (parameters.parameterType === secureStringType) {
