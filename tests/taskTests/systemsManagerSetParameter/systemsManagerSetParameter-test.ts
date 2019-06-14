@@ -115,7 +115,7 @@ describe('Systems Manager Set Parameter', () => {
         const ssm = new SSM() as any
         ssm.getParameter = jest.fn(() => getParameterNotSecureString)
         ssm.putParameter = jest.fn(argument => {
-            expect(argument.Type).toBe(undefined)
+            expect(argument.Type).toStrictEqual('')
 
             return putParameterSucceeds
         })
