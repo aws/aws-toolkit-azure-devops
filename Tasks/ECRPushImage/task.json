@@ -153,6 +153,7 @@
         "TestingForRepository": "Testing existence of repository '%s'",
         "CreatingRepository": "Repository not found, attempting to create",
         "SettingOutputVariable": "Setting output variable %s with the pushed image tag %s",
-        "TaskCompleted": "Successfully completed sending the message"
+        "TaskCompleted": "Successfully completed sending the message",
+        "FailureToObtainAuthToken": "Failed to obtain auth token!"
     }
 }
