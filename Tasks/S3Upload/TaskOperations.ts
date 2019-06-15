@@ -135,17 +135,17 @@ export class TaskOperations {
                             break
 
                         case awsKeyManagementValue: {
-                            if (this.taskParameters.encryptionAlgorithm !== '') {
+                            if (this.taskParameters.encryptionAlgorithm) {
                                 request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
                             }
-                            if (this.taskParameters.kmsMasterKeyId !== '') {
+                            if (this.taskParameters.kmsMasterKeyId) {
                                 request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
                             }
                             break
                         }
 
                         case customerKeyManagementValue: {
-                            if (this.taskParameters.encryptionAlgorithm !== '') {
+                            if (this.taskParameters.encryptionAlgorithm) {
                                 request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
                             }
                             if (this.taskParameters.customerKey !== Buffer.from([])) {

@@ -29,7 +29,7 @@ export class TaskOperations {
                 Value: this.taskParameters.parameterValue,
                 Overwrite: true
             }
-            if (this.taskParameters.encryptionKeyId !== '') {
+            if (this.taskParameters.encryptionKeyId) {
                 parameters.KeyId = this.taskParameters.encryptionKeyId
             }
             await this.ssmClient.putParameter(parameters).promise()

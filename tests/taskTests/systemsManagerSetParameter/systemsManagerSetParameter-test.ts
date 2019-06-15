@@ -7,7 +7,7 @@ import { SSM } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SystemsManagerSetParameter/TaskOperations'
 import { secureStringType, TaskParameters } from '../../../Tasks/SystemsManagerSetParameter/TaskParameters'
-import { emptyConnectionParameters } from '../testcommon'
+import { emptyConnectionParameters } from '../testCommon'
 
 const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: emptyConnectionParameters,

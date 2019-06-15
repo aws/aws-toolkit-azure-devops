@@ -68,7 +68,7 @@ export class TaskOperations {
 
             return await bash.exec((execOptions as unknown) as tr.IExecOptions)
         } finally {
-            if (this.taskParameters.scriptType === inlineScriptType && scriptPath !== '' && tl.exist(scriptPath)) {
+            if (this.taskParameters.scriptType === inlineScriptType && scriptPath && tl.exist(scriptPath)) {
                 fs.unlinkSync(scriptPath)
             }
         }

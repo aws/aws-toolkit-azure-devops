@@ -7,7 +7,7 @@ import { Lambda } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaInvokeFunction/TaskOperations'
 import { TaskParameters } from '../../../Tasks/LambdaInvokeFunction/TaskParameters'
-import { emptyConnectionParameters } from '../testcommon'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any

@@ -67,6 +67,10 @@ export class TaskOperations {
 
             const response = await this.lambdaClient.updateFunctionCode(updateCodeRequest).promise()
 
+            if (!response.FunctionArn) {
+                return ''
+            }
+
             return response.FunctionArn
         } catch (err) {
             throw new Error(`Error while updating function code: ${err}`)
@@ -166,6 +170,10 @@ export class TaskOperations {
 
         try {
             const response = await this.lambdaClient.createFunction(request).promise()
+
+            if (!response.FunctionArn) {
+                return ''
+            }
 
             return response.FunctionArn
         } catch (err) {

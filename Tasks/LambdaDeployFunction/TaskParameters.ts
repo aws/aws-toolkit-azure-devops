@@ -24,7 +24,7 @@ export interface TaskParameters {
     localZipFile: string
     s3Bucket: string
     s3ObjectKey: string
-    s3ObjectVersion: string
+    s3ObjectVersion: string | undefined
     roleARN: string
     description: string
     memorySize: number
@@ -45,14 +45,14 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         deploymentMode: tl.getInput('deploymentMode', true),
         functionName: tl.getInput('functionName', true),
-        functionHandler: undefined,
-        runtime: undefined,
+        functionHandler: '',
+        runtime: '',
         codeLocation: tl.getInput('codeLocation', true),
-        localZipFile: undefined,
-        s3Bucket: undefined,
-        s3ObjectKey: undefined,
+        localZipFile: '',
+        s3Bucket: '',
+        s3ObjectKey: '',
         s3ObjectVersion: undefined,
-        roleARN: undefined,
+        roleARN: '',
         description: tl.getInput('description', false),
         memorySize: 128,
         timeout: 3,

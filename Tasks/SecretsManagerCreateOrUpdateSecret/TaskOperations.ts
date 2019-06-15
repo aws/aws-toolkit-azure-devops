@@ -44,7 +44,7 @@ export class TaskOperations {
                 KmsKeyId: this.taskParameters.kmsKeyId
             }
 
-            if (this.taskParameters.description !== '') {
+            if (this.taskParameters.description) {
                 updateMetaRequest.Description = this.taskParameters.description
             }
 
@@ -92,7 +92,7 @@ export class TaskOperations {
             KmsKeyId: this.taskParameters.kmsKeyId
         }
 
-        if (this.taskParameters.description !== '') {
+        if (this.taskParameters.description) {
             request.Description = this.taskParameters.description
         }
 
