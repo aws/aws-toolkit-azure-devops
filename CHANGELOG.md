@@ -1,5 +1,7 @@
 ### Next Release
 
+-   Issue #255, Fix bug when not putting in tags or environment variables on lambda deploy
+
 ### 1.3.0 (2019-06-11)
 
 -   Issue #251, Hotfix credentials not working
