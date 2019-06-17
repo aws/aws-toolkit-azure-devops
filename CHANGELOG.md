@@ -1,6 +1,10 @@
 ### Next Release
 
--   Issue #254, fix default working directory for AWS Shell Script
+<<<<<<< HEAD
+
+-   # Issue #254, fix default working directory for AWS Shell Script
+-   Issue #255, Fix bug when not putting in tags or environment variables on lambda deploy
+    > > > > > > > e04a315aa356c95242bc8b1479f6299a66183f89
 
 ### 1.3.0 (2019-06-11)
 
