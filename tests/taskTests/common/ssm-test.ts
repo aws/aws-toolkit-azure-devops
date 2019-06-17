@@ -6,13 +6,13 @@
 import { transformParameterToVariableName } from 'Common/ssm'
 
 const defaultTaskParameters = {
-    parameterName: undefined,
-    variableNameTransform: undefined,
+    parameterName: '',
+    variableNameTransform: '',
     globalMatch: false,
     caseInsensitiveMatch: false,
-    replacementPattern: undefined,
-    replacementText: undefined,
-    customVariableName: undefined
+    replacementPattern: '',
+    replacementText: '',
+    customVariableName: ''
 }
 
 describe('System Manager Common', () => {

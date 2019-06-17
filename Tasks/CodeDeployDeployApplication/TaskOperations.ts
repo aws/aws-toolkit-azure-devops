@@ -223,6 +223,10 @@ export class TaskOperations {
                 )
             )
 
+            if (!response.deploymentId) {
+                return ''
+            }
+
             return response.deploymentId
         } catch (err) {
             console.error(tl.loc('DeploymentError', (err as Error).message), err)

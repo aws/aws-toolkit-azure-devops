@@ -13,26 +13,27 @@ import {
     revisionSourceFromWorkspace,
     TaskParameters
 } from '../../../Tasks/CodeDeployDeployApplication/TaskParameters'
+import { emptyConnectionParameters } from '../testcommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    applicationName: undefined,
-    deploymentGroupName: undefined,
-    deploymentRevisionSource: undefined,
-    revisionBundle: undefined,
-    bucketName: undefined,
-    bundlePrefix: undefined,
-    bundleKey: undefined,
-    description: undefined,
-    fileExistsBehavior: undefined,
-    updateOutdatedInstancesOnly: undefined,
-    ignoreApplicationStopFailures: undefined,
-    outputVariable: undefined,
-    timeoutInMins: undefined
+    awsConnectionParameters: emptyConnectionParameters,
+    applicationName: '',
+    deploymentGroupName: '',
+    deploymentRevisionSource: '',
+    revisionBundle: '',
+    bucketName: '',
+    bundlePrefix: '',
+    bundleKey: '',
+    description: '',
+    fileExistsBehavior: '',
+    updateOutdatedInstancesOnly: false,
+    ignoreApplicationStopFailures: false,
+    outputVariable: '',
+    timeoutInMins: 0
 }
 
 const emptyPromise = {
