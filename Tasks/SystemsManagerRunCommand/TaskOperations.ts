@@ -40,7 +40,7 @@ export class TaskOperations {
                     const t: SSM.Target = {}
                     t.Key = 'tag:' + kv[0].trim()
                     t.Values = kv[1].split(',')
-                    request.Targets.push(t)
+                    request.Targets!.push(t)
                 })
                 break
 
@@ -63,11 +63,18 @@ export class TaskOperations {
         }
 
         const response = await this.ssmClient.sendCommand(request).promise()
-        if (this.taskParameters.commandIdOutputVariable) {
-            console.log(tl.loc('SettingOutputVariable', this.taskParameters.commandIdOutputVariable))
-            tl.setVariable(this.taskParameters.commandIdOutputVariable, response.Command.CommandId)
+        let commandId: string = ''
+        if (response.Command) {
+            commandId = `${response.Command.CommandId}`
+        } else {
+            commandId = `${undefined}`
         }
 
-        console.log(tl.loc('TaskCompleted', this.taskParameters.documentName, response.Command.CommandId))
+        if (this.taskParameters.commandIdOutputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.commandIdOutputVariable))
+            tl.setVariable(this.taskParameters.commandIdOutputVariable, commandId)
+        }
+
+        console.log(tl.loc('TaskCompleted', this.taskParameters.documentName, commandId))
     }
 }

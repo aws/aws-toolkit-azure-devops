@@ -4,7 +4,7 @@
  */
 
 import SSM = require('aws-sdk/clients/ssm')
-import { transformParameterToVariableName } from 'Common/ssm'
+import { readModeHierarchy, readModeSingle, transformParameterToVariableName } from 'Common/ssm'
 import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
@@ -13,11 +13,11 @@ export class TaskOperations {
 
     public async execute(): Promise<void> {
         switch (this.taskParameters.readMode) {
-            case 'single':
+            case readModeSingle:
                 await this.readSingleParameterValue()
                 break
 
-            case 'hierarchy':
+            case readModeHierarchy:
                 await this.readParameterHierarchy()
                 break
 
@@ -44,9 +44,14 @@ export class TaskOperations {
             })
             .promise()
 
-        const isSecret = response.Parameter.Type === 'SecureString'
+        let isSecret = false
+        let value = `${undefined}`
+        if (response.Parameter) {
+            isSecret = response.Parameter.Type === 'SecureString'
+            value = `${response.Parameter.Value}`
+        }
         console.log(tl.loc('SettingVariable', outputVariableName, parameterName, isSecret))
-        tl.setVariable(outputVariableName, response.Parameter.Value, isSecret)
+        tl.setVariable(outputVariableName, value, isSecret)
     }
 
     // Reads a hierarchy of parameters identified by a common name path. SecureString parameter types are
@@ -62,7 +67,7 @@ export class TaskOperations {
 
         console.log(tl.loc('ReadingParameterHierarchy', finalParameterPath, this.taskParameters.recursive))
 
-        let nextToken: string
+        let nextToken: string | undefined
         do {
             const response = await this.ssmClient
                 .getParametersByPath({
@@ -73,15 +78,18 @@ export class TaskOperations {
                 })
                 .promise()
 
-            for (const p of response.Parameters) {
-                const outputVariableName = transformParameterToVariableName(this.taskParameters, p.Name)
-                const isSecret = p.Type === 'SecureString'
-                console.log(tl.loc('SettingVariable', outputVariableName, p.Name, isSecret))
+            if (!response.Parameters) {
+                nextToken = undefined
+            } else {
+                for (const p of response.Parameters) {
+                    const outputVariableName = transformParameterToVariableName(this.taskParameters, p.Name)
+                    const isSecret = p.Type === 'SecureString'
+                    console.log(tl.loc('SettingVariable', outputVariableName, p.Name, isSecret))
 
-                tl.setVariable(outputVariableName, p.Value, isSecret)
+                    tl.setVariable(outputVariableName, `${p.Value}`, isSecret)
+                }
+                nextToken = response.NextToken
             }
-
-            nextToken = response.NextToken
         } while (nextToken)
     }
 }

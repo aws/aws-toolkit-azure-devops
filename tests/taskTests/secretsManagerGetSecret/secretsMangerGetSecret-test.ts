@@ -7,14 +7,15 @@ import { SecretsManager } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SecretsManagerGetSecret/TaskOperations'
 import { TaskParameters } from '../../../Tasks/SecretsManagerGetSecret/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    secretIdOrName: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
+    secretIdOrName: '',
     variableName: 'secret',
     versionId: undefined,
     versionStage: undefined

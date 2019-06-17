@@ -12,30 +12,31 @@ import {
     fromTags,
     TaskParameters
 } from '../../../Tasks/SystemsManagerRunCommand/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    documentName: undefined,
-    documentParameters: undefined,
-    serviceRoleARN: undefined,
-    comment: undefined,
-    instanceSelector: undefined,
-    instanceIds: undefined,
-    instanceTags: undefined,
-    instanceBuildVariable: undefined,
-    maxConcurrency: undefined,
-    maxErrors: undefined,
-    timeout: undefined,
-    notificationArn: undefined,
-    notificationEvents: undefined,
-    notificationType: undefined,
-    outputS3BucketName: undefined,
-    outputS3KeyPrefix: undefined,
-    commandIdOutputVariable: undefined
+    awsConnectionParameters: emptyConnectionParameters,
+    documentName: '',
+    documentParameters: '',
+    serviceRoleARN: '',
+    comment: '',
+    instanceSelector: '',
+    instanceIds: [],
+    instanceTags: [],
+    instanceBuildVariable: '',
+    maxConcurrency: '',
+    maxErrors: '',
+    timeout: '',
+    notificationArn: '',
+    notificationEvents: '',
+    notificationType: '',
+    outputS3BucketName: '',
+    outputS3KeyPrefix: '',
+    commandIdOutputVariable: ''
 }
 
 const systemsManagerFails = {

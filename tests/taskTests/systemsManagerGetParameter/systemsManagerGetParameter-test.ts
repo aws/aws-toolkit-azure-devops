@@ -8,24 +8,25 @@ import { SSM } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SystemsManagerGetParameter/TaskOperations'
 import { TaskParameters } from '../../../Tasks/SystemsManagerGetParameter/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    readMode: undefined,
-    parameterName: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
+    readMode: '',
+    parameterName: '',
     parameterVersion: undefined,
-    parameterPath: undefined,
+    parameterPath: '',
     recursive: undefined,
-    variableNameTransform: undefined,
-    customVariableName: undefined,
-    replacementPattern: undefined,
-    replacementText: undefined,
-    globalMatch: undefined,
-    caseInsensitiveMatch: undefined
+    variableNameTransform: '',
+    customVariableName: '',
+    replacementPattern: '',
+    replacementText: '',
+    globalMatch: false,
+    caseInsensitiveMatch: false
 }
 
 const singleParameterResponse = {

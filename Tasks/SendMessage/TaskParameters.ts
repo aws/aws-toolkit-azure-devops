@@ -12,7 +12,7 @@ export interface TaskParameters {
     message: string
     topicArn: string
     queueUrl: string
-    delaySeconds: number
+    delaySeconds: number | undefined
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -20,8 +20,8 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         messageTarget: tl.getInput('messageTarget', true),
         message: tl.getInput('message', true),
-        topicArn: undefined,
-        queueUrl: undefined,
+        topicArn: '',
+        queueUrl: '',
         delaySeconds: undefined
     }
     if (parameters.messageTarget === 'topic') {
