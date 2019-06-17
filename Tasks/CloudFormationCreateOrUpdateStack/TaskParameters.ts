@@ -61,15 +61,15 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         stackName: tl.getInput('stackName', true),
         templateSource: tl.getInput('templateSource', true),
-        templateFile: undefined,
-        s3BucketName: undefined,
-        s3ObjectKey: undefined,
-        templateUrl: undefined,
+        templateFile: '',
+        s3BucketName: '',
+        s3ObjectKey: '',
+        templateUrl: '',
         templateParametersSource: tl.getInput('templateParametersSource', true),
-        templateParametersFile: undefined,
-        templateParameters: undefined,
+        templateParametersFile: '',
+        templateParameters: '',
         useChangeSet: tl.getBoolInput('useChangeSet', false),
-        changeSetName: undefined,
+        changeSetName: '',
         description: tl.getInput('description', false),
         autoExecuteChangeSet: tl.getBoolInput('autoExecuteChangeSet', false),
         capabilityIAM: tl.getBoolInput('capabilityIAM', false),
@@ -81,7 +81,7 @@ export function buildTaskParameters(): TaskParameters {
         tags: tl.getDelimitedInput('tags', '\n', false),
         monitorRollbackTriggers: tl.getBoolInput('monitorRollbackTriggers', false),
         monitoringTimeInMinutes: 0,
-        rollbackTriggerARNs: undefined,
+        rollbackTriggerARNs: [],
         onFailure: tl.getInput('onFailure'),
         warnWhenNoWorkNeeded: tl.getBoolInput('warnWhenNoWorkNeeded'),
         outputVariable: tl.getInput('outputVariable', false),
@@ -125,7 +125,7 @@ export function buildTaskParameters(): TaskParameters {
             parameters.templateParametersFile = tl.getPathInput('templateParametersFile', false, true)
             if (parameters.templateParametersFile) {
                 if (fs.statSync(parameters.templateParametersFile).isDirectory()) {
-                    parameters.templateParametersFile = undefined
+                    parameters.templateParametersFile = ''
                 }
             }
             break

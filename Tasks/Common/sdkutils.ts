@@ -212,9 +212,9 @@ export abstract class SdkUtils {
         })
     }
 
-    public static getTagsDictonary<T, K extends keyof T>(tags: string[]): T[K] | undefined {
+    public static getTagsDictonary<T>(tags: string[]): T | undefined {
         // tslint:disable-next-line:no-object-literal-type-assertion
-        const arr: T[K] = {} as T[K]
+        const arr: any = {}
 
         const parsed = this.getTags(tags)
         if (!parsed) {
@@ -223,7 +223,7 @@ export abstract class SdkUtils {
 
         parsed.forEach(item => (arr[`${item.Key}`] = item.Value))
 
-        return arr
+        return arr as T
     }
 
     public static getTags<T extends { Key?: string; Value?: string }[]>(tags: string[]): T | undefined {

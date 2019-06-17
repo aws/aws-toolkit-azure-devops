@@ -146,6 +146,10 @@ export class TaskOperations {
             tl.debug(`Stack id ${response.StackId}`)
             await waitForStackCreation(this.cloudFormationClient, request.StackName, this.taskParameters.timeoutInMins)
 
+            if (!response.StackId) {
+                return ''
+            }
+
             return response.StackId
         } catch (err) {
             console.error(tl.loc('StackCreateRequestFailed', (err as Error).message), err)
@@ -313,6 +317,10 @@ export class TaskOperations {
                 await this.executeChangeSet(this.taskParameters.changeSetName, this.taskParameters.stackName)
             }
 
+            if (!response.StackId) {
+                return ''
+            }
+
             return response.StackId
         } catch (err) {
             console.error(tl.loc('ChangeSetCreationFailed', (err as Error).message), err)
@@ -370,7 +378,11 @@ export class TaskOperations {
         }
     }
 
-    private getCapabilities(capabilityIAM: boolean, capabilityNamedIAM: boolean, capabilityAutoExpand: boolean) {
+    private getCapabilities(
+        capabilityIAM: boolean,
+        capabilityNamedIAM: boolean,
+        capabilityAutoExpand: boolean
+    ): string[] | undefined {
         const arr = []
 
         if (capabilityIAM) {
@@ -447,8 +459,8 @@ export class TaskOperations {
         }
     }
 
-    private loadTemplateParameters(): CloudFormation.Parameters {
-        let parsedParameters: CloudFormation.Parameters
+    private loadTemplateParameters(): CloudFormation.Parameters | undefined {
+        let parsedParameters: CloudFormation.Parameters | undefined
 
         switch (this.taskParameters.templateParametersSource) {
             case loadTemplateParametersFromFile:
@@ -472,7 +484,7 @@ export class TaskOperations {
         return parsedParameters
     }
 
-    private loadParametersFromFile(parametersFile: string): CloudFormation.Parameters {
+    private loadParametersFromFile(parametersFile: string): CloudFormation.Parameters | undefined {
         if (!parametersFile) {
             console.log(tl.loc('NoParametersFileSpecified'))
 
@@ -548,7 +560,7 @@ export class TaskOperations {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName))
         try {
             const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
-            const response = await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms as any).promise()
+            await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms as any).promise()
             console.log(tl.loc('ChangeSetValidated'))
         } catch (err) {
             // Inspect to see if the error was down to the service reporting (as an exception trapped
@@ -559,7 +571,11 @@ export class TaskOperations {
             const response = await this.cloudFormationClient
                 .describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
                 .promise()
-            if (this.isNoWorkToDoValidationError(response.Status, response.StatusReason)) {
+            if (
+                response.Status &&
+                response.StatusReason &&
+                this.isNoWorkToDoValidationError(response.Status, response.StatusReason)
+            ) {
                 return false
             } else {
                 throw new Error(tl.loc('ChangeSetValidationFailed', stackName, changeSetName, (err as Error).message))

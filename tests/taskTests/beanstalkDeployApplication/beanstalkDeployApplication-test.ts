@@ -16,17 +16,17 @@ jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: emptyConnectionParameters,
-    applicationName: undefined,
-    environmentName: undefined,
-    applicationType: undefined,
-    versionLabel: undefined,
-    webDeploymentArchive: undefined,
-    dotnetPublishPath: undefined,
-    deploymentBundleBucket: undefined,
-    deploymentBundleKey: undefined,
-    description: undefined,
-    outputVariable: undefined,
-    eventPollingDelay: undefined
+    applicationName: '',
+    environmentName: '',
+    applicationType: '',
+    versionLabel: '',
+    webDeploymentArchive: '',
+    dotnetPublishPath: '',
+    deploymentBundleBucket: '',
+    deploymentBundleKey: '',
+    description: '',
+    outputVariable: '',
+    eventPollingDelay: 0
 }
 
 // NOTE: most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so
