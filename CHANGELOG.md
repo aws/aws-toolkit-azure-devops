@@ -1,5 +1,7 @@
 ### Next Release
 
+-   Issue #254, fix default working directory for AWS Shell Script
+
 ### 1.3.0 (2019-06-11)
 
 -   Issue #251, Hotfix credentials not working
