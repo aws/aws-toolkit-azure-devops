@@ -65,7 +65,7 @@ describe('BeanstalkUtils', () => {
 
     test('ConstructVersionLabel succeeds', async () => {
         expect(BeanstalkUtils.constructVersionLabel('label')).toBe('label')
-        expect(BeanstalkUtils.constructVersionLabel(undefined)).toMatch(new RegExp('^v[0-9]+$'))
+        expect(BeanstalkUtils.constructVersionLabel('')).toMatch(new RegExp('^v[0-9]+$'))
     })
 
     test('UploadBundle throws on failure', async () => {
