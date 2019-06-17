@@ -7,42 +7,43 @@ import { CloudFormation, S3 } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/CloudFormationCreateOrUpdateStack/TaskOperations'
 import { TaskParameters } from '../../../Tasks/CloudFormationCreateOrUpdateStack/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    stackName: undefined,
-    templateSource: undefined,
-    templateFile: undefined,
-    s3BucketName: undefined,
-    s3ObjectKey: undefined,
-    templateUrl: undefined,
-    templateParametersSource: undefined,
-    templateParametersFile: undefined,
-    templateParameters: undefined,
-    useChangeSet: undefined,
-    changeSetName: undefined,
-    description: undefined,
-    autoExecuteChangeSet: undefined,
-    capabilityIAM: undefined,
-    capabilityNamedIAM: undefined,
-    capabilityAutoExpand: undefined,
-    roleARN: undefined,
-    notificationARNs: undefined,
-    resourceTypes: undefined,
-    tags: undefined,
-    monitorRollbackTriggers: undefined,
-    monitoringTimeInMinutes: undefined,
-    rollbackTriggerARNs: undefined,
-    onFailure: undefined,
-    warnWhenNoWorkNeeded: undefined,
-    outputVariable: undefined,
-    captureStackOutputs: undefined,
-    captureAsSecuredVars: undefined,
-    timeoutInMins: undefined
+    awsConnectionParameters: emptyConnectionParameters,
+    stackName: '',
+    templateSource: '',
+    templateFile: '',
+    s3BucketName: '',
+    s3ObjectKey: '',
+    templateUrl: '',
+    templateParametersSource: '',
+    templateParametersFile: '',
+    templateParameters: '',
+    useChangeSet: false,
+    changeSetName: '',
+    description: '',
+    autoExecuteChangeSet: false,
+    capabilityIAM: false,
+    capabilityNamedIAM: false,
+    capabilityAutoExpand: false,
+    roleARN: '',
+    notificationARNs: [],
+    resourceTypes: [],
+    tags: [],
+    monitorRollbackTriggers: false,
+    monitoringTimeInMinutes: 0,
+    rollbackTriggerARNs: [],
+    onFailure: '',
+    warnWhenNoWorkNeeded: false,
+    outputVariable: '',
+    captureStackOutputs: '',
+    captureAsSecuredVars: false,
+    timeoutInMins: 30
 }
 
 // NOTE: these tests are too hard to write, fucntional tests will not work the module as is. We need to break

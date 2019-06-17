@@ -13,26 +13,27 @@ import {
     revisionSourceFromWorkspace,
     TaskParameters
 } from '../../../Tasks/CodeDeployDeployApplication/TaskParameters'
+import { emptyConnectionParameters } from '../testcommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    applicationName: undefined,
-    deploymentGroupName: undefined,
-    deploymentRevisionSource: undefined,
-    revisionBundle: undefined,
-    bucketName: undefined,
-    bundlePrefix: undefined,
-    bundleKey: undefined,
-    description: undefined,
-    fileExistsBehavior: undefined,
-    updateOutdatedInstancesOnly: undefined,
-    ignoreApplicationStopFailures: undefined,
-    outputVariable: undefined,
-    timeoutInMins: undefined
+    awsConnectionParameters: emptyConnectionParameters,
+    applicationName: 'undefined',
+    deploymentGroupName: 'undefined',
+    deploymentRevisionSource: '',
+    revisionBundle: '',
+    bucketName: '',
+    bundlePrefix: '',
+    bundleKey: 'undefined',
+    description: '',
+    fileExistsBehavior: '',
+    updateOutdatedInstancesOnly: false,
+    ignoreApplicationStopFailures: false,
+    outputVariable: '',
+    timeoutInMins: 0
 }
 
 const emptyPromise = {
@@ -112,7 +113,7 @@ describe('CodeDeploy Deploy Application', () => {
         taskParameters.applicationName = 'test'
         const s3 = new S3() as any
         s3.upload = jest.fn(args => {
-            expect(args.Bucket).toBeUndefined()
+            expect(args.Bucket).toBe('')
             expect(args.Key).toContain('test.v')
             const dir = fs.readdirSync(__dirname)
             for (const file of dir) {

@@ -77,6 +77,10 @@ export class TaskOperations {
 
             const response = await this.cloudFormationClient.describeChangeSet(request).promise()
 
+            if (!response.StackId) {
+                return ''
+            }
+
             return response.StackId
         } catch (err) {
             throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName))
