@@ -16,7 +16,11 @@ export class BeanstalkUtils {
         const response = await beanstalkClient.createStorageLocation().promise()
         console.log(tl.loc('DeterminedBucket', response.S3Bucket))
 
-        return `${response.S3Bucket}`
+        if (!response.S3Bucket) {
+            return ''
+        }
+
+        return response.S3Bucket
     }
 
     public static async prepareAspNetCoreBundle(dotnetPublishPath: string, tempDirectory: string): Promise<string> {
