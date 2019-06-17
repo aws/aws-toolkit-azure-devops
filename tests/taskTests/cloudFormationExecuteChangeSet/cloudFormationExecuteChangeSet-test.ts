@@ -58,7 +58,7 @@ describe('Cloud Formation Execute Change Set', () => {
         const cloudFormation = new CloudFormation()
         const taskOperations = new TaskOperations(cloudFormation, defaultTaskParameters)
         await taskOperations.execute().catch(err => {
-            expect(`${err}`).toContain('Change set undefined does not exist')
+            expect(`${err}`).toContain('Change set  does not exist')
         })
     })
 

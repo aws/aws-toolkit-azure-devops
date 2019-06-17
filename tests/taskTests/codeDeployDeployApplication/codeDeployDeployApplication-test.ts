@@ -21,13 +21,13 @@ jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: emptyConnectionParameters,
-    applicationName: '',
-    deploymentGroupName: '',
+    applicationName: 'undefined',
+    deploymentGroupName: 'undefined',
     deploymentRevisionSource: '',
     revisionBundle: '',
     bucketName: '',
     bundlePrefix: '',
-    bundleKey: '',
+    bundleKey: 'undefined',
     description: '',
     fileExistsBehavior: '',
     updateOutdatedInstancesOnly: false,
@@ -113,7 +113,7 @@ describe('CodeDeploy Deploy Application', () => {
         taskParameters.applicationName = 'test'
         const s3 = new S3() as any
         s3.upload = jest.fn(args => {
-            expect(args.Bucket).toBeUndefined()
+            expect(args.Bucket).toBe('')
             expect(args.Key).toContain('test.v')
             const dir = fs.readdirSync(__dirname)
             for (const file of dir) {

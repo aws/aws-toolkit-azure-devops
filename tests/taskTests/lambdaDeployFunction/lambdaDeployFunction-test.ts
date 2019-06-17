@@ -16,7 +16,7 @@ jest.mock('aws-sdk')
 const baseTaskParameters: TaskParameters = {
     awsConnectionParameters: emptyConnectionParameters,
     deploymentMode: '',
-    functionName: '',
+    functionName: 'undefined1',
     functionHandler: '',
     runtime: '',
     codeLocation: '',
@@ -116,7 +116,7 @@ describe('Lambda Deploy Function', () => {
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionFails)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
-        await taskOperations.execute().catch(e => expect(`${e}`).toContain('Function undefined does not exist'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('Function undefined1 does not exist'))
         expect(lambda.getFunction).toBeCalledTimes(1)
     })
 

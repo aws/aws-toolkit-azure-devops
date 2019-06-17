@@ -221,6 +221,7 @@ export abstract class SdkUtils {
             return undefined
         }
 
+        // tslint:disable-next-line:no-unsafe-any
         parsed.forEach(item => (arr[`${item.Key}`] = item.Value))
 
         return arr as T

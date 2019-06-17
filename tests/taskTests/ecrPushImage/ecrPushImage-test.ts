@@ -137,6 +137,6 @@ describe('Secrets Manger Get Secret', () => {
         await taskOperations.execute()
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
         expect(ecr.describeRepositories).toBeCalledTimes(1)
-        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual([undefined, 'example.com/name'])
+        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual(['', 'example.com/name'])
     })
 })
