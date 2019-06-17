@@ -171,7 +171,7 @@ export class TaskOperations {
         console.log(tl.loc('EventsComing'))
 
         let success = true
-        let environment: ElasticBeanstalk.EnvironmentDescription
+        let environment: ElasticBeanstalk.EnvironmentDescription | undefined
 
         // delay the event poll by a random amount, up to 5 seconds, so that if multiple
         // deployments run in parallel they don't all start querying at the same time and
@@ -189,7 +189,7 @@ export class TaskOperations {
                 const responseEnvironments = await this.beanstalkClient
                     .describeEnvironments(requestEnvironment)
                     .promise()
-                if (responseEnvironments.Environments.length === 0) {
+                if (!responseEnvironments.Environments || responseEnvironments.Environments.length === 0) {
                     throw new Error(tl.loc('FailedToFindEnvironment'))
                 }
                 environment = responseEnvironments.Environments[0]
@@ -197,10 +197,10 @@ export class TaskOperations {
                 requestEvents.StartTime = lastPrintedEventDate
                 const responseEvent = await this.beanstalkClient.describeEvents(requestEvents).promise()
 
-                if (responseEvent.Events.length > 0) {
+                if (responseEvent.Events && responseEvent.Events.length > 0) {
                     for (let i = responseEvent.Events.length - 1; i >= 0; i--) {
                         const event = responseEvent.Events[i]
-                        if (event.EventDate <= lastPrintedEventDate) {
+                        if (!event.EventDate || event.EventDate <= lastPrintedEventDate) {
                             continue
                         }
 
@@ -211,7 +211,9 @@ export class TaskOperations {
                         }
                     }
 
-                    lastPrintedEventDate = responseEvent.Events[0].EventDate
+                    if (responseEvent.Events[0].EventDate) {
+                        lastPrintedEventDate = responseEvent.Events[0].EventDate
+                    }
                 }
             } catch (err) {
                 // if we are still encountering throttles, increase the poll delay some more
@@ -223,7 +225,7 @@ export class TaskOperations {
                     throw err
                 }
             }
-        } while (environment.Status === 'Launching' || environment.Status === 'Updating')
+        } while (environment && (environment.Status === 'Launching' || environment.Status === 'Updating'))
 
         if (!success) {
             throw new Error(tl.loc('FailedToDeploy'))
@@ -237,7 +239,7 @@ export class TaskOperations {
         }
 
         const response = await this.beanstalkClient.describeEvents(requestEvents).promise()
-        if (response.Events.length === 0) {
+        if (!response.Events || response.Events.length === 0 || !response.Events[0].EventDate) {
             return new Date()
         }
 

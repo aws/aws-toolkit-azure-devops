@@ -12,6 +12,7 @@ import {
     applicationTypeS3Archive,
     TaskParameters
 } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -26,16 +27,16 @@ const verifyApplicationExistsResponse = {
 }
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    applicationName: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
+    applicationName: '',
     applicationType: applicationTypeS3Archive,
-    versionLabel: undefined,
-    webDeploymentArchive: undefined,
-    dotnetPublishPath: undefined,
-    deploymentBundleBucket: undefined,
-    deploymentBundleKey: undefined,
-    description: undefined,
-    outputVariable: undefined
+    versionLabel: '',
+    webDeploymentArchive: '',
+    dotnetPublishPath: '',
+    deploymentBundleBucket: '',
+    deploymentBundleKey: '',
+    description: '',
+    outputVariable: ''
 }
 
 // NOTE: most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so

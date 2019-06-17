@@ -18,7 +18,7 @@ export class TaskOperations {
     // and region into the environment, and to be able to specify the script inline
     // or from a file
     public async execute(): Promise<number> {
-        let scriptPath: string
+        let scriptPath = ''
         try {
             await this.configureAWSContext()
             await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('AWSShellScript')
