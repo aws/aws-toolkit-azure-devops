@@ -165,6 +165,7 @@
         "ApplicationDoesNotExist": "Application %s does not exist",
         "SettingOutputVariable": "Setting output variable %s with the version label %s",
         "ApplicationExistsQueryError": "DescribeApplications: error %s returned querying for existence of application %s",
+        "ApplicationExistsQueryErrorTooManyApplications": "DescribeApplications: Too many applications returned querying for existence of application %s. List of applications returned: %s",
         "TaskCompleted": "Creation of new revision completed successfully"
     }
 }

@@ -125,7 +125,7 @@ export class DotNetCliWrapper {
             dotnet.arg(arg)
         }
 
-        if (additionalArgs === '') {
+        if (additionalArgs) {
             dotnet.line(additionalArgs)
         }
 

@@ -138,8 +138,17 @@ export class BeanstalkUtils {
                 .promise()
 
             if (response.Applications) {
-                appExists = response.Applications.length === 1
                 tl.debug(`Query for application ${applicationName} yield ${response.Applications.length} items`)
+                appExists = response.Applications.length === 1
+                if (response.Applications.length > 1) {
+                    console.log(
+                        tl.loc(
+                            'ApplicationExistsQueryErrorTooManyApplications',
+                            applicationName,
+                            response.Applications.join(' ,')
+                        )
+                    )
+                }
             } else {
                 tl.debug(`Query for application ${applicationName} had an invalid response ${response}`)
             }
@@ -169,8 +178,17 @@ export class BeanstalkUtils {
                 .promise()
 
             if (response.Environments) {
-                envExists = response.Environments.length === 1
                 tl.debug(`Query for environment ${environmentName} yielded ${response.Environments.length} items`)
+                envExists = response.Environments.length === 1
+                if (response.Environments.length > 1) {
+                    console.log(
+                        tl.loc(
+                            'EnvironmentExistsQueryErrorTooManyApplications',
+                            applicationName,
+                            response.Environments.join(' ,')
+                        )
+                    )
+                }
             } else {
                 tl.debug(`Query for environment ${environmentName} yielded an invalid response ${response}`)
             }
