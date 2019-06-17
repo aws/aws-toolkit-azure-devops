@@ -7,35 +7,36 @@ import { IAM, Lambda } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaDeployFunction/TaskOperations'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters } from '../../../Tasks/LambdaDeployFunction/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const baseTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    deploymentMode: undefined,
-    functionName: undefined,
-    functionHandler: undefined,
-    runtime: undefined,
-    codeLocation: undefined,
-    localZipFile: undefined,
-    s3Bucket: undefined,
-    s3ObjectKey: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
+    deploymentMode: '',
+    functionName: 'undefined1',
+    functionHandler: '',
+    runtime: '',
+    codeLocation: '',
+    localZipFile: '',
+    s3Bucket: '',
+    s3ObjectKey: '',
     s3ObjectVersion: undefined,
-    roleARN: undefined,
-    description: undefined,
+    roleARN: '',
+    description: '',
     memorySize: 128,
     timeout: 3,
-    publish: undefined,
-    deadLetterARN: undefined,
-    kmsKeyARN: undefined,
-    environment: undefined,
-    tags: undefined,
-    securityGroups: undefined,
-    subnets: undefined,
-    tracingConfig: undefined,
-    outputVariable: undefined
+    publish: false,
+    deadLetterARN: '',
+    kmsKeyARN: '',
+    environment: [],
+    tags: [],
+    securityGroups: [],
+    subnets: [],
+    tracingConfig: '',
+    outputVariable: ''
 }
 
 const getFunctionSucceeds = {
@@ -115,7 +116,7 @@ describe('Lambda Deploy Function', () => {
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionFails)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
-        await taskOperations.execute().catch(e => expect(`${e}`).toContain('Function undefined does not exist'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('Function undefined1 does not exist'))
         expect(lambda.getFunction).toBeCalledTimes(1)
     })
 

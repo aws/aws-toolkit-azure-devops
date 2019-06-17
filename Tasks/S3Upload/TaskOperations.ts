@@ -106,7 +106,7 @@ export class TaskOperations {
             if (!stats.isDirectory()) {
                 const fileBuffer = fs.createReadStream(matchedFile)
                 try {
-                    let contentType: string
+                    let contentType: string | undefined
                     if (this.taskParameters.contentType) {
                         contentType = this.taskParameters.contentType
                     } else {
@@ -135,14 +135,22 @@ export class TaskOperations {
                             break
 
                         case awsKeyManagementValue: {
-                            request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
-                            request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
+                            if (this.taskParameters.encryptionAlgorithm) {
+                                request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
+                            }
+                            if (this.taskParameters.kmsMasterKeyId) {
+                                request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
+                            }
                             break
                         }
 
                         case customerKeyManagementValue: {
-                            request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
-                            request.SSECustomerKey = this.taskParameters.customerKey
+                            if (this.taskParameters.encryptionAlgorithm) {
+                                request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
+                            }
+                            if (this.taskParameters.customerKey !== Buffer.from([])) {
+                                request.SSECustomerKey = this.taskParameters.customerKey
+                            }
                             break
                         }
                     }

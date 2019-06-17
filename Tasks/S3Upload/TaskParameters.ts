@@ -51,10 +51,10 @@ export function buildTaskParameters(): TaskParameters {
         contentEncoding: tl.getInput('contentEncoding', false),
         forcePathStyleAddressing: tl.getBoolInput('forcePathStyleAddressing', false),
         storageClass: tl.getInput('storageClass', false),
-        keyManagement: undefined,
-        encryptionAlgorithm: undefined,
-        kmsMasterKeyId: undefined,
-        customerKey: undefined
+        keyManagement: '',
+        encryptionAlgorithm: '',
+        kmsMasterKeyId: '',
+        customerKey: Buffer.from([])
     }
     if (!parameters.storageClass) {
         parameters.storageClass = 'STANDARD'

@@ -22,8 +22,8 @@ export interface TaskParameters {
     functionHandler: string
     functionName: string
     functionRole: string
-    functionMemory: number
-    functionTimeout: number
+    functionMemory: number | undefined
+    functionTimeout: number | undefined
     stackName: string
     s3Bucket: string
     s3Prefix: string
@@ -36,7 +36,7 @@ export function buildTaskParameters(): TaskParameters {
         command: tl.getInput('command', true),
         packageOnly: tl.getBoolInput('packageOnly', true),
         lambdaProjectPath: tl.getPathInput('lambdaProjectPath', true, true),
-        packageOutputFile: undefined,
+        packageOutputFile: '',
         functionHandler: tl.getInput('functionHandler', false),
         functionName: tl.getInput('functionName', false),
         functionRole: tl.getInput('functionRole', false),
@@ -45,7 +45,7 @@ export function buildTaskParameters(): TaskParameters {
         stackName: tl.getInput('stackName', false),
         s3Bucket: tl.getInput('s3Bucket', false),
         s3Prefix: tl.getInput('s3Prefix', false),
-        additionalArgs: tl.getInput('additionalArgs', false)
+        additionalArgs: tl.getInput('additionalArgs', false) || ''
     }
 
     if (parameters.packageOnly) {

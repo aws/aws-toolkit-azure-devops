@@ -8,21 +8,22 @@ import { DockerHandler } from 'Common/dockerUtils'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/ECRPushImage/TaskOperations'
 import { imageNameSource, TaskParameters } from '../../../Tasks/ECRPushImage/TaskParameters'
+import { emptyConnectionParameters } from '../testcommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    imageSource: undefined,
-    sourceImageName: undefined,
-    sourceImageTag: undefined,
-    sourceImageId: undefined,
-    repositoryName: undefined,
-    pushTag: undefined,
-    autoCreateRepository: undefined,
-    outputVariable: undefined
+    awsConnectionParameters: emptyConnectionParameters,
+    imageSource: '',
+    sourceImageName: '',
+    sourceImageTag: '',
+    sourceImageId: '',
+    repositoryName: '',
+    pushTag: '',
+    autoCreateRepository: false,
+    outputVariable: ''
 }
 
 const defaultDocker: DockerHandler = {
@@ -89,7 +90,7 @@ describe('Secrets Manger Get Secret', () => {
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         const dockerHandler = { ...defaultDocker }
-        const runDockerCommand = jest.fn((thing1, thing2, thing3) => undefined)
+        const runDockerCommand = jest.fn(async (thing1, thing2, thing3) => undefined)
         dockerHandler.runDockerCommand = runDockerCommand
         const taskOperations = new TaskOperations(ecr, dockerHandler, defaultTaskParameters)
         await taskOperations.execute()
@@ -122,7 +123,7 @@ describe('Secrets Manger Get Secret', () => {
     test('Happy path', async () => {
         expect.assertions(3)
         const dockerHandler = { ...defaultDocker }
-        const runDockerCommand = jest.fn((thing1, thing2, thing3) => undefined)
+        const runDockerCommand = jest.fn(async (thing1, thing2, thing3) => undefined)
         dockerHandler.runDockerCommand = runDockerCommand
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
@@ -136,6 +137,6 @@ describe('Secrets Manger Get Secret', () => {
         await taskOperations.execute()
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
         expect(ecr.describeRepositories).toBeCalledTimes(1)
-        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual([undefined, 'example.com/name'])
+        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual(['', 'example.com/name'])
     })
 })

@@ -29,9 +29,9 @@ export function buildTaskParameters(): TaskParameters {
         pushTag: tl.getInput('pushTag', false),
         autoCreateRepository: tl.getBoolInput('autoCreateRepository', false),
         outputVariable: tl.getInput('outputVariable', false),
-        sourceImageName: undefined,
-        sourceImageId: undefined,
-        sourceImageTag: undefined
+        sourceImageName: '',
+        sourceImageId: '',
+        sourceImageTag: ''
     }
 
     if (parameters.imageSource === imageNameSource) {

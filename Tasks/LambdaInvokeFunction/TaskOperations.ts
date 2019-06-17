@@ -24,7 +24,10 @@ export class TaskOperations {
         }
         try {
             const data: Lambda.InvocationResponse = await this.lambdaClient.invoke(params).promise()
-            const outValue: string = data.Payload.toString()
+            let outValue: string = ''
+            if (data.Payload) {
+                outValue = data.Payload.toString()
+            }
 
             // don't echo the value into the normal logs in case it contains sensitive data
             tl.debug(tl.loc('ReceivedOutput', outValue))

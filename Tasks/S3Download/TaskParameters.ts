@@ -35,7 +35,7 @@ export function buildTaskParameters(): TaskParameters {
         forcePathStyleAddressing: tl.getBoolInput('forcePathStyleAddressing', false),
         flattenFolders: tl.getBoolInput('flattenFolders', false),
         keyManagement: tl.getInput('keyManagement', false),
-        customerKey: undefined
+        customerKey: Buffer.from([])
     }
 
     if (parameters.keyManagement === customerManagedKeyValue) {
