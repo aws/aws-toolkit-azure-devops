@@ -38,7 +38,7 @@ export class TaskOperations {
             if (this.taskParameters.disableAutoCwd) {
                 workingDirectory = this.taskParameters.workingDirectory
             } else {
-                workingDirectory = path.dirname(scriptPath)
+                workingDirectory = process.env.SYSTEM_DEFAULTWORKINGDIRECTORY || path.dirname(scriptPath)
             }
 
             // The solution to this not working on windows comes from doing it like it's done in
