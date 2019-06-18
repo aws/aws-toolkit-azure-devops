@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
+import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { DotNetCliWrapper } from 'Common/dotNetCliWrapper'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
@@ -57,8 +57,8 @@ export class TaskOperations {
         const wrapper = new DotNetCliWrapper(cwd, env)
 
         console.log(tl.loc('StartingDotNetRestore'))
-        await wrapper.restoreAsync()
-        if (!wrapper.checkForGlobalLambdaToolsInstalled() && !(await wrapper.installGlobalToolsAsync())) {
+        await wrapper.restore()
+        if (!wrapper.checkForGlobalLambdaToolsInstalled() && !(await wrapper.installGlobalTools())) {
             throw new Error(
                 'Unable to install Amazon.Lambda.Tools! Are you using the correct hosted ' +
                     "agent type? Refer to Microsoft's guide for the correct hoested agent for .NET Core" +
@@ -70,7 +70,7 @@ export class TaskOperations {
         switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'))
-                await wrapper.lambdaDeployAsync(
+                await wrapper.lambdaDeploy(
                     region,
                     this.taskParameters.functionName,
                     this.taskParameters.functionHandler,
@@ -84,7 +84,7 @@ export class TaskOperations {
                 break
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'))
-                await wrapper.serverlessDeployAsync(
+                await wrapper.serverlessDeploy(
                     region,
                     this.taskParameters.stackName,
                     this.taskParameters.s3Bucket,

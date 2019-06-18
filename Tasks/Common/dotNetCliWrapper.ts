@@ -4,18 +4,22 @@
  */
 
 import tl = require('vsts-task-lib/task')
-import tr = require('vsts-task-lib/toolrunner')
+
+export interface DotNetCli {
+    restore(): Promise<void>
+    checkForGlobalLambdaToolsInstalled(): Promise<boolean>
+}
 
 export class DotNetCliWrapper {
     public constructor(private readonly cwd: string, private readonly env: any) {}
 
-    public async restoreAsync(): Promise<void> {
-        return this.executeAsync(['restore'], '')
+    public async restore(): Promise<void> {
+        return this.execute(['restore'], '')
     }
 
     public async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
         try {
-            await this.executeAsync(['lambda', '--help'], '')
+            await this.execute(['lambda', '--help'], '')
         } catch (exception) {
             return false
         }
@@ -23,14 +27,14 @@ export class DotNetCliWrapper {
         return true
     }
 
-    public async installGlobalToolsAsync(): Promise<boolean> {
+    public async installGlobalTools(): Promise<boolean> {
         try {
-            await this.executeAsync(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
+            await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
         } catch (e) {
             // If something went wrong in the last step, we try to update the tools instead
             // This might succeed, but if it doesn't we just throw an exception
             try {
-                await this.executeAsync(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
+                await this.execute(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
             } catch (e2) {
                 return false
             }
@@ -39,7 +43,7 @@ export class DotNetCliWrapper {
         return true
     }
 
-    public async serverlessDeployAsync(
+    public async serverlessDeploy(
         awsRegion: string,
         stackName: string,
         s3Bucket: string,
@@ -83,10 +87,10 @@ export class DotNetCliWrapper {
         args.push('--disable-interactive')
         args.push('true')
 
-        return this.executeAsync(args, additionalArgs)
+        return this.execute(args, additionalArgs)
     }
 
-    public async lambdaDeployAsync(
+    public async lambdaDeploy(
         awsRegion: string,
         functionName: string,
         functionHandler: string,
@@ -138,10 +142,10 @@ export class DotNetCliWrapper {
         args.push('--disable-interactive')
         args.push('true')
 
-        return this.executeAsync(args, additionalArgs)
+        return this.execute(args, additionalArgs)
     }
 
-    public async executeAsync(args: string[], additionalArgs: string): Promise<void> {
+    public async execute(args: string[], additionalArgs: string): Promise<void> {
         const dotnetPath = tl.which('dotnet', true)
         console.log('Path to tool: ' + dotnetPath)
 
