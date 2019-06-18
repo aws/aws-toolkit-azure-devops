@@ -12,7 +12,7 @@ import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    public constructor(public readonly taskParameters: TaskParameters) {}
+    public constructor(public readonly dotnetPath: string, public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         const cwd = this.determineProjectDirectory(this.taskParameters.lambdaProjectPath)
@@ -54,18 +54,7 @@ export class TaskOperations {
 
         await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy')
 
-        const wrapper = new DotNetCliWrapper(cwd, env)
-
-        console.log(tl.loc('StartingDotNetRestore'))
-        await wrapper.restore()
-        if (!wrapper.checkForGlobalLambdaToolsInstalled() && !(await wrapper.installGlobalTools())) {
-            throw new Error(
-                'Unable to install Amazon.Lambda.Tools! Are you using the correct hosted ' +
-                    "agent type? Refer to Microsoft's guide for the correct hoested agent for .NET Core" +
-                    'to make sure: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted? ' +
-                    'view=azure-devops#use-a-microsoft-hosted-agent'
-            )
-        }
+        const wrapper = await DotNetCliWrapper.buildDotNetCliWrapper(cwd, env, this.dotnetPath)
 
         switch (this.taskParameters.command) {
             case 'deployFunction':

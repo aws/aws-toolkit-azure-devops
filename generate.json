@@ -51,7 +51,8 @@
     },
     {
         "taskName": "LambdaNETCoreDeploy",
-        "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-LambdaNETCoreDeploy'"]
+        "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-LambdaNETCoreDeploy'"],
+        "additionalArguments": ["tl.which('dotnet', false)"]
     },
     {
         "taskName": "S3Download",

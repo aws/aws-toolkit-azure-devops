@@ -3,45 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+import path = require('path')
 import tl = require('vsts-task-lib/task')
 
-export interface DotNetCli {
-    restore(): Promise<void>
-    checkForGlobalLambdaToolsInstalled(): Promise<boolean>
-}
-
 export class DotNetCliWrapper {
-    public constructor(private readonly cwd: string, private readonly env: any) {}
-
-    public async restore(): Promise<void> {
-        return this.execute(['restore'], '')
-    }
-
-    public async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
-        try {
-            await this.execute(['lambda', '--help'], '')
-        } catch (exception) {
-            return false
-        }
-
-        return true
-    }
-
-    public async installGlobalTools(): Promise<boolean> {
-        try {
-            await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
-        } catch (e) {
-            // If something went wrong in the last step, we try to update the tools instead
-            // This might succeed, but if it doesn't we just throw an exception
-            try {
-                await this.execute(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
-            } catch (e2) {
-                return false
-            }
-        }
-
-        return true
-    }
+    private constructor(private readonly cwd: string, private readonly env: any, private dotnetCliPath: string) {}
 
     public async serverlessDeploy(
         awsRegion: string,
@@ -53,8 +19,6 @@ export class DotNetCliWrapper {
         additionalArgs: string
     ): Promise<void> {
         const args = Array<string>()
-
-        args.push('lambda')
 
         if (packageOnly) {
             console.log(tl.loc('CreatingServerlessPackageOnly', packageOutputFile))
@@ -103,8 +67,6 @@ export class DotNetCliWrapper {
     ): Promise<void> {
         const args = Array<string>()
 
-        args.push('lambda')
-
         if (packageOnly) {
             args.push('package')
             console.log(tl.loc('CreatingFunctionPackageOnly', packageOutputFile))
@@ -146,10 +108,7 @@ export class DotNetCliWrapper {
     }
 
     public async execute(args: string[], additionalArgs: string): Promise<void> {
-        const dotnetPath = tl.which('dotnet', true)
-        console.log('Path to tool: ' + dotnetPath)
-
-        const dotnet = tl.tool(dotnetPath)
+        const dotnet = tl.tool(this.dotnetCliPath)
 
         for (const arg of args) {
             dotnet.arg(arg)
@@ -164,5 +123,75 @@ export class DotNetCliWrapper {
 
         // tslint:disable-next-line: no-unsafe-any
         await dotnet.exec(execOptions as any)
+    }
+
+    private async restore(): Promise<void> {
+        return this.execute(['restore'], '')
+    }
+
+    private async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
+        try {
+            await this.execute(['lambda', '--help'], '')
+        } catch (exception) {
+            return false
+        }
+
+        return true
+    }
+
+    private async installGlobalTools(): Promise<boolean> {
+        try {
+            await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
+        } catch (e) {
+            // If something went wrong in the last step, we try to update the tools instead
+            // This might succeed, but if it doesn't we just throw an exception
+            try {
+                await this.execute(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
+            } catch (e2) {
+                return false
+            }
+        }
+
+        this.dotnetCliPath = tl.which('dotnet-lambda', false)
+        try {
+            tl.checkPath(this.dotnetCliPath, 'dotnet')
+
+            return true
+        } catch {}
+
+        this.dotnetCliPath = path.join('~', '.dotnet', 'tools', 'dotnet-lambda.exe')
+        try {
+            tl.checkPath(this.dotnetCliPath, 'dotnet')
+
+            return true
+        } catch {}
+
+        this.dotnetCliPath = path.join('~', '.dotnet', 'tools', 'dotnet-lambda')
+        try {
+            tl.checkPath(this.dotnetCliPath, 'dotnet')
+
+            return true
+        } catch {}
+
+        return false
+    }
+
+    public static async buildDotNetCliWrapper(cwd: string, env: any, dotnetCliPath: string): Promise<DotNetCliWrapper> {
+        const wrapper = new DotNetCliWrapper(cwd, env, dotnetCliPath)
+        tl.debug(tl.loc('StartingDotNetRestore'))
+        // Restore, this will install the lambda cli if it's < version 3
+        await wrapper.restore()
+        if (!wrapper.checkForGlobalLambdaToolsInstalled() && !(await wrapper.installGlobalTools())) {
+            // if checking for lambda tools fails and installing them fails, we are probably on the
+            // wrong instance type because we were unable to install
+            throw new Error(
+                'Unable to install Amazon.Lambda.Tools! Are you using the correct hosted ' +
+                    "agent type? Refer to Microsoft's guide for the correct hosted agent for .NET Core" +
+                    'to make sure: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted? ' +
+                    'view=azure-devops#use-a-microsoft-hosted-agent'
+            )
+        }
+
+        return wrapper
     }
 }
