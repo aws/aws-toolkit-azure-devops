@@ -1,0 +1,93 @@
+{
+    "options": [
+        {
+            "enabled": false,
+            "definition": { "id": "5d58cc01-7c75-450c-be18-a388ddb129ec" },
+            "inputs": { "branchFilters": "[\"+refs/heads/*\"]", "additionalFields": "{}" }
+        },
+        {
+            "enabled": false,
+            "definition": { "id": "a9db38f9-9fdc-478c-b0f9-464221e58316" },
+            "inputs": { "workItemType": "1", "assignToRequestor": "true", "additionalFields": "{}" }
+        }
+    ],
+    "variables": {
+        "secureStringParameterName": { "value": "secureStringParameterInstanceCreds", "allowOverride": true },
+        "secureStringParameterValue": { "value": null, "allowOverride": true, "isSecret": true },
+        "simpleStringParameterName": { "value": "simpleStringParameterInstanceCreds", "allowOverride": true },
+        "simpleStringParameterValue": { "value": "my simple string parameter", "allowOverride": true },
+        "system.debug": { "value": "false", "allowOverride": true }
+    },
+    "description": "Tests that not setting credentials makes the task fail",
+    "jobAuthorizationScope": 1,
+    "jobTimeoutInMinutes": 60,
+    "jobCancelTimeoutInMinutes": 5,
+    "process": {
+        "phases": [
+            {
+                "steps": [
+                    {
+                        "environment": {},
+                        "enabled": true,
+                        "continueOnError": false,
+                        "alwaysRun": false,
+                        "displayName": "Set Simple String Parameter",
+                        "timeoutInMinutes": 0,
+                        "condition": "succeeded()",
+                        "refName": "SystemsManagerSetParameter_1",
+                        "task": {
+                            "id": "3c47544d-0c9b-49e1-89a4-3c94d0586c89",
+                            "versionSpec": "1.*",
+                            "definitionType": "task"
+                        },
+                        "inputs": {
+                            "awsCredentials": "",
+                            "regionName": "us-west-2",
+                            "parameterName": "$(simpleStringParameterName)",
+                            "parameterType": "String",
+                            "parameterValue": "$(simpleStringParameterValue)",
+                            "encryptionKeyId": "",
+                            "logRequest": "false",
+                            "logResponse": "false"
+                        }
+                    }
+                ],
+                "name": "Agent job 1",
+                "refName": "Phase_1",
+                "condition": "succeeded()",
+                "target": { "executionOptions": { "type": 0 }, "allowScriptsAuthAccessOption": false, "type": 1 },
+                "jobAuthorizationScope": 1,
+                "jobCancelTimeoutInMinutes": 1
+            }
+        ],
+        "type": 1
+    },
+    "repository": {
+        "properties": {
+            "cleanOptions": "0",
+            "labelSources": "0",
+            "labelSourcesFormat": "$(build.buildNumber)",
+            "reportBuildStatus": "true",
+            "gitLfsSupport": "false",
+            "skipSyncSource": "true",
+            "checkoutNestedSubmodules": "false",
+            "fetchDepth": "0"
+        },
+        "id": "f0f167f8-5e29-4d05-9139-d126feea6c0b",
+        "type": "TfsGit",
+        "name": "VstsTesting",
+        "defaultBranch": "refs/heads/master",
+        "clean": "false",
+        "checkoutSubmodules": false
+    },
+    "processParameters": {},
+    "quality": 1,
+    "drafts": [],
+    "id": 36,
+    "name": "instancecreds-should-fail",
+    "path": "\\",
+    "type": 2,
+    "queueStatus": 0,
+    "revision": 5,
+    "project": { "name": "VstsTesting", "state": 1, "visibility": 0 }
+}
