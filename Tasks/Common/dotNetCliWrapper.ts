@@ -10,7 +10,33 @@ export class DotNetCliWrapper {
     public constructor(private readonly cwd: string, private readonly env: any) {}
 
     public async restoreAsync(): Promise<void> {
-        return this.executeAsync(['restore'], undefined)
+        return this.executeAsync(['restore'], '')
+    }
+
+    public async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
+        try {
+            await this.executeAsync(['lambda', '--help'], '')
+        } catch (exception) {
+            return false
+        }
+
+        return true
+    }
+
+    public async installGlobalToolsAsync(): Promise<boolean> {
+        try {
+            await this.executeAsync(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
+        } catch (e) {
+            // If something went wrong in the last step, we try to update the tools instead
+            // This might succeed, but if it doesn't we just throw an exception
+            try {
+                await this.executeAsync(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
+            } catch (e2) {
+                return false
+            }
+        }
+
+        return true
     }
 
     public async serverlessDeployAsync(

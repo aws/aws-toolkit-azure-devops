@@ -58,6 +58,14 @@ export class TaskOperations {
 
         console.log(tl.loc('StartingDotNetRestore'))
         await wrapper.restoreAsync()
+        if (!wrapper.checkForGlobalLambdaToolsInstalled() && !(await wrapper.installGlobalToolsAsync())) {
+            throw new Error(
+                'Unable to install Amazon.Lambda.Tools! Are you using the correct hosted ' +
+                    "agent type? Refer to Microsoft's guide for the correct hoested agent for .NET Core" +
+                    'to make sure: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted? ' +
+                    'view=azure-devops#use-a-microsoft-hosted-agent'
+            )
+        }
 
         switch (this.taskParameters.command) {
             case 'deployFunction':
