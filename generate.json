@@ -51,8 +51,12 @@
     },
     {
         "taskName": "LambdaNETCoreDeploy",
+        "additionalImports": ["import { getCredentials } from 'Common/awsConnectionParameters'"],
         "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-LambdaNETCoreDeploy'"],
-        "additionalArguments": ["tl.which('dotnet', false)"]
+        "additionalArguments": [
+            "await getCredentials(taskParameters.awsConnectionParameters)",
+            "tl.which('dotnet', false)"
+        ]
     },
     {
         "taskName": "S3Download",

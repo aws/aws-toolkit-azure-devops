@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
+import { Credentials } from 'aws-sdk'
+import { getRegion } from 'Common/awsConnectionParameters'
 import { DotNetCliWrapper } from 'Common/dotNetCliWrapper'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
@@ -12,7 +13,11 @@ import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    public constructor(public readonly dotnetPath: string, public readonly taskParameters: TaskParameters) {}
+    public constructor(
+        public readonly credentials: Credentials | undefined,
+        public readonly dotnetPath: string,
+        public readonly taskParameters: TaskParameters
+    ) {}
 
     public async execute(): Promise<void> {
         const cwd = this.determineProjectDirectory(this.taskParameters.lambdaProjectPath)
@@ -39,14 +44,13 @@ export class TaskOperations {
         // If assume role credentials are in play, make sure the initial generation
         // of temporary credentials has been performed. If no credentials were defined
         // for the task, we assume they are already set in the host environment.
-        const credentials = await getCredentials(this.taskParameters.awsConnectionParameters)
-        if (credentials) {
-            await credentials.getPromise()
+        if (this.credentials) {
+            await this.credentials.getPromise()
             tl.debug('configure credentials into environment variables')
-            env.AWS_ACCESS_KEY_ID = credentials.accessKeyId
-            env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey
-            if (credentials.sessionToken) {
-                env.AWS_SESSION_TOKEN = credentials.sessionToken
+            env.AWS_ACCESS_KEY_ID = this.credentials.accessKeyId
+            env.AWS_SECRET_ACCESS_KEY = this.credentials.secretAccessKey
+            if (this.credentials.sessionToken) {
+                env.AWS_SESSION_TOKEN = this.credentials.sessionToken
             }
         }
 
