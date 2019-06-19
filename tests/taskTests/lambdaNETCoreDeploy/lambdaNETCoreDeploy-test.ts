@@ -27,6 +27,7 @@ const baseTaskParameters: TaskParameters = {
 describe('Lambda NET Core Deploy', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
+        process.env.AWS_REGION = 'region'
         SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/LambdaNETCoreDeploy/task.json')
     })
 
@@ -42,9 +43,8 @@ describe('Lambda NET Core Deploy', () => {
         })
     })
 
-    test('unknown command throws', async () => {
+    test('Unknown command throws', async () => {
         expect.assertions(1)
-        process.env.AWS_REGION = 'region'
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'Command that will throw'
@@ -54,8 +54,17 @@ describe('Lambda NET Core Deploy', () => {
         })
     })
 
+    test('Netcore binary not found throws', async () => {
+        expect.assertions(1)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.lambdaProjectPath = '.'
+        const taskOperation = new TaskOperations(undefined, ';437895834795', taskParameters)
+        await taskOperation.execute().catch(e => {
+            expect(`${e}`).toContain("Unable to locate executable file: ';437895834795'")
+        })
+    })
+
     test('Happy path deploy', async () => {
-        process.env.AWS_REGION = 'region'
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployFunction'
@@ -63,11 +72,20 @@ describe('Lambda NET Core Deploy', () => {
         await taskOperation.execute()
     })
 
+    test('Happy path package only', async () => {
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.lambdaProjectPath = '.'
+        taskParameters.command = 'deployFunction'
+        taskParameters.packageOnly = true
+        const taskOperation = new TaskOperations(undefined, 'echo', taskParameters)
+        await taskOperation.execute()
+    })
+
     test('Happy path deploy serverless', async () => {
-        process.env.AWS_REGION = 'region'
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployServerless'
+        taskParameters.functionTimeout = 60
         const taskOperation = new TaskOperations(undefined, 'echo', taskParameters)
         await taskOperation.execute()
     })

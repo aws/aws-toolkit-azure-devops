@@ -56,7 +56,7 @@ export class DotNetCliWrapper {
         args.push('--disable-interactive')
         args.push('true')
 
-        return this.execute(args, additionalArgs)
+        return await this.execute(args, additionalArgs)
     }
 
     public async lambdaDeploy(
@@ -111,7 +111,7 @@ export class DotNetCliWrapper {
         args.push('--disable-interactive')
         args.push('true')
 
-        return this.execute(args, additionalArgs)
+        return await this.execute(args, additionalArgs)
     }
 
     public async execute(args: string[], additionalArgs: string, additionalCommandLineOptions?: any): Promise<number> {
