@@ -142,12 +142,12 @@ export class DotNetCliWrapper {
     }
 
     private async restore(): Promise<number> {
-        return this.execute(['restore'], '')
+        return await this.execute(['restore'], '')
     }
 
     private async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
         try {
-            const returnCode = await this.execute(['lambda', 'help'], '', { silent: true })
+            const returnCode = await this.execute(['lambda', 'help'], '', { silent: false })
             if (returnCode !== 0) {
                 return false
             }
@@ -188,6 +188,7 @@ export class DotNetCliWrapper {
             return wrapper
         }
 
+        tl.debug(tl.loc('InstallingOrUpdatingLambdaTools'))
         if (!(await wrapper.installGlobalTools())) {
             // if checking for lambda tools fails and installing them fails, we are probably on the
             // wrong instance type because we were unable to install

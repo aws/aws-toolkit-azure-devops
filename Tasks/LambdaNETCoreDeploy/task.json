@@ -191,6 +191,7 @@
         "CreatingServerlessPackageOnly": "Performing package-only build of serverless application, output template will be placed in %s",
         "CreatingFunctionPackageOnly": "Performing package-only build of function, output package will be placed in %s",
         "PackageAndDeployTaskCompleted": "Completed packaging and deployment of the project",
-        "PackageOnlyTaskCompleted": "Completed packaging of the project"
+        "PackageOnlyTaskCompleted": "Completed packaging of the project",
+        "InstallingOrUpdatingLambdaTools": "Lambda tools not found, installing or updating them!"
     }
 }
