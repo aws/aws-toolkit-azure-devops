@@ -125,8 +125,7 @@ export class DotNetCliWrapper {
 
         const execOptions: any = {
             cwd: this.cwd,
-            env: this.env,
-            silent: false
+            env: this.env
         }
 
         if (additionalCommandLineOptions) {
@@ -147,7 +146,7 @@ export class DotNetCliWrapper {
 
     private async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
         try {
-            const returnCode = await this.execute(['lambda', 'help'], '', { silent: false })
+            const returnCode = await this.execute(['lambda', 'help'], '', { silent: true })
             if (returnCode !== 0) {
                 return false
             }
