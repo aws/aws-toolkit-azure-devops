@@ -72,11 +72,16 @@ describe('Beanstalk Create Application Version', () => {
     })
 
     test('Happy path, uploads new object to S3', async () => {
+        expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNet
         taskParameters.webDeploymentArchive = 'web/web.txt'
         const s3 = new S3() as any
-        s3.upload = jest.fn(() => s3BucketResponse)
+        s3.upload = jest.fn((args: any) => {
+            expect(args.Key).toContain('web.txt')
+
+            return s3BucketResponse
+        })
         const beanstalk = new ElasticBeanstalk() as any
         beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
         beanstalk.createApplicationVersion = jest.fn(() => verifyApplicationExistsResponse)
