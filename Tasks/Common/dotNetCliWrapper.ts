@@ -184,7 +184,7 @@ export class DotNetCliWrapper {
         tl.debug(tl.loc('StartingDotNetRestore'))
         // Restore, this will install the lambda cli if it's < version 3
         await wrapper.restore()
-        if (wrapper.checkForGlobalLambdaToolsInstalled()) {
+        if (await wrapper.checkForGlobalLambdaToolsInstalled()) {
             return wrapper
         }
 
