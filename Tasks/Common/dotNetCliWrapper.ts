@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import path = require('path')
 import tl = require('vsts-task-lib/task')
 
 export class DotNetCliWrapper {
-    private constructor(private readonly cwd: string, private readonly env: any, private dotnetCliPath: string) {}
+    private constructor(
+        private readonly cwd: string,
+        private readonly env: any,
+        private readonly dotnetCliPath: string
+    ) {}
 
     public async serverlessDeploy(
         awsRegion: string,
@@ -19,6 +22,8 @@ export class DotNetCliWrapper {
         additionalArgs: string
     ): Promise<void> {
         const args = Array<string>()
+
+        args.push('lambda')
 
         if (packageOnly) {
             console.log(tl.loc('CreatingServerlessPackageOnly', packageOutputFile))
@@ -67,6 +72,8 @@ export class DotNetCliWrapper {
     ): Promise<void> {
         const args = Array<string>()
 
+        args.push('lambda')
+
         if (packageOnly) {
             args.push('package')
             console.log(tl.loc('CreatingFunctionPackageOnly', packageOutputFile))
@@ -107,7 +114,7 @@ export class DotNetCliWrapper {
         return this.execute(args, additionalArgs)
     }
 
-    public async execute(args: string[], additionalArgs: string): Promise<void> {
+    public async execute(args: string[], additionalArgs: string, silent?: boolean): Promise<void> {
         const dotnet = tl.tool(this.dotnetCliPath)
 
         for (const arg of args) {
@@ -118,7 +125,12 @@ export class DotNetCliWrapper {
 
         const execOptions = {
             cwd: this.cwd,
-            env: this.env
+            env: this.env,
+            silent: false
+        }
+
+        if (silent) {
+            execOptions.silent = true
         }
 
         // tslint:disable-next-line: no-unsafe-any
@@ -131,7 +143,7 @@ export class DotNetCliWrapper {
 
     private async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
         try {
-            await this.execute(['lambda', '--help'], '')
+            await this.execute(['lambda', 'help'], '', true)
         } catch (exception) {
             return false
         }
@@ -151,27 +163,6 @@ export class DotNetCliWrapper {
                 return false
             }
         }
-
-        this.dotnetCliPath = tl.which('dotnet-lambda', false)
-        try {
-            tl.checkPath(this.dotnetCliPath, 'dotnet')
-
-            return true
-        } catch {}
-
-        this.dotnetCliPath = path.join('~', '.dotnet', 'tools', 'dotnet-lambda.exe')
-        try {
-            tl.checkPath(this.dotnetCliPath, 'dotnet')
-
-            return true
-        } catch {}
-
-        this.dotnetCliPath = path.join('~', '.dotnet', 'tools', 'dotnet-lambda')
-        try {
-            tl.checkPath(this.dotnetCliPath, 'dotnet')
-
-            return true
-        } catch {}
 
         return false
     }
