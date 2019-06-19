@@ -20,7 +20,7 @@ export class DotNetCliWrapper {
         packageOnly: boolean,
         packageOutputFile: string,
         additionalArgs: string
-    ): Promise<void> {
+    ): Promise<number> {
         const args = Array<string>()
 
         args.push('lambda')
@@ -69,7 +69,7 @@ export class DotNetCliWrapper {
         packageOnly: boolean,
         packageOutputFile: string,
         additionalArgs: string
-    ): Promise<void> {
+    ): Promise<number> {
         const args = Array<string>()
 
         args.push('lambda')
@@ -114,7 +114,7 @@ export class DotNetCliWrapper {
         return this.execute(args, additionalArgs)
     }
 
-    public async execute(args: string[], additionalArgs: string, additionalCommandLineOptions?: any): Promise<void> {
+    public async execute(args: string[], additionalArgs: string, additionalCommandLineOptions?: any): Promise<number> {
         const dotnet = tl.tool(this.dotnetCliPath)
 
         for (const arg of args) {
@@ -138,19 +138,20 @@ export class DotNetCliWrapper {
         }
 
         // tslint:disable-next-line: no-unsafe-any
-        await dotnet.exec(execOptions)
+        return await dotnet.exec(execOptions)
     }
 
-    private async restore(): Promise<void> {
+    private async restore(): Promise<number> {
         return this.execute(['restore'], '')
     }
 
     private async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
         try {
-            await this.execute(['lambda', 'help'], '', { silent: true, failOnStdErr: true })
+            const returnCode = await this.execute(['lambda', 'help'], '', { silent: true })
+            if (returnCode !== 0) {
+                return false
+            }
         } catch (exception) {
-            tl.debug(`${exception}`)
-
             return false
         }
 
@@ -159,15 +160,20 @@ export class DotNetCliWrapper {
 
     private async installGlobalTools(): Promise<boolean> {
         try {
-            await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
-        } catch (e) {
-            // If something went wrong in the last step, we try to update the tools instead
-            // This might succeed, but if it doesn't we just throw an exception
-            try {
-                await this.execute(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
-            } catch (e2) {
-                return false
+            const returnCode = await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
+            if (returnCode === 0) {
+                return true
             }
+        } catch (e) {}
+
+        // If something went wrong in the last step, we try to update the tools instead
+        try {
+            const returnCode = await this.execute(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
+            if (returnCode === 0) {
+                return true
+            }
+        } catch (e2) {
+            return false
         }
 
         return false
