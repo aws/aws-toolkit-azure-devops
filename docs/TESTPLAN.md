@@ -132,7 +132,7 @@ End to end tests serve the purpose of making sure the tasks work when actually c
 test every code path, but to make sure we can:
 
 -   Connect to AWS at all/create clients that work
--   Instance and fixed credentials both work
+-   fixed credentials and fixed credentails with assume roals both work
 -   Any task that does heavy build/filesystem work is tested more heavily here (Lambda, Cloudformation, and beanstalk tasks)
 -   Anything that relies on the real environment is tested (like the aws shell script task or the powershell scripts)
 
@@ -186,20 +186,22 @@ Here is the current list of tasks and how end to end tests currently test them. 
     -   Deploy .NETcore 2.1 application
     -   Deploy .NETcore 1 application
 -   S3 Download
-    -   Download from an s3 bucket (with normal and instance credentials)
+    -   Download from an s3 bucket
 -   S3 Upload
-    -   Upload a file (with fixed and instance credentials)
+    -   Upload a file
     -   Upload a file with a set content encoding
 -   Secrets Manager Create Secret
-    -   Combined test with get (instance and fixed credentials), creates and updates
+    -   Combined test with get, creates and updates
 -   Secrets Manager Get Secret
-    -   Combined test with create/update (instance and fixed credentials)
+    -   Combined test with create/update
 -   Send SQS/SNS Message
-    -   Send SQS (instance and fixed credentials)
-    -   Send SNS (instance and fixed credentials)
+    -   Send SQS
+    -   Send SNS
 -   Systems Manager Get Parameter
-    -   Set and Get combined into one (instance and fixed creds)
+    -   Set and Get combined into one
 -   Systems Manager Run Command
     -   Run one SSM command (AWS-ListWindowsInventory)
 -   Systems Manager Set Parameter
-    -   Set and Get combined into one (instance and fixed creds)
+    -   Set and Get combined into one
+
+**instance credentials are currently untested**
