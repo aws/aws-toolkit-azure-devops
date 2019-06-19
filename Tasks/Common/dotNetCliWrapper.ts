@@ -114,7 +114,7 @@ export class DotNetCliWrapper {
         return this.execute(args, additionalArgs)
     }
 
-    public async execute(args: string[], additionalArgs: string, silent?: boolean): Promise<void> {
+    public async execute(args: string[], additionalArgs: string, additionalCommandLineOptions?: any): Promise<void> {
         const dotnet = tl.tool(this.dotnetCliPath)
 
         for (const arg of args) {
@@ -123,18 +123,22 @@ export class DotNetCliWrapper {
 
         dotnet.line(additionalArgs)
 
-        const execOptions = {
+        const execOptions: any = {
             cwd: this.cwd,
             env: this.env,
             silent: false
         }
 
-        if (silent) {
-            execOptions.silent = true
+        if (additionalCommandLineOptions) {
+            // tslint:disable-next-line: no-unsafe-any
+            for (const key of Object.keys(additionalCommandLineOptions)) {
+                // tslint:disable-next-line: no-unsafe-any
+                execOptions.key = additionalCommandLineOptions[key]
+            }
         }
 
         // tslint:disable-next-line: no-unsafe-any
-        await dotnet.exec(execOptions as any)
+        await dotnet.exec(execOptions)
     }
 
     private async restore(): Promise<void> {
@@ -143,8 +147,10 @@ export class DotNetCliWrapper {
 
     private async checkForGlobalLambdaToolsInstalled(): Promise<boolean> {
         try {
-            await this.execute(['lambda', 'help'], '', true)
+            await this.execute(['lambda', 'help'], '', { silent: true, failOnStdErr: true })
         } catch (exception) {
+            tl.debug(`${exception}`)
+
             return false
         }
 
@@ -172,7 +178,11 @@ export class DotNetCliWrapper {
         tl.debug(tl.loc('StartingDotNetRestore'))
         // Restore, this will install the lambda cli if it's < version 3
         await wrapper.restore()
-        if (!wrapper.checkForGlobalLambdaToolsInstalled() && !(await wrapper.installGlobalTools())) {
+        if (wrapper.checkForGlobalLambdaToolsInstalled()) {
+            return wrapper
+        }
+
+        if (!(await wrapper.installGlobalTools())) {
             // if checking for lambda tools fails and installing them fails, we are probably on the
             // wrong instance type because we were unable to install
             throw new Error(
