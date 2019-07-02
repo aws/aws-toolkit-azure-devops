@@ -1,12 +1,11 @@
 /*!
  * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: MIT
  */
 
 import * as child_process from 'child_process'
 import * as fs from 'fs-extra'
 import { join } from 'path'
-// tslint:disable-next-line:no-implicit-dependencies
 import * as readlineSync from 'readline-sync'
 import { v4 as uuid } from 'uuid'
 
