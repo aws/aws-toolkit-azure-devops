@@ -87,11 +87,12 @@ export class DotNetCliWrapper {
             // if checking for lambda tools fails and installing them fails, we are probably on the
             // wrong instance type because we were unable to install. This is fine, we might be able to
             // use the old tools
-            tl.debug(
-                'Unable to install Amazon.Lambda.Tools! Are you using the correct hosted ' +
-                    "agent type? Refer to Microsoft's guide for the correct hosted agent for .NET Core" +
-                    'to make sure: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?' +
-                    'view=azure-devops#use-a-microsoft-hosted-agent'
+            tl.error(
+                'Unable to install global Amazon.Lambda.Tools! The old package based version of Amazon.Lambda.Tools ' +
+                    'is now deprecated. Newer .NET core versions will need to use a newer hosted agent and the ' +
+                    "global tools (which this task auto installs). Refer to Microsoft's guide for the correct hosted " +
+                    'agent for which hosted agent you need to use newer .NET Core versions:' +
+                    'https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted'
             )
         }
 
