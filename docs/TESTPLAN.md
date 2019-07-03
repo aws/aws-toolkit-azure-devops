@@ -132,7 +132,7 @@ End to end tests serve the purpose of making sure the tasks work when actually c
 test every code path, but to make sure we can:
 
 -   Connect to AWS at all/create clients that work
--   fixed credentials and fixed credentails with assume roals both work
+-   fixed credentials and fixed credentials with assume roles both work
 -   Any task that does heavy build/filesystem work is tested more heavily here (Lambda, Cloudformation, and beanstalk tasks)
 -   Anything that relies on the real environment is tested (like the aws shell script task or the powershell scripts)
 

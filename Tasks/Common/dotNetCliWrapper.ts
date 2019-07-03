@@ -172,6 +172,8 @@ export class DotNetCliWrapper {
                 return true
             }
         } catch (e2) {
+            tl.debug(`${e2}`)
+
             return false
         }
 
@@ -194,7 +196,7 @@ export class DotNetCliWrapper {
             throw new Error(
                 'Unable to install Amazon.Lambda.Tools! Are you using the correct hosted ' +
                     "agent type? Refer to Microsoft's guide for the correct hosted agent for .NET Core" +
-                    'to make sure: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted? ' +
+                    'to make sure: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?' +
                     'view=azure-devops#use-a-microsoft-hosted-agent'
             )
         }
