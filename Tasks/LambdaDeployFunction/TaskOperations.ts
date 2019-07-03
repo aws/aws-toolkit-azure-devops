@@ -92,7 +92,6 @@ export class TaskOperations {
                     TargetArn: this.taskParameters.deadLetterARN
                 }
             }
-
             if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {}
                 updateConfigRequest.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
@@ -109,7 +108,20 @@ export class TaskOperations {
                 }
             }
 
-            await this.lambdaClient.updateFunctionConfiguration(updateConfigRequest).promise()
+            const response = await this.lambdaClient.updateFunctionConfiguration(updateConfigRequest).promise()
+
+            // Update tags if we have them
+            if (this.taskParameters.tags) {
+                try {
+                    const tagRequest: Lambda.TagResourceRequest = {
+                        Resource: response.FunctionArn,
+                        Tags: SdkUtils.getTagsDictonary(this.taskParameters.tags)
+                    }
+                    await this.lambdaClient.tagResource(tagRequest).promise()
+                } catch (e) {
+                    tl.debug(`${e}`)
+                }
+            }
 
             return await this.updateFunctionCode()
         } catch (err) {
