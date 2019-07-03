@@ -106,13 +106,12 @@ export class TaskOperations {
             .decode(encodedAuthToken)
             .trim()
             .split(':')
-        await this.dockerHandler.runDockerCommand(this.dockerPath, 'login', [
-            '-u',
-            tokens[0],
-            '-p',
-            tokens[1],
-            endpoint
-        ])
+        await this.dockerHandler.runDockerCommand(
+            this.dockerPath,
+            'login',
+            ['-u', tokens[0], '-p', tokens[1], endpoint],
+            { silent: true }
+        )
     }
 
     private async tagImage(sourceImageRef: string, imageTag: string): Promise<void> {
