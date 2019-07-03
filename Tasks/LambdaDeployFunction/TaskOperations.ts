@@ -111,7 +111,7 @@ export class TaskOperations {
             const response = await this.lambdaClient.updateFunctionConfiguration(updateConfigRequest).promise()
 
             // Update tags if we have them
-            if (this.taskParameters.tags) {
+            if (this.taskParameters.tags && this.taskParameters.tags.length > 0) {
                 try {
                     const tagRequest: Lambda.TagResourceRequest = {
                         Resource: response.FunctionArn,
@@ -161,7 +161,7 @@ export class TaskOperations {
             request.Environment = {}
             request.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
         }
-        if (this.taskParameters.tags) {
+        if (this.taskParameters.tags && this.taskParameters.tags.length > 0) {
             request.Tags = SdkUtils.getTagsDictonary(this.taskParameters.tags)
         }
         if (this.taskParameters.securityGroups) {

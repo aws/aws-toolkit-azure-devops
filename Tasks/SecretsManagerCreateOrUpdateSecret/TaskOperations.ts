@@ -104,7 +104,7 @@ export class TaskOperations {
             }
         }
 
-        if (this.taskParameters.tags) {
+        if (this.taskParameters.tags && this.taskParameters.tags.length > 0) {
             request.Tags = SdkUtils.getTags<SecretsManager.Tag[]>(this.taskParameters.tags)
         }
 
