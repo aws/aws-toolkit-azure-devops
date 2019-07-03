@@ -55,7 +55,8 @@
         "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-LambdaNETCoreDeploy'"],
         "additionalArguments": [
             "await getCredentials(taskParameters.awsConnectionParameters)",
-            "tl.which('dotnet', true)"
+            "tl.which('dotnet', true)",
+            "'dotnet-lambda'"
         ]
     },
     {

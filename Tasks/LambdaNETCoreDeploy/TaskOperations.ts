@@ -5,7 +5,7 @@
 
 import { Credentials } from 'aws-sdk'
 import { getRegion } from 'Common/awsConnectionParameters'
-import { DotNetCliWrapper } from 'Common/dotNetCliWrapper'
+import { DotNetCliWrapper, DotNetLambdaWrapper } from 'Common/dotNetCliWrapper'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
@@ -16,6 +16,7 @@ export class TaskOperations {
     public constructor(
         public readonly credentials: Credentials | undefined,
         public readonly dotnetPath: string,
+        public readonly dotnetLambdaToolName: string,
         public readonly taskParameters: TaskParameters
     ) {}
 
@@ -64,10 +65,16 @@ export class TaskOperations {
         tl.debug(tl.loc('StartingDotNetRestore'))
         await wrapper.restore()
 
+        const lambdaWrapper = await DotNetLambdaWrapper.buildDotNetLambdaWrapper(
+            cwd,
+            env,
+            this.dotnetLambdaToolName,
+            this.dotnetPath
+        )
         switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'))
-                await wrapper.lambdaDeploy(
+                await lambdaWrapper.lambdaDeploy(
                     region,
                     this.taskParameters.functionName,
                     this.taskParameters.functionHandler,
@@ -81,7 +88,7 @@ export class TaskOperations {
                 break
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'))
-                await wrapper.serverlessDeploy(
+                await lambdaWrapper.serverlessDeploy(
                     region,
                     this.taskParameters.stackName,
                     this.taskParameters.s3Bucket,

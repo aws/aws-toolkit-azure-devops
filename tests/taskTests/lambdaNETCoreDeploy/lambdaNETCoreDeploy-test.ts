@@ -32,12 +32,12 @@ describe('Lambda NET Core Deploy', () => {
     })
 
     test('Creates a TaskOperation', () => {
-        expect(new TaskOperations(undefined, '', baseTaskParameters)).not.toBeNull()
+        expect(new TaskOperations(undefined, '', '', baseTaskParameters)).not.toBeNull()
     })
 
     test('Project path does not exist', async () => {
         expect.assertions(1)
-        const taskOperation = new TaskOperations(undefined, 'echo', baseTaskParameters)
+        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', baseTaskParameters)
         await taskOperation.execute().catch(e => {
             expect(`${e}`).toContain('does not exist')
         })
@@ -48,7 +48,7 @@ describe('Lambda NET Core Deploy', () => {
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'Command that will throw'
-        const taskOperation = new TaskOperations(undefined, 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
         await taskOperation.execute().catch(e => {
             expect(`${e}`).toContain('Unknown deployment type: Command that will throw')
         })
@@ -58,9 +58,9 @@ describe('Lambda NET Core Deploy', () => {
         expect.assertions(1)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
-        const taskOperation = new TaskOperations(undefined, ';437895834795', taskParameters)
+        const taskOperation = new TaskOperations(undefined, ';437895834795', 'echo', taskParameters)
         await taskOperation.execute().catch(e => {
-            expect(`${e}`).toContain('Error: Unable to install Amazon.Lambda.Tools!')
+            expect(`${e}`).toContain("Error: Unable to locate executable file: ';437895834795")
         })
     })
 
@@ -68,7 +68,7 @@ describe('Lambda NET Core Deploy', () => {
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployFunction'
-        const taskOperation = new TaskOperations(undefined, 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
         await taskOperation.execute()
     })
 
@@ -77,7 +77,7 @@ describe('Lambda NET Core Deploy', () => {
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployFunction'
         taskParameters.packageOnly = true
-        const taskOperation = new TaskOperations(undefined, 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
         await taskOperation.execute()
     })
 
@@ -86,7 +86,7 @@ describe('Lambda NET Core Deploy', () => {
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployServerless'
         taskParameters.functionTimeout = 60
-        const taskOperation = new TaskOperations(undefined, 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
         await taskOperation.execute()
     })
 })

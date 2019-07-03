@@ -303,8 +303,6 @@
         "UpdatingFunctionCode": "Updating code for function %s",
         "UpdatingFunctionConfiguration": "Updating configuration for function %s",
         "FunctionNotFound": "Function %s does not exist, cannot update code only",
-        "TaskCompleted": "Completed create or update of Lambda function %s, function ARN %s",
-        "LambdaToolsInstallFailed": "Install of dotnet lambda tools failed with: %s",
-        "LambdaToolsUpdateFailed": "Update of dotnet lambda tools failed with: %s"
+        "TaskCompleted": "Completed create or update of Lambda function %s, function ARN %s"
     }
 }
