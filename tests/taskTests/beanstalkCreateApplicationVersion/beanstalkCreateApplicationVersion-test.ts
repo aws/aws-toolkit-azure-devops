@@ -6,6 +6,7 @@
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
 
 import { SdkUtils } from 'Common/sdkutils'
+import * as path from 'path'
 import { TaskOperations } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskOperations'
 import {
     applicationTypeAspNet,
@@ -75,10 +76,10 @@ describe('Beanstalk Create Application Version', () => {
         expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNet
-        taskParameters.webDeploymentArchive = 'web.txt'
+        taskParameters.webDeploymentArchive = '../../resources/beanstalkBundle/doc.txt'
         const s3 = new S3() as any
         s3.upload = jest.fn((args: any) => {
-            expect(args.Key).toContain('web.txt')
+            expect(args.Key).toContain('doc.txt')
 
             return s3BucketResponse
         })
