@@ -26,6 +26,10 @@ const verifyApplicationExistsResponse = {
     promise: () => ({ Applications: ['yes'] })
 }
 
+const prepareAspNetCoreBundleResponse = {
+    promise: () => 'yes'
+}
+
 const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: undefined,
     applicationName: undefined,
@@ -76,7 +80,7 @@ describe('Beanstalk Create Application Version', () => {
         expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNet
-        taskParameters.webDeploymentArchive = '../../resources/beanstalkBundle/doc.txt'
+        taskParameters.webDeploymentArchive = path.join(__dirname, '../../resources/beanstalkBundle/doc.txt')
         const s3 = new S3() as any
         s3.upload = jest.fn((args: any) => {
             expect(args.Key).toContain('doc.txt')
