@@ -7,7 +7,12 @@ import tl = require('vsts-task-lib/task')
 
 export interface DockerHandler {
     locateDockerExecutable(): Promise<string>
-    runDockerCommand(dockerPath: string, command: string, args: string[]): Promise<void>
+    runDockerCommand(
+        dockerPath: string,
+        command: string,
+        args: string[],
+        additionalCommandLineOptions?: any
+    ): Promise<void>
 }
 
 export async function locateDockerExecutable(): Promise<string> {
