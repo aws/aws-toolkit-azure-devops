@@ -140,7 +140,7 @@ export class DotNetCliWrapper {
         return await dotnet.exec(execOptions)
     }
 
-    private async restore(): Promise<number> {
+    public async restore(): Promise<number> {
         return await this.execute(['restore'], '')
     }
 
@@ -157,22 +157,16 @@ export class DotNetCliWrapper {
         return true
     }
 
-    private async installGlobalTools(): Promise<boolean> {
-        try {
-            const returnCode = await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
-            if (returnCode === 0) {
-                return true
-            }
-        } catch (e) {}
-
-        // If something went wrong in the last step, we try to update the tools instead
+    private async updateGlobalTools(): Promise<boolean> {
         try {
             const returnCode = await this.execute(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
             if (returnCode === 0) {
                 return true
+            } else {
+                tl.error(tl.loc('LambdaToolsUpdateFailed', `${returnCode}`))
             }
-        } catch (e2) {
-            tl.debug(`${e2}`)
+        } catch (e) {
+            tl.error(tl.loc('LambdaToolsUpdateFailed', `${e}`))
 
             return false
         }
@@ -180,12 +174,30 @@ export class DotNetCliWrapper {
         return false
     }
 
+    private async installGlobalTools(): Promise<boolean> {
+        try {
+            const returnCode = await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
+            if (returnCode === 0) {
+                return true
+            } else {
+                tl.error(tl.loc('LambdaToolsInstallFailed', `${returnCode}`))
+            }
+        } catch (e) {
+            tl.error(tl.loc('LambdaToolsInstallFailed', `${e}`))
+        }
+
+        // If install fails, try update as a last resort
+        return await this.updateGlobalTools()
+    }
+
     public static async buildDotNetCliWrapper(cwd: string, env: any, dotnetCliPath: string): Promise<DotNetCliWrapper> {
         const wrapper = new DotNetCliWrapper(cwd, env, dotnetCliPath)
-        tl.debug(tl.loc('StartingDotNetRestore'))
-        // Restore, this will install the lambda cli if it's < version 3
-        await wrapper.restore()
         if (await wrapper.checkForGlobalLambdaToolsInstalled()) {
+            // Try an update, if it fails that is fine
+            if (!(await wrapper.updateGlobalTools())) {
+                tl.error('Update of dotnet lambda tools failed, see the log for the error produced')
+            }
+
             return wrapper
         }
 

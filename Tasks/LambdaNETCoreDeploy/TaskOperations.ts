@@ -60,6 +60,10 @@ export class TaskOperations {
 
         const wrapper = await DotNetCliWrapper.buildDotNetCliWrapper(cwd, env, this.dotnetPath)
 
+        // Restore packages
+        tl.debug(tl.loc('StartingDotNetRestore'))
+        await wrapper.restore()
+
         switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'))

@@ -60,7 +60,7 @@ describe('Lambda NET Core Deploy', () => {
         taskParameters.lambdaProjectPath = '.'
         const taskOperation = new TaskOperations(undefined, ';437895834795', taskParameters)
         await taskOperation.execute().catch(e => {
-            expect(`${e}`).toContain("Unable to locate executable file: ';437895834795'")
+            expect(`${e}`).toContain('Error: Unable to install Amazon.Lambda.Tools!')
         })
     })
 
