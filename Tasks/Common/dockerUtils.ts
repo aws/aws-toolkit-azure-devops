@@ -35,7 +35,12 @@ export async function locateDockerExecutable(): Promise<string> {
     return dockerPath
 }
 
-export async function runDockerCommand(dockerPath: string, command: string, args: string[]): Promise<void> {
+export async function runDockerCommand(
+    dockerPath: string,
+    command: string,
+    args: string[],
+    additionalCommandLineOptions?: any
+): Promise<void> {
     console.log(tl.loc('InvokingDockerCommand', dockerPath, command))
 
     const docker = tl.tool(dockerPath)
@@ -46,5 +51,5 @@ export async function runDockerCommand(dockerPath: string, command: string, args
     }
 
     // tslint:disable-next-line: no-unsafe-any
-    await docker.exec()
+    await docker.exec(additionalCommandLineOptions)
 }
