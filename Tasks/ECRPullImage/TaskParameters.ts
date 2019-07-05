@@ -16,7 +16,7 @@ export interface TaskParameters {
     sourceImageTag: string
     sourceImageId: string
     repositoryName: string
-    pushTag: string
+    pullTag: string
     autoCreateRepository: boolean
     outputVariable: string
 }
@@ -26,7 +26,7 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         imageSource: tl.getInput('imageSource', true),
         repositoryName: tl.getInput('repositoryName', true),
-        pushTag: tl.getInput('pullTag', false),
+        pullTag: tl.getInput('pullTag', false),
         autoCreateRepository: tl.getBoolInput('autoCreateRepository', false),
         outputVariable: tl.getInput('outputVariable', false),
         sourceImageName: undefined,
