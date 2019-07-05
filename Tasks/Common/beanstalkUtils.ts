@@ -183,7 +183,7 @@ export class BeanstalkUtils {
                 if (response.Environments.length > 1) {
                     console.log(
                         tl.loc(
-                            'EnvironmentExistsQueryErrorTooManyApplications',
+                            'EnvironmentExistsQueryErrorTooManyEnvironments',
                             applicationName,
                             response.Environments.join(' ,')
                         )
