@@ -202,7 +202,8 @@
             "label": "Lambda Layers",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "List of Lambda Layer ARNs (including version), one per line."
+            "helpMarkDown": "List of Lambda Layer ARNs (including version), one per line.",
+            "visibleRule": "deploymentMode = codeandconfiguration"
         },
         {
             "name": "deadLetterARN",
