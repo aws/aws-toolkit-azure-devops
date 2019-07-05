@@ -102,6 +102,9 @@ export class TaskOperations {
                     SubnetIds: this.taskParameters.subnets
                 }
             }
+            if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
+                updateConfigRequest.Layers = this.taskParameters.layers
+            }
             if (this.taskParameters.tracingConfig !== 'XRay') {
                 updateConfigRequest.TracingConfig = {
                     Mode: this.taskParameters.tracingConfig
@@ -164,7 +167,10 @@ export class TaskOperations {
         if (this.taskParameters.tags && this.taskParameters.tags.length > 0) {
             request.Tags = SdkUtils.getTagsDictonary(this.taskParameters.tags)
         }
-        if (this.taskParameters.securityGroups) {
+        if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
+            request.Layers = this.taskParameters.layers
+        }
+        if (this.taskParameters.securityGroups && this.taskParameters.securityGroups.length > 0) {
             request.VpcConfig = {
                 SecurityGroupIds: this.taskParameters.securityGroups,
                 SubnetIds: this.taskParameters.subnets

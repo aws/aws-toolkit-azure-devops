@@ -197,6 +197,15 @@
             "helpMarkDown": "If set requests AWS Lambda to create or update the Lambda function and publish a version as an atomic operation."
         },
         {
+            "name": "layers",
+            "type": "multiLine",
+            "label": "Lambda Layers",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "List of Lambda Layer ARNs (including version), one per line.",
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
             "name": "deadLetterARN",
             "type": "string",
             "label": "Dead Letter ARN",
