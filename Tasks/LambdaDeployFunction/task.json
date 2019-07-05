@@ -199,7 +199,7 @@
         {
             "name": "layers",
             "type": "multiLine",
-            "label": "Security Group IDs",
+            "label": "Lambda Layers",
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "List of Lambda Layer ARNs (including version), one per line."
