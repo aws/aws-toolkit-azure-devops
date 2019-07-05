@@ -35,6 +35,7 @@ export interface TaskParameters {
     environment: string[]
     tags: string[]
     securityGroups: string[]
+    layers: string[]
     subnets: string[]
     tracingConfig: string
     outputVariable: string
@@ -62,6 +63,7 @@ export function buildTaskParameters(): TaskParameters {
         environment: tl.getDelimitedInput('environment', '\n', false),
         tags: tl.getDelimitedInput('tags', '\n', false),
         securityGroups: tl.getDelimitedInput('securityGroups', '\n', false),
+        layers: tl.getDelimitedInput('layers', '\n', false),
         subnets: tl.getDelimitedInput('subnets', '\n', false),
         tracingConfig: tl.getInput('tracingConfig', false),
         outputVariable: tl.getInput('outputVariable', false)
