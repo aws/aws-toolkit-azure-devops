@@ -34,6 +34,14 @@
         "taskClients": ["CloudFormation"]
     },
     {
+        "taskName": "ECRPullImage",
+        "taskClients": ["ECR"],
+        "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],
+        "additionalArguments": [
+            "{ runDockerCommand: runDockerCommand, locateDockerExecutable: locateDockerExecutable }"
+        ]
+    },
+    {
         "taskName": "ECRPushImage",
         "taskClients": ["ECR"],
         "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],
