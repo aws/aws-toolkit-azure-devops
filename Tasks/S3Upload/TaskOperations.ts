@@ -75,7 +75,7 @@ export class TaskOperations {
             }
             const matchStatemnt = expression.substring(0, firstIndex).trim()
             const cacheControlSettings = expression.substring(firstIndex + 1).trim()
-            const result = tl.match([currentFile], matchStatemnt)
+            const result = tl.match([currentFile], matchStatemnt, this.taskParameters.sourceFolder)
             if (result.length > 0) {
                 return cacheControlSettings
             }
@@ -96,6 +96,13 @@ export class TaskOperations {
         )
 
         const matchedFiles = this.findMatchingFiles(this.taskParameters)
+
+        if (matchedFiles.length === 0) {
+            throw new Error(
+                tl.loc('NoMatchingFilesFound', this.taskParameters.sourceFolder, this.taskParameters.globExpressions)
+            )
+        }
+
         for (const matchedFile of matchedFiles) {
             let relativePath = matchedFile.substring(this.taskParameters.sourceFolder.length)
             if (relativePath.startsWith(path.sep)) {

@@ -251,6 +251,7 @@
         "AllPaths": "All paths %s",
         "MatchedPaths": "Matched paths %s",
         "MatchedFiles": "Matched files list %s",
+        "NoMatchingFilesFound": "No files found in folder \"%s\" that match pattern \"%s\"",
         "CreateBucketFailure": "Failed to create bucket",
         "BucketCreated": "Bucket created",
         "UploadingFile": "Uploading matched file %s, content type %s",
