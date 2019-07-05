@@ -64,7 +64,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The name of the image to push. Required _Image Identity_ is set to _Image name with optional tag_.",
+            "helpMarkDown": "The name of the image to pull. Required _Image Identity_ is set to _Image name with optional tag_.",
             "visibleRule": "imageSource = imagename"
         },
         {
@@ -82,7 +82,7 @@
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The ID of the image to push. Required if _Image Identity_ is set to _Image ID_",
+            "helpMarkDown": "The ID of the image to pull. Required if _Image Identity_ is set to _Image ID_",
             "visibleRule": "imageSource = imageId"
         },
         {
@@ -91,7 +91,7 @@
             "type": "string",
             "required": true,
             "defaultValue": "",
-            "helpMarkDown": "The name of the repository to which the image will be pushed."
+            "helpMarkDown": "The name of the repository from where the image will be pulled."
         },
         {
             "name": "pullTag",
@@ -127,6 +127,8 @@
         }
     },
     "messages": {
-        "PullImageWithId": "Pushing image with ID '%s'"
+        "PullImageWithId": "Pulling image with ID '%s'",
+        "PullImageWithName": "Pulling image with name '%s'",
+        "PullingImage": "Pulling image '%s' from Elastic Container Registry"
     }
 }

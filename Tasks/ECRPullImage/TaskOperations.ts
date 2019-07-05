@@ -3,14 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-/*
-  Copyright 2017-2018 Amazon.com, Inc. and its affiliates. All Rights Reserved.
-  *
-  * Licensed under the MIT License. See the LICENSE accompanying this file
-  * for the specific language governing permissions and limitations under
-  * the License.
-  */
-
 import ECR = require('aws-sdk/clients/ecr')
 import base64 = require('base-64')
 import { DockerHandler } from 'Common/dockerUtils'
@@ -36,29 +28,25 @@ export class TaskOperations {
                 this.taskParameters.sourceImageName,
                 this.taskParameters.sourceImageTag
             )
-            console.log(tl.loc('PushImageWithName', sourceImageRef))
+            console.log(tl.loc('PullImageWithName', sourceImageRef))
         } else {
             sourceImageRef = this.taskParameters.sourceImageId
-            console.log(tl.loc('PushImageWithId', this.taskParameters.sourceImageId))
+            console.log(tl.loc('PullImageWithId', this.taskParameters.sourceImageId))
         }
 
         const authData = await this.getEcrAuthorizationData()
         const endpoint = parse(authData.proxyEndpoint).host
 
-        if (this.taskParameters.autoCreateRepository) {
-            await this.createRepositoryIfNeeded(this.taskParameters.repositoryName)
-        }
-
         const targetImageName = this.constructTaggedImageName(
             this.taskParameters.repositoryName,
-            this.taskParameters.pushTag
+            this.taskParameters.pullTag
         )
         const targetImageRef = `${endpoint}/${targetImageName}`
         await this.tagImage(sourceImageRef, targetImageRef)
 
         await this.loginToRegistry(authData.authorizationToken, authData.proxyEndpoint)
 
-        await this.pushImageToECR(targetImageRef)
+        await this.pullImageFromECR(targetImageRef)
 
         if (this.taskParameters.outputVariable) {
             console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, targetImageRef))
@@ -119,9 +107,9 @@ export class TaskOperations {
         await this.dockerHandler.runDockerCommand(this.dockerPath, 'tag', [sourceImageRef, imageTag])
     }
 
-    private async pushImageToECR(imageRef: string): Promise<void> {
-        console.log(tl.loc('PushingImage', imageRef))
-        await this.dockerHandler.runDockerCommand(this.dockerPath, 'push', [imageRef])
+    private async pullImageFromECR(imageRef: string): Promise<void> {
+        console.log(tl.loc('PullingImage', imageRef))
+        await this.dockerHandler.runDockerCommand(this.dockerPath, 'pull', [imageRef])
     }
 
     private async getEcrAuthorizationData(): Promise<ECR.AuthorizationData> {
