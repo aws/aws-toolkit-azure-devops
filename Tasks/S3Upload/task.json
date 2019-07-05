@@ -213,6 +213,15 @@
             "groupName": "advanced"
         },
         {
+            "name": "cacheControl",
+            "type": "multiLine",
+            "label": "Cache Control Expression",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Set cache control for files one per line. The format used is globExpression=cacheControlExpression, ex. \"*.js=max-age=3600, public\"",
+            "groupName": "advanced"
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",

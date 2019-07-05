@@ -67,6 +67,23 @@ export class TaskOperations {
         }
     }
 
+    private getCacheControl(currentFile: string): string {
+        for (const expression of this.taskParameters.cacheControl) {
+            const firstIndex = expression.indexOf('=')
+            if (firstIndex < 1) {
+                continue
+            }
+            const matchStatemnt = expression.substring(0, firstIndex).trim()
+            const cacheControlSettings = expression.substring(firstIndex + 1).trim()
+            const result = tl.match([currentFile], matchStatemnt)
+            if (result.length > 0) {
+                return cacheControlSettings
+            }
+        }
+
+        return ''
+    }
+
     private async uploadFiles() {
         let msgTarget: string
         if (this.taskParameters.targetFolder) {
@@ -128,6 +145,13 @@ export class TaskOperations {
 
                     if (this.taskParameters.contentEncoding) {
                         request.ContentEncoding = this.taskParameters.contentEncoding
+                    }
+
+                    if (this.taskParameters.cacheControl && this.taskParameters.cacheControl.length > 0) {
+                        const cacheControl = this.getCacheControl(matchedFile)
+                        if (cacheControl) {
+                            request.CacheControl = cacheControl
+                        }
                     }
 
                     switch (this.taskParameters.keyManagement) {
