@@ -32,6 +32,7 @@ const baseTaskParameters: TaskParameters = {
     kmsKeyARN: undefined,
     environment: undefined,
     tags: undefined,
+    layers: undefined,
     securityGroups: undefined,
     subnets: undefined,
     tracingConfig: undefined,
@@ -164,7 +165,7 @@ describe('Lambda Deploy Function', () => {
     })
 
     test('Create function adds fields if they exist', async () => {
-        expect.assertions(4)
+        expect.assertions(5)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.deploymentMode = deployCodeAndConfig
         taskParameters.roleARN = 'arn:yes'
@@ -172,6 +173,7 @@ describe('Lambda Deploy Function', () => {
         taskParameters.securityGroups = ['security']
         taskParameters.tags = ['tag1=2', 'tag2=22']
         taskParameters.environment = ['tag1=2', 'tag2=1']
+        taskParameters.layers = ['arn:thing:whatever:version']
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionFails)
         lambda.createFunction = jest.fn((args: any) => {
@@ -179,6 +181,7 @@ describe('Lambda Deploy Function', () => {
             expect(args.Tags).toStrictEqual({ tag1: '2', tag2: '22' })
             expect(args.VpcConfig.SecurityGroupIds).toStrictEqual(['security'])
             expect(args.TracingConfig).toBeUndefined()
+            expect(args.Layers.length).toBe(1)
 
             return updateFunctionSucceeds
         })
