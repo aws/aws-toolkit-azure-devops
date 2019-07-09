@@ -16,6 +16,10 @@ export class BeanstalkUtils {
         const response = await beanstalkClient.createStorageLocation().promise()
         console.log(tl.loc('DeterminedBucket', response.S3Bucket))
 
+        if (!response.S3Bucket) {
+            return ''
+        }
+
         return response.S3Bucket
     }
 
@@ -133,8 +137,21 @@ export class BeanstalkUtils {
                 })
                 .promise()
 
-            tl.debug(`Query for application ${applicationName} yield ${response.Applications.length} items`)
-            appExists = response.Applications.length === 1
+            if (response.Applications) {
+                tl.debug(`Query for application ${applicationName} yield ${response.Applications.length} items`)
+                appExists = response.Applications.length === 1
+                if (response.Applications.length > 1) {
+                    console.log(
+                        tl.loc(
+                            'ApplicationExistsQueryErrorTooManyApplications',
+                            applicationName,
+                            response.Applications.join(' ,')
+                        )
+                    )
+                }
+            } else {
+                tl.debug(`Query for application ${applicationName} had an invalid response ${response}`)
+            }
         } catch (err) {
             console.log(tl.loc('ApplicationExistsQueryError', applicationName, err))
         }
@@ -160,8 +177,21 @@ export class BeanstalkUtils {
                 })
                 .promise()
 
-            tl.debug(`Query for environment ${environmentName} yielded ${response.Environments.length} items`)
-            envExists = response.Environments.length === 1
+            if (response.Environments) {
+                tl.debug(`Query for environment ${environmentName} yielded ${response.Environments.length} items`)
+                envExists = response.Environments.length === 1
+                if (response.Environments.length > 1) {
+                    console.log(
+                        tl.loc(
+                            'EnvironmentExistsQueryErrorTooManyEnvironments',
+                            applicationName,
+                            response.Environments.join(' ,')
+                        )
+                    )
+                }
+            } else {
+                tl.debug(`Query for environment ${environmentName} yielded an invalid response ${response}`)
+            }
         } catch (err) {
             console.log(tl.loc('EnvironmentExistsQueryError', applicationName, environmentName, err))
         }
