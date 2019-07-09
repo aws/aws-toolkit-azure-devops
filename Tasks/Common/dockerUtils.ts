@@ -18,7 +18,7 @@ export interface DockerHandler {
 export async function locateDockerExecutable(): Promise<string> {
     const dockerExecutables: string[] = ['docker', 'docker.exe']
 
-    let dockerPath: string
+    let dockerPath = ''
     for (const e of dockerExecutables) {
         try {
             dockerPath = tl.which(e, true)

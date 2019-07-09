@@ -157,8 +157,8 @@ export class DotNetLambdaWrapper {
         functionName: string,
         functionHandler: string,
         functionRole: string,
-        functionMemory: number,
-        functionTimeout: number,
+        functionMemory: number | undefined,
+        functionTimeout: number | undefined,
         packageOnly: boolean,
         packageOutputFile: string,
         additionalArgs: string
@@ -247,7 +247,9 @@ export class DotNetLambdaWrapper {
             dotnet.arg(arg)
         }
 
-        dotnet.line(additionalArgs)
+        if (additionalArgs) {
+            dotnet.line(additionalArgs)
+        }
 
         const execOptions: any = {
             cwd: this.cwd,
