@@ -6,6 +6,7 @@
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
 
 import { SdkUtils } from 'Common/sdkutils'
+import * as path from 'path'
 import { TaskOperations } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskOperations'
 import {
     applicationTypeAspNet,
@@ -23,6 +24,10 @@ const s3BucketResponse = {
 
 const verifyApplicationExistsResponse = {
     promise: () => ({ Applications: ['yes'] })
+}
+
+const prepareAspNetCoreBundleResponse = {
+    promise: () => 'yes'
 }
 
 const defaultTaskParameters: TaskParameters = {
@@ -72,11 +77,16 @@ describe('Beanstalk Create Application Version', () => {
     })
 
     test('Happy path, uploads new object to S3', async () => {
+        expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNet
-        taskParameters.webDeploymentArchive = 'web/web.txt'
+        taskParameters.webDeploymentArchive = path.join(__dirname, '../../resources/beanstalkBundle/doc.txt')
         const s3 = new S3() as any
-        s3.upload = jest.fn(() => s3BucketResponse)
+        s3.upload = jest.fn((args: any) => {
+            expect(args.Key).toContain('doc.txt')
+
+            return s3BucketResponse
+        })
         const beanstalk = new ElasticBeanstalk() as any
         beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
         beanstalk.createApplicationVersion = jest.fn(() => verifyApplicationExistsResponse)
