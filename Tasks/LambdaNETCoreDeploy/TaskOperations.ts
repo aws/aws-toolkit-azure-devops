@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSConnectionParameters, getCredentials, getRegion } from 'Common/awsConnectionParameters'
-import { DotNetCliWrapper } from 'Common/dotNetCliWrapper'
+import { Credentials } from 'aws-sdk'
+import { getRegion } from 'Common/awsConnectionParameters'
+import { DotNetCliWrapper, DotNetLambdaWrapper } from 'Common/dotNetCliWrapper'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
@@ -12,7 +13,12 @@ import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    public constructor(public readonly taskParameters: TaskParameters) {}
+    public constructor(
+        public readonly credentials: Credentials | undefined,
+        public readonly dotnetPath: string,
+        public readonly dotnetLambdaToolName: string,
+        public readonly taskParameters: TaskParameters
+    ) {}
 
     public async execute(): Promise<void> {
         const cwd = this.determineProjectDirectory(this.taskParameters.lambdaProjectPath)
@@ -39,14 +45,13 @@ export class TaskOperations {
         // If assume role credentials are in play, make sure the initial generation
         // of temporary credentials has been performed. If no credentials were defined
         // for the task, we assume they are already set in the host environment.
-        const credentials = await getCredentials(this.taskParameters.awsConnectionParameters)
-        if (credentials) {
-            await credentials.getPromise()
+        if (this.credentials) {
+            await this.credentials.getPromise()
             tl.debug('configure credentials into environment variables')
-            env.AWS_ACCESS_KEY_ID = credentials.accessKeyId
-            env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey
-            if (credentials.sessionToken) {
-                env.AWS_SESSION_TOKEN = credentials.sessionToken
+            env.AWS_ACCESS_KEY_ID = this.credentials.accessKeyId
+            env.AWS_SECRET_ACCESS_KEY = this.credentials.secretAccessKey
+            if (this.credentials.sessionToken) {
+                env.AWS_SESSION_TOKEN = this.credentials.sessionToken
             }
         }
 
@@ -54,15 +59,22 @@ export class TaskOperations {
 
         await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('LambdaNETCoreDeploy')
 
-        const wrapper = new DotNetCliWrapper(cwd, env)
+        const wrapper = await DotNetCliWrapper.buildDotNetCliWrapper(cwd, env, this.dotnetPath)
 
-        console.log(tl.loc('StartingDotNetRestore'))
-        await wrapper.restoreAsync()
+        // Restore packages
+        tl.debug(tl.loc('StartingDotNetRestore'))
+        await wrapper.restore()
 
+        const lambdaWrapper = await DotNetLambdaWrapper.buildDotNetLambdaWrapper(
+            cwd,
+            env,
+            this.dotnetLambdaToolName,
+            this.dotnetPath
+        )
         switch (this.taskParameters.command) {
             case 'deployFunction':
                 console.log(tl.loc('StartingFunctionDeployment'))
-                await wrapper.lambdaDeployAsync(
+                await lambdaWrapper.lambdaDeploy(
                     region,
                     this.taskParameters.functionName,
                     this.taskParameters.functionHandler,
@@ -76,7 +88,7 @@ export class TaskOperations {
                 break
             case 'deployServerless':
                 console.log(tl.loc('StartingServerlessDeployment'))
-                await wrapper.serverlessDeployAsync(
+                await lambdaWrapper.serverlessDeploy(
                     region,
                     this.taskParameters.stackName,
                     this.taskParameters.s3Bucket,
