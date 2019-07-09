@@ -31,9 +31,7 @@ export class TaskOperations {
         if (response.SecretString) {
             tl.setVariable(this.taskParameters.variableName, response.SecretString, true)
         } else {
-            // tslint:disable-next-line: no-unsafe-any
-            const v = base64.decode(response.SecretBinary)
-            // tslint:disable-next-line: no-unsafe-any
+            const v = base64.decode(`${response.SecretBinary}`)
             tl.setVariable(this.taskParameters.variableName, v.trim(), true)
         }
 
