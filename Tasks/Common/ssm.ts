@@ -8,6 +8,7 @@ import tl = require('vsts-task-lib/task')
 export const transformCustom = 'custom'
 export const transformSubstitute = 'substitute'
 export const readModeSingle = 'single'
+export const readModeHierarchy = 'hierarchy'
 
 // Transforms the read parameter name depending on task settings. If the task was set
 // to read a single parameter, the input parameter name is in the task parameters. When
@@ -29,7 +30,7 @@ export function transformParameterToVariableName(
         inputParameterName = taskParameters.parameterName
     }
 
-    let outputVariableName: string
+    let outputVariableName: string | undefined
     switch (taskParameters.variableNameTransform) {
         case 'none':
             outputVariableName = inputParameterName

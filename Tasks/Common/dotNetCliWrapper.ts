@@ -10,7 +10,7 @@ export class DotNetCliWrapper {
     public constructor(private readonly cwd: string, private readonly env: any) {}
 
     public async restoreAsync(): Promise<void> {
-        return this.executeAsync(['restore'], undefined)
+        return this.executeAsync(['restore'], '')
     }
 
     public async serverlessDeployAsync(
@@ -65,8 +65,8 @@ export class DotNetCliWrapper {
         functionName: string,
         functionHandler: string,
         functionRole: string,
-        functionMemory: number,
-        functionTimeout: number,
+        functionMemory: number | undefined,
+        functionTimeout: number | undefined,
         packageOnly: boolean,
         packageOutputFile: string,
         additionalArgs: string
@@ -125,7 +125,9 @@ export class DotNetCliWrapper {
             dotnet.arg(arg)
         }
 
-        dotnet.line(additionalArgs)
+        if (additionalArgs) {
+            dotnet.line(additionalArgs)
+        }
 
         const execOptions = {
             cwd: this.cwd,

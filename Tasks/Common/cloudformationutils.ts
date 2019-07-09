@@ -24,6 +24,9 @@ export async function captureStackOutputs(
         .promise()
 
     try {
+        if (!response.Stacks) {
+            throw new Error('No stacks in response')
+        }
         const stack = response.Stacks[0]
         if (asJsonBlob) {
             console.log(tl.loc('ProcessingStackOutputsToJsonBlobBuildVariable'))
@@ -33,10 +36,14 @@ export async function captureStackOutputs(
             tl.setVariable(varName, blob, asSecureVars)
         } else {
             console.log(tl.loc('ProcessingStackOutputsToBuildVariables'))
-            stack.Outputs.forEach(o => {
-                console.log(tl.loc('CreatingStackOutputVariable', o.OutputKey))
-                tl.setVariable(o.OutputKey, o.OutputValue, asSecureVars)
-            })
+            if (stack.Outputs) {
+                stack.Outputs.forEach(o => {
+                    if (o.OutputKey) {
+                        console.log(tl.loc('CreatingStackOutputVariable', o.OutputKey))
+                        tl.setVariable(o.OutputKey, `${o.OutputValue}`, asSecureVars)
+                    }
+                })
+            }
         }
     } catch (err) {
         console.log(tl.loc('ErrorRetrievingStackOutputs', stackName, err))
@@ -51,7 +58,7 @@ export async function testStackHasResources(cloudFormationClient: CloudFormation
     try {
         const response = await cloudFormationClient.describeStackResources({ StackName: stackName }).promise()
 
-        return response.StackResources && response.StackResources.length > 0
+        return response.StackResources !== undefined && response.StackResources.length > 0
     } catch (err) {
         return false
     }
@@ -114,14 +121,14 @@ export async function testStackExists(cloudFormationClient: CloudFormation, stac
                 StackName: stackName
             })
             .promise()
-        if (response.Stacks && response.Stacks.length > 0) {
+        if (response.Stacks && response.Stacks.length > 0 && response.Stacks[0].StackId) {
             return response.Stacks[0].StackId
         }
     } catch (err) {
         console.log(tl.loc('StackLookupFailed', stackName, err))
     }
 
-    return undefined
+    return ''
 }
 
 export async function testChangeSetExists(
