@@ -6,10 +6,7 @@
     "author": "Amazon Web Services",
     "helpMarkDown": "Please refer to [AWS Elastic Beanstalk User Guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html) for more details on deploying applications with AWS Elastic Beanstalk.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/elastic-beanstalk-deploy.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (not all APIs may be used depending on selected task options and environment configuration):\n* autoscaling:DescribeScalingActivities\n* autoscaling:DescribeAutoScalingGroups\n* autoscaling:ResumeProcesses\n* autoscaling:SuspendProcesses\n* cloudformation:DescribeStackResource\n* cloudformation:DescribeStackResources\n* elasticbeanstalk:CreateApplicationVersion\n* elasticbeanstalk:CreateStorageLocation\n* elasticbeanstalk:DescribeApplications\n* elasticbeanstalk:DescribeEnvironments\n* elasticbeanstalk:DescribeEvents\n* elasticloadbalancing:RegisterInstancesWithLoadBalancer\n* elasticbeanstalk:UpdateEnvironment\n\nThe task also requires permissions to upload your application content to the specified Amazon S3 bucket. Depending on the size of the application bundle, either PutObject or the S3 multi-part upload APIs may be used.",
     "category": "Deploy",
-    "visibility": [
-        "Build",
-        "Release"
-    ],
+    "visibility": ["Build", "Release"],
     "demands": [],
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "Deploy to Elastic Beanstalk: $(applicationName)",
@@ -36,7 +33,7 @@
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
-            "options": { },
+            "options": {},
             "properties": {
                 "EditableOptions": "True"
             }
@@ -190,7 +187,9 @@
         "EnvironmentDoesNotExist": "Environment %s does not exist for the application %s",
         "SettingOutputVariable": "Setting output variable %s with the version label %s",
         "ApplicationExistsQueryError": "DescribeApplications: error %s returned querying for existence of application %s",
+        "ApplicationExistsQueryErrorTooManyApplications": "DescribeApplications: Too many applications were returned while querying for existence of application %s. List of applications returned: %s",
         "EnvironmentExistsQueryError": "DescribeEnvironments: error %s thrown querying for existence of environment %s for application %s",
+        "EnvironmentExistsQueryErrorTooManyEnvironments": "DescribeEnvironments: Too many environments were returned while querying for existence of environment %s. List of environments returned: %s",
         "InvalidEventPollDelay": "Event polling delay setting of %s is invalid (minimum %s seconds, maximum %s seconds) - task will use minimum poll delay by default",
         "ConfiguredEventPollDelay": "Task configured to wait %s seconds between queries for deployment events",
         "EventPollWaitExtended": "Throttling detected, extending event polling delay to %s seconds",
