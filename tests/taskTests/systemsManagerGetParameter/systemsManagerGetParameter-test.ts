@@ -20,7 +20,7 @@ const defaultTaskParameters: TaskParameters = {
     parameterName: '',
     parameterVersion: undefined,
     parameterPath: '',
-    recursive: undefined,
+    recursive: false,
     variableNameTransform: '',
     customVariableName: '',
     replacementPattern: '',

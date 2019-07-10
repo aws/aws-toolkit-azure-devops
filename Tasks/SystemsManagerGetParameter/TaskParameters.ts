@@ -5,7 +5,8 @@
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { readModeHierarchy, readModeSingle } from 'Common/ssm'
-import tl = require('vsts-task-lib/task')
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
@@ -13,7 +14,7 @@ export interface TaskParameters {
     parameterName: string
     parameterVersion: number | undefined
     parameterPath: string
-    recursive: boolean | undefined
+    recursive: boolean
     variableNameTransform: string
     customVariableName: string
     replacementPattern: string
@@ -25,11 +26,11 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        readMode: tl.getInput('readMode', true),
+        readMode: getInputRequired('readMode'),
         parameterName: '',
         parameterVersion: undefined,
         parameterPath: '',
-        recursive: undefined,
+        recursive: false,
         variableNameTransform: '',
         customVariableName: '',
         replacementPattern: '',
@@ -40,8 +41,8 @@ export function buildTaskParameters(): TaskParameters {
 
     switch (parameters.readMode) {
         case readModeSingle:
-            parameters.parameterName = tl.getInput('parameterName', true)
-            const versionstring = tl.getInput('parameterVersion', false)
+            parameters.parameterName = getInputRequired('parameterName')
+            const versionstring = getInputOptional('parameterVersion')
             if (versionstring) {
                 const pv = parseInt(versionstring, 10)
                 if (pv > 0) {
@@ -50,12 +51,12 @@ export function buildTaskParameters(): TaskParameters {
                     throw new Error(tl.loc('InvalidParameterVersion', pv))
                 }
             }
-            parameters.variableNameTransform = tl.getInput('singleNameTransform', false)
+            parameters.variableNameTransform = getInputOrEmpty('singleNameTransform')
             break
         case readModeHierarchy:
-            parameters.parameterPath = tl.getInput('parameterPath', true)
+            parameters.parameterPath = getInputRequired('parameterPath')
             parameters.recursive = tl.getBoolInput('recursive', false)
-            parameters.variableNameTransform = tl.getInput('hierarchyNameTransform', false)
+            parameters.variableNameTransform = getInputOrEmpty('hierarchyNameTransform')
             break
         default:
             throw new Error(tl.loc('UnknownReadMode', parameters.readMode))
@@ -63,14 +64,14 @@ export function buildTaskParameters(): TaskParameters {
 
     switch (parameters.variableNameTransform) {
         case 'substitute':
-            parameters.replacementPattern = tl.getInput('replacementPattern', true)
-            parameters.replacementText = tl.getInput('replacementText', false) || ''
-            parameters.globalMatch = tl.getBoolInput('globalMatch', false) || false
+            parameters.replacementPattern = getInputRequired('replacementPattern')
+            parameters.replacementText = getInputOrEmpty('replacementText')
+            parameters.globalMatch = tl.getBoolInput('globalMatch', false)
             parameters.caseInsensitiveMatch = tl.getBoolInput('caseInsensitiveMatch', false)
             break
 
         case 'custom':
-            parameters.customVariableName = tl.getInput('customVariableName', true)
+            parameters.customVariableName = getInputRequired('customVariableName')
             break
 
         default:

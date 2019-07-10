@@ -17,7 +17,7 @@ const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: emptyConnectionParameters,
     secretIdOrName: '',
     variableName: 'secret',
-    versionId: undefined,
+    versionId: '',
     versionStage: undefined
 }
 

@@ -4,7 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
 export const simpleStringType: string = 'String'
 export const stringListType: string = 'StringList'
@@ -21,14 +21,14 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        parameterName: tl.getInput('parameterName', true),
-        parameterType: tl.getInput('parameterType', true),
-        parameterValue: tl.getInput('parameterValue', true),
+        parameterName: getInputRequired('parameterName'),
+        parameterType: getInputRequired('parameterType'),
+        parameterValue: getInputRequired('parameterValue'),
         encryptionKeyId: ''
     }
 
     if (parameters.parameterType === secureStringType) {
-        parameters.encryptionKeyId = tl.getInput('encryptionKeyId', false)
+        parameters.encryptionKeyId = getInputOrEmpty('encryptionKeyId')
     }
 
     return parameters

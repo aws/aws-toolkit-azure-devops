@@ -4,6 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import tl = require('vsts-task-lib/task')
 
 export const stringSecretType: string = 'string'
@@ -19,7 +20,7 @@ export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
     secretNameOrId: string
     description: string
-    kmsKeyId: string
+    kmsKeyId: string | undefined
     secretValueType: string
     secretValueSource: string
     secretValue: string
@@ -33,11 +34,11 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        secretNameOrId: tl.getInput('secretNameOrId', true),
-        description: tl.getInput('description', false),
-        kmsKeyId: tl.getInput('kmsKeyId', false),
-        secretValueType: tl.getInput('secretValueType', true),
-        secretValueSource: tl.getInput('secretValueSource', true),
+        secretNameOrId: getInputRequired('secretNameOrId'),
+        description: getInputOrEmpty('description'),
+        kmsKeyId: getInputOptional('kmsKeyId'),
+        secretValueType: getInputRequired('secretValueType'),
+        secretValueSource: getInputRequired('secretValueSource'),
         secretValue: '',
         secretValueFile: '',
         autoCreateSecret: tl.getBoolInput('autoCreateSecret', false),
@@ -47,7 +48,7 @@ export function buildTaskParameters(): TaskParameters {
     }
 
     if (parameters.secretValueSource === inlineSecretSource) {
-        parameters.secretValue = tl.getInput('secretValue', true)
+        parameters.secretValue = getInputRequired('secretValue')
     } else {
         parameters.secretValueFile = tl.getPathInput('secretValueFile', true, true)
     }
