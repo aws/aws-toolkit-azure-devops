@@ -77,18 +77,17 @@ export class TaskOperations {
                     NextToken: nextToken
                 })
                 .promise()
-
             if (!response.Parameters) {
-                nextToken = undefined
-            } else {
-                for (const p of response.Parameters) {
-                    const outputVariableName = transformParameterToVariableName(this.taskParameters, p.Name)
-                    const isSecret = p.Type === 'SecureString'
-                    console.log(tl.loc('SettingVariable', outputVariableName, p.Name, isSecret))
+                break
+            }
 
-                    tl.setVariable(outputVariableName, `${p.Value}`, isSecret)
-                }
-                nextToken = response.NextToken
+            nextToken = response.NextToken
+            for (const p of response.Parameters) {
+                const outputVariableName = transformParameterToVariableName(this.taskParameters, p.Name)
+                const isSecret = p.Type === 'SecureString'
+                console.log(tl.loc('SettingVariable', outputVariableName, p.Name, isSecret))
+
+                tl.setVariable(outputVariableName, `${p.Value}`, isSecret)
             }
         } while (nextToken)
     }

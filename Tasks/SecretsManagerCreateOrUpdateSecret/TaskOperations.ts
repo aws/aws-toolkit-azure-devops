@@ -110,7 +110,7 @@ export class TaskOperations {
             }
         }
 
-        if (this.taskParameters.tags !== []) {
+        if (this.taskParameters.tags.length > 0) {
             request.Tags = SdkUtils.getTags(this.taskParameters.tags)
         }
 

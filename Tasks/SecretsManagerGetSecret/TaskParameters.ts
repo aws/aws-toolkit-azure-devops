@@ -11,7 +11,7 @@ export interface TaskParameters {
     secretIdOrName: string
     variableName: string
     versionId: string
-    versionStage: string | undefined
+    versionStage: string
 }
 
 export function buildTaskParameters(): TaskParameters {
