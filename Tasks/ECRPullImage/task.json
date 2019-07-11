@@ -69,11 +69,11 @@
         },
         {
             "name": "targetImageTag",
-            "label": "Target Image Tag",
+            "label": "Tag",
             "type": "string",
             "required": false,
             "defaultValue": "latest",
-            "helpMarkDown": "Optional tag to suffix to the image name. If a tag is not supplied, 'latest' is assumed",
+            "helpMarkDown": "Optional tag for the new image in the repository. If not specified, ECR will assume 'latest'.",
             "visibleRule": "imageSource = imagename"
         },
         {
@@ -92,14 +92,6 @@
             "required": true,
             "defaultValue": "",
             "helpMarkDown": "The name of the repository from where the image will be pulled."
-        },
-        {
-            "name": "pullTag",
-            "label": "Repository Tag",
-            "type": "string",
-            "required": false,
-            "defaultValue": "latest",
-            "helpMarkDown": "Optional tag for the new image in the repository. If not specified, ECR will assume 'latest'."
         },
         {
             "name": "logRequest",

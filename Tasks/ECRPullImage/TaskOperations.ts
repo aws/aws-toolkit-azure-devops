@@ -37,11 +37,7 @@ export class TaskOperations {
         const authData = await getEcrAuthorizationData(this.ecrClient)
         const endpoint = parse(authData.proxyEndpoint).host
 
-        const targetImageName = constructTaggedImageName(
-            this.taskParameters.repositoryName,
-            this.taskParameters.targetImageTag
-        )
-        const targetImageRef = `${endpoint}/${targetImageName}`
+        const targetImageRef = `${endpoint}/${sourceImageRef}`
 
         await loginToRegistry(this.dockerHandler, this.dockerPath, authData.authorizationToken, authData.proxyEndpoint)
         await this.pullImageFromECR(targetImageRef)
