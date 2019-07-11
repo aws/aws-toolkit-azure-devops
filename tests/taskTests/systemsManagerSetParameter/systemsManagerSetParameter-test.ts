@@ -7,13 +7,14 @@ import { SSM } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/SystemsManagerSetParameter/TaskOperations'
 import { secureStringType, TaskParameters } from '../../../Tasks/SystemsManagerSetParameter/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    parameterName: undefined,
-    parameterType: undefined,
-    parameterValue: undefined,
-    encryptionKeyId: undefined
+    awsConnectionParameters: emptyConnectionParameters,
+    parameterName: '',
+    parameterType: '',
+    parameterValue: '',
+    encryptionKeyId: ''
 }
 
 const getParameterFails = {
@@ -114,7 +115,7 @@ describe('Systems Manager Set Parameter', () => {
         const ssm = new SSM() as any
         ssm.getParameter = jest.fn(() => getParameterNotSecureString)
         ssm.putParameter = jest.fn(argument => {
-            expect(argument.Type).toBe(undefined)
+            expect(argument.Type).toStrictEqual('')
 
             return putParameterSucceeds
         })
