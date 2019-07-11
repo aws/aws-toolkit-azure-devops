@@ -77,7 +77,9 @@ export class TaskOperations {
                     NextToken: nextToken
                 })
                 .promise()
+
             if (!response.Parameters) {
+                tl.error(tl.loc('ErrorParametersEmpty'))
                 break
             }
 
