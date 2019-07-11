@@ -310,7 +310,7 @@
         },
         {
             "id": "ECRPullImage",
-            "description": "Pull a Elastic Container Registry image",
+            "description": "Pull an Elastic Container Registry image",
             "type": "ms.vss-distributed-task.task",
             "targets": ["ms.vss-distributed-task.tasks"],
             "properties": {
