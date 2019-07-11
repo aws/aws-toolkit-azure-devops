@@ -4,7 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
@@ -12,23 +12,23 @@ export interface TaskParameters {
     message: string
     topicArn: string
     queueUrl: string
-    delaySeconds: number
+    delaySeconds: number | undefined
 }
 
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        messageTarget: tl.getInput('messageTarget', true),
-        message: tl.getInput('message', true),
-        topicArn: undefined,
-        queueUrl: undefined,
+        messageTarget: getInputRequired('messageTarget'),
+        message: getInputRequired('message'),
+        topicArn: '',
+        queueUrl: '',
         delaySeconds: undefined
     }
     if (parameters.messageTarget === 'topic') {
-        parameters.topicArn = tl.getInput('topicArn', true)
+        parameters.topicArn = getInputRequired('topicArn')
     } else {
-        parameters.queueUrl = tl.getInput('queueUrl', true)
-        const delay = tl.getInput('delaySeconds', false)
+        parameters.queueUrl = getInputRequired('queueUrl')
+        const delay = getInputOrEmpty('delaySeconds')
         if (delay) {
             parameters.delaySeconds = parseInt(delay, 10)
         }
