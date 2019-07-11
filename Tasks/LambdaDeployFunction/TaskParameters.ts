@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 // possible values for the deploymentMode parameter
 export const deployCodeOnly: string = 'codeonly'
@@ -30,8 +31,8 @@ export interface TaskParameters {
     memorySize: number
     timeout: number
     publish: boolean
-    deadLetterARN: string
-    kmsKeyARN: string
+    deadLetterARN: string | undefined
+    kmsKeyARN: string | undefined
     environment: string[]
     tags: string[]
     securityGroups: string[]
@@ -44,17 +45,17 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        deploymentMode: tl.getInput('deploymentMode', true),
-        functionName: tl.getInput('functionName', true),
+        deploymentMode: getInputRequired('deploymentMode'),
+        functionName: getInputRequired('functionName'),
         functionHandler: '',
         runtime: '',
-        codeLocation: tl.getInput('codeLocation', true),
+        codeLocation: getInputRequired('codeLocation'),
         localZipFile: '',
         s3Bucket: '',
         s3ObjectKey: '',
         s3ObjectVersion: undefined,
         roleARN: '',
-        description: tl.getInput('description', false),
+        description: getInputOrEmpty('description'),
         memorySize: 128,
         timeout: 3,
         publish: tl.getBoolInput('publish', false),
@@ -65,20 +66,25 @@ export function buildTaskParameters(): TaskParameters {
         securityGroups: tl.getDelimitedInput('securityGroups', '\n', false),
         layers: tl.getDelimitedInput('layers', '\n', false),
         subnets: tl.getDelimitedInput('subnets', '\n', false),
-        tracingConfig: tl.getInput('tracingConfig', false),
-        outputVariable: tl.getInput('outputVariable', false)
+        tracingConfig: getInputOrEmpty('tracingConfig'),
+        outputVariable: getInputOrEmpty('outputVariable')
     }
 
-    const requireBasicConfigFields = parameters.deploymentMode === deployCodeAndConfig
-    parameters.functionHandler = tl.getInput('functionHandler', requireBasicConfigFields)
-    parameters.runtime = tl.getInput('runtime', requireBasicConfigFields)
-    parameters.roleARN = tl.getInput('roleARN', requireBasicConfigFields)
+    if (parameters.deploymentMode === deployCodeAndConfig) {
+        parameters.functionHandler = getInputRequired('functionHandler')
+        parameters.runtime = getInputRequired('runtime')
+        parameters.roleARN = getInputRequired('roleARN')
+    } else {
+        parameters.functionHandler = getInputOrEmpty('functionHandler')
+        parameters.runtime = getInputOrEmpty('runtime')
+        parameters.roleARN = getInputOrEmpty('roleARN')
+    }
 
     if (parameters.codeLocation === updateFromLocalFile) {
         parameters.localZipFile = tl.getPathInput('localZipFile', true, true)
     } else {
-        parameters.s3Bucket = tl.getInput('s3Bucket', true)
-        parameters.s3ObjectKey = tl.getInput('s3ObjectKey', true)
+        parameters.s3Bucket = getInputRequired('s3Bucket')
+        parameters.s3ObjectKey = getInputRequired('s3ObjectKey')
         parameters.s3ObjectVersion = tl.getInput('s3ObjectVersion', false)
     }
 

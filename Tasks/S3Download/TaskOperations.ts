@@ -69,7 +69,7 @@ export class TaskOperations {
                 }
                 if (this.taskParameters.keyManagement === customerManagedKeyValue) {
                     params.SSECustomerAlgorithm = aes256AlgorithmValue
-                    if (this.taskParameters.customerKey !== Buffer.from([])) {
+                    if (this.taskParameters.customerKey.length > 0) {
                         params.SSECustomerKey = this.taskParameters.customerKey
                     }
                 }

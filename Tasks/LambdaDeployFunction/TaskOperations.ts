@@ -7,7 +7,7 @@ import IAM = require('aws-sdk/clients/iam')
 import Lambda = require('aws-sdk/clients/lambda')
 import { SdkUtils } from 'Common/sdkutils'
 import { readFileSync } from 'fs'
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
 
 export class TaskOperations {
@@ -68,7 +68,7 @@ export class TaskOperations {
             const response = await this.lambdaClient.updateFunctionCode(updateCodeRequest).promise()
 
             if (!response.FunctionArn) {
-                return ''
+                throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
             return response.FunctionArn

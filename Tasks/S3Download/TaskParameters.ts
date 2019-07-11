@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 // options for Server-side encryption Key Management
 export const noneOrAWSManagedKeyValue = 'noneOrAWSManaged'
@@ -27,19 +28,19 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        bucketName: tl.getInput('bucketName', true),
+        bucketName: getInputRequired('bucketName'),
         sourceFolder: tl.getPathInput('sourceFolder', false, false),
         targetFolder: tl.getPathInput('targetFolder', true, false),
         globExpressions: tl.getDelimitedInput('globExpressions', '\n', true),
         overwrite: tl.getBoolInput('overwrite', false),
         forcePathStyleAddressing: tl.getBoolInput('forcePathStyleAddressing', false),
         flattenFolders: tl.getBoolInput('flattenFolders', false),
-        keyManagement: tl.getInput('keyManagement', false),
+        keyManagement: getInputOrEmpty('keyManagement'),
         customerKey: Buffer.from([])
     }
 
     if (parameters.keyManagement === customerManagedKeyValue) {
-        const customerKey = tl.getInput('customerKey', true)
+        const customerKey = getInputRequired('customerKey')
         parameters.customerKey = Buffer.from(customerKey, 'hex')
     }
 

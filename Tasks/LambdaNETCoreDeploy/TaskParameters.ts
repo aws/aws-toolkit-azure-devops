@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 // option values for the 'deploymentType' property
 export const deployFunction: string = 'deployFunction'
@@ -33,18 +34,18 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        command: tl.getInput('command', true),
+        command: getInputRequired('command'),
         packageOnly: tl.getBoolInput('packageOnly', true),
         lambdaProjectPath: tl.getPathInput('lambdaProjectPath', true, true),
         packageOutputFile: '',
-        functionHandler: tl.getInput('functionHandler', false),
-        functionName: tl.getInput('functionName', false),
-        functionRole: tl.getInput('functionRole', false),
+        functionHandler: getInputOrEmpty('functionHandler'),
+        functionName: getInputOrEmpty('functionName'),
+        functionRole: getInputOrEmpty('functionRole'),
         functionMemory: undefined,
         functionTimeout: undefined,
-        stackName: tl.getInput('stackName', false),
-        s3Bucket: tl.getInput('s3Bucket', false),
-        s3Prefix: tl.getInput('s3Prefix', false),
+        stackName: getInputOrEmpty('stackName'),
+        s3Bucket: getInputOrEmpty('s3Bucket'),
+        s3Prefix: getInputOrEmpty('s3Prefix'),
         additionalArgs: tl.getInput('additionalArgs', false) || ''
     }
 
@@ -52,10 +53,10 @@ export function buildTaskParameters(): TaskParameters {
         parameters.packageOutputFile = tl.getPathInput('packageOutputFile', true, false)
     }
     if (tl.getInput('functionMemory', false)) {
-        parameters.functionMemory = parseInt(tl.getInput('functionMemory', false), 10)
+        parameters.functionMemory = parseInt(getInputRequired('functionMemory'), 10)
     }
     if (tl.getInput('functionTimeout', false)) {
-        parameters.functionTimeout = parseInt(tl.getInput('functionTimeout', false), 10)
+        parameters.functionTimeout = parseInt(getInputRequired('functionTimeout'), 10)
     }
 
     return parameters

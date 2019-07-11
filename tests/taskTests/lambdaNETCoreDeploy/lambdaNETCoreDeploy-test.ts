@@ -6,9 +6,10 @@
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaNETCoreDeploy/TaskOperations'
 import { TaskParameters } from '../../../Tasks/LambdaNETCoreDeploy/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 const baseTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
     command: '',
     packageOnly: false,
     lambdaProjectPath: '',

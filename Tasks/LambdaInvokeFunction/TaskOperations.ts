@@ -4,8 +4,7 @@
  */
 
 import Lambda = require('aws-sdk/clients/lambda')
-import path = require('path')
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
@@ -17,10 +16,16 @@ export class TaskOperations {
         console.log(tl.loc('InvokingFunction', this.taskParameters.functionName))
 
         const params: Lambda.InvocationRequest = {
-            FunctionName: this.taskParameters.functionName,
-            InvocationType: this.taskParameters.invocationType,
-            LogType: this.taskParameters.logType,
-            Payload: JSON.stringify(this.taskParameters.payload)
+            FunctionName: this.taskParameters.functionName
+        }
+        if (this.taskParameters.payload) {
+            params.Payload = JSON.stringify(this.taskParameters.payload)
+        }
+        if (this.taskParameters.invocationType) {
+            params.InvocationType = this.taskParameters.invocationType
+        }
+        if (this.taskParameters.logType) {
+            params.LogType = this.taskParameters.logType
         }
         try {
             const data: Lambda.InvocationResponse = await this.lambdaClient.invoke(params).promise()
