@@ -6,8 +6,8 @@
 import { ECR } from 'aws-sdk'
 import { DockerHandler } from 'Common/dockerUtils'
 import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../tasks/ECRPullImage/TaskOperations'
-import { TaskParameters } from '../../../tasks/ECRPullImage/TaskParameters'
+import { TaskOperations } from '../../../Tasks/ECRPullImage/TaskOperations'
+import { TaskParameters } from '../../../Tasks/ECRPullImage/TaskParameters'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
