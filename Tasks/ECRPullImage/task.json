@@ -59,17 +59,17 @@
             }
         },
         {
-            "name": "sourceImageName",
-            "label": "Source Image Name",
+            "name": "targetImageName",
+            "label": "Target Image Name",
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The name of the image to pull. Required _Image Identity_ is set to _Image name with optional tag_.",
+            "helpMarkDown": "The name of the image to pull. Required when _Image Identity_ is set to _Image name with optional tag_.",
             "visibleRule": "imageSource = imagename"
         },
         {
-            "name": "sourceImageTag",
-            "label": "Source Image Tag",
+            "name": "targetImageTag",
+            "label": "Target Image Tag",
             "type": "string",
             "required": false,
             "defaultValue": "latest",
@@ -77,8 +77,8 @@
             "visibleRule": "imageSource = imagename"
         },
         {
-            "name": "sourceImageId",
-            "label": "Source Image ID",
+            "name": "targetImageId",
+            "label": "Target Image ID",
             "type": "string",
             "required": false,
             "defaultValue": "",
@@ -87,7 +87,7 @@
         },
         {
             "name": "repositoryName",
-            "label": "Target Repository Name",
+            "label": "Repository Name",
             "type": "string",
             "required": true,
             "defaultValue": "",
@@ -95,7 +95,7 @@
         },
         {
             "name": "pullTag",
-            "label": "Target Repository Tag",
+            "label": "Repository Tag",
             "type": "string",
             "required": false,
             "defaultValue": "latest",
@@ -129,6 +129,9 @@
     "messages": {
         "PullImageWithId": "Pulling image with ID '%s'",
         "PullImageWithName": "Pulling image with name '%s'",
-        "PullingImage": "Pulling image '%s' from Elastic Container Registry"
+        "PullingImage": "Pulling image '%s' from Elastic Container Registry",
+        "InvokingDockerCommand": "Invoking '%s' with command '%s'",
+        "RequestingAuthToken": "Obtaining authentication token for ECR login",
+        "TaskCompleted": "Successfully completed sending the message"
     }
 }

@@ -12,11 +12,10 @@ export const imageIdSource: string = 'imageid'
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
     imageSource: string
-    sourceImageName: string
-    sourceImageTag: string
-    sourceImageId: string
+    targetImageName: string
+    targetImageTag: string
+    targetImageId: string
     repositoryName: string
-    pullTag: string
     autoCreateRepository: boolean
     outputVariable: string
 }
@@ -26,22 +25,21 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         imageSource: tl.getInput('imageSource', true),
         repositoryName: tl.getInput('repositoryName', true),
-        pullTag: tl.getInput('pullTag', false),
         autoCreateRepository: tl.getBoolInput('autoCreateRepository', false),
         outputVariable: tl.getInput('outputVariable', false),
-        sourceImageName: undefined,
-        sourceImageId: undefined,
-        sourceImageTag: undefined
+        targetImageName: undefined,
+        targetImageId: undefined,
+        targetImageTag: undefined
     }
 
     if (parameters.imageSource === imageNameSource) {
-        parameters.sourceImageName = tl.getInput('sourceImageName', true)
-        parameters.sourceImageTag = tl.getInput('sourceImageTag', false)
-        if (!parameters.sourceImageTag) {
-            parameters.sourceImageTag = 'latest'
+        parameters.targetImageName = tl.getInput('targetImageName', true)
+        parameters.targetImageTag = tl.getInput('targetImageTag', false)
+        if (!parameters.targetImageTag) {
+            parameters.targetImageTag = 'latest'
         }
     } else {
-        parameters.sourceImageId = tl.getInput('sourceImageId', true)
+        parameters.targetImageId = tl.getInput('targetImageId', true)
     }
 
     return parameters

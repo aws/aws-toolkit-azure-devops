@@ -25,13 +25,13 @@ export class TaskOperations {
         let sourceImageRef: string
         if (this.taskParameters.imageSource === imageNameSource) {
             sourceImageRef = constructTaggedImageName(
-                this.taskParameters.sourceImageName,
-                this.taskParameters.sourceImageTag
+                this.taskParameters.targetImageName,
+                this.taskParameters.targetImageTag
             )
             console.log(tl.loc('PullImageWithName', sourceImageRef))
         } else {
-            sourceImageRef = this.taskParameters.sourceImageId
-            console.log(tl.loc('PullImageWithId', this.taskParameters.sourceImageId))
+            sourceImageRef = this.taskParameters.targetImageId
+            console.log(tl.loc('PullImageWithId', this.taskParameters.targetImageId))
         }
 
         const authData = await getEcrAuthorizationData(this.ecrClient)
@@ -39,7 +39,7 @@ export class TaskOperations {
 
         const targetImageName = constructTaggedImageName(
             this.taskParameters.repositoryName,
-            this.taskParameters.pullTag
+            this.taskParameters.targetImageTag
         )
         const targetImageRef = `${endpoint}/${targetImageName}`
 
