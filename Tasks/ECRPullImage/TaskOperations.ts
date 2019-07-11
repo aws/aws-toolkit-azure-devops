@@ -8,7 +8,7 @@ import { DockerHandler } from 'Common/dockerUtils'
 import { constructTaggedImageName, getEcrAuthorizationData, loginToRegistry } from 'Common/ecrUtils'
 import { parse } from 'url'
 import tl = require('vsts-task-lib/task')
-import { imageNameSource, TaskParameters } from './TaskParameters'
+import { imageTagSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     private dockerPath: string
@@ -22,30 +22,22 @@ export class TaskOperations {
     public async execute(): Promise<void> {
         this.dockerPath = await this.dockerHandler.locateDockerExecutable()
 
-        let sourceImageRef: string
-        if (this.taskParameters.imageSource === imageNameSource) {
-            sourceImageRef = constructTaggedImageName(
-                this.taskParameters.targetImageName,
-                this.taskParameters.targetImageTag
-            )
-            console.log(tl.loc('PullImageWithName', sourceImageRef))
-        } else {
-            sourceImageRef = this.taskParameters.targetImageId
-            console.log(tl.loc('PullImageWithId', this.taskParameters.targetImageId))
-        }
-
         const authData = await getEcrAuthorizationData(this.ecrClient)
         const endpoint = parse(authData.proxyEndpoint).host
+
+        let sourceImageRef: string
+        if (this.taskParameters.imageSource === imageTagSource) {
+            sourceImageRef = `${this.taskParameters.repositoryName}:${this.taskParameters.targetImageTag}`
+            console.log(tl.loc('PullImageWithTag', endpoint, sourceImageRef))
+        } else {
+            sourceImageRef = `${this.taskParameters.repositoryName}@${this.taskParameters.targetImageDigest}`
+            console.log(tl.loc('PullImageWithDigest', endpoint, sourceImageRef))
+        }
 
         const targetImageRef = `${endpoint}/${sourceImageRef}`
 
         await loginToRegistry(this.dockerHandler, this.dockerPath, authData.authorizationToken, authData.proxyEndpoint)
         await this.pullImageFromECR(targetImageRef)
-
-        if (this.taskParameters.outputVariable) {
-            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, targetImageRef))
-            tl.setVariable(this.taskParameters.outputVariable, targetImageRef)
-        }
 
         console.log(tl.loc('TaskCompleted'))
     }

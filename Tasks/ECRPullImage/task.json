@@ -44,28 +44,27 @@
             }
         },
         {
+            "name": "repositoryName",
+            "label": "Repository Name",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The name of the repository from where the image will be pulled."
+        },
+        {
             "name": "imageSource",
             "type": "radio",
             "label": "Image Identity",
             "required": true,
-            "defaultValue": "imagename",
-            "helpMarkDown": "How the image to be pulled is identified. You can select from either the image ID or the image name. If image name is selected a tag can also be specified",
+            "defaultValue": "imagetag",
+            "helpMarkDown": "How the image to be pulled is identified. You can select from either the image tag or image digest.",
             "options": {
-                "imagename": "Image name with optional tag",
-                "imageid": "Image ID"
+                "imagetag": "Image tag",
+                "imagedigest": "Image digest"
             },
             "properties": {
                 "EditableOptions": "false"
             }
-        },
-        {
-            "name": "targetImageName",
-            "label": "Target Image Name",
-            "type": "string",
-            "required": false,
-            "defaultValue": "",
-            "helpMarkDown": "The name of the image to pull. Required when _Image Identity_ is set to _Image name with optional tag_.",
-            "visibleRule": "imageSource = imagename"
         },
         {
             "name": "targetImageTag",
@@ -74,24 +73,16 @@
             "required": false,
             "defaultValue": "latest",
             "helpMarkDown": "Optional tag for the new image in the repository. If not specified, ECR will assume 'latest'.",
-            "visibleRule": "imageSource = imagename"
+            "visibleRule": "imageSource = imagetag"
         },
         {
-            "name": "targetImageId",
-            "label": "Target Image ID",
+            "name": "targetImageDigest",
+            "label": "Target Image Digest",
             "type": "string",
             "required": false,
             "defaultValue": "",
-            "helpMarkDown": "The ID of the image to pull. Required if _Image Identity_ is set to _Image ID_",
-            "visibleRule": "imageSource = imageId"
-        },
-        {
-            "name": "repositoryName",
-            "label": "Repository Name",
-            "type": "string",
-            "required": true,
-            "defaultValue": "",
-            "helpMarkDown": "The name of the repository from where the image will be pulled."
+            "helpMarkDown": "The Digest of the image to pull.",
+            "visibleRule": "imageSource = imagedigest"
         },
         {
             "name": "logRequest",
@@ -119,8 +110,8 @@
         }
     },
     "messages": {
-        "PullImageWithId": "Pulling image with ID '%s'",
-        "PullImageWithName": "Pulling image with name '%s'",
+        "PullImageWithDigest": "Pulling image from %s with digest '%s'",
+        "PullImageWithTag": "Pulling image from %s with tag '%s'",
         "PullingImage": "Pulling image '%s' from Elastic Container Registry",
         "InvokingDockerCommand": "Invoking '%s' with command '%s'",
         "RequestingAuthToken": "Obtaining authentication token for ECR login",
