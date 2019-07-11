@@ -27,10 +27,10 @@ export class TaskOperations {
 
         let sourceImageRef: string
         if (this.taskParameters.imageSource === imageTagSource) {
-            sourceImageRef = `${this.taskParameters.repositoryName}:${this.taskParameters.targetImageTag}`
+            sourceImageRef = `${this.taskParameters.repository}:${this.taskParameters.imageTag}`
             console.log(tl.loc('PullImageWithTag', endpoint, sourceImageRef))
         } else {
-            sourceImageRef = `${this.taskParameters.repositoryName}@${this.taskParameters.targetImageDigest}`
+            sourceImageRef = `${this.taskParameters.repository}@${this.taskParameters.imageDigest}`
             console.log(tl.loc('PullImageWithDigest', endpoint, sourceImageRef))
         }
 

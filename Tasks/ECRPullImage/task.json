@@ -44,7 +44,7 @@
             }
         },
         {
-            "name": "repositoryName",
+            "name": "repository",
             "label": "Repository Name",
             "type": "string",
             "required": true,
@@ -67,7 +67,7 @@
             }
         },
         {
-            "name": "targetImageTag",
+            "name": "imageTag",
             "label": "Tag",
             "type": "string",
             "required": false,
@@ -76,7 +76,7 @@
             "visibleRule": "imageSource = imagetag"
         },
         {
-            "name": "targetImageDigest",
+            "name": "imageDigest",
             "label": "Target Image Digest",
             "type": "string",
             "required": false,

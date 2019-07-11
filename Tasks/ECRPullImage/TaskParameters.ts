@@ -12,18 +12,18 @@ export const imageIdSource: string = 'imagedigest'
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
     imageSource: string
-    targetImageTag: string
-    targetImageDigest: string
-    repositoryName: string
+    imageTag: string
+    imageDigest: string
+    repository: string
 }
 
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
         imageSource: tl.getInput('imageSource', true),
-        repositoryName: tl.getInput('repositoryName', true),
-        targetImageTag: tl.getInput('targetImageTag', false),
-        targetImageDigest: tl.getInput('targetImageTag', false)
+        repository: tl.getInput('repository', true),
+        imageTag: tl.getInput('imageTag', false),
+        imageDigest: tl.getInput('imageDigest', false)
     }
 
     return parameters
