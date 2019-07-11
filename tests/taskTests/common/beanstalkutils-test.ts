@@ -16,6 +16,10 @@ const s3BucketResponse = {
     promise: () => ({ S3Bucket: 'bucket' })
 }
 
+const s3BucketResponseUndefined = {
+    promise: () => ({ S3Bucket: undefined })
+}
+
 const verifyApplicationExistsResponse = {
     promise: () => ({ Applications: ['yes'] })
 }
@@ -57,6 +61,14 @@ describe('BeanstalkUtils', () => {
         })
     })
 
+    test('DetermineS3Bucket returns undefined returns empty', async () => {
+        expect.assertions(1)
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.createStorageLocation = jest.fn(() => s3BucketResponseUndefined)
+        const response = await BeanstalkUtils.determineS3Bucket(beanstalk)
+        expect(response).toBe('')
+    })
+
     test('PrepareAspNet bundle succeeds', async () => {
         const temp = path.join(__dirname, '../../resources/beanstalkBundle')
         const code = path.join(__dirname, '../../resources/beanstalkBundle')
@@ -65,7 +77,7 @@ describe('BeanstalkUtils', () => {
 
     test('ConstructVersionLabel succeeds', async () => {
         expect(BeanstalkUtils.constructVersionLabel('label')).toBe('label')
-        expect(BeanstalkUtils.constructVersionLabel(undefined)).toMatch(new RegExp('^v[0-9]+$'))
+        expect(BeanstalkUtils.constructVersionLabel('')).toMatch(new RegExp('^v[0-9]+$'))
     })
 
     test('UploadBundle throws on failure', async () => {
