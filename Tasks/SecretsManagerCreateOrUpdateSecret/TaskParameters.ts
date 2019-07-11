@@ -4,6 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import tl = require('vsts-task-lib/task')
 
 export const stringSecretType: string = 'string'
@@ -19,35 +20,35 @@ export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
     secretNameOrId: string
     description: string
-    kmsKeyId: string
+    kmsKeyId: string | undefined
     secretValueType: string
     secretValueSource: string
     secretValue: string
     secretValueFile: string
-    autoCreateSecret: boolean
+    autoCreateSecret: boolean | undefined
     tags: string[]
-    arnOutputVariable: string
-    versionIdOutputVariable: string
+    arnOutputVariable: string | undefined
+    versionIdOutputVariable: string | undefined
 }
 
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        secretNameOrId: tl.getInput('secretNameOrId', true),
-        description: tl.getInput('description', false),
-        kmsKeyId: tl.getInput('kmsKeyId', false),
-        secretValueType: tl.getInput('secretValueType', true),
-        secretValueSource: tl.getInput('secretValueSource', true),
-        secretValue: undefined,
-        secretValueFile: undefined,
+        secretNameOrId: getInputRequired('secretNameOrId'),
+        description: getInputOrEmpty('description'),
+        kmsKeyId: getInputOptional('kmsKeyId'),
+        secretValueType: getInputRequired('secretValueType'),
+        secretValueSource: getInputRequired('secretValueSource'),
+        secretValue: '',
+        secretValueFile: '',
         autoCreateSecret: tl.getBoolInput('autoCreateSecret', false),
-        tags: undefined,
+        tags: [],
         arnOutputVariable: tl.getInput('arnOutputVariable', false),
         versionIdOutputVariable: tl.getInput('versionIdOutputVariable', false)
     }
 
     if (parameters.secretValueSource === inlineSecretSource) {
-        parameters.secretValue = tl.getInput('secretValue', true)
+        parameters.secretValue = getInputRequired('secretValue')
     } else {
         parameters.secretValueFile = tl.getPathInput('secretValueFile', true, true)
     }

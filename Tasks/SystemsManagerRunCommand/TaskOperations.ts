@@ -12,16 +12,29 @@ export class TaskOperations {
 
     public async execute(): Promise<void> {
         const request: SSM.SendCommandRequest = {
-            DocumentName: this.taskParameters.documentName,
-            Comment: this.taskParameters.comment,
-            MaxConcurrency: this.taskParameters.maxConcurrency,
-            MaxErrors: this.taskParameters.maxErrors,
-            ServiceRoleArn: this.taskParameters.serviceRoleARN,
-            TimeoutSeconds: parseInt(this.taskParameters.timeout, 10),
-            OutputS3BucketName: this.taskParameters.outputS3BucketName,
-            OutputS3KeyPrefix: this.taskParameters.outputS3KeyPrefix
+            DocumentName: this.taskParameters.documentName
         }
-
+        if (this.taskParameters.outputS3KeyPrefix) {
+            request.OutputS3KeyPrefix = this.taskParameters.outputS3KeyPrefix
+        }
+        if (this.taskParameters.outputS3BucketName) {
+            request.OutputS3BucketName = this.taskParameters.outputS3BucketName
+        }
+        if (this.taskParameters.timeout) {
+            request.TimeoutSeconds = parseInt(this.taskParameters.timeout, 10)
+        }
+        if (this.taskParameters.maxErrors) {
+            request.MaxErrors = this.taskParameters.maxErrors
+        }
+        if (this.taskParameters.maxConcurrency) {
+            request.MaxConcurrency = this.taskParameters.maxConcurrency
+        }
+        if (this.taskParameters.serviceRoleARN) {
+            request.ServiceRoleArn = this.taskParameters.serviceRoleARN
+        }
+        if (this.taskParameters.comment) {
+            request.Comment = this.taskParameters.comment
+        }
         if (this.taskParameters.documentParameters) {
             // tslint:disable-next-line: no-unsafe-any
             request.Parameters = JSON.parse(this.taskParameters.documentParameters)
@@ -40,7 +53,7 @@ export class TaskOperations {
                     const t: SSM.Target = {}
                     t.Key = 'tag:' + kv[0].trim()
                     t.Values = kv[1].split(',')
-                    request.Targets.push(t)
+                    request.Targets!.push(t)
                 })
                 break
 
@@ -57,17 +70,27 @@ export class TaskOperations {
         if (this.taskParameters.notificationArn) {
             request.NotificationConfig = {
                 NotificationArn: this.taskParameters.notificationArn,
-                NotificationEvents: [this.taskParameters.notificationEvents],
                 NotificationType: this.taskParameters.notificationType
+            }
+
+            if (this.taskParameters.notificationEvents) {
+                request.NotificationConfig.NotificationEvents = [this.taskParameters.notificationEvents]
             }
         }
 
         const response = await this.ssmClient.sendCommand(request).promise()
-        if (this.taskParameters.commandIdOutputVariable) {
-            console.log(tl.loc('SettingOutputVariable', this.taskParameters.commandIdOutputVariable))
-            tl.setVariable(this.taskParameters.commandIdOutputVariable, response.Command.CommandId)
+        let commandId: string = ''
+        if (response.Command) {
+            commandId = `${response.Command.CommandId}`
+        } else {
+            commandId = `${undefined}`
         }
 
-        console.log(tl.loc('TaskCompleted', this.taskParameters.documentName, response.Command.CommandId))
+        if (this.taskParameters.commandIdOutputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.commandIdOutputVariable))
+            tl.setVariable(this.taskParameters.commandIdOutputVariable, commandId)
+        }
+
+        console.log(tl.loc('TaskCompleted', this.taskParameters.documentName, commandId))
     }
 }
