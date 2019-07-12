@@ -52,7 +52,7 @@ describe('CloudFormationUtils', () => {
         const cloudFormation = new CloudFormation() as any
         expect(await testStackHasResources(cloudFormation, 'stack')).toBe(false)
         cloudFormation.describeStackResources = jest.fn(() => cloudFormationDescribeStacksSucceeds)
-        expect(await testStackHasResources(cloudFormation, 'stack')).toBeUndefined()
+        expect(await testStackHasResources(cloudFormation, 'stack')).toBe(false)
         cloudFormation.describeStackResources = jest.fn(() => cloudFormationHasResourcesSucceeds)
         expect(await testStackHasResources(cloudFormation, 'stack')).toBe(true)
     })
@@ -89,7 +89,7 @@ describe('CloudFormationUtils', () => {
     test('Test stack exists', async () => {
         expect.assertions(2)
         const cloudFormation = new CloudFormation() as any
-        expect(await testStackExists(cloudFormation, 'stack')).toBeUndefined()
+        expect(await testStackExists(cloudFormation, 'stack')).toStrictEqual('')
         cloudFormation.describeStacks = jest.fn(() => cloudFormationDescribeStacksSucceeds)
         expect(await testStackExists(cloudFormation, 'stack')).toBe('yes')
     })

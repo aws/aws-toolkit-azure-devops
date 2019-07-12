@@ -1,19 +1,10 @@
 <!--- Provide a general summary of your changes in the Title above -->
 
-## Types of changes
-
-<!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
-
--   [ ] Bug fix (non-breaking change which fixes an issue)
--   [ ] New feature (non-breaking change which adds functionality)
--   [ ] Added tests
--   [ ] Code cleanup
-
 ## Description
 
 <!--- Describe your changes in detail -->
 
-## Motivation and Context
+## Motivation
 
 <!--- Why is this change required? What problem does it solve? -->
 
@@ -34,12 +25,9 @@
 
 -   [ ] I have read the **README** document
 -   [ ] I have read the **CONTRIBUTING** document
--   [ ] Local run of `npm run fullBuild` succeeds
--   [ ] I have run tslint against my changes using the root tslint.yaml
 -   [ ] My code follows the code style of this project
 -   [ ] I have added tests to cover my changes
--   [ ] All new and existing tests passed
--   [ ] A short description of the change has been added to the **CHANGELOG** (CHANGELOG.md) if the change is feature related
+-   [ ] A short description of the change has been added to the changelog using the script `npm run newChange`
 
 ## License
 

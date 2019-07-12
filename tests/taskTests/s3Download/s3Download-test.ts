@@ -9,6 +9,7 @@ import * as fs from 'fs'
 import { Readable as ReadableStream } from 'stream'
 import { TaskOperations } from '../../../Tasks/S3Download/TaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Download/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -16,7 +17,7 @@ jest.mock('aws-sdk')
 
 describe('S3 Download', () => {
     const baseTaskParameters: TaskParameters = {
-        awsConnectionParameters: undefined,
+        awsConnectionParameters: emptyConnectionParameters,
         bucketName: '',
         sourceFolder: '',
         targetFolder: '',

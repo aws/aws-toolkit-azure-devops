@@ -36,14 +36,14 @@ export interface AWSConnectionParameters {
     proxyConfiguration: string | tl.ProxyConfiguration
     // If set, the task should expect to receive temporary session credentials
     // scoped to the role.
-    AssumeRoleARN: string
+    AssumeRoleARN: string | undefined
     // Optional diagnostic logging switches
     logRequestData: boolean
     logResponseData: boolean
     // Original task credentials configured by the task user; if we are in assume-role
     // mode, these credentials were used to generate the temporary credential
     // fields above
-    awsEndpointAuth: tl.EndpointAuthorization
+    awsEndpointAuth: tl.EndpointAuthorization | undefined
 }
 
 // Discover any configured proxy setup, first using the Agent.ProxyUrl and related variables.
@@ -96,7 +96,7 @@ export function buildConnectionParameters(): AWSConnectionParameters {
 function attemptEndpointCredentialConfiguration(
     awsparams: AWSConnectionParameters,
     endpointName: string
-): AWS.Credentials {
+): AWS.Credentials | undefined {
     if (!endpointName) {
         return undefined
     }
@@ -159,7 +159,7 @@ function attemptEndpointCredentialConfiguration(
 // visible as environment vars for the AWS Node.js sdk to auto-recover
 // so treat as if a service endpoint had been set and return a credentials
 // instance.
-function attemptCredentialConfigurationFromVariables(): AWS.Credentials {
+function attemptCredentialConfigurationFromVariables(): AWS.Credentials | undefined {
     const accessKey = tl.getVariable(awsAccessKeyIdVariable)
     if (!accessKey) {
         return undefined
@@ -190,7 +190,7 @@ function attemptCredentialConfigurationFromVariables(): AWS.Credentials {
 // Team Services environment we will assume they are set as either
 // environment variables on the build host (or, if the build host is
 // an EC2 instance, in instance metadata).
-export async function getCredentials(awsParams: AWSConnectionParameters): Promise<AWS.Credentials> {
+export async function getCredentials(awsParams: AWSConnectionParameters): Promise<AWS.Credentials | undefined> {
     console.log('Configuring credentials for task')
 
     const credentials =
@@ -276,5 +276,5 @@ export async function getRegion(): Promise<string> {
 
     console.log('No region specified in the task configuration or environment')
 
-    return undefined
+    return ''
 }
