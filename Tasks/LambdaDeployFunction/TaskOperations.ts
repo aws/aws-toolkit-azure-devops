@@ -178,7 +178,7 @@ export class TaskOperations {
             const response = await this.lambdaClient.createFunction(request).promise()
 
             if (!response.FunctionArn) {
-                return ''
+                throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
             return response.FunctionArn
