@@ -7,7 +7,7 @@ import IAM = require('aws-sdk/clients/iam')
 import Lambda = require('aws-sdk/clients/lambda')
 import { SdkUtils } from 'Common/sdkutils'
 import { readFileSync } from 'fs'
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
 
 export class TaskOperations {
@@ -67,6 +67,10 @@ export class TaskOperations {
 
             const response = await this.lambdaClient.updateFunctionCode(updateCodeRequest).promise()
 
+            if (!response.FunctionArn) {
+                throw new Error(tl.loc('NoFunctionArnReturned'))
+            }
+
             return response.FunctionArn
         } catch (err) {
             throw new Error(`Error while updating function code: ${err}`)
@@ -102,6 +106,9 @@ export class TaskOperations {
                     SecurityGroupIds: this.taskParameters.securityGroups,
                     SubnetIds: this.taskParameters.subnets
                 }
+            }
+            if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
+                updateConfigRequest.Layers = this.taskParameters.layers
             }
             if (this.taskParameters.tracingConfig !== 'XRay') {
                 updateConfigRequest.TracingConfig = {
@@ -152,7 +159,10 @@ export class TaskOperations {
         if (this.taskParameters.tags) {
             request.Tags = SdkUtils.getTagsDictonary(this.taskParameters.tags)
         }
-        if (this.taskParameters.securityGroups) {
+        if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
+            request.Layers = this.taskParameters.layers
+        }
+        if (this.taskParameters.securityGroups && this.taskParameters.securityGroups.length > 0) {
             request.VpcConfig = {
                 SecurityGroupIds: this.taskParameters.securityGroups,
                 SubnetIds: this.taskParameters.subnets
@@ -166,6 +176,10 @@ export class TaskOperations {
 
         try {
             const response = await this.lambdaClient.createFunction(request).promise()
+
+            if (!response.FunctionArn) {
+                throw new Error(tl.loc('NoFunctionArnReturned'))
+            }
 
             return response.FunctionArn
         } catch (err) {

@@ -7,35 +7,37 @@ import { IAM, Lambda } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/LambdaDeployFunction/TaskOperations'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters } from '../../../Tasks/LambdaDeployFunction/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const baseTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    deploymentMode: undefined,
-    functionName: undefined,
-    functionHandler: undefined,
-    runtime: undefined,
-    codeLocation: undefined,
-    localZipFile: undefined,
-    s3Bucket: undefined,
-    s3ObjectKey: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
+    deploymentMode: '',
+    functionName: 'undefined1',
+    functionHandler: '',
+    runtime: '',
+    codeLocation: '',
+    localZipFile: '',
+    s3Bucket: '',
+    s3ObjectKey: '',
     s3ObjectVersion: undefined,
-    roleARN: undefined,
-    description: undefined,
+    roleARN: '',
+    description: '',
+    layers: [],
     memorySize: 128,
     timeout: 3,
-    publish: undefined,
-    deadLetterARN: undefined,
-    kmsKeyARN: undefined,
-    environment: undefined,
-    tags: undefined,
-    securityGroups: undefined,
-    subnets: undefined,
-    tracingConfig: undefined,
-    outputVariable: undefined
+    publish: false,
+    deadLetterARN: '',
+    kmsKeyARN: '',
+    environment: [],
+    tags: [],
+    securityGroups: [],
+    subnets: [],
+    tracingConfig: '',
+    outputVariable: ''
 }
 
 const getFunctionSucceeds = {
@@ -115,7 +117,7 @@ describe('Lambda Deploy Function', () => {
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionFails)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
-        await taskOperations.execute().catch(e => expect(`${e}`).toContain('Function undefined does not exist'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('Function undefined1 does not exist'))
         expect(lambda.getFunction).toBeCalledTimes(1)
     })
 
@@ -164,7 +166,7 @@ describe('Lambda Deploy Function', () => {
     })
 
     test('Create function adds fields if they exist', async () => {
-        expect.assertions(4)
+        expect.assertions(5)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.deploymentMode = deployCodeAndConfig
         taskParameters.roleARN = 'arn:yes'
@@ -172,6 +174,7 @@ describe('Lambda Deploy Function', () => {
         taskParameters.securityGroups = ['security']
         taskParameters.tags = ['tag1=2', 'tag2=22']
         taskParameters.environment = ['tag1=2', 'tag2=1']
+        taskParameters.layers = ['arn:thing:whatever:version']
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionFails)
         lambda.createFunction = jest.fn((args: any) => {
@@ -179,6 +182,7 @@ describe('Lambda Deploy Function', () => {
             expect(args.Tags).toStrictEqual({ tag1: '2', tag2: '22' })
             expect(args.VpcConfig.SecurityGroupIds).toStrictEqual(['security'])
             expect(args.TracingConfig).toBeUndefined()
+            expect(args.Layers.length).toBe(1)
 
             return updateFunctionSucceeds
         })

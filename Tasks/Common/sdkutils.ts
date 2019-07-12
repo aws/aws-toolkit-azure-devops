@@ -58,7 +58,7 @@ export abstract class SdkUtils {
     public static getTempLocation(): string {
         let tempDirectory = tl.getVariable(this.agentTempDirectoryVariable)
         if (!tempDirectory) {
-            tempDirectory = process.env.TEMP
+            tempDirectory = process.env.TEMP || ''
             console.log(`Agent.TempDirectory not available, falling back to TEMP location at ${tempDirectory}`)
         }
 
@@ -79,12 +79,12 @@ export abstract class SdkUtils {
         taskParams: AWSConnectionParameters,
         logger: (msg: string) => void
     ): Promise<any> {
-        awsService.prototype.customizeRequests(request => {
+        awsService.prototype.customizeRequests((request: any) => {
             const logRequestData = taskParams.logRequestData
             const logResponseData = taskParams.logResponseData
             const operation = request.operation
 
-            request.on('complete', response => {
+            request.on('complete', (response: any) => {
                 try {
                     logger(`AWS ${operation} request ID: ${response.requestId}`)
 
@@ -212,25 +212,26 @@ export abstract class SdkUtils {
         })
     }
 
-    public static getTagsDictonary<T, K extends keyof T>(tags: string[]): T[K] | undefined {
+    public static getTagsDictonary<T>(tags: string[]): T | undefined {
         // tslint:disable-next-line:no-object-literal-type-assertion
-        const arr: T[K] = {} as T[K]
+        const arr: any = {}
 
         const parsed = this.getTags(tags)
         if (!parsed) {
             return undefined
         }
 
+        // tslint:disable-next-line:no-unsafe-any
         parsed.forEach(item => (arr[`${item.Key}`] = item.Value))
 
-        return arr
+        return arr as T
     }
 
-    public static getTags<T extends { Key?: string; Value?: string }[]>(tags: string[]): T {
-        let arr: T
+    public static getTags<T extends { Key?: string; Value?: string }[]>(tags: string[]): T | undefined {
+        let arr: T | undefined
 
         if (tags && tags.length > 0) {
-            arr = [] as T
+            arr = ([] as unknown) as T
             tags.forEach(t => {
                 const firstEqualsIndex = t.indexOf('=')
                 // if the tag is invalid, skip it
@@ -240,7 +241,7 @@ export abstract class SdkUtils {
                 const key = t.substring(0, firstEqualsIndex).trim()
                 const val = t.substring(firstEqualsIndex + 1).trim()
                 console.log(tl.loc('AddingTag', key, val))
-                arr.push({
+                arr!.push({
                     Key: key,
                     Value: val
                 })
