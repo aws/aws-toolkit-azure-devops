@@ -4,6 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import tl = require('vsts-task-lib/task')
 
 export const revisionSourceFromWorkspace: string = 'workspace'
@@ -20,7 +21,7 @@ export interface TaskParameters {
     bundlePrefix: string
     bundleKey: string
     description: string
-    fileExistsBehavior: string
+    fileExistsBehavior: string | undefined
     updateOutdatedInstancesOnly: boolean
     ignoreApplicationStopFailures: boolean
     outputVariable: string
@@ -30,29 +31,29 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        applicationName: tl.getInput('applicationName', true),
-        deploymentGroupName: tl.getInput('deploymentGroupName', true),
-        deploymentRevisionSource: tl.getInput('deploymentRevisionSource', true),
+        applicationName: getInputRequired('applicationName'),
+        deploymentGroupName: getInputRequired('deploymentGroupName'),
+        deploymentRevisionSource: getInputRequired('deploymentRevisionSource'),
         revisionBundle: '',
-        bucketName: tl.getInput('bucketName', true),
+        bucketName: getInputRequired('bucketName'),
         bundlePrefix: '',
         bundleKey: '',
-        description: tl.getInput('description', false),
+        description: getInputOrEmpty('description'),
         fileExistsBehavior: tl.getInput('fileExistsBehavior', false),
         updateOutdatedInstancesOnly: tl.getBoolInput('updateOutdatedInstancesOnly', false),
         ignoreApplicationStopFailures: tl.getBoolInput('ignoreApplicationStopFailures', false),
-        outputVariable: tl.getInput('outputVariable', false),
+        outputVariable: getInputOrEmpty('outputVariable'),
         timeoutInMins: Number(tl.getInput('timeoutInMins', false)) || defaultTimeoutInMins
     }
 
     switch (parameters.deploymentRevisionSource) {
         case revisionSourceFromWorkspace:
             parameters.revisionBundle = tl.getPathInput('revisionBundle', true, true)
-            parameters.bundlePrefix = tl.getInput('bundlePrefix', false)
+            parameters.bundlePrefix = getInputOrEmpty('bundlePrefix')
             break
 
         case revisionSourceFromS3:
-            parameters.bundleKey = tl.getInput('bundleKey', true)
+            parameters.bundleKey = getInputRequired('bundleKey')
             break
     }
 

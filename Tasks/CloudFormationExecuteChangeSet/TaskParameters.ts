@@ -4,6 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import tl = require('vsts-task-lib/task')
 
 export const ignoreStackOutputs: string = 'ignore'
@@ -22,10 +23,10 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        changeSetName: tl.getInput('changeSetName', true),
-        stackName: tl.getInput('stackName', true),
-        outputVariable: tl.getInput('outputVariable', false),
-        captureStackOutputs: tl.getInput('captureStackOutputs', false),
+        changeSetName: getInputRequired('changeSetName'),
+        stackName: getInputRequired('stackName'),
+        outputVariable: getInputOrEmpty('outputVariable'),
+        captureStackOutputs: getInputOrEmpty('captureStackOutputs'),
         captureAsSecuredVars: tl.getBoolInput('captureAsSecuredVars', false)
     }
 

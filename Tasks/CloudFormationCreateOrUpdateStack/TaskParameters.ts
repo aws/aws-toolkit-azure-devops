@@ -5,6 +5,7 @@
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { defaultTimeoutInMins } from 'Common/cloudformationutils'
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import fs = require('fs')
 import tl = require('vsts-task-lib/task')
 
@@ -41,14 +42,14 @@ export interface TaskParameters {
     capabilityIAM: boolean
     capabilityNamedIAM: boolean
     capabilityAutoExpand: boolean
-    roleARN: string
+    roleARN: string | undefined
     notificationARNs: string[]
     resourceTypes: string[]
     tags: string[]
     monitorRollbackTriggers: boolean
     monitoringTimeInMinutes: number
     rollbackTriggerARNs: string[]
-    onFailure: string
+    onFailure: string | undefined
     warnWhenNoWorkNeeded: boolean
     outputVariable: string
     captureStackOutputs: string
@@ -59,18 +60,18 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        stackName: tl.getInput('stackName', true),
-        templateSource: tl.getInput('templateSource', true),
+        stackName: getInputRequired('stackName'),
+        templateSource: getInputRequired('templateSource'),
         templateFile: '',
         s3BucketName: '',
         s3ObjectKey: '',
         templateUrl: '',
-        templateParametersSource: tl.getInput('templateParametersSource', true),
+        templateParametersSource: getInputRequired('templateParametersSource'),
         templateParametersFile: '',
         templateParameters: '',
         useChangeSet: tl.getBoolInput('useChangeSet', false),
         changeSetName: '',
-        description: tl.getInput('description', false),
+        description: getInputOrEmpty('description'),
         autoExecuteChangeSet: tl.getBoolInput('autoExecuteChangeSet', false),
         capabilityIAM: tl.getBoolInput('capabilityIAM', false),
         capabilityNamedIAM: tl.getBoolInput('capabilityNamedIAM', false),
@@ -82,10 +83,10 @@ export function buildTaskParameters(): TaskParameters {
         monitorRollbackTriggers: tl.getBoolInput('monitorRollbackTriggers', false),
         monitoringTimeInMinutes: 0,
         rollbackTriggerARNs: [],
-        onFailure: tl.getInput('onFailure'),
+        onFailure: tl.getInput('onFailure', false),
         warnWhenNoWorkNeeded: tl.getBoolInput('warnWhenNoWorkNeeded'),
-        outputVariable: tl.getInput('outputVariable', false),
-        captureStackOutputs: tl.getInput('captureStackOutputs', false),
+        outputVariable: getInputOrEmpty('outputVariable'),
+        captureStackOutputs: getInputOrEmpty('captureStackOutputs'),
         captureAsSecuredVars: tl.getBoolInput('captureAsSecuredVars', false),
         timeoutInMins: defaultTimeoutInMins
     }
@@ -93,16 +94,16 @@ export function buildTaskParameters(): TaskParameters {
     switch (parameters.templateSource) {
         case fileSource:
             parameters.templateFile = tl.getPathInput('templateFile', true, true)
-            parameters.s3BucketName = tl.getInput('s3BucketName', false)
+            parameters.s3BucketName = getInputOrEmpty('s3BucketName')
             break
 
         case urlSource:
-            parameters.templateUrl = tl.getInput('templateUrl', true)
+            parameters.templateUrl = getInputRequired('templateUrl')
             break
 
         case s3Source:
-            parameters.s3BucketName = tl.getInput('s3BucketName', true)
-            parameters.s3ObjectKey = tl.getInput('s3ObjectKey', true)
+            parameters.s3BucketName = getInputRequired('s3BucketName')
+            parameters.s3ObjectKey = getInputRequired('s3ObjectKey')
             break
 
         case usePreviousTemplate:
@@ -131,14 +132,18 @@ export function buildTaskParameters(): TaskParameters {
             break
 
         case loadTemplateParametersInline:
-            parameters.templateParameters = tl.getInput('templateParameters', true)
+            parameters.templateParameters = getInputRequired('templateParameters')
             break
 
         default:
             throw new Error(`Unrecognized template parameters source: ${parameters.templateParametersSource}`)
     }
 
-    parameters.changeSetName = tl.getInput('changeSetName', parameters.useChangeSet)
+    if (parameters.useChangeSet) {
+        parameters.changeSetName = getInputRequired('changeSetName')
+    } else {
+        parameters.changeSetName = getInputOrEmpty('changeSetName')
+    }
 
     if (parameters.monitorRollbackTriggers) {
         const monitoringTime = tl.getInput('monitoringTimeInMinutes', false)
