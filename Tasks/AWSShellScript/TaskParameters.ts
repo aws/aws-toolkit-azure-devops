@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 export const inlineScriptType: string = 'inline'
 export const fileScriptType: string = 'filePath'
@@ -23,8 +24,8 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        arguments: tl.getInput('arguments', false),
-        scriptType: tl.getInput('scriptType', true),
+        arguments: getInputOrEmpty('arguments'),
+        scriptType: getInputRequired('scriptType'),
         filePath: '',
         inlineScript: '',
         disableAutoCwd: tl.getBoolInput('disableAutoCwd', false),
@@ -35,7 +36,7 @@ export function buildTaskParameters(): TaskParameters {
     if (parameters.scriptType === fileScriptType) {
         parameters.filePath = tl.getPathInput('filePath', true, true)
     } else {
-        parameters.inlineScript = tl.getInput('inlineScript', true)
+        parameters.inlineScript = getInputRequired('inlineScript')
     }
 
     if (parameters.disableAutoCwd) {

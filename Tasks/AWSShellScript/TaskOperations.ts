@@ -7,8 +7,8 @@ import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
-import tl = require('vsts-task-lib/task')
-import tr = require('vsts-task-lib/toolrunner')
+import * as tl from 'vsts-task-lib/task'
+import * as tr from 'vsts-task-lib/toolrunner'
 import { inlineScriptType, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

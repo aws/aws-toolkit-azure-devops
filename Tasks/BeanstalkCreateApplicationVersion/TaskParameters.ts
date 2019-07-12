@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 export const applicationTypeAspNet: string = 'aspnet'
 export const applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows'
@@ -26,15 +27,15 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        applicationName: tl.getInput('applicationName', true),
-        applicationType: tl.getInput('applicationType', true),
+        applicationName: getInputRequired('applicationName'),
+        applicationType: getInputRequired('applicationType'),
         webDeploymentArchive: '',
         dotnetPublishPath: '',
         deploymentBundleBucket: '',
         deploymentBundleKey: '',
-        versionLabel: tl.getInput('versionLabel', false),
-        description: tl.getInput('description', false),
-        outputVariable: tl.getInput('outputVariable', false)
+        versionLabel: getInputOrEmpty('versionLabel'),
+        description: getInputOrEmpty('description'),
+        outputVariable: getInputOrEmpty('outputVariable')
     }
 
     switch (parameters.applicationType) {
@@ -47,8 +48,8 @@ export function buildTaskParameters(): TaskParameters {
             break
 
         case applicationTypeS3Archive:
-            parameters.deploymentBundleBucket = tl.getInput('deploymentBundleBucket', true)
-            parameters.deploymentBundleKey = tl.getInput('deploymentBundleKey', true)
+            parameters.deploymentBundleBucket = getInputRequired('deploymentBundleBucket')
+            parameters.deploymentBundleKey = getInputRequired('deploymentBundleKey')
             break
     }
 
