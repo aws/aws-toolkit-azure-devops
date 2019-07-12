@@ -42,8 +42,8 @@
         "@types/jest": "^24.0.12",
         "@types/js-yaml": "^3.12.1",
         "@types/node": "^12.0.0",
-        "@types/readline-sync": "^1.4.3",
         "@types/q": "^1.5.2",
+        "@types/readline-sync": "^1.4.3",
         "@types/uuid": "^3.4.5",
         "archiver": "^3.0.0",
         "clean-webpack-plugin": "^2.0.1",
@@ -66,8 +66,8 @@
         "typescript": "^3.4.5",
         "uuid": "^3.3.2",
         "validator": "^10.11.0",
-        "webpack": "^4.30.0",
-        "webpack-cli": "^3.3.2",
+        "webpack": "^4.35.3",
+        "webpack-cli": "^3.3.5",
         "webpack-node-externals": "^1.7.2"
     },
     "dependencies": {
@@ -76,7 +76,7 @@
         "https-proxy-agent": "2.2.1",
         "js-yaml": "^3.13.1",
         "q": "^1.5.1",
-        "shelljs": "0.7.8",
+        "shelljs": "^0.8.3",
         "vsts-task-lib": "2.7.0"
     },
     "jest": {
