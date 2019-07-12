@@ -19,7 +19,7 @@ import tl = require('vsts-task-lib/task')
 import { imageNameSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    private dockerPath: string
+    private dockerPath: string = ''
 
     public constructor(
         public readonly ecrClient: ECR,
@@ -43,7 +43,25 @@ export class TaskOperations {
         }
 
         const authData = await this.getEcrAuthorizationData()
-        const endpoint = parse(authData.proxyEndpoint).host
+        if (!authData) {
+            throw new Error(tl.loc('FailureToObtainAuthToken'))
+        }
+
+        let endpoint = ''
+        let authToken = ''
+        let proxyEndpoint = ''
+        if (authData.proxyEndpoint) {
+            endpoint = `${parse(authData.proxyEndpoint).host}`
+        }
+        if (!endpoint) {
+            throw new Error(tl.loc('NoValidEndpoint', this.taskParameters.repositoryName))
+        }
+        if (authData.authorizationToken) {
+            authToken = authData.authorizationToken
+        }
+        if (authData.proxyEndpoint) {
+            proxyEndpoint = authData.proxyEndpoint
+        }
 
         if (this.taskParameters.autoCreateRepository) {
             await this.createRepositoryIfNeeded(this.taskParameters.repositoryName)
@@ -56,7 +74,7 @@ export class TaskOperations {
         const targetImageRef = `${endpoint}/${targetImageName}`
         await this.tagImage(sourceImageRef, targetImageRef)
 
-        await this.loginToRegistry(authData.authorizationToken, authData.proxyEndpoint)
+        await this.loginToRegistry(authToken, proxyEndpoint)
 
         await this.pushImageToECR(targetImageRef)
 
@@ -106,13 +124,12 @@ export class TaskOperations {
             .decode(encodedAuthToken)
             .trim()
             .split(':')
-        await this.dockerHandler.runDockerCommand(this.dockerPath, 'login', [
-            '-u',
-            tokens[0],
-            '-p',
-            tokens[1],
-            endpoint
-        ])
+        await this.dockerHandler.runDockerCommand(
+            this.dockerPath,
+            'login',
+            ['-u', tokens[0], '-p', tokens[1], endpoint],
+            { silent: true }
+        )
     }
 
     private async tagImage(sourceImageRef: string, imageTag: string): Promise<void> {
@@ -125,10 +142,14 @@ export class TaskOperations {
         await this.dockerHandler.runDockerCommand(this.dockerPath, 'push', [imageRef])
     }
 
-    private async getEcrAuthorizationData(): Promise<ECR.AuthorizationData> {
+    private async getEcrAuthorizationData(): Promise<ECR.AuthorizationData | undefined> {
         try {
             console.log(tl.loc('RequestingAuthToken'))
             const response = await this.ecrClient.getAuthorizationToken().promise()
+
+            if (!response.authorizationData) {
+                return undefined
+            }
 
             return response.authorizationData[0]
         } catch (err) {

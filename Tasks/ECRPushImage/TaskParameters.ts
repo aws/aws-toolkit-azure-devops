@@ -4,6 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import tl = require('vsts-task-lib/task')
 
 export const imageNameSource: string = 'imagename'
@@ -24,24 +25,24 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        imageSource: tl.getInput('imageSource', true),
-        repositoryName: tl.getInput('repositoryName', true),
-        pushTag: tl.getInput('pushTag', false),
+        imageSource: getInputRequired('imageSource'),
+        repositoryName: getInputRequired('repositoryName'),
+        pushTag: getInputOrEmpty('pushTag'),
         autoCreateRepository: tl.getBoolInput('autoCreateRepository', false),
-        outputVariable: tl.getInput('outputVariable', false),
-        sourceImageName: undefined,
-        sourceImageId: undefined,
-        sourceImageTag: undefined
+        outputVariable: getInputOrEmpty('outputVariable'),
+        sourceImageName: '',
+        sourceImageId: '',
+        sourceImageTag: ''
     }
 
     if (parameters.imageSource === imageNameSource) {
-        parameters.sourceImageName = tl.getInput('sourceImageName', true)
-        parameters.sourceImageTag = tl.getInput('sourceImageTag', false)
+        parameters.sourceImageName = getInputRequired('sourceImageName')
+        parameters.sourceImageTag = getInputOrEmpty('sourceImageTag')
         if (!parameters.sourceImageTag) {
             parameters.sourceImageTag = 'latest'
         }
     } else {
-        parameters.sourceImageId = tl.getInput('sourceImageId', true)
+        parameters.sourceImageId = getInputRequired('sourceImageId')
     }
 
     return parameters
