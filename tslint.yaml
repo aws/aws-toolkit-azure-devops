@@ -5,7 +5,6 @@ extends:
 linterOptions:
     exclude:
         - node_modules/**
-        - tasks/3rdParty/**
         - '**/*.json'
 
 rules:
