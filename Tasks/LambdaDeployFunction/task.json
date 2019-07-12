@@ -312,6 +312,7 @@
         "UpdatingFunctionCode": "Updating code for function %s",
         "UpdatingFunctionConfiguration": "Updating configuration for function %s",
         "FunctionNotFound": "Function %s does not exist, cannot update code only",
-        "TaskCompleted": "Completed create or update of Lambda function %s, function ARN %s"
+        "TaskCompleted": "Completed create or update of Lambda function %s, function ARN %s",
+        "NoFunctionArnReturned": "No function ARN returned from the service! Deployment failed!"
     }
 }
