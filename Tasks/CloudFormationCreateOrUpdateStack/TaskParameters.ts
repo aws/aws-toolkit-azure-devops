@@ -6,8 +6,8 @@
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { defaultTimeoutInMins } from 'Common/cloudformationutils'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
-import fs = require('fs')
-import tl = require('vsts-task-lib/task')
+import { statSync } from 'fs'
+import * as tl from 'vsts-task-lib/task'
 
 export const fileSource: string = 'file'
 export const urlSource: string = 'url'
@@ -125,7 +125,7 @@ export function buildTaskParameters(): TaskParameters {
             // directory vs file test
             parameters.templateParametersFile = tl.getPathInput('templateParametersFile', false, true)
             if (parameters.templateParametersFile) {
-                if (fs.statSync(parameters.templateParametersFile).isDirectory()) {
+                if (statSync(parameters.templateParametersFile).isDirectory()) {
                     parameters.templateParametersFile = ''
                 }
             }
