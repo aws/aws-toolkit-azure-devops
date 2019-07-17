@@ -11,7 +11,7 @@ import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
 import Q = require('q')
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import {
     defaultTimeoutInMins,
     revisionSourceFromS3,
@@ -222,6 +222,10 @@ export class TaskOperations {
                     response.deploymentId
                 )
             )
+
+            if (!response.deploymentId) {
+                return ''
+            }
 
             return response.deploymentId
         } catch (err) {
