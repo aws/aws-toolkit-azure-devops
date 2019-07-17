@@ -5,7 +5,7 @@
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
-import * as tl from 'vsts-task-lib/task'
+import { getBoolInput, getPathInput } from 'vsts-task-lib/task'
 
 export const inlineScriptType: string = 'inline'
 export const fileScriptType: string = 'filePath'
@@ -28,19 +28,19 @@ export function buildTaskParameters(): TaskParameters {
         scriptType: getInputRequired('scriptType'),
         filePath: '',
         inlineScript: '',
-        disableAutoCwd: tl.getBoolInput('disableAutoCwd', false),
+        disableAutoCwd: getBoolInput('disableAutoCwd', false),
         workingDirectory: '',
-        failOnStandardError: tl.getBoolInput('failOnStandardError', false)
+        failOnStandardError: getBoolInput('failOnStandardError', false)
     }
 
     if (parameters.scriptType === fileScriptType) {
-        parameters.filePath = tl.getPathInput('filePath', true, true)
+        parameters.filePath = getPathInput('filePath', true, true)
     } else {
         parameters.inlineScript = getInputRequired('inlineScript')
     }
 
     if (parameters.disableAutoCwd) {
-        parameters.workingDirectory = tl.getPathInput('workingDirectory', true, false)
+        parameters.workingDirectory = getPathInput('workingDirectory', true, false)
     }
 
     return parameters
