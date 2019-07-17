@@ -6,6 +6,7 @@
 import * as tl from 'vsts-task-lib/task'
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
 export const applicationTypeAspNet: string = 'aspnet'
 export const applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows'
@@ -33,16 +34,16 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        applicationName: tl.getInput('applicationName', true),
-        environmentName: tl.getInput('environmentName', true),
-        applicationType: tl.getInput('applicationType', true),
-        versionLabel: undefined,
-        webDeploymentArchive: undefined,
-        dotnetPublishPath: undefined,
-        deploymentBundleBucket: undefined,
-        deploymentBundleKey: undefined,
-        description: tl.getInput('description', false),
-        outputVariable: tl.getInput('outputVariable', false),
+        applicationName: getInputRequired('applicationName'),
+        environmentName: getInputRequired('environmentName'),
+        applicationType: getInputRequired('applicationType'),
+        versionLabel: '',
+        webDeploymentArchive: '',
+        dotnetPublishPath: '',
+        deploymentBundleBucket: '',
+        deploymentBundleKey: '',
+        description: getInputOrEmpty('description'),
+        outputVariable: getInputOrEmpty('outputVariable'),
         eventPollingDelay: defaultEventPollingDelaySeconds
     }
 
@@ -58,8 +59,8 @@ export function buildTaskParameters(): TaskParameters {
             break
 
         case applicationTypeS3Archive:
-            parameters.deploymentBundleBucket = tl.getInput('deploymentBundleBucket', true)
-            parameters.deploymentBundleKey = tl.getInput('deploymentBundleKey', true)
+            parameters.deploymentBundleBucket = getInputRequired('deploymentBundleBucket')
+            parameters.deploymentBundleKey = getInputRequired('deploymentBundleKey')
             break
 
         default:
@@ -67,7 +68,11 @@ export function buildTaskParameters(): TaskParameters {
             break
     }
 
-    parameters.versionLabel = tl.getInput('versionLabel', parameters.applicationType === applicationTypeExistingVersion)
+    if (parameters.applicationType === applicationTypeExistingVersion) {
+        parameters.versionLabel = getInputRequired('versionLabel')
+    } else {
+        parameters.versionLabel = getInputOrEmpty('versionLabel')
+    }
 
     const pollDelay = tl.getInput('eventPollingDelay', false)
     if (pollDelay) {
