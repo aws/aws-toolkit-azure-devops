@@ -111,8 +111,10 @@ export class TaskOperations {
             const versionRequest: ElasticBeanstalk.CreateApplicationVersionMessage = {
                 ApplicationName: application,
                 VersionLabel: versionLabel,
-                SourceBundle: sourceBundle,
-                Description: description
+                SourceBundle: sourceBundle
+            }
+            if (this.taskParameters.description) {
+                versionRequest.Description = this.taskParameters.description
             }
 
             await this.beanstalkClient.createApplicationVersion(versionRequest).promise()

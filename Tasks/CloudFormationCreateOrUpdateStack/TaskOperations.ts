@@ -249,10 +249,11 @@ export class TaskOperations {
             ChangeSetName: this.taskParameters.changeSetName,
             ChangeSetType: changesetType,
             StackName: this.taskParameters.stackName,
-            Description: this.taskParameters.description,
             RoleARN: this.taskParameters.roleARN
         }
-
+        if (this.taskParameters.description) {
+            request.Description = this.taskParameters.description
+        }
         switch (this.taskParameters.templateSource) {
             case fileSource:
                 if (this.taskParameters.s3BucketName) {

@@ -40,12 +40,14 @@ export class TaskOperations {
         // treat updating descrption et al about the secret as distinct from a value update
         if (this.taskParameters.description || this.taskParameters.kmsKeyId) {
             const updateMetaRequest: SecretsManager.UpdateSecretRequest = {
-                SecretId: this.taskParameters.secretNameOrId,
-                KmsKeyId: this.taskParameters.kmsKeyId
+                SecretId: this.taskParameters.secretNameOrId
             }
 
             if (this.taskParameters.description) {
                 updateMetaRequest.Description = this.taskParameters.description
+            }
+            if (this.taskParameters.kmsKeyId) {
+                updateMetaRequest.KmsKeyId = this.taskParameters.kmsKeyId
             }
 
             await this.secretsManagerClient.updateSecret(updateMetaRequest).promise()
@@ -95,7 +97,6 @@ export class TaskOperations {
         if (this.taskParameters.description) {
             request.Description = this.taskParameters.description
         }
-
         if (this.taskParameters.secretValueSource === inlineSecretSource) {
             request.SecretString = this.taskParameters.secretValue
         } else {

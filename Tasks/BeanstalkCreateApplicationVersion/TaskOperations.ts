@@ -57,11 +57,14 @@ export class TaskOperations {
         const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
             ApplicationName: this.taskParameters.applicationName,
             VersionLabel: versionLabel,
-            SourceBundle: sourceBundle,
-            Description: this.taskParameters.description
+            SourceBundle: sourceBundle
+        }
+        if (this.taskParameters.description) {
+            versionRequest.Description = this.taskParameters.description
         }
 
         await this.beanstalkClient.createApplicationVersion(versionRequest).promise()
+
         if (this.taskParameters.description) {
             console.log(
                 tl.loc(
