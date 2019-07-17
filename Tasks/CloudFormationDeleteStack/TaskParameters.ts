@@ -4,7 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputRequired } from 'Common/vstsUtils'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
@@ -14,7 +14,7 @@ export interface TaskParameters {
 export function buildTaskParameters() {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        stackName: tl.getInput('stackName', true)
+        stackName: getInputRequired('stackName')
     }
 
     return parameters

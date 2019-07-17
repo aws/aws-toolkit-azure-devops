@@ -18,7 +18,7 @@ const defaultTaskParameters: TaskParameters = {
     secretIdOrName: '',
     variableName: 'secret',
     versionId: '',
-    versionStage: undefined
+    versionStage: ''
 }
 
 const secretsManagerFails = {
