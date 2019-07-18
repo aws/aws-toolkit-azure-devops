@@ -112,7 +112,7 @@ export class TaskOperations {
             if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
                 updateConfigRequest.Layers = this.taskParameters.layers
             }
-            if (this.taskParameters.tracingConfig !== 'XRay') {
+            if (this.taskParameters.tracingConfig && this.taskParameters.tracingConfig !== 'XRay') {
                 updateConfigRequest.TracingConfig = {
                     Mode: this.taskParameters.tracingConfig
                 }
