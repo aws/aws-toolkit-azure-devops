@@ -25,7 +25,7 @@ export class TaskOperations {
         try {
             const parameters: SSM.PutParameterRequest = {
                 Name: this.taskParameters.parameterName,
-                Type: forceAsSecureString ? 'SecureString' : this.taskParameters.parameterType,
+                Type: forceAsSecureString ? secureStringType : this.taskParameters.parameterType,
                 Value: this.taskParameters.parameterValue,
                 Overwrite: true
             }

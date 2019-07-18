@@ -172,7 +172,7 @@ export class TaskOperations {
                 SubnetIds: this.taskParameters.subnets
             }
         }
-        if (this.taskParameters.tracingConfig !== 'XRay') {
+        if (this.taskParameters.tracingConfig && this.taskParameters.tracingConfig !== 'XRay') {
             request.TracingConfig = {
                 Mode: this.taskParameters.tracingConfig
             }

@@ -45,7 +45,7 @@ export function buildTaskParameters(): TaskParameters {
             const versionstring = getInputOptional('parameterVersion')
             if (versionstring) {
                 const pv = parseInt(versionstring, 10)
-                if (pv > 0) {
+                if (!isNaN(pv) && pv > 0) {
                     parameters.parameterVersion = pv
                 } else {
                     throw new Error(tl.loc('InvalidParameterVersion', pv))

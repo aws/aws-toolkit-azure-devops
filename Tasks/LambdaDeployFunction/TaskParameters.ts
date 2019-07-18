@@ -90,12 +90,18 @@ export function buildTaskParameters(): TaskParameters {
 
     const memorySizeTmp = tl.getInput('memorySize', false)
     if (memorySizeTmp) {
-        parameters.memorySize = parseInt(memorySizeTmp, 10)
+        const parsedInt = parseInt(memorySizeTmp, 10)
+        if (!isNaN(parsedInt)) {
+            parameters.memorySize = parsedInt
+        }
     }
 
     const timeoutTmp = tl.getInput('timeout', false)
     if (timeoutTmp) {
-        parameters.timeout = parseInt(timeoutTmp, 10)
+        const parsedInt = parseInt(timeoutTmp, 10)
+        if (!isNaN(parsedInt)) {
+            parameters.timeout = parsedInt
+        }
     }
 
     return parameters
