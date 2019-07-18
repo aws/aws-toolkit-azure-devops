@@ -6,7 +6,7 @@
         "module": "commonjs",
         "sourceMap": true,
         "incremental": true,
-        //"strict": true,
+        "strict": true,
         "paths": {
             "aws-sdk*": ["node_modules/aws-sdk/*"],
             "Common/*": ["Tasks/Common/*"]

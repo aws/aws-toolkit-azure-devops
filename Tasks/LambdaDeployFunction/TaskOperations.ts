@@ -86,7 +86,6 @@ export class TaskOperations {
             const updateConfigRequest: Lambda.UpdateFunctionConfigurationRequest = {
                 FunctionName: this.taskParameters.functionName,
                 Handler: this.taskParameters.functionHandler,
-                Description: this.taskParameters.description,
                 Role: await SdkUtils.roleArnFromName(this.iamClient, this.taskParameters.roleARN),
                 MemorySize: this.taskParameters.memorySize,
                 Timeout: this.taskParameters.timeout,
@@ -97,6 +96,9 @@ export class TaskOperations {
                 }
             }
 
+            if (this.taskParameters.description) {
+                updateConfigRequest.Description = this.taskParameters.description
+            }
             if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {}
                 updateConfigRequest.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
@@ -110,7 +112,7 @@ export class TaskOperations {
             if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
                 updateConfigRequest.Layers = this.taskParameters.layers
             }
-            if (this.taskParameters.tracingConfig !== 'XRay') {
+            if (this.taskParameters.tracingConfig && this.taskParameters.tracingConfig !== 'XRay') {
                 updateConfigRequest.TracingConfig = {
                     Mode: this.taskParameters.tracingConfig
                 }
@@ -130,7 +132,6 @@ export class TaskOperations {
         const request: Lambda.CreateFunctionRequest = {
             FunctionName: this.taskParameters.functionName,
             Handler: this.taskParameters.functionHandler,
-            Description: this.taskParameters.description,
             Role: await SdkUtils.roleArnFromName(this.iamClient, this.taskParameters.roleARN),
             MemorySize: this.taskParameters.memorySize,
             Timeout: this.taskParameters.timeout,
@@ -152,6 +153,9 @@ export class TaskOperations {
             KMSKeyArn: this.taskParameters.kmsKeyARN
         }
 
+        if (this.taskParameters.description) {
+            request.Description = this.taskParameters.description
+        }
         if (this.taskParameters.environment) {
             request.Environment = {}
             request.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
@@ -168,7 +172,7 @@ export class TaskOperations {
                 SubnetIds: this.taskParameters.subnets
             }
         }
-        if (this.taskParameters.tracingConfig !== 'XRay') {
+        if (this.taskParameters.tracingConfig && this.taskParameters.tracingConfig !== 'XRay') {
             request.TracingConfig = {
                 Mode: this.taskParameters.tracingConfig
             }

@@ -30,7 +30,10 @@ export function buildTaskParameters(): TaskParameters {
         parameters.queueUrl = getInputRequired('queueUrl')
         const delay = getInputOrEmpty('delaySeconds')
         if (delay) {
-            parameters.delaySeconds = parseInt(delay, 10)
+            const parsedInt = parseInt(delay, 10)
+            if (!isNaN(parsedInt)) {
+                parameters.delaySeconds = parsedInt
+            }
         }
     }
 

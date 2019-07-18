@@ -198,7 +198,6 @@ export class TaskOperations {
             const request: CodeDeploy.CreateDeploymentInput = {
                 applicationName: this.taskParameters.applicationName,
                 deploymentGroupName: this.taskParameters.deploymentGroupName,
-                description: this.taskParameters.description,
                 fileExistsBehavior: this.taskParameters.fileExistsBehavior,
                 ignoreApplicationStopFailures: this.taskParameters.ignoreApplicationStopFailures,
                 updateOutdatedInstancesOnly: this.taskParameters.updateOutdatedInstancesOnly,
@@ -210,6 +209,10 @@ export class TaskOperations {
                         bundleType: archiveType
                     }
                 }
+            }
+
+            if (this.taskParameters.description) {
+                request.description = this.taskParameters.description
             }
             const response: CodeDeploy.CreateDeploymentOutput = await this.codeDeployClient
                 .createDeployment(request)
