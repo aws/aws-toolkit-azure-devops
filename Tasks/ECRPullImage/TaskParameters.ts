@@ -4,7 +4,7 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
 export const imageTagSource: string = 'imagetag'
 export const imageIdSource: string = 'imagedigest'
@@ -20,10 +20,10 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        imageSource: tl.getInput('imageSource', true),
-        repository: tl.getInput('repository', true),
-        imageTag: tl.getInput('imageTag', false),
-        imageDigest: tl.getInput('imageDigest', false)
+        imageSource: getInputRequired('imageSource'),
+        repository: getInputRequired('repository'),
+        imageTag: getInputOrEmpty('imageTag'),
+        imageDigest: getInputOrEmpty('imageDigest')
     }
 
     return parameters

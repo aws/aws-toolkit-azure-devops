@@ -115,6 +115,8 @@
         "PullingImage": "Pulling image '%s' from Elastic Container Registry",
         "InvokingDockerCommand": "Invoking '%s' with command '%s'",
         "RequestingAuthToken": "Obtaining authentication token for ECR login",
+        "FailureToObtainAuthToken": "Failed to obtain auth token!",
+        "NoValidEndpoint": "Failed to get endpoint of repository %s. Check your credentials and if the endpoint exists!",
         "TaskCompleted": "Successfully completed sending the message"
     }
 }

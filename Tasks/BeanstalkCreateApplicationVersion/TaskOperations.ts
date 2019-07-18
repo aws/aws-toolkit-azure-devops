@@ -8,7 +8,7 @@ import S3 = require('aws-sdk/clients/s3')
 import { BeanstalkUtils } from 'Common/beanstalkUtils'
 import { SdkUtils } from 'Common/sdkutils'
 import path = require('path')
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import { applicationTypeAspNetCoreForWindows, applicationTypeS3Archive, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
@@ -57,11 +57,14 @@ export class TaskOperations {
         const versionRequest: Beanstalk.CreateApplicationVersionMessage = {
             ApplicationName: this.taskParameters.applicationName,
             VersionLabel: versionLabel,
-            SourceBundle: sourceBundle,
-            Description: this.taskParameters.description
+            SourceBundle: sourceBundle
+        }
+        if (this.taskParameters.description) {
+            versionRequest.Description = this.taskParameters.description
         }
 
         await this.beanstalkClient.createApplicationVersion(versionRequest).promise()
+
         if (this.taskParameters.description) {
             console.log(
                 tl.loc(

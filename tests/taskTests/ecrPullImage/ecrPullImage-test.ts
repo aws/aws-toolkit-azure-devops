@@ -8,13 +8,14 @@ import { DockerHandler } from 'Common/dockerUtils'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/ECRPullImage/TaskOperations'
 import { TaskParameters } from '../../../Tasks/ECRPullImage/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
     imageSource: '',
     imageTag: '',
     imageDigest: '',
@@ -85,7 +86,7 @@ describe('ECR Pull image', () => {
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         const dockerHandler = { ...defaultDocker }
-        const runDockerCommand = jest.fn((thing1, thing2, thing3) => undefined)
+        const runDockerCommand = jest.fn((thing1, thing2, thing3) => Promise.resolve())
         dockerHandler.runDockerCommand = runDockerCommand
         const taskOperations = new TaskOperations(ecr, dockerHandler, defaultTaskParameters)
         await taskOperations.execute()
@@ -98,7 +99,7 @@ describe('ECR Pull image', () => {
     test('Happy path', async () => {
         expect.assertions(2)
         const dockerHandler = { ...defaultDocker }
-        const runDockerCommand = jest.fn((thing1, thing2, thing3) => undefined)
+        const runDockerCommand = jest.fn((thing1, thing2, thing3) => Promise.resolve())
         dockerHandler.runDockerCommand = runDockerCommand
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)

@@ -24,10 +24,14 @@ export async function loginToRegistry(
     })
 }
 
-export async function getEcrAuthorizationData(ecrClient: ECR): Promise<ECR.AuthorizationData> {
+export async function getEcrAuthorizationData(ecrClient: ECR): Promise<ECR.AuthorizationData | undefined> {
     try {
         console.log(tl.loc('RequestingAuthToken'))
         const response = await ecrClient.getAuthorizationToken().promise()
+
+        if (!response.authorizationData) {
+            return undefined
+        }
 
         return response.authorizationData[0]
     } catch (err) {

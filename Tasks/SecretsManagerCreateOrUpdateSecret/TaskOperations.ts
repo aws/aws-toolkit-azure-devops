@@ -40,9 +40,14 @@ export class TaskOperations {
         // treat updating descrption et al about the secret as distinct from a value update
         if (this.taskParameters.description || this.taskParameters.kmsKeyId) {
             const updateMetaRequest: SecretsManager.UpdateSecretRequest = {
-                SecretId: this.taskParameters.secretNameOrId,
-                Description: this.taskParameters.description,
-                KmsKeyId: this.taskParameters.kmsKeyId
+                SecretId: this.taskParameters.secretNameOrId
+            }
+
+            if (this.taskParameters.description) {
+                updateMetaRequest.Description = this.taskParameters.description
+            }
+            if (this.taskParameters.kmsKeyId) {
+                updateMetaRequest.KmsKeyId = this.taskParameters.kmsKeyId
             }
 
             await this.secretsManagerClient.updateSecret(updateMetaRequest).promise()
@@ -72,12 +77,12 @@ export class TaskOperations {
 
         if (this.taskParameters.arnOutputVariable) {
             console.log(tl.loc('SettingArnOutputVariable', this.taskParameters.arnOutputVariable))
-            tl.setVariable(this.taskParameters.arnOutputVariable, response.ARN)
+            tl.setVariable(this.taskParameters.arnOutputVariable, `${response.ARN}`)
         }
 
         if (this.taskParameters.versionIdOutputVariable) {
             console.log(tl.loc('SettingVersionIdOutputVariable', this.taskParameters.versionIdOutputVariable))
-            tl.setVariable(this.taskParameters.versionIdOutputVariable, response.VersionId)
+            tl.setVariable(this.taskParameters.versionIdOutputVariable, `${response.VersionId}`)
         }
     }
 
@@ -86,10 +91,12 @@ export class TaskOperations {
 
         const request: SecretsManager.CreateSecretRequest = {
             Name: this.taskParameters.secretNameOrId,
-            KmsKeyId: this.taskParameters.kmsKeyId,
-            Description: this.taskParameters.description
+            KmsKeyId: this.taskParameters.kmsKeyId
         }
 
+        if (this.taskParameters.description) {
+            request.Description = this.taskParameters.description
+        }
         if (this.taskParameters.secretValueSource === inlineSecretSource) {
             request.SecretString = this.taskParameters.secretValue
         } else {
@@ -104,20 +111,20 @@ export class TaskOperations {
             }
         }
 
-        if (this.taskParameters.tags) {
-            request.Tags = SdkUtils.getTags<SecretsManager.Tag[]>(this.taskParameters.tags)
+        if (this.taskParameters.tags.length > 0) {
+            request.Tags = SdkUtils.getTags(this.taskParameters.tags)
         }
 
         const response = await this.secretsManagerClient.createSecret(request).promise()
 
         if (this.taskParameters.arnOutputVariable) {
             console.log(tl.loc('SettingArnOutputVariable', this.taskParameters.arnOutputVariable))
-            tl.setVariable(this.taskParameters.arnOutputVariable, response.ARN)
+            tl.setVariable(this.taskParameters.arnOutputVariable, `${response.ARN}`)
         }
 
         if (this.taskParameters.versionIdOutputVariable) {
             console.log(tl.loc('SettingVersionIdOutputVariable', this.taskParameters.versionIdOutputVariable))
-            tl.setVariable(this.taskParameters.versionIdOutputVariable, response.VersionId)
+            tl.setVariable(this.taskParameters.versionIdOutputVariable, `${response.VersionId}`)
         }
     }
 }

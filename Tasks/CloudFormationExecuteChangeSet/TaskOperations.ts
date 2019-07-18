@@ -10,7 +10,7 @@ import {
     waitForStackCreation,
     waitForStackUpdate
 } from 'Common/cloudformationutils'
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import { ignoreStackOutputs, stackOutputsAsJson, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
@@ -76,6 +76,10 @@ export class TaskOperations {
             }
 
             const response = await this.cloudFormationClient.describeChangeSet(request).promise()
+
+            if (!response.StackId) {
+                return ''
+            }
 
             return response.StackId
         } catch (err) {

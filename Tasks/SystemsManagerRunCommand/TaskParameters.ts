@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 export const fromInstanceIds: string = 'fromInstanceIds'
 export const fromTags: string = 'fromTags'
@@ -23,9 +24,9 @@ export interface TaskParameters {
     maxConcurrency: string
     maxErrors: string
     timeout: string
-    notificationArn: string
-    notificationEvents: string
-    notificationType: string
+    notificationArn: string | undefined
+    notificationEvents: string | undefined
+    notificationType: string | undefined
     outputS3BucketName: string
     outputS3KeyPrefix: string
     commandIdOutputVariable: string
@@ -34,23 +35,23 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        documentName: tl.getInput('documentName', true),
-        documentParameters: tl.getInput('documentParameters', false),
-        serviceRoleARN: tl.getInput('serviceRoleARN', false),
-        comment: tl.getInput('comment', false),
-        instanceSelector: tl.getInput('instanceSelector', true),
-        maxConcurrency: tl.getInput('maxConcurrency', false),
-        maxErrors: tl.getInput('maxErrors', false),
-        timeout: tl.getInput('timeout', false),
-        notificationArn: tl.getInput('notificationArn', false),
-        notificationEvents: tl.getInput('notificationEvents', false),
-        notificationType: tl.getInput('notificationType', false),
-        outputS3BucketName: tl.getInput('outputS3BucketName', false),
-        outputS3KeyPrefix: tl.getInput('outputS3KeyPrefix', false),
-        commandIdOutputVariable: tl.getInput('commandIdOutputVariable', false),
-        instanceIds: undefined,
-        instanceTags: undefined,
-        instanceBuildVariable: undefined
+        documentName: getInputRequired('documentName'),
+        documentParameters: getInputOrEmpty('documentParameters'),
+        serviceRoleARN: getInputOrEmpty('serviceRoleARN'),
+        comment: getInputOrEmpty('comment'),
+        instanceSelector: getInputRequired('instanceSelector'),
+        maxConcurrency: getInputOrEmpty('maxConcurrency'),
+        maxErrors: getInputOrEmpty('maxErrors'),
+        timeout: getInputOrEmpty('timeout'),
+        notificationArn: getInputOptional('notificationArn'),
+        notificationEvents: getInputOptional('notificationEvents'),
+        notificationType: getInputOptional('notificationType'),
+        outputS3BucketName: getInputOrEmpty('outputS3BucketName'),
+        outputS3KeyPrefix: getInputOrEmpty('outputS3KeyPrefix'),
+        commandIdOutputVariable: getInputOrEmpty('commandIdOutputVariable'),
+        instanceIds: [],
+        instanceTags: [],
+        instanceBuildVariable: ''
     }
 
     switch (parameters.instanceSelector) {
@@ -63,7 +64,7 @@ export function buildTaskParameters(): TaskParameters {
             break
 
         case fromBuildVariable:
-            parameters.instanceBuildVariable = tl.getInput('instanceBuildVariable', true)
+            parameters.instanceBuildVariable = getInputRequired('instanceBuildVariable')
             break
 
         default:

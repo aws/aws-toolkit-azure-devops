@@ -8,24 +8,25 @@ import { ElasticBeanstalk, S3 } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/BeanstalkDeployApplication/TaskOperations'
 import { TaskParameters } from '../../../Tasks/BeanstalkDeployApplication/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    applicationName: undefined,
-    environmentName: undefined,
-    applicationType: undefined,
-    versionLabel: undefined,
-    webDeploymentArchive: undefined,
-    dotnetPublishPath: undefined,
-    deploymentBundleBucket: undefined,
-    deploymentBundleKey: undefined,
-    description: undefined,
-    outputVariable: undefined,
-    eventPollingDelay: undefined
+    awsConnectionParameters: emptyConnectionParameters,
+    applicationName: '',
+    environmentName: '',
+    applicationType: '',
+    versionLabel: '',
+    webDeploymentArchive: '',
+    dotnetPublishPath: '',
+    deploymentBundleBucket: '',
+    deploymentBundleKey: '',
+    description: '',
+    outputVariable: '',
+    eventPollingDelay: 0
 }
 
 // NOTE: most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so

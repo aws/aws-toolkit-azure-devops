@@ -11,7 +11,7 @@ import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
 import Q = require('q')
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import {
     defaultTimeoutInMins,
     revisionSourceFromS3,
@@ -198,7 +198,6 @@ export class TaskOperations {
             const request: CodeDeploy.CreateDeploymentInput = {
                 applicationName: this.taskParameters.applicationName,
                 deploymentGroupName: this.taskParameters.deploymentGroupName,
-                description: this.taskParameters.description,
                 fileExistsBehavior: this.taskParameters.fileExistsBehavior,
                 ignoreApplicationStopFailures: this.taskParameters.ignoreApplicationStopFailures,
                 updateOutdatedInstancesOnly: this.taskParameters.updateOutdatedInstancesOnly,
@@ -211,6 +210,10 @@ export class TaskOperations {
                     }
                 }
             }
+
+            if (this.taskParameters.description) {
+                request.description = this.taskParameters.description
+            }
             const response: CodeDeploy.CreateDeploymentOutput = await this.codeDeployClient
                 .createDeployment(request)
                 .promise()
@@ -222,6 +225,10 @@ export class TaskOperations {
                     response.deploymentId
                 )
             )
+
+            if (!response.deploymentId) {
+                return ''
+            }
 
             return response.deploymentId
         } catch (err) {

@@ -11,7 +11,7 @@ import tl = require('vsts-task-lib/task')
 import { imageNameSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    private dockerPath: string
+    private dockerPath: string = ''
 
     public constructor(
         public readonly ecrClient: ECR,
@@ -35,7 +35,25 @@ export class TaskOperations {
         }
 
         const authData = await getEcrAuthorizationData(this.ecrClient)
-        const endpoint = parse(authData.proxyEndpoint).host
+        if (!authData) {
+            throw new Error(tl.loc('FailureToObtainAuthToken'))
+        }
+
+        let endpoint = ''
+        let authToken = ''
+        let proxyEndpoint = ''
+        if (authData.proxyEndpoint) {
+            endpoint = `${parse(authData.proxyEndpoint).host}`
+        }
+        if (!endpoint) {
+            throw new Error(tl.loc('NoValidEndpoint', this.taskParameters.repositoryName))
+        }
+        if (authData.authorizationToken) {
+            authToken = authData.authorizationToken
+        }
+        if (authData.proxyEndpoint) {
+            proxyEndpoint = authData.proxyEndpoint
+        }
 
         if (this.taskParameters.autoCreateRepository) {
             await this.createRepositoryIfNeeded(this.taskParameters.repositoryName)
@@ -48,7 +66,7 @@ export class TaskOperations {
         const targetImageRef = `${endpoint}/${targetImageName}`
         await this.tagImage(sourceImageRef, targetImageRef)
 
-        await loginToRegistry(this.dockerHandler, this.dockerPath, authData.authorizationToken, authData.proxyEndpoint)
+        await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
 
         await this.pushImageToECR(targetImageRef)
 
