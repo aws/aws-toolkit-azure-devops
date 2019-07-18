@@ -7,17 +7,18 @@ import { CloudFormation, S3 } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/CloudFormationExecuteChangeSet/TaskOperations'
 import { ignoreStackOutputs, TaskParameters } from '../../../Tasks/CloudFormationExecuteChangeSet/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    changeSetName: undefined,
-    stackName: undefined,
-    outputVariable: undefined,
-    captureStackOutputs: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
+    changeSetName: '',
+    stackName: '',
+    outputVariable: '',
+    captureStackOutputs: '',
     captureAsSecuredVars: false
 }
 
@@ -57,7 +58,7 @@ describe('Cloud Formation Execute Change Set', () => {
         const cloudFormation = new CloudFormation()
         const taskOperations = new TaskOperations(cloudFormation, defaultTaskParameters)
         await taskOperations.execute().catch(err => {
-            expect(`${err}`).toContain('Change set undefined does not exist')
+            expect(`${err}`).toContain('Change set  does not exist')
         })
     })
 

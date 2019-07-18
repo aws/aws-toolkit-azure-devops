@@ -7,13 +7,14 @@ import { S3 } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
 import { TaskOperations } from '../../../Tasks/S3Upload/TaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Upload/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const baseTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
     bucketName: '',
     sourceFolder: '',
     targetFolder: '',
@@ -31,14 +32,6 @@ const baseTaskParameters: TaskParameters = {
     kmsMasterKeyId: '',
     customerKey: Buffer.from([]),
     cacheControl: []
-}
-
-const connectionParameters = {
-    proxyConfiguration: '',
-    logRequestData: true,
-    logResponseData: true,
-    AssumeRoleARN: '',
-    awsEndpointAuth: undefined
 }
 
 const headBucketResponse = {
@@ -90,7 +83,6 @@ describe('S3 Upload', () => {
         s3.headBucket = jest.fn(() => headBucketResponseFails)
         s3.createBucket = jest.fn(() => createBucketResponse)
         const taskParameters = { ...baseTaskParameters }
-        taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
         taskParameters.bucketName = 'potato'
         const taskOperation = new TaskOperations(s3, '', taskParameters)
@@ -143,7 +135,6 @@ describe('S3 Upload', () => {
             return validateUpload
         })
         const taskParameters = { ...baseTaskParameters }
-        taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
         taskParameters.bucketName = 'potato'
         taskParameters.sourceFolder = __dirname

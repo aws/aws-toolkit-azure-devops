@@ -30,6 +30,17 @@ function package(options) {
     fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.packageRoot, manifestFile), {
         overwrite: true
     })
+    // Do a best effort job of generating a git hash and putting it into the package
+    try {
+        let response = shell.exec('git rev-parse HEAD')
+        if (response.code !== 0) {
+            console.log('Warning: unable to run git rev-parse to get commit hash!')
+        } else {
+            fs.outputFileSync(path.join(folders.packageRoot, '.gitcommit'), response.stdout)
+        }
+    } catch (e) {
+        console.log('Getting commit hash failed ' + e)
+    }
 
     // stage manifest images
     fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.packageRoot, 'images'), { overwrite: true })

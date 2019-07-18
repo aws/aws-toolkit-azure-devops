@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import S3 = require('aws-sdk/clients/s3')
+import * as S3 from 'aws-sdk/clients/s3'
 import { knownMimeTypes, testBucketExists } from 'Common/s3'
-import fs = require('fs')
-import path = require('path')
-import tl = require('vsts-task-lib/task')
+import * as fs from 'fs'
+import * as path from 'path'
+import * as tl from 'vsts-task-lib/task'
 import {
     awsKeyManagementValue,
     customerKeyManagementValue,
@@ -130,7 +130,7 @@ export class TaskOperations {
             if (!stats.isDirectory()) {
                 const fileBuffer = fs.createReadStream(matchedFile)
                 try {
-                    let contentType: string
+                    let contentType: string | undefined
                     if (this.taskParameters.contentType) {
                         contentType = this.taskParameters.contentType
                     } else {
@@ -145,7 +145,6 @@ export class TaskOperations {
                         Bucket: this.taskParameters.bucketName,
                         Key: targetPath,
                         Body: fileBuffer,
-                        ACL: this.taskParameters.filesAcl,
                         ContentType: contentType,
                         StorageClass: this.taskParameters.storageClass
                     }
@@ -161,19 +160,30 @@ export class TaskOperations {
                         }
                     }
 
+                    if (this.taskParameters.filesAcl) {
+                        request.ACL = this.taskParameters.filesAcl
+                    }
                     switch (this.taskParameters.keyManagement) {
                         case noKeyManagementValue:
                             break
 
                         case awsKeyManagementValue: {
-                            request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
-                            request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
+                            if (this.taskParameters.encryptionAlgorithm) {
+                                request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
+                            }
+                            if (this.taskParameters.kmsMasterKeyId) {
+                                request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
+                            }
                             break
                         }
 
                         case customerKeyManagementValue: {
-                            request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
-                            request.SSECustomerKey = this.taskParameters.customerKey
+                            if (this.taskParameters.encryptionAlgorithm) {
+                                request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
+                            }
+                            if (this.taskParameters.customerKey.length > 0) {
+                                request.SSECustomerKey = this.taskParameters.customerKey
+                            }
                             break
                         }
                     }

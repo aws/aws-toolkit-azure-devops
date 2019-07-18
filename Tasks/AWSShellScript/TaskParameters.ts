@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import { getBoolInput, getPathInput } from 'vsts-task-lib/task'
 
 export const inlineScriptType: string = 'inline'
 export const fileScriptType: string = 'filePath'
@@ -23,23 +24,23 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        arguments: tl.getInput('arguments', false),
-        scriptType: tl.getInput('scriptType', true),
-        filePath: undefined,
-        inlineScript: undefined,
-        disableAutoCwd: tl.getBoolInput('disableAutoCwd', false),
-        workingDirectory: undefined,
-        failOnStandardError: tl.getBoolInput('failOnStandardError', false)
+        arguments: getInputOrEmpty('arguments'),
+        scriptType: getInputRequired('scriptType'),
+        filePath: '',
+        inlineScript: '',
+        disableAutoCwd: getBoolInput('disableAutoCwd', false),
+        workingDirectory: '',
+        failOnStandardError: getBoolInput('failOnStandardError', false)
     }
 
     if (parameters.scriptType === fileScriptType) {
-        parameters.filePath = tl.getPathInput('filePath', true, true)
+        parameters.filePath = getPathInput('filePath', true, true)
     } else {
-        parameters.inlineScript = tl.getInput('inlineScript', true)
+        parameters.inlineScript = getInputRequired('inlineScript')
     }
 
     if (parameters.disableAutoCwd) {
-        parameters.workingDirectory = tl.getPathInput('workingDirectory', true, false)
+        parameters.workingDirectory = getPathInput('workingDirectory', true, false)
     }
 
     return parameters

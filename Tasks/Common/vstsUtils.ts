@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import * as tl from 'vsts-task-lib/task'
+import { getInput } from 'vsts-task-lib/task'
 
 export interface VSTSManifestVersionInfo {
     Major: string
@@ -22,7 +22,7 @@ export interface VSTSTaskManifest {
  * version 2.7.0 .
  */
 export function getInputRequired(name: string): string {
-    const input = tl.getInput(name, true)
+    const input = getInput(name, true)
     if (!input) {
         throw new Error('Unreachable code, required input returned undefined and did not throw!')
     }
@@ -31,9 +31,9 @@ export function getInputRequired(name: string): string {
 }
 
 export function getInputOptional(name: string): string | undefined {
-    return tl.getInput(name, false)
+    return getInput(name, false)
 }
 
 export function getInputOrEmpty(name: string): string {
-    return tl.getInput(name, false) || ''
+    return getInput(name, false) || ''
 }

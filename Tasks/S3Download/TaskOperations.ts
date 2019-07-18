@@ -69,7 +69,9 @@ export class TaskOperations {
                 }
                 if (this.taskParameters.keyManagement === customerManagedKeyValue) {
                     params.SSECustomerAlgorithm = aes256AlgorithmValue
-                    params.SSECustomerKey = this.taskParameters.customerKey
+                    if (this.taskParameters.customerKey.length > 0) {
+                        params.SSECustomerKey = this.taskParameters.customerKey
+                    }
                 }
                 allDownloads.push(this.downloadFile(params, dest))
             }
@@ -119,8 +121,10 @@ export class TaskOperations {
                     s3Data.Contents.forEach(s3object => {
                         // AWS IDE toolkits can cause 0 byte 'folder markers' to be in the bucket,
                         // filter those out
-                        if (!s3object.Key.endsWith('_$folder$')) {
-                            allKeys.push(s3object.Key)
+                        if (s3object.Key) {
+                            if (!s3object.Key.endsWith('_$folder$')) {
+                                allKeys.push(s3object.Key)
+                            }
                         }
                     })
                 }

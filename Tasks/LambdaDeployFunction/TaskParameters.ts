@@ -4,7 +4,8 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import tl = require('vsts-task-lib/task')
+import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 // possible values for the deploymentMode parameter
 export const deployCodeOnly: string = 'codeonly'
@@ -24,14 +25,14 @@ export interface TaskParameters {
     localZipFile: string
     s3Bucket: string
     s3ObjectKey: string
-    s3ObjectVersion: string
+    s3ObjectVersion: string | undefined
     roleARN: string
     description: string
     memorySize: number
     timeout: number
     publish: boolean
-    deadLetterARN: string
-    kmsKeyARN: string
+    deadLetterARN: string | undefined
+    kmsKeyARN: string | undefined
     environment: string[]
     tags: string[]
     securityGroups: string[]
@@ -44,17 +45,17 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        deploymentMode: tl.getInput('deploymentMode', true),
-        functionName: tl.getInput('functionName', true),
-        functionHandler: undefined,
-        runtime: undefined,
-        codeLocation: tl.getInput('codeLocation', true),
-        localZipFile: undefined,
-        s3Bucket: undefined,
-        s3ObjectKey: undefined,
+        deploymentMode: getInputRequired('deploymentMode'),
+        functionName: getInputRequired('functionName'),
+        functionHandler: '',
+        runtime: '',
+        codeLocation: getInputRequired('codeLocation'),
+        localZipFile: '',
+        s3Bucket: '',
+        s3ObjectKey: '',
         s3ObjectVersion: undefined,
-        roleARN: undefined,
-        description: tl.getInput('description', false),
+        roleARN: '',
+        description: getInputOrEmpty('description'),
         memorySize: 128,
         timeout: 3,
         publish: tl.getBoolInput('publish', false),
@@ -65,31 +66,42 @@ export function buildTaskParameters(): TaskParameters {
         securityGroups: tl.getDelimitedInput('securityGroups', '\n', false),
         layers: tl.getDelimitedInput('layers', '\n', false),
         subnets: tl.getDelimitedInput('subnets', '\n', false),
-        tracingConfig: tl.getInput('tracingConfig', false),
-        outputVariable: tl.getInput('outputVariable', false)
+        tracingConfig: getInputOrEmpty('tracingConfig'),
+        outputVariable: getInputOrEmpty('outputVariable')
     }
 
-    const requireBasicConfigFields = parameters.deploymentMode === deployCodeAndConfig
-    parameters.functionHandler = tl.getInput('functionHandler', requireBasicConfigFields)
-    parameters.runtime = tl.getInput('runtime', requireBasicConfigFields)
-    parameters.roleARN = tl.getInput('roleARN', requireBasicConfigFields)
+    if (parameters.deploymentMode === deployCodeAndConfig) {
+        parameters.functionHandler = getInputRequired('functionHandler')
+        parameters.runtime = getInputRequired('runtime')
+        parameters.roleARN = getInputRequired('roleARN')
+    } else {
+        parameters.functionHandler = getInputOrEmpty('functionHandler')
+        parameters.runtime = getInputOrEmpty('runtime')
+        parameters.roleARN = getInputOrEmpty('roleARN')
+    }
 
     if (parameters.codeLocation === updateFromLocalFile) {
         parameters.localZipFile = tl.getPathInput('localZipFile', true, true)
     } else {
-        parameters.s3Bucket = tl.getInput('s3Bucket', true)
-        parameters.s3ObjectKey = tl.getInput('s3ObjectKey', true)
+        parameters.s3Bucket = getInputRequired('s3Bucket')
+        parameters.s3ObjectKey = getInputRequired('s3ObjectKey')
         parameters.s3ObjectVersion = tl.getInput('s3ObjectVersion', false)
     }
 
     const memorySizeTmp = tl.getInput('memorySize', false)
     if (memorySizeTmp) {
-        parameters.memorySize = parseInt(memorySizeTmp, 10)
+        const parsedInt = parseInt(memorySizeTmp, 10)
+        if (!isNaN(parsedInt)) {
+            parameters.memorySize = parsedInt
+        }
     }
 
     const timeoutTmp = tl.getInput('timeout', false)
     if (timeoutTmp) {
-        parameters.timeout = parseInt(timeoutTmp, 10)
+        const parsedInt = parseInt(timeoutTmp, 10)
+        if (!isNaN(parsedInt)) {
+            parameters.timeout = parsedInt
+        }
     }
 
     return parameters
