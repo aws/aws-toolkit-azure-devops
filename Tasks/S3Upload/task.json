@@ -260,6 +260,7 @@
         "TaskCompleted": "All uploads to S3 completed",
         "UploadingFiles": "Uploading files from %s to %s in bucket %s",
         "BucketNotExistNoAutocreate": "Bucket %s does not exist or you do not have access. Auto-create option not set, cannot continue.",
-        "BucketNotExistCreating": "Bucket %s does not appear to exist (or you do not have access). Attempting to create in region %s."
+        "BucketNotExistCreating": "Bucket %s does not appear to exist (or you do not have access). Attempting to create in region %s.",
+        "InvalidExpression": "Invalid match expression %s"
     }
 }

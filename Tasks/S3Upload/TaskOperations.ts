@@ -70,8 +70,8 @@ export class TaskOperations {
     private getCacheControl(currentFile: string): string {
         for (const expression of this.taskParameters.cacheControl) {
             const firstIndex = expression.indexOf('=')
-            if (firstIndex < 1) {
-                continue
+            if (firstIndex < 1 || firstIndex === expression.length - 1) {
+                throw new Error(tl.loc('InvalidExpression', expression))
             }
             const matchStatemnt = expression.substring(0, firstIndex).trim()
             const cacheControlSettings = expression.substring(firstIndex + 1).trim()
@@ -98,7 +98,7 @@ export class TaskOperations {
         const matchedFiles = this.findMatchingFiles(this.taskParameters)
 
         if (matchedFiles.length === 0) {
-            throw new Error(
+            tl.warning(
                 tl.loc('NoMatchingFilesFound', this.taskParameters.sourceFolder, this.taskParameters.globExpressions)
             )
         }

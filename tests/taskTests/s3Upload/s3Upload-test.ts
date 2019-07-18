@@ -105,21 +105,17 @@ describe('S3 Upload', () => {
     })
 
     test('No matching files found', async () => {
-        expect.assertions(1)
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
         s3.upload = jest.fn((params: S3.PutObjectRequest) => {
             throw new Error('should not be called')
         })
         const taskParameters = { ...baseTaskParameters }
-        taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
         taskParameters.sourceFolder = __dirname
         taskParameters.globExpressions = ['*.js']
         const taskOperation = new TaskOperations(s3, '', taskParameters)
-        await taskOperation.execute().catch(err => {
-            expect(`${err}`).toContain('No files found in folder')
-        })
+        await taskOperation.execute()
     })
 
     test('Happy path uploads a found file', async () => {
@@ -156,7 +152,6 @@ describe('S3 Upload', () => {
             return validateUpload
         })
         const taskParameters = { ...baseTaskParameters }
-        taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
         taskParameters.sourceFolder = __dirname
         taskParameters.globExpressions = ['*.ts']
@@ -175,12 +170,31 @@ describe('S3 Upload', () => {
             return validateUpload
         })
         const taskParameters = { ...baseTaskParameters }
-        taskParameters.awsConnectionParameters = connectionParameters
         taskParameters.createBucket = true
         taskParameters.sourceFolder = __dirname
         taskParameters.globExpressions = ['*.ts']
         taskParameters.cacheControl = ['*.js=public']
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         await taskOperation.execute()
+    })
+
+    test('Cache control invalid expression works', async () => {
+        expect.assertions(1)
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
+            expect(params.CacheControl).toBeUndefined()
+
+            return validateUpload
+        })
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.createBucket = true
+        taskParameters.sourceFolder = __dirname
+        taskParameters.globExpressions = ['*.ts']
+        taskParameters.cacheControl = ['*.js=']
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute().catch(e => {
+            expect(e.message).toContain('Invalid expression')
+        })
     })
 })
