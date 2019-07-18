@@ -120,12 +120,17 @@ export class TaskOperations {
 
             const response = await this.lambdaClient.updateFunctionConfiguration(updateConfigRequest).promise()
 
+            if (!response.FunctionArn) {
+                throw new Error(tl.loc('NoFunctionArnReturned'))
+            }
+
             // Update tags if we have them
-            if (this.taskParameters.tags && this.taskParameters.tags.length > 0) {
+            const tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
+            if (tags && Object.keys(tags).length > 0) {
                 try {
                     const tagRequest: Lambda.TagResourceRequest = {
                         Resource: response.FunctionArn,
-                        Tags: SdkUtils.getTagsDictonary(this.taskParameters.tags)
+                        Tags: tags
                     }
                     await this.lambdaClient.tagResource(tagRequest).promise()
                 } catch (e) {
