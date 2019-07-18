@@ -178,8 +178,8 @@ describe('S3 Upload', () => {
         await taskOperation.execute()
     })
 
-    test('Cache control invalid expression works', async () => {
-        expect.assertions(1)
+    test('Cache control invalid expression fails', async () => {
+        expect.assertions(2)
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
         s3.upload = jest.fn((params: S3.PutObjectRequest) => {
@@ -192,9 +192,14 @@ describe('S3 Upload', () => {
         taskParameters.sourceFolder = __dirname
         taskParameters.globExpressions = ['*.ts']
         taskParameters.cacheControl = ['*.js=']
-        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        let taskOperation = new TaskOperations(s3, '', taskParameters)
         await taskOperation.execute().catch(e => {
-            expect(e.message).toContain('Invalid expression')
+            expect(e.message).toContain('Invalid match expression *.js=')
+        })
+        taskParameters.cacheControl = ['=false']
+        taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute().catch(e => {
+            expect(e.message).toContain('Invalid match expression =false')
         })
     })
 })

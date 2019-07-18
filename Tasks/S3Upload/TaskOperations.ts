@@ -84,6 +84,47 @@ export class TaskOperations {
         return ''
     }
 
+    private buildS3Request(request: S3.PutObjectRequest, matchedFile: string) {
+        if (this.taskParameters.contentEncoding) {
+            request.ContentEncoding = this.taskParameters.contentEncoding
+        }
+
+        if (this.taskParameters.cacheControl && this.taskParameters.cacheControl.length > 0) {
+            const cacheControl = this.getCacheControl(matchedFile)
+            if (cacheControl) {
+                request.CacheControl = cacheControl
+            }
+        }
+
+        if (this.taskParameters.filesAcl) {
+            request.ACL = this.taskParameters.filesAcl
+        }
+        switch (this.taskParameters.keyManagement) {
+            case noKeyManagementValue:
+                break
+
+            case awsKeyManagementValue: {
+                if (this.taskParameters.encryptionAlgorithm) {
+                    request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
+                }
+                if (this.taskParameters.kmsMasterKeyId) {
+                    request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
+                }
+                break
+            }
+
+            case customerKeyManagementValue: {
+                if (this.taskParameters.encryptionAlgorithm) {
+                    request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
+                }
+                if (this.taskParameters.customerKey.length > 0) {
+                    request.SSECustomerKey = this.taskParameters.customerKey
+                }
+                break
+            }
+        }
+    }
+
     private async uploadFiles() {
         let msgTarget: string
         if (this.taskParameters.targetFolder) {
@@ -149,46 +190,9 @@ export class TaskOperations {
                         StorageClass: this.taskParameters.storageClass
                     }
 
-                    if (this.taskParameters.contentEncoding) {
-                        request.ContentEncoding = this.taskParameters.contentEncoding
-                    }
+                    this.buildS3Request(request, matchedFile)
 
-                    if (this.taskParameters.cacheControl && this.taskParameters.cacheControl.length > 0) {
-                        const cacheControl = this.getCacheControl(matchedFile)
-                        if (cacheControl) {
-                            request.CacheControl = cacheControl
-                        }
-                    }
-
-                    if (this.taskParameters.filesAcl) {
-                        request.ACL = this.taskParameters.filesAcl
-                    }
-                    switch (this.taskParameters.keyManagement) {
-                        case noKeyManagementValue:
-                            break
-
-                        case awsKeyManagementValue: {
-                            if (this.taskParameters.encryptionAlgorithm) {
-                                request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
-                            }
-                            if (this.taskParameters.kmsMasterKeyId) {
-                                request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
-                            }
-                            break
-                        }
-
-                        case customerKeyManagementValue: {
-                            if (this.taskParameters.encryptionAlgorithm) {
-                                request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
-                            }
-                            if (this.taskParameters.customerKey.length > 0) {
-                                request.SSECustomerKey = this.taskParameters.customerKey
-                            }
-                            break
-                        }
-                    }
-
-                    const response: S3.ManagedUpload.SendData = await this.s3Client.upload(request).promise()
+                    await this.s3Client.upload(request).promise()
                     console.log(tl.loc('FileUploadCompleted', matchedFile, targetPath))
                 } catch (err) {
                     console.error(tl.loc('FileUploadFailed'), err)
