@@ -6,12 +6,14 @@
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
 
 import { SdkUtils } from 'Common/sdkutils'
+import * as path from 'path'
 import { TaskOperations } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskOperations'
 import {
     applicationTypeAspNet,
     applicationTypeS3Archive,
     TaskParameters
 } from '../../../Tasks/BeanstalkCreateApplicationVersion/TaskParameters'
+import { emptyConnectionParameters } from '../testCommon'
 
 // unsafe any's is how jest mocking works, so this needs to be disabled for all test files
 // tslint:disable: no-unsafe-any
@@ -25,17 +27,21 @@ const verifyApplicationExistsResponse = {
     promise: () => ({ Applications: ['yes'] })
 }
 
+const prepareAspNetCoreBundleResponse = {
+    promise: () => 'yes'
+}
+
 const defaultTaskParameters: TaskParameters = {
-    awsConnectionParameters: undefined,
-    applicationName: undefined,
+    awsConnectionParameters: emptyConnectionParameters,
+    applicationName: '',
     applicationType: applicationTypeS3Archive,
-    versionLabel: undefined,
-    webDeploymentArchive: undefined,
-    dotnetPublishPath: undefined,
-    deploymentBundleBucket: undefined,
-    deploymentBundleKey: undefined,
-    description: undefined,
-    outputVariable: undefined
+    versionLabel: '',
+    webDeploymentArchive: '',
+    dotnetPublishPath: '',
+    deploymentBundleBucket: '',
+    deploymentBundleKey: '',
+    description: '',
+    outputVariable: ''
 }
 
 // NOTE: most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so
@@ -72,11 +78,16 @@ describe('Beanstalk Create Application Version', () => {
     })
 
     test('Happy path, uploads new object to S3', async () => {
+        expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNet
-        taskParameters.webDeploymentArchive = 'web/web.txt'
+        taskParameters.webDeploymentArchive = path.join(__dirname, '../../resources/beanstalkBundle/doc.txt')
         const s3 = new S3() as any
-        s3.upload = jest.fn(() => s3BucketResponse)
+        s3.upload = jest.fn((args: any) => {
+            expect(args.Key).toContain('doc.txt')
+
+            return s3BucketResponse
+        })
         const beanstalk = new ElasticBeanstalk() as any
         beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
         beanstalk.createApplicationVersion = jest.fn(() => verifyApplicationExistsResponse)

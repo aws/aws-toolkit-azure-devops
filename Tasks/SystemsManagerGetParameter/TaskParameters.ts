@@ -4,14 +4,15 @@
  */
 
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
-import { readModeSingle } from 'Common/ssm'
-import tl = require('vsts-task-lib/task')
+import { readModeHierarchy, readModeSingle } from 'Common/ssm'
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
+import * as tl from 'vsts-task-lib/task'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
     readMode: string
     parameterName: string
-    parameterVersion: number
+    parameterVersion: number | undefined
     parameterPath: string
     recursive: boolean
     variableNameTransform: string
@@ -25,47 +26,52 @@ export interface TaskParameters {
 export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
-        readMode: tl.getInput('readMode', true),
-        parameterName: undefined,
+        readMode: getInputRequired('readMode'),
+        parameterName: '',
         parameterVersion: undefined,
-        parameterPath: undefined,
-        recursive: undefined,
-        variableNameTransform: undefined,
-        customVariableName: undefined,
-        replacementPattern: undefined,
-        replacementText: undefined,
-        globalMatch: undefined,
-        caseInsensitiveMatch: undefined
+        parameterPath: '',
+        recursive: false,
+        variableNameTransform: '',
+        customVariableName: '',
+        replacementPattern: '',
+        replacementText: '',
+        globalMatch: false,
+        caseInsensitiveMatch: false
     }
 
-    if (parameters.readMode === readModeSingle) {
-        parameters.parameterName = tl.getInput('parameterName', true)
-        const versionstring = tl.getInput('parameterVersion', false)
-        if (versionstring) {
-            const pv = parseInt(versionstring, 10)
-            if (pv > 0) {
-                parameters.parameterVersion = pv
-            } else {
-                throw new Error(tl.loc('InvalidParameterVersion', pv))
+    switch (parameters.readMode) {
+        case readModeSingle:
+            parameters.parameterName = getInputRequired('parameterName')
+            const versionstring = getInputOptional('parameterVersion')
+            if (versionstring) {
+                const pv = parseInt(versionstring, 10)
+                if (!isNaN(pv) && pv > 0) {
+                    parameters.parameterVersion = pv
+                } else {
+                    throw new Error(tl.loc('InvalidParameterVersion', pv))
+                }
             }
-        }
-        parameters.variableNameTransform = tl.getInput('singleNameTransform', false)
-    } else {
-        parameters.parameterPath = tl.getInput('parameterPath', true)
-        parameters.recursive = tl.getBoolInput('recursive', false)
-        parameters.variableNameTransform = tl.getInput('hierarchyNameTransform', false)
+            parameters.variableNameTransform = getInputOrEmpty('singleNameTransform')
+            break
+        case readModeHierarchy:
+            parameters.parameterPath = getInputRequired('parameterPath')
+            parameters.recursive = tl.getBoolInput('recursive', false)
+            parameters.variableNameTransform = getInputOrEmpty('hierarchyNameTransform')
+            break
+        default:
+            throw new Error(tl.loc('UnknownReadMode', parameters.readMode))
     }
 
     switch (parameters.variableNameTransform) {
         case 'substitute':
-            parameters.replacementPattern = tl.getInput('replacementPattern', true)
-            parameters.replacementText = tl.getInput('replacementText', false) || ''
+            parameters.replacementPattern = getInputRequired('replacementPattern')
+            parameters.replacementText = getInputOrEmpty('replacementText')
             parameters.globalMatch = tl.getBoolInput('globalMatch', false)
             parameters.caseInsensitiveMatch = tl.getBoolInput('caseInsensitiveMatch', false)
             break
 
         case 'custom':
-            parameters.customVariableName = tl.getInput('customVariableName', true)
+            parameters.customVariableName = getInputRequired('customVariableName')
             break
 
         default:

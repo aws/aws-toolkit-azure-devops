@@ -5,10 +5,10 @@
 
 import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { SdkUtils } from 'Common/sdkutils'
-import fs = require('fs')
-import path = require('path')
-import tl = require('vsts-task-lib/task')
-import tr = require('vsts-task-lib/toolrunner')
+import { unlinkSync, writeFileSync } from 'fs'
+import { basename, dirname, join, posix } from 'path'
+import { debug, exist, loc, mkdirP, tool, which } from 'vsts-task-lib/task'
+import { IExecOptions } from 'vsts-task-lib/toolrunner'
 import { inlineScriptType, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
@@ -18,18 +18,18 @@ export class TaskOperations {
     // and region into the environment, and to be able to specify the script inline
     // or from a file
     public async execute(): Promise<number> {
-        let scriptPath: string
+        let scriptPath = ''
         try {
             await this.configureAWSContext()
             await SdkUtils.configureHttpProxyFromAgentProxyConfiguration('AWSShellScript')
 
-            const bash = tl.tool(tl.which('bash', true))
+            const bash = tool(which('bash', true))
 
             if (this.taskParameters.scriptType === inlineScriptType) {
                 const tempDir = SdkUtils.getTempLocation()
                 const fileName = `awsshellscript_${process.pid}.sh`
-                scriptPath = path.join(tempDir, fileName)
-                fs.writeFileSync(scriptPath, this.taskParameters.inlineScript, { encoding: 'utf-8' })
+                scriptPath = join(tempDir, fileName)
+                writeFileSync(scriptPath, this.taskParameters.inlineScript, { encoding: 'utf-8' })
             } else {
                 scriptPath = this.taskParameters.filePath
             }
@@ -38,7 +38,7 @@ export class TaskOperations {
             if (this.taskParameters.disableAutoCwd) {
                 workingDirectory = this.taskParameters.workingDirectory
             } else {
-                workingDirectory = process.env.SYSTEM_DEFAULTWORKINGDIRECTORY || path.dirname(scriptPath)
+                workingDirectory = process.env.SYSTEM_DEFAULTWORKINGDIRECTORY || dirname(scriptPath)
             }
 
             // The solution to this not working on windows comes from doing it like it's done in
@@ -46,11 +46,10 @@ export class TaskOperations {
             // Thanks to the ms team opensourcing their tasks for the solution logic
             if (process.platform === 'win32') {
                 scriptPath =
-                    (await this.translateWindowsPath(path.dirname(scriptPath))) +
-                    `${path.posix.sep}${path.basename(scriptPath)}`
+                    (await this.translateWindowsPath(dirname(scriptPath))) + `${posix.sep}${basename(scriptPath)}`
             }
 
-            tl.mkdirP(workingDirectory)
+            mkdirP(workingDirectory)
 
             bash.arg(scriptPath)
 
@@ -66,17 +65,16 @@ export class TaskOperations {
                 failOnStdErr: this.taskParameters.failOnStandardError
             }
 
-            return await bash.exec((execOptions as unknown) as tr.IExecOptions)
+            return await bash.exec((execOptions as unknown) as IExecOptions)
         } finally {
-            if (this.taskParameters.scriptType === inlineScriptType && scriptPath && tl.exist(scriptPath)) {
-                fs.unlinkSync(scriptPath)
+            if (this.taskParameters.scriptType === inlineScriptType && scriptPath && exist(scriptPath)) {
+                unlinkSync(scriptPath)
             }
         }
     }
 
     private async translateWindowsPath(windowsPath: string): Promise<string> {
-        const pwd = tl
-            .tool(tl.which('bash', true))
+        const pwd = tool(which('bash', true))
             .arg('--noprofile')
             .arg('--norc')
             .arg('-c')
@@ -92,11 +90,11 @@ export class TaskOperations {
         let unixPath = ''
         // tslint:disable-next-line: no-unsafe-any
         pwd.on('stdout', c => (unixPath += c.toString()))
-        await pwd.exec((options as unknown) as tr.IExecOptions)
+        await pwd.exec((options as unknown) as IExecOptions)
         unixPath = unixPath.trim()
 
         if (!unixPath) {
-            throw new Error(tl.loc('BashUnableToFindScript', windowsPath))
+            throw new Error(loc('BashUnableToFindScript', windowsPath))
         }
 
         return unixPath
@@ -114,7 +112,7 @@ export class TaskOperations {
         const credentials = await getCredentials(this.taskParameters.awsConnectionParameters)
         if (credentials) {
             await credentials.getPromise()
-            tl.debug('configure credentials into environment variables')
+            debug('configure credentials into environment variables')
             env.AWS_ACCESS_KEY_ID = credentials.accessKeyId
             env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey
             if (credentials.sessionToken) {
@@ -124,7 +122,7 @@ export class TaskOperations {
 
         const region = await getRegion()
         if (region) {
-            tl.debug('configure region into environment variable')
+            debug('configure region into environment variable')
             env.AWS_REGION = region
             // set for the benefit of any aws cli commands the user might
             // exec as part of the script

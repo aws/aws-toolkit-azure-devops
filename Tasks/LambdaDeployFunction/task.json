@@ -197,6 +197,15 @@
             "helpMarkDown": "If set requests AWS Lambda to create or update the Lambda function and publish a version as an atomic operation."
         },
         {
+            "name": "layers",
+            "type": "multiLine",
+            "label": "Lambda Layers",
+            "required": false,
+            "defaultValue": "",
+            "helpMarkDown": "List of Lambda Layer ARNs (including version), one per line.",
+            "visibleRule": "deploymentMode = codeandconfiguration"
+        },
+        {
             "name": "deadLetterARN",
             "type": "string",
             "label": "Dead Letter ARN",
@@ -304,6 +313,7 @@
         "UpdatingFunctionConfiguration": "Updating configuration for function %s",
         "FunctionNotFound": "Function %s does not exist, cannot update code only",
         "TaskCompleted": "Completed create or update of Lambda function %s, function ARN %s",
-        "AddingTag": "Adding tag key '%s', value '%s'"
+        "AddingTag": "Adding tag key '%s', value '%s'",
+        "NoFunctionArnReturned": "No function ARN returned from the service! Deployment failed!"
     }
 }

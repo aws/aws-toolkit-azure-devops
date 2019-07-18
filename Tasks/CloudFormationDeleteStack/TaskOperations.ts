@@ -4,7 +4,7 @@
  */
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

@@ -5,12 +5,12 @@
 
 import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { SdkUtils } from 'Common/sdkutils'
-import tl = require('vsts-task-lib/task')
-import tr = require('vsts-task-lib/toolrunner')
-import Parameters = require('./TaskParameters')
+import * as tl from 'vsts-task-lib/task'
+import * as tr from 'vsts-task-lib/toolrunner'
+import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    public constructor(public readonly taskParameters: Parameters.TaskParameters) {}
+    public constructor(public readonly taskParameters: TaskParameters) {}
 
     public async execute(): Promise<void> {
         this.checkIfAwsCliIsInstalled()
@@ -21,7 +21,7 @@ export class TaskOperations {
         const awsCliTool: tr.ToolRunner = tl.tool(awsCliPath)
         awsCliTool.arg(this.taskParameters.awsCliCommand)
         awsCliTool.arg(this.taskParameters.awsCliSubCommand)
-        if (this.taskParameters.awsCliParameters !== undefined) {
+        if (this.taskParameters.awsCliParameters) {
             awsCliTool.line(this.taskParameters.awsCliParameters)
         }
         // tslint:disable-next-line: no-unsafe-any

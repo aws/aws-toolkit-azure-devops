@@ -7,7 +7,7 @@ import IAM = require('aws-sdk/clients/iam')
 import Lambda = require('aws-sdk/clients/lambda')
 import { SdkUtils } from 'Common/sdkutils'
 import { readFileSync } from 'fs'
-import tl = require('vsts-task-lib/task')
+import * as tl from 'vsts-task-lib/task'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
 
 export class TaskOperations {
@@ -67,6 +67,10 @@ export class TaskOperations {
 
             const response = await this.lambdaClient.updateFunctionCode(updateCodeRequest).promise()
 
+            if (!response.FunctionArn) {
+                throw new Error(tl.loc('NoFunctionArnReturned'))
+            }
+
             return response.FunctionArn
         } catch (err) {
             throw new Error(`Error while updating function code: ${err}`)
@@ -82,7 +86,6 @@ export class TaskOperations {
             const updateConfigRequest: Lambda.UpdateFunctionConfigurationRequest = {
                 FunctionName: this.taskParameters.functionName,
                 Handler: this.taskParameters.functionHandler,
-                Description: this.taskParameters.description,
                 Role: await SdkUtils.roleArnFromName(this.iamClient, this.taskParameters.roleARN),
                 MemorySize: this.taskParameters.memorySize,
                 Timeout: this.taskParameters.timeout,
@@ -91,6 +94,10 @@ export class TaskOperations {
                 DeadLetterConfig: {
                     TargetArn: this.taskParameters.deadLetterARN
                 }
+            }
+
+            if (this.taskParameters.description) {
+                updateConfigRequest.Description = this.taskParameters.description
             }
             if (this.taskParameters.environment) {
                 updateConfigRequest.Environment = {}
@@ -102,7 +109,10 @@ export class TaskOperations {
                     SubnetIds: this.taskParameters.subnets
                 }
             }
-            if (this.taskParameters.tracingConfig !== 'XRay') {
+            if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
+                updateConfigRequest.Layers = this.taskParameters.layers
+            }
+            if (this.taskParameters.tracingConfig && this.taskParameters.tracingConfig !== 'XRay') {
                 updateConfigRequest.TracingConfig = {
                     Mode: this.taskParameters.tracingConfig
                 }
@@ -135,7 +145,6 @@ export class TaskOperations {
         const request: Lambda.CreateFunctionRequest = {
             FunctionName: this.taskParameters.functionName,
             Handler: this.taskParameters.functionHandler,
-            Description: this.taskParameters.description,
             Role: await SdkUtils.roleArnFromName(this.iamClient, this.taskParameters.roleARN),
             MemorySize: this.taskParameters.memorySize,
             Timeout: this.taskParameters.timeout,
@@ -157,6 +166,9 @@ export class TaskOperations {
             KMSKeyArn: this.taskParameters.kmsKeyARN
         }
 
+        if (this.taskParameters.description) {
+            request.Description = this.taskParameters.description
+        }
         if (this.taskParameters.environment) {
             request.Environment = {}
             request.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
@@ -164,13 +176,16 @@ export class TaskOperations {
         if (this.taskParameters.tags && this.taskParameters.tags.length > 0) {
             request.Tags = SdkUtils.getTagsDictonary(this.taskParameters.tags)
         }
-        if (this.taskParameters.securityGroups) {
+        if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
+            request.Layers = this.taskParameters.layers
+        }
+        if (this.taskParameters.securityGroups && this.taskParameters.securityGroups.length > 0) {
             request.VpcConfig = {
                 SecurityGroupIds: this.taskParameters.securityGroups,
                 SubnetIds: this.taskParameters.subnets
             }
         }
-        if (this.taskParameters.tracingConfig !== 'XRay') {
+        if (this.taskParameters.tracingConfig && this.taskParameters.tracingConfig !== 'XRay') {
             request.TracingConfig = {
                 Mode: this.taskParameters.tracingConfig
             }
@@ -178,6 +193,10 @@ export class TaskOperations {
 
         try {
             const response = await this.lambdaClient.createFunction(request).promise()
+
+            if (!response.FunctionArn) {
+                throw new Error(tl.loc('NoFunctionArnReturned'))
+            }
 
             return response.FunctionArn
         } catch (err) {
