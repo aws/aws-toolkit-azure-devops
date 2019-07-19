@@ -30,7 +30,8 @@ const baseTaskParameters: TaskParameters = {
     keyManagement: '',
     encryptionAlgorithm: '',
     kmsMasterKeyId: '',
-    customerKey: Buffer.from([])
+    customerKey: Buffer.from([]),
+    cacheControl: []
 }
 
 const headBucketResponse = {
@@ -103,7 +104,21 @@ describe('S3 Upload', () => {
         expect(results.length).toBe(1)
     })
 
-    test('Happy path uplaods a found file', async () => {
+    test('No matching files found', async () => {
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
+            throw new Error('should not be called')
+        })
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.createBucket = true
+        taskParameters.sourceFolder = __dirname
+        taskParameters.globExpressions = ['*.js']
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute()
+    })
+
+    test('Happy path uploads a found file', async () => {
         expect.assertions(5)
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
@@ -125,5 +140,62 @@ describe('S3 Upload', () => {
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         await taskOperation.execute()
         expect(s3.upload.mock.calls.length).toBe(1)
+    })
+
+    test('Cache control works', async () => {
+        expect.assertions(1)
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
+            expect(params.CacheControl).toBe('public')
+
+            return validateUpload
+        })
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.createBucket = true
+        taskParameters.sourceFolder = __dirname
+        taskParameters.globExpressions = ['*.ts']
+        taskParameters.cacheControl = ['*.ts=public']
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute()
+    })
+
+    test("Cache control doesn't match", async () => {
+        expect.assertions(1)
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
+            expect(params.CacheControl).toBeUndefined()
+
+            return validateUpload
+        })
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.createBucket = true
+        taskParameters.sourceFolder = __dirname
+        taskParameters.globExpressions = ['*.ts']
+        taskParameters.cacheControl = ['*.js=public']
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute()
+    })
+
+    test('Cache control invalid expression fails', async () => {
+        expect.assertions(2)
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.upload = jest.fn(() => validateUpload)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.createBucket = true
+        taskParameters.sourceFolder = __dirname
+        taskParameters.globExpressions = ['*.ts']
+        taskParameters.cacheControl = ['*.js=']
+        let taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute().catch(e => {
+            expect(e.message).toContain('Invalid match expression *.js=')
+        })
+        taskParameters.cacheControl = ['=false']
+        taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute().catch(e => {
+            expect(e.message).toContain('Invalid match expression =false')
+        })
     })
 })
