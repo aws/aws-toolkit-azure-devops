@@ -134,7 +134,7 @@ export class TaskOperations {
                     }
                     await this.lambdaClient.tagResource(tagRequest).promise()
                 } catch (e) {
-                    tl.debug(`${e}`)
+                    tl.warning(`${e}`)
                 }
             }
 
