@@ -191,12 +191,13 @@ describe('Lambda Deploy Function', () => {
     })
 
     test('Update function adds fields if they exist', async () => {
-        expect.assertions(3)
+        expect.assertions(4)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.deploymentMode = deployCodeAndConfig
         taskParameters.roleARN = 'arn:yes'
         taskParameters.securityGroups = ['security']
         taskParameters.environment = ['tag1=2', 'tag2=1']
+        taskParameters.tags = ['tag1=5', 'tag=abc']
         taskParameters.tracingConfig = 'XRay'
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionSucceeds)
@@ -208,8 +209,31 @@ describe('Lambda Deploy Function', () => {
 
             return updateFunctionSucceeds
         })
+        lambda.tagResource = jest.fn(args => {
+            expect(args.Tags).toStrictEqual({ tag1: '5', tag: 'abc' })
+
+            return updateFunctionSucceeds
+        })
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
         await taskOperations.execute()
+    })
+
+    test('Update function does not call functions when it should not', async () => {
+        expect.assertions(1)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        taskParameters.tags = []
+        taskParameters.tracingConfig = 'XRay'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
+        const tagResourceFunction = jest.fn()
+        lambda.tagResource = tagResourceFunction
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
+        expect(tagResourceFunction).toHaveBeenCalledTimes(0)
     })
 
     test('IAM call when no role arn specified works', async () => {

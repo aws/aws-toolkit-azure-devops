@@ -409,7 +409,7 @@
         "DeletingExistingChangeSet": "Deleting existing change set %s associated with stack %s",
         "FailedToDeleteChangeSet": "Change set deletion request failed with error: '%s'",
         "AddingCapability": "Setting capability %s for stack",
-        "AddingTag": "Adding tag key '%s', value '%s'",
+        "AddingTag": "Adding tag. Key '%s', Value '%s'",
         "AutoExecuteChangeSetOption": "Auto execute change set option: %s",
         "CreatingChangeSet": "Creating %s type change set %s",
         "NoParametersFileSpecified": "No parameters file specified",
