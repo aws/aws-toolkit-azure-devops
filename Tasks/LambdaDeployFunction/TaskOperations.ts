@@ -118,7 +118,25 @@ export class TaskOperations {
                 }
             }
 
-            await this.lambdaClient.updateFunctionConfiguration(updateConfigRequest).promise()
+            const response = await this.lambdaClient.updateFunctionConfiguration(updateConfigRequest).promise()
+
+            if (!response.FunctionArn) {
+                throw new Error(tl.loc('NoFunctionArnReturned'))
+            }
+
+            // Update tags if we have them
+            const tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
+            if (tags && Object.keys(tags).length > 0) {
+                try {
+                    const tagRequest: Lambda.TagResourceRequest = {
+                        Resource: response.FunctionArn,
+                        Tags: tags
+                    }
+                    await this.lambdaClient.tagResource(tagRequest).promise()
+                } catch (e) {
+                    tl.warning(`${e}`)
+                }
+            }
 
             return await this.updateFunctionCode()
         } catch (err) {
@@ -160,7 +178,7 @@ export class TaskOperations {
             request.Environment = {}
             request.Environment.Variables = SdkUtils.getTagsDictonary(this.taskParameters.environment)
         }
-        if (this.taskParameters.tags) {
+        if (this.taskParameters.tags && this.taskParameters.tags.length > 0) {
             request.Tags = SdkUtils.getTagsDictonary(this.taskParameters.tags)
         }
         if (this.taskParameters.layers && this.taskParameters.layers.length > 0) {
