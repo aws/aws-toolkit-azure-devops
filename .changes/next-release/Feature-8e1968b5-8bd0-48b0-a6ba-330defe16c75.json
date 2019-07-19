@@ -1,0 +1,4 @@
+{
+    "type": "Feature",
+    "description": "Add the ability to set CacheControl for an upload to S3 (issue #50)"
+}

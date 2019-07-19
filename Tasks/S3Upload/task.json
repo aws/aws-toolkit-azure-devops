@@ -213,6 +213,15 @@
             "groupName": "advanced"
         },
         {
+            "name": "cacheControl",
+            "type": "multiLine",
+            "label": "Cache Control Expression",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Set CacheControl metadata, one per line. The format used is globExpression=cacheControlExpression, ex. \"**/*.js=max-age=3600, public\" will set all js files max-age to 3600 and public",
+            "groupName": "advanced"
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
@@ -242,6 +251,7 @@
         "AllPaths": "All paths %s",
         "MatchedPaths": "Matched paths %s",
         "MatchedFiles": "Matched files list %s",
+        "NoMatchingFilesFound": "No files found in folder \"%s\" that match pattern \"%s\"",
         "CreateBucketFailure": "Failed to create bucket",
         "BucketCreated": "Bucket created",
         "UploadingFile": "Uploading matched file %s, content type %s",
@@ -250,6 +260,7 @@
         "TaskCompleted": "All uploads to S3 completed",
         "UploadingFiles": "Uploading files from %s to %s in bucket %s",
         "BucketNotExistNoAutocreate": "Bucket %s does not exist or you do not have access. Auto-create option not set, cannot continue.",
-        "BucketNotExistCreating": "Bucket %s does not appear to exist (or you do not have access). Attempting to create in region %s."
+        "BucketNotExistCreating": "Bucket %s does not appear to exist (or you do not have access). Attempting to create in region %s.",
+        "InvalidExpression": "Invalid match expression %s"
     }
 }

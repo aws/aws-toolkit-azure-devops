@@ -67,6 +67,64 @@ export class TaskOperations {
         }
     }
 
+    private getCacheControl(currentFile: string): string {
+        for (const expression of this.taskParameters.cacheControl) {
+            const firstIndex = expression.indexOf('=')
+            if (firstIndex < 1 || firstIndex === expression.length - 1) {
+                throw new Error(tl.loc('InvalidExpression', expression))
+            }
+            const matchStatemnt = expression.substring(0, firstIndex).trim()
+            const cacheControlSettings = expression.substring(firstIndex + 1).trim()
+            const result = tl.match([currentFile], matchStatemnt, this.taskParameters.sourceFolder)
+            if (result.length > 0) {
+                return cacheControlSettings
+            }
+        }
+
+        return ''
+    }
+
+    private buildS3Request(request: S3.PutObjectRequest, matchedFile: string) {
+        if (this.taskParameters.contentEncoding) {
+            request.ContentEncoding = this.taskParameters.contentEncoding
+        }
+
+        if (this.taskParameters.cacheControl && this.taskParameters.cacheControl.length > 0) {
+            const cacheControl = this.getCacheControl(matchedFile)
+            if (cacheControl) {
+                request.CacheControl = cacheControl
+            }
+        }
+
+        if (this.taskParameters.filesAcl) {
+            request.ACL = this.taskParameters.filesAcl
+        }
+        switch (this.taskParameters.keyManagement) {
+            case noKeyManagementValue:
+                break
+
+            case awsKeyManagementValue: {
+                if (this.taskParameters.encryptionAlgorithm) {
+                    request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
+                }
+                if (this.taskParameters.kmsMasterKeyId) {
+                    request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
+                }
+                break
+            }
+
+            case customerKeyManagementValue: {
+                if (this.taskParameters.encryptionAlgorithm) {
+                    request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
+                }
+                if (this.taskParameters.customerKey.length > 0) {
+                    request.SSECustomerKey = this.taskParameters.customerKey
+                }
+                break
+            }
+        }
+    }
+
     private async uploadFiles() {
         let msgTarget: string
         if (this.taskParameters.targetFolder) {
@@ -79,6 +137,13 @@ export class TaskOperations {
         )
 
         const matchedFiles = this.findMatchingFiles(this.taskParameters)
+
+        if (matchedFiles.length === 0) {
+            tl.warning(
+                tl.loc('NoMatchingFilesFound', this.taskParameters.sourceFolder, this.taskParameters.globExpressions)
+            )
+        }
+
         for (const matchedFile of matchedFiles) {
             let relativePath = matchedFile.substring(this.taskParameters.sourceFolder.length)
             if (relativePath.startsWith(path.sep)) {
@@ -125,38 +190,9 @@ export class TaskOperations {
                         StorageClass: this.taskParameters.storageClass
                     }
 
-                    if (this.taskParameters.contentEncoding) {
-                        request.ContentEncoding = this.taskParameters.contentEncoding
-                    }
-                    if (this.taskParameters.filesAcl) {
-                        request.ACL = this.taskParameters.filesAcl
-                    }
-                    switch (this.taskParameters.keyManagement) {
-                        case noKeyManagementValue:
-                            break
+                    this.buildS3Request(request, matchedFile)
 
-                        case awsKeyManagementValue: {
-                            if (this.taskParameters.encryptionAlgorithm) {
-                                request.ServerSideEncryption = this.taskParameters.encryptionAlgorithm
-                            }
-                            if (this.taskParameters.kmsMasterKeyId) {
-                                request.SSEKMSKeyId = this.taskParameters.kmsMasterKeyId
-                            }
-                            break
-                        }
-
-                        case customerKeyManagementValue: {
-                            if (this.taskParameters.encryptionAlgorithm) {
-                                request.SSECustomerAlgorithm = this.taskParameters.encryptionAlgorithm
-                            }
-                            if (this.taskParameters.customerKey.length > 0) {
-                                request.SSECustomerKey = this.taskParameters.customerKey
-                            }
-                            break
-                        }
-                    }
-
-                    const response: S3.ManagedUpload.SendData = await this.s3Client.upload(request).promise()
+                    await this.s3Client.upload(request).promise()
                     console.log(tl.loc('FileUploadCompleted', matchedFile, targetPath))
                 } catch (err) {
                     console.error(tl.loc('FileUploadFailed'), err)

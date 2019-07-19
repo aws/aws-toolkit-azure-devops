@@ -35,6 +35,7 @@ export interface TaskParameters {
     encryptionAlgorithm: string
     kmsMasterKeyId: string
     customerKey: Buffer
+    cacheControl: string[]
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -55,7 +56,8 @@ export function buildTaskParameters(): TaskParameters {
         keyManagement: '',
         encryptionAlgorithm: '',
         kmsMasterKeyId: '',
-        customerKey: Buffer.from([])
+        customerKey: Buffer.from([]),
+        cacheControl: tl.getDelimitedInput('cacheControl', '\n', false)
     }
     if (!parameters.storageClass) {
         parameters.storageClass = 'STANDARD'
