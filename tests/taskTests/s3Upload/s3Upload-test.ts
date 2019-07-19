@@ -182,11 +182,7 @@ describe('S3 Upload', () => {
         expect.assertions(2)
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
-        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
-            expect(params.CacheControl).toBeUndefined()
-
-            return validateUpload
-        })
+        s3.upload = jest.fn(() => validateUpload)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.createBucket = true
         taskParameters.sourceFolder = __dirname
