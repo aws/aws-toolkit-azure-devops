@@ -1,0 +1,4 @@
+{
+    "type": "Removal",
+    "description": "Remove Lambda .NET Core 1.0, it is EOL"
+}
