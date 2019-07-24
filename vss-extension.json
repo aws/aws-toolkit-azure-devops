@@ -100,6 +100,9 @@
             "path": "Tasks/CodeDeployDeployApplication"
         },
         {
+            "path": "Tasks/ECRPullImage"
+        },
+        {
             "path": "Tasks/ECRPushImage"
         },
         {
@@ -303,6 +306,15 @@
             "targets": ["ms.vss-distributed-task.tasks"],
             "properties": {
                 "name": "Tasks/CodeDeployDeployApplication"
+            }
+        },
+        {
+            "id": "ECRPullImage",
+            "description": "Pull an Elastic Container Registry image",
+            "type": "ms.vss-distributed-task.task",
+            "targets": ["ms.vss-distributed-task.tasks"],
+            "properties": {
+                "name": "Tasks/ECRPullImage"
             }
         },
         {
