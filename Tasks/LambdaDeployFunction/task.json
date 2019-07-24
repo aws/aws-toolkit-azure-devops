@@ -95,6 +95,7 @@
             "required": true,
             "helpMarkDown": "The runtime environment for the Lambda function you are uploading. The list of runtimes available in the pick list are those known at the time this version of the tools was released. To use a runtime not shown in the list simply enter the runtime identifier in the field.",
             "options": {
+                "provided": "provided",
                 "dotnetcore2.1": "dotnetcore2.1",
                 "go1.x": "go1.x",
                 "java8": "java8",
