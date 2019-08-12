@@ -1,4 +1,0 @@
-{
-    "type": "Bug Fix",
-    "description": "Fix issue #259: auto-install new version of the lambda tools globally if required."
-}

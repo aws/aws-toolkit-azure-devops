@@ -1,4 +1,0 @@
-{
-    "type": "Bug Fix",
-    "description": "Fix issue #272 by no longer printing the command"
-}

@@ -1,3 +1,14 @@
+## 1.5.0 2019-08-12
+
+- **Bug Fix** Fix issue #270 by adding tags on lambda update
+- **Bug Fix** Fix issue #272 by no longer printing the command
+- **Bug Fix** Fix issue #259: auto-install new version of the lambda tools globally if required.
+- **Feature** Add the ability to set CacheControl for an upload to S3 (issue #50)
+- **Feature** Add ECR pull task (issue #169)
+- **Feature** Issue #133 support for Lambda Layers
+- **Feature** Refresh list of Lambda runtimes to the currently supported runtimes
+- **Removal** Remove Lambda .NET Core 1.0, it is EOL
+
 ### 1.4.0 (2019-06-18)
 
 -   Issue #254, fix default working directory for AWS Shell Script
