@@ -1,0 +1,38 @@
+{
+	"date": "2019-08-12",
+	"version": "1.5.0",
+	"entries": [
+		{
+			"type": "Bug Fix",
+			"description": "Fix issue #270 by adding tags on lambda update"
+		},
+		{
+			"type": "Bug Fix",
+			"description": "Fix issue #272 by no longer printing the command"
+		},
+		{
+			"type": "Bug Fix",
+			"description": "Fix issue #259: auto-install new version of the lambda tools globally if required."
+		},
+		{
+			"type": "Feature",
+			"description": "Add the ability to set CacheControl for an upload to S3 (issue #50)"
+		},
+		{
+			"type": "Feature",
+			"description": "Add ECR pull task (issue #169)"
+		},
+		{
+			"type": "Feature",
+			"description": "Issue #133 support for Lambda Layers"
+		},
+		{
+			"type": "Feature",
+			"description": "Refresh list of Lambda runtimes to the currently supported runtimes"
+		},
+		{
+			"type": "Removal",
+			"description": "Remove Lambda .NET Core 1.0, it is EOL"
+		}
+	]
+}
