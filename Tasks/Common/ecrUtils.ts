@@ -4,8 +4,8 @@
  */
 
 import ECR = require('aws-sdk/clients/ecr')
+import tl = require('azure-pipelines-task-lib/task')
 import base64 = require('base-64')
-import tl = require('vsts-task-lib/task')
 import { DockerHandler } from './dockerUtils'
 
 export async function loginToRegistry(

@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
-import * as tl from 'vsts-task-lib/task'
 
 export const fromInstanceIds: string = 'fromInstanceIds'
 export const fromTags: string = 'fromTags'

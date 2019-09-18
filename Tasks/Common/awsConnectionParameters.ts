@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import * as tl from 'vsts-task-lib/task'
+import * as tl from 'azure-pipelines-task-lib/task'
 
 import { STS } from 'aws-sdk/clients/all'
 import * as AWS from 'aws-sdk/global'
@@ -32,7 +32,7 @@ export const maxduration: number = 3600
 export const roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration'
 
 export interface AWSConnectionParameters {
-    // pre-formatted url string, or vsts-task-lib/ProxyConfiguration
+    // pre-formatted url string, or azure-pipelines-task-lib/ProxyConfiguration
     proxyConfiguration: string | tl.ProxyConfiguration
     // If set, the task should expect to receive temporary session credentials
     // scoped to the role.
