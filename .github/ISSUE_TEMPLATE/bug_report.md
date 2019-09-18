@@ -1,13 +1,14 @@
 ---
 name: Bug report
-about: Create a bug report to help us improve the VSTS plugin
-
+about: Create a bug report to help us improve the AWS Toolkit for Azure Devops
 ---
 
 **Describe the bug**
+
 <!-- A clear and concise description of what the bug is. -->
 
 **To reproduce**
+
 <!-- Steps to reproduce the behavior: -->
 <!-- 1. Go to '...' -->
 <!-- 2. Click on '....' -->
@@ -15,16 +16,19 @@ about: Create a bug report to help us improve the VSTS plugin
 <!-- 4. See error -->
 
 **Expected behavior**
+
 <!-- A clear and concise description of what you expected to happen. -->
 
 **Screenshots**
+
 <!-- If applicable, add screenshots to help explain your problem. -->
 
 **Your Environment**
- - VSTS or Azure Devops (on-prem or cloud based?): 
- - VSTS or Azure Devops version: 
- - AWS VSTS Tools version:
+
+-   On-prem or cloud based?:
+-   Azure Devops version:
+-   AWS Toolkit for Azure Devops version:
 
 **Additional context**
-<!-- Add any other context about the problem here. -->
 
+<!-- Add any other context about the problem here. -->

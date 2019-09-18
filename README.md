@@ -3,9 +3,9 @@
 Build: ![TravisCI Build Status - master branch](https://travis-ci.org/aws/aws-vsts-tools.svg?branch=master)
 Coverage: [![codecov](https://codecov.io/gh/aws/aws-vsts-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/aws/aws-vsts-tools)
 
-AWS Tools for Microsoft Visual Studio Team Services (VSTS) adds tasks to easily enable build and release pipelines in VSTS and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
+The AWS Toolkit for Azure Devops adds tasks to easily enable build and release pipelines in Azure Devops and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
 
-AWS Tools for VSTS is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
+The AWS Toolkit for Azure Devops is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
 
 This is an open source project because we want you to be involved. We love issues, feature requests, code reviews, pull
 requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIBUTING.md) guide for how to help, including how to build your own extension.
@@ -18,7 +18,7 @@ requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIB
 -   CodeDeploy - Deploy with CodeDeploy
 -   CloudFormation - Create/Delete/Update CloudFormation stacks
 -   ECR - Push an image to an ECR repository
--   Lambda - Deploy from S3, .net core applications, or any other language that builds on VSTS
+-   Lambda - Deploy from S3, .net core applications, or any other language that builds on Azure Devops
 -   S3 - Upload/Download to/from S3 buckets
 -   Secrets Manager - Create and retrieve secrets
 -   SQS - Send SQS messages
@@ -29,9 +29,11 @@ requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIB
 
 The [User Guide](https://docs.aws.amazon.com/vsts/latest/userguide/welcome.html) contains additional instructions for getting up and running with the extension.
 
+**NOTE:** The user-guide source content that used to live in this folder has been moved to its own [GitHub repository](https://github.com/awsdocs/aws-tools-ado-vsts-user-guide).
+
 ## Credentials Handling for AWS Services
 
-To enable tasks to call AWS services when run as part of your build or release pipelines AWS credentials need to have been configured for the tasks or be available in the host process for the build agent. Note that the credentials are used specifically by the tasks when run in a build agent process, they are not related to end-user logins to your VSTS or TFS instance.
+To enable tasks to call AWS services when run as part of your build or release pipelines AWS credentials need to have been configured for the tasks or be available in the host process for the build agent. Note that the credentials are used specifically by the tasks when run in a build agent process, they are not related to end-user logins to your Azure Devops instance.
 
 The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
@@ -47,7 +49,7 @@ The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
 ### Configuring an AWS Service Endpoint
 
-To use _AWS_ service endpoints add the AWS subscription(s) to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Note that each VSTS/TFS project is associated with its own set of credentials. Service endpoints are not shared across projects. You can associate a single service endpoint to be used with all AWS tasks in a build or multiple endpoints if you require.
+To use _AWS_ service endpoints add the AWS subscription(s) to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Note that each Azure Devops project is associated with its own set of credentials. Service endpoints are not shared across projects. You can associate a single service endpoint to be used with all AWS tasks in a build or multiple endpoints if you require.
 
 Select the _AWS_ endpoint type and provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
 
