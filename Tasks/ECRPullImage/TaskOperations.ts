@@ -4,10 +4,10 @@
  */
 
 import * as ECR from 'aws-sdk/clients/ecr'
+import * as tl from 'azure-pipelines-task-lib/task'
 import { DockerHandler } from 'Common/dockerUtils'
 import { getEcrAuthorizationData, loginToRegistry } from 'Common/ecrUtils'
 import { parse } from 'url'
-import * as tl from 'vsts-task-lib/task'
 import { imageTagSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

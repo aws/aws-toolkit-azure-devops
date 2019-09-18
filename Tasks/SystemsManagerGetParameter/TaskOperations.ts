@@ -4,8 +4,8 @@
  */
 
 import SSM = require('aws-sdk/clients/ssm')
+import tl = require('azure-pipelines-task-lib/task')
 import { readModeHierarchy, readModeSingle, transformParameterToVariableName } from 'Common/ssm'
-import tl = require('vsts-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

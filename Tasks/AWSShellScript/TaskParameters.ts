@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { getBoolInput, getPathInput } from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
-import { getBoolInput, getPathInput } from 'vsts-task-lib/task'
 
 export const inlineScriptType: string = 'inline'
 export const fileScriptType: string = 'filePath'

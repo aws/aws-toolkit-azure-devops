@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { getBoolInput } from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
-import { getBoolInput } from 'vsts-task-lib/task'
 
 export const ignoreStackOutputs: string = 'ignore'
 export const stackOutputsAsVariables: string = 'asVariables'

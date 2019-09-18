@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+import tl = require('azure-pipelines-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
-import tl = require('vsts-task-lib/task')
 
 export const imageNameSource: string = 'imagename'
 export const imageIdSource: string = 'imageid'

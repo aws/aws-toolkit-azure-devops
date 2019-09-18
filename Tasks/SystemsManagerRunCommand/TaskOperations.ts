@@ -4,7 +4,7 @@
  */
 
 import SSM = require('aws-sdk/clients/ssm')
-import tl = require('vsts-task-lib/task')
+import tl = require('azure-pipelines-task-lib/task')
 import { fromBuildVariable, fromInstanceIds, fromTags, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

@@ -5,7 +5,7 @@
 
 import SNS = require('aws-sdk/clients/sns')
 import SQS = require('aws-sdk/clients/sqs')
-import tl = require('vsts-task-lib/task')
+import tl = require('azure-pipelines-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
