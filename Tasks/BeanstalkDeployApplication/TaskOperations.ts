@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import * as tl from 'vsts-task-lib/task'
+import * as tl from 'azure-pipelines-task-lib/task'
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import { BeanstalkUtils } from 'Common/beanstalkUtils'

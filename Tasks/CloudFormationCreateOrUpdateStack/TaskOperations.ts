@@ -18,7 +18,7 @@ import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import yaml = require('js-yaml')
 import path = require('path')
-import * as tl from 'vsts-task-lib/task'
+import * as tl from 'azure-pipelines-task-lib/task'
 import {
     fileSource,
     ignoreStackOutputs,

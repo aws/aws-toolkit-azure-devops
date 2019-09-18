@@ -7,7 +7,7 @@ import * as S3 from 'aws-sdk/clients/s3'
 import { knownMimeTypes, testBucketExists } from 'Common/s3'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as tl from 'vsts-task-lib/task'
+import * as tl from 'azure-pipelines-task-lib/task'
 import {
     awsKeyManagementValue,
     customerKeyManagementValue,

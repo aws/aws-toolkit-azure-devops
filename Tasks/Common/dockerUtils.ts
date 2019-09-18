@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import tl = require('vsts-task-lib/task')
+import tl = require('azure-pipelines-task-lib/task')
 
 export interface DockerHandler {
     locateDockerExecutable(): Promise<string>

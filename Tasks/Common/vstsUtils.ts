@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { getInput } from 'vsts-task-lib/task'
+import { getInput } from 'azure-pipelines-task-lib/task'
 
 export interface VSTSManifestVersionInfo {
     Major: string
@@ -18,8 +18,8 @@ export interface VSTSTaskManifest {
 
 /**
  * This function is required for strict mode compliance. Although it will not throw
- * errors without it, that is because the vsts-task-lib type annotations are wrong as of
- * version 2.7.0 .
+ * errors without it, that is because the azure-pipelines-task-lib type annotations are wrong as of
+ * version 2.8.0 .
  */
 export function getInputRequired(name: string): string {
     const input = getInput(name, true)

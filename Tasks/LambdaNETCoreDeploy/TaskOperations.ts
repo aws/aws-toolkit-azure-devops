@@ -9,7 +9,7 @@ import { DotNetCliWrapper, DotNetLambdaWrapper } from 'Common/dotNetCliWrapper'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import * as path from 'path'
-import * as tl from 'vsts-task-lib/task'
+import * as tl from 'azure-pipelines-task-lib/task'
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

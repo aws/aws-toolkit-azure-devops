@@ -4,7 +4,7 @@
  */
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
-import tl = require('vsts-task-lib/task')
+import tl = require('azure-pipelines-task-lib/task')
 
 export const defaultTimeoutInMins: number = 60
 

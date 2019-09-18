@@ -77,7 +77,7 @@
         "js-yaml": "^3.13.1",
         "q": "^1.5.1",
         "shelljs": "^0.8.3",
-        "vsts-task-lib": "2.7.0"
+        "azure-pipelines-task-lib": "2.8.0"
     },
     "jest": {
         "coverageDirectory": "./coverage/",

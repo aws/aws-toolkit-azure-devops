@@ -5,7 +5,7 @@
 
 import SecretsManager = require('aws-sdk/clients/secretsmanager')
 import base64 = require('base-64')
-import tl = require('vsts-task-lib/task')
+import tl = require('azure-pipelines-task-lib/task')
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-import tl = require('vsts-task-lib/task')
+import tl = require('azure-pipelines-task-lib/task')
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { ToolRunner } from 'vsts-task-lib/toolrunner'
+import { ToolRunner } from 'azure-pipelines-task-lib/toolrunner'
 
 export class DotNetCliWrapper {
     private constructor(

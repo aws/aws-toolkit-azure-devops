@@ -7,8 +7,8 @@ import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
 import { SdkUtils } from 'Common/sdkutils'
 import { unlinkSync, writeFileSync } from 'fs'
 import { basename, dirname, join, posix } from 'path'
-import { debug, exist, loc, mkdirP, tool, which } from 'vsts-task-lib/task'
-import { IExecOptions } from 'vsts-task-lib/toolrunner'
+import { debug, exist, loc, mkdirP, tool, which } from 'azure-pipelines-task-lib/task'
+import { IExecOptions } from 'azure-pipelines-task-lib/toolrunner'
 import { inlineScriptType, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

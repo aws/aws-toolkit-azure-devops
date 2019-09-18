@@ -7,7 +7,7 @@ import { S3 } from 'aws-sdk/clients/all'
 import * as fs from 'fs'
 import * as mm from 'minimatch'
 import * as path from 'path'
-import * as tl from 'vsts-task-lib/task'
+import * as tl from 'azure-pipelines-task-lib/task'
 
 import { testBucketExists } from 'Common/s3'
 import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './TaskParameters'
