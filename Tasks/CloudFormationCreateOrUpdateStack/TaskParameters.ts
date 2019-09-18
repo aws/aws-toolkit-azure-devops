@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { defaultTimeoutInMins } from 'Common/cloudformationutils'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import { statSync } from 'fs'
-import * as tl from 'azure-pipelines-task-lib/task'
 
 export const fileSource: string = 'file'
 export const urlSource: string = 'url'

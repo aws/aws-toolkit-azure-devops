@@ -5,9 +5,9 @@
 
 import tl = require('azure-pipelines-task-lib/task')
 
+import { ToolRunner } from 'azure-pipelines-task-lib/toolrunner'
 import * as fs from 'fs'
 import * as path from 'path'
-import { ToolRunner } from 'azure-pipelines-task-lib/toolrunner'
 
 export class DotNetCliWrapper {
     private constructor(

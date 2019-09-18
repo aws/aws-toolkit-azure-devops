@@ -5,6 +5,7 @@
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import S3 = require('aws-sdk/clients/s3')
+import * as tl from 'azure-pipelines-task-lib/task'
 import {
     captureStackOutputs,
     setWaiterParams,
@@ -18,7 +19,6 @@ import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import yaml = require('js-yaml')
 import path = require('path')
-import * as tl from 'azure-pipelines-task-lib/task'
 import {
     fileSource,
     ignoreStackOutputs,

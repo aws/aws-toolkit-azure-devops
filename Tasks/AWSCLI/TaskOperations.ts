@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
-import { SdkUtils } from 'Common/sdkutils'
 import * as tl from 'azure-pipelines-task-lib/task'
 import * as tr from 'azure-pipelines-task-lib/toolrunner'
+import { getCredentials, getRegion } from 'Common/awsConnectionParameters'
+import { SdkUtils } from 'Common/sdkutils'
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

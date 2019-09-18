@@ -4,12 +4,12 @@
  */
 
 import { Credentials } from 'aws-sdk'
+import * as tl from 'azure-pipelines-task-lib/task'
 import { getRegion } from 'Common/awsConnectionParameters'
 import { DotNetCliWrapper, DotNetLambdaWrapper } from 'Common/dotNetCliWrapper'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import * as path from 'path'
-import * as tl from 'azure-pipelines-task-lib/task'
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

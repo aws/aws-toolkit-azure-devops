@@ -7,11 +7,11 @@ import archiver = require('archiver')
 import CodeDeploy = require('aws-sdk/clients/codedeploy')
 import S3 = require('aws-sdk/clients/s3')
 import { AWSError } from 'aws-sdk/lib/error'
+import * as tl from 'azure-pipelines-task-lib/task'
 import { SdkUtils } from 'Common/sdkutils'
 import fs = require('fs')
 import path = require('path')
 import Q = require('q')
-import * as tl from 'azure-pipelines-task-lib/task'
 import {
     defaultTimeoutInMins,
     revisionSourceFromS3,
