@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for AWS Toolkit for Azure Devops
+about: Suggest an idea for AWS Toolkit for Azure DevOps
 ---
 
 **Is your feature request related to a problem? Please describe.**

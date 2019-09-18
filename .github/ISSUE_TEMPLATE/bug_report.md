@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a bug report to help us improve the AWS Toolkit for Azure Devops
+about: Create a bug report to help us improve the AWS Toolkit for Azure DevOps
 ---
 
 **Describe the bug**
@@ -26,8 +26,8 @@ about: Create a bug report to help us improve the AWS Toolkit for Azure Devops
 **Your Environment**
 
 -   On-prem or cloud based?:
--   Azure Devops version:
--   AWS Toolkit for Azure Devops version:
+-   Azure DevOps version:
+-   AWS Toolkit for Azure DevOps version:
 
 **Additional context**
 
