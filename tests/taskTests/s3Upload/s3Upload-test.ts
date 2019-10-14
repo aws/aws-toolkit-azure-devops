@@ -19,7 +19,6 @@ const baseTaskParameters: TaskParameters = {
     sourceFolder: '',
     targetFolder: '',
     flattenFolders: false,
-    overwrite: false,
     globExpressions: [],
     filesAcl: '',
     createBucket: false,

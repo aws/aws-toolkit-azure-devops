@@ -23,7 +23,6 @@ export interface TaskParameters {
     sourceFolder: string
     targetFolder: string
     flattenFolders: boolean
-    overwrite: boolean
     globExpressions: string[]
     filesAcl: string
     createBucket: boolean
@@ -42,7 +41,6 @@ export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
         bucketName: getInputRequired('bucketName'),
-        overwrite: tl.getBoolInput('overwrite', false),
         flattenFolders: tl.getBoolInput('flattenFolders', false),
         sourceFolder: tl.getPathInput('sourceFolder', true, true),
         targetFolder: getInputOrEmpty('targetFolder'),
