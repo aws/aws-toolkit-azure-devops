@@ -12,7 +12,7 @@ const buildRoot = path.join(repoRoot, '_build')
 const buildTasks = path.join(buildRoot, tasksDirectory)
 const packageRoot = path.join(repoRoot, '_package')
 const packageTasks = path.join(packageRoot, tasksDirectory)
-const releaseVersion = require(path.join('..', 'package.json')).version
+const releaseVersion = require(path.join(repoRoot, 'package.json')).version
 
 module.exports = {
     repoRoot: repoRoot,

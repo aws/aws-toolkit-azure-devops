@@ -10,7 +10,7 @@ const timeMessage = 'Copied resources'
 const ignoredFiles = ['tsconfig.json', 'make.json']
 const ignoreExtensions = ['.ts']
 
-const filterFunc = (src: String, dest: String) => {
+const filterFunc = (src: string, dest: string) => {
     return (
         ignoredFiles.every(element => {
             if (src.endsWith(element)) {

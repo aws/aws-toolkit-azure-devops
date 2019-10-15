@@ -264,7 +264,7 @@ function generateTaskResources(taskPath, knownRegions, versionInfo) {
 
 function addVersionToVssExtension(versionInfo) {
     var vss = JSON.parse(fs.readFileSync(vssPath))
-    vss.version = '' + versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch
+    vss.version = versionInfo
     fs.writeFileSync(vssBuildPath, JSON.stringify(vss, null, 2))
 }
 
