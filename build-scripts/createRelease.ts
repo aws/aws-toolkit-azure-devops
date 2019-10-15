@@ -6,11 +6,10 @@
 import * as child_process from 'child_process'
 import * as fs from 'fs-extra'
 import * as path from 'path'
+import { releaseVersion } from './scriptUtils'
 
 const changesDirectory = '.changes'
 const nextReleaseDirectory = path.join(changesDirectory, 'next-release')
-// tslint:disable-next-line:no-var-requires no-unsafe-any
-const releaseVersion = require(path.join('..', 'package.json')).version
 const changesFile = path.join(changesDirectory, `${releaseVersion}.json`)
 
 fs.mkdirpSync(nextReleaseDirectory)

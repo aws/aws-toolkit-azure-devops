@@ -3,25 +3,27 @@
  * SPDX-License-Identifier: MIT
  */
 
-const folders = require('./scriptUtils')
-const fs = require('fs-extra')
+import fs = require('fs-extra')
+import folders = require('./scriptUtils')
 
 const timeMessage = 'Copied resources'
 const ignoredFiles = ['tsconfig.json', 'make.json']
 const ignoreExtensions = ['.ts']
 
-const filterFunc = (src, dest) => {
+const filterFunc = (src: String, dest: String) => {
     return (
         ignoredFiles.every(element => {
             if (src.endsWith(element)) {
                 return false
             }
+
             return true
         }) &&
         ignoreExtensions.every(element => {
             if (src.endsWith(element)) {
                 return false
             }
+
             return true
         })
     )
@@ -33,8 +35,8 @@ const options = {
 }
 
 console.time(timeMessage)
-console.log('Copying files from ' + folders.sourceTasks + ' to ' + folders.buildTasks)
+console.log(`Copying files from ${folders.sourceTasks} to folders.buildTasks`)
 fs.copy(folders.sourceTasks, folders.buildTasks, options)
     .then(() => console.info('Successfully coppied files'))
-    .catch(error => console.info('Copy failed with error: ' + error))
+    .catch(error => console.info(`Copy failed with error: ${error}`))
 console.timeEnd(timeMessage)
