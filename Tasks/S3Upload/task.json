@@ -154,15 +154,6 @@
             "visibleRule": "keyManagement = customerManaged"
         },
         {
-            "name": "overwrite",
-            "type": "boolean",
-            "label": "Overwrite",
-            "defaultValue": "true",
-            "required": false,
-            "helpMarkDown": " If selected existing files (Amazon S3 objects) in the bucket at the target location are overwritten.",
-            "groupName": "advanced"
-        },
-        {
             "name": "flattenFolders",
             "type": "boolean",
             "label": "Flatten folders",
