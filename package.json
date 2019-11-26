@@ -12,7 +12,7 @@
         "clean": "ts-node ./build-scripts/clean.ts",
         "lint": "tslint --project .",
         "generateResources": "node ./build-scripts/generateResources.js",
-        "copyResources": "node ./build-scripts/copyResources.js",
+        "copyResources": "ts-node ./build-scripts/copyResources.ts",
         "package": "node ./build-scripts/packageExtension.js",
         "fullBuild": "npm run build && npm run lint && npm run copyResources && npm run generateResources && npm run test && npm run package",
         "newChange": "ts-node ./build-scripts/newChange.ts",

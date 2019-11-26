@@ -5,13 +5,14 @@
 
 const path = require('path')
 
-repoRoot = path.dirname(__dirname)
-tasksDirectory = 'Tasks'
-sourceTasks = path.join(repoRoot, tasksDirectory)
-buildRoot = path.join(repoRoot, '_build')
-buildTasks = path.join(buildRoot, tasksDirectory)
-packageRoot = path.join(repoRoot, '_package')
-packageTasks = path.join(packageRoot, tasksDirectory)
+const repoRoot = path.dirname(__dirname)
+const tasksDirectory = 'Tasks'
+const sourceTasks = path.join(repoRoot, tasksDirectory)
+const buildRoot = path.join(repoRoot, '_build')
+const buildTasks = path.join(buildRoot, tasksDirectory)
+const packageRoot = path.join(repoRoot, '_package')
+const packageTasks = path.join(packageRoot, tasksDirectory)
+const releaseVersion = require(path.join(repoRoot, 'package.json')).version
 
 module.exports = {
     repoRoot: repoRoot,
@@ -19,5 +20,6 @@ module.exports = {
     buildRoot: buildRoot,
     buildTasks: buildTasks,
     packageRoot: packageRoot,
-    packageTasks: packageTasks
+    packageTasks: packageTasks,
+    releaseVersion: releaseVersion
 }

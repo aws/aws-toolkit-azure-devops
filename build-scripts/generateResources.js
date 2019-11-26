@@ -13,7 +13,6 @@ const folders = require('./scriptUtils')
 const timeMessage = 'Generated resources'
 const taskJson = 'task.json'
 const taskLocJson = 'task.loc.json'
-const masterVersionFile = '_versioninfo.json'
 const vssPath = path.join(folders.repoRoot, 'vss-extension.json')
 const vssBuildPath = path.join(folders.repoRoot, '_build', 'vss-extension.json')
 
@@ -265,16 +264,14 @@ function generateTaskResources(taskPath, knownRegions, versionInfo) {
 
 function addVersionToVssExtension(versionInfo) {
     var vss = JSON.parse(fs.readFileSync(vssPath))
-    vss.version = '' + versionInfo.Major + '.' + versionInfo.Minor + '.' + versionInfo.Patch
+    vss.version = versionInfo
     fs.writeFileSync(vssBuildPath, JSON.stringify(vss, null, 2))
 }
 
 console.time(timeMessage)
-var versionInfoFile = path.join(folders.repoRoot, masterVersionFile)
-var versionInfo = JSON.parse(fs.readFileSync(versionInfoFile))
 const knownRegions = fetchLatestRegions()
 findMatchingFiles(folders.sourceTasks).forEach(path => {
-    generateTaskResources(path, knownRegions, versionInfo)
+    generateTaskResources(path, knownRegions, folders.releaseVersion)
 })
-addVersionToVssExtension(versionInfo)
+addVersionToVssExtension(folders.releaseVersion)
 console.timeEnd(timeMessage)
