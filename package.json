@@ -41,7 +41,7 @@
         "@types/fs-extra": "^8.0.0",
         "@types/jest": "^24.0.18",
         "@types/js-yaml": "^3.12.1",
-        "@types/node": "^12.7.5",
+        "@types/node": "^6.14.4",
         "@types/q": "^1.5.2",
         "@types/readline-sync": "^1.4.3",
         "@types/uuid": "^3.4.5",
@@ -62,7 +62,7 @@
         "tslint": "^5.20.0",
         "tslint-eslint-rules": "^5.4.0",
         "tslint-no-circular-imports": "^0.7.0",
-        "typescript": "^3.6.3",
+        "typescript": "^3.7.2",
         "uuid": "^3.3.3",
         "validator": "^11.1.0",
         "webpack": "^4.40.2",
@@ -71,12 +71,12 @@
     },
     "dependencies": {
         "aws-sdk": "^2.530.0",
+        "azure-pipelines-task-lib": "2.8.0",
         "base-64": "^0.1.0",
-        "https-proxy-agent": "^2.2.2",
+        "https-proxy-agent": "^2.2.4",
         "js-yaml": "^3.13.1",
         "q": "^1.5.1",
-        "shelljs": "^0.8.3",
-        "azure-pipelines-task-lib": "2.8.0"
+        "shelljs": "^0.8.3"
     },
     "jest": {
         "coverageDirectory": "./coverage/",
