@@ -15,6 +15,7 @@ export interface TaskParameters {
     imageTag: string
     imageDigest: string
     repository: string
+    outputVariable: string
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -23,7 +24,8 @@ export function buildTaskParameters(): TaskParameters {
         imageSource: getInputRequired('imageSource'),
         repository: getInputRequired('repository'),
         imageTag: getInputOrEmpty('imageTag'),
-        imageDigest: getInputOrEmpty('imageDigest')
+        imageDigest: getInputOrEmpty('imageDigest'),
+        outputVariable: getInputOrEmpty('outputVariable')
     }
 
     return parameters
