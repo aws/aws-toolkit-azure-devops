@@ -1,6 +1,6 @@
 {
     "name": "aws-vsts-tools",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "description": "aws tools for visual studio team services",
     "private": true,
     "main": "_build/tasks",
@@ -76,6 +76,7 @@
         "https-proxy-agent": "^2.2.4",
         "js-yaml": "^3.13.1",
         "q": "^1.5.1",
+        "semver": "^7.1.1",
         "shelljs": "^0.8.3"
     },
     "jest": {

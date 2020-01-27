@@ -115,7 +115,7 @@ function package(options) {
         }
 
         shell.cd(taskPackageFolder)
-        var npmCmd = 'npm install vsts-task-lib --only=production'
+        var npmCmd = 'npm install azure-pipelines-task-lib --only=production'
         try {
             output = ncp.execSync(npmCmd, { stdio: 'pipe' })
             console.log(output)

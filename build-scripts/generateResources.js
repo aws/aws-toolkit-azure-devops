@@ -9,6 +9,7 @@ const path = require('path')
 const syncRequest = require('sync-request')
 const validate = require('validator')
 const folders = require('./scriptUtils')
+const semverParse = require('semver/functions/parse')
 
 const timeMessage = 'Generated resources'
 const taskJson = 'task.json'
@@ -166,10 +167,11 @@ var createResjson = function(task, taskPath) {
 }
 
 function addVersionToTask(task, versionInfo) {
+    versionInfo = semverParse(versionInfo)
     task.version = {
-        Major: versionInfo.Major,
-        Minor: versionInfo.Minor,
-        Patch: versionInfo.Patch
+        Major: versionInfo.major,
+        Minor: versionInfo.minor,
+        Patch: versionInfo.patch
     }
 }
 
