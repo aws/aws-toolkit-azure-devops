@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "name": "AWS Tools for Microsoft Visual Studio Team Services",
     "scopes": ["vso.build", "vso.build_execute", "vso.release"],
     "description": "Tasks for Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and more, and running commands in the AWS Tools for Windows PowerShell module and the AWS CLI.",
@@ -185,6 +185,17 @@
                                 "isConfidential": true,
                                 "validation": {
                                     "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "sessionToken",
+                                "name": "Session Token",
+                                "description": "The AWS session token for signing programmatic requests.\nExample: AQoDYXdzEJr...<remainder of security token>",
+                                "inputMode": "passwordbox",
+                                "isConfidential": true,
+                                "validation": {
+                                    "isRequired": false,
                                     "dataType": "string"
                                 }
                             },

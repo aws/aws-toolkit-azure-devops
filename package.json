@@ -1,6 +1,6 @@
 {
     "name": "aws-vsts-tools",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "aws tools for visual studio team services",
     "private": true,
     "main": "_build/tasks",
