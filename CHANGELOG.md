@@ -1,7 +1,3 @@
-## 1.5.1 2020-01-27
-
--   **Feature** Add support for Session Token in endpoint definition
-
 ## 1.5.0 2019-08-12
 
 -   **Bug Fix** Fix issue #270 by adding tags on lambda update
