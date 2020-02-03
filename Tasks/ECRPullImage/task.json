@@ -85,6 +85,15 @@
             "visibleRule": "imageSource = imagedigest"
         },
         {
+            "name": "outputVariable",
+            "type": "string",
+            "label": "Image Tag Output Variable",
+            "defaultValue": "",
+            "groupName": "output",
+            "helpMarkDown": "The name of the variable that will contain the tag of the image pulled from ECR. The image tag will be of the form *aws_account_id.dkr.ecr.region.amazonaws.com/imagename*, where **imagename** is in the format *repositoryname[:tag]*",
+            "required": false
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
@@ -117,6 +126,7 @@
         "RequestingAuthToken": "Obtaining authentication token for ECR login",
         "FailureToObtainAuthToken": "Failed to obtain auth token!",
         "NoValidEndpoint": "Failed to get endpoint of repository %s. Check your credentials and if the endpoint exists!",
-        "TaskCompleted": "Successfully completed sending the message"
+        "TaskCompleted": "Successfully completed sending the message",
+        "SettingOutputVariable": "Setting output variable %s with the pushed image tag %s"
     }
 }

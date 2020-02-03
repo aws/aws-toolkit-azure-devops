@@ -88,8 +88,7 @@ export class TaskOperations {
             ignoreReturnCode: false
         }
         let unixPath = ''
-        // tslint:disable-next-line: no-unsafe-any
-        pwd.on('stdout', c => (unixPath += c.toString()))
+        pwd.on('stdout', (c: string | symbol) => (unixPath += c.toString()))
         await pwd.exec((options as unknown) as IExecOptions)
         unixPath = unixPath.trim()
 

@@ -19,7 +19,8 @@ const defaultTaskParameters: TaskParameters = {
     imageSource: '',
     imageTag: '',
     imageDigest: '',
-    repository: ''
+    repository: '',
+    outputVariable: ''
 }
 
 const defaultDocker: DockerHandler = {

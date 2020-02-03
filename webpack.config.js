@@ -14,7 +14,7 @@ module.exports = {
         }
     },
     externals: {
-        'vsts-task-lib/task': 'require("vsts-task-lib/task")'
+        'azure-pipelines-task-lib/task': 'require("azure-pipelines-task-lib/task")'
     },
     optimization: {
         minimizer: [new TerserPlugin({ cache: true, parallel: true, sourceMap: true })]

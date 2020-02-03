@@ -10,6 +10,7 @@ declare module scriptUtils {
     const buildTasks: string
     const packageRoot: string
     const packageTask: string
+    const releaseVersion: string
 }
 
 export = scriptUtils

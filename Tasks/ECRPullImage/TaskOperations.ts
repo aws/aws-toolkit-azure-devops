@@ -59,6 +59,11 @@ export class TaskOperations {
         await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
         await this.pullImageFromECR(targetImageRef)
 
+        if (this.taskParameters.outputVariable) {
+            console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, targetImageRef))
+            tl.setVariable(this.taskParameters.outputVariable, targetImageRef)
+        }
+
         console.log(tl.loc('TaskCompleted'))
     }
 

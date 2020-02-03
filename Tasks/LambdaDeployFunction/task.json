@@ -99,11 +99,13 @@
                 "dotnetcore2.1": "dotnetcore2.1",
                 "go1.x": "go1.x",
                 "java8": "java8",
-                "nodejs8.10": "nodejs8.10",
+                "java11": "java11",
                 "nodejs10.x": "nodejs10.x",
+                "nodejs12.x": "nodejs12.x",
                 "python2.7": "python2.7",
                 "python3.6": "python3.6",
                 "python3.7": "python3.7",
+                "python3.8": "python3.8",
                 "ruby2.5": "ruby2.5"
             },
             "properties": {

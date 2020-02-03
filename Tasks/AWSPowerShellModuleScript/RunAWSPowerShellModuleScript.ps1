@@ -15,8 +15,7 @@ Import-VstsLocStrings "$PSScriptRoot\task.json"
 # Adapting code from the VSTS-Tasks 'PowerShell' task to install (if needed)
 # and set up the executing context for AWS, then handing the user script
 # off to PowerShell for execution
-try
-{
+try {
     # suppress any progress bars to attempt to speed things up
     $ProgressPreference = 'SilentlyContinue'
 
@@ -27,8 +26,7 @@ try
     # preventing an issue causing our tasks to not be listed after install
     # if a higher agent version is specified.
     $tempDirectory = Get-VstsTaskVariable -Name 'agent.tempDirectory'
-    if (!$tempDirectory)
-    {
+    if (!$tempDirectory) {
         Write-Host 'Agent.TempDirectory not available, falling back to user temp location'
         $tempDirectory = $env:TEMP
     }
@@ -38,8 +36,7 @@ try
     # install the module if not present (we assume if present it is an an autoload-capable
     # location)
     Write-Host (Get-VstsLocString -Key 'TestingAWSModuleInstalled')
-    if (!(Get-Module -Name AWSPowerShell -ListAvailable))
-    {
+    if (!(Get-Module -Name AWSPowerShell -ListAvailable)) {
         Write-Host (Get-VstsLocString -Key 'AWSModuleNotFound')
 
         # AllowClobber is not available in Install-Module in the Hosted agent (but is in the
@@ -52,12 +49,10 @@ try
         Write-Host (Get-VstsLocString -Key 'InstallingAWSModule')
         Install-PackageProvider -Name NuGet -Scope CurrentUser -Verbose -Force
         $installModuleCmd = Get-Command Install-Module
-        if ($installModuleCmd.Parameters.ContainsKey("AllowClobber"))
-        {
+        if ($installModuleCmd.Parameters.ContainsKey("AllowClobber")) {
             Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -AllowClobber -Force
         }
-        else
-        {
+        else {
             Install-Module -Name AWSPowerShell -Scope CurrentUser -Verbose -Force
         }
     }
@@ -75,48 +70,40 @@ try
     # determine region first in case we need to perform an assume role call
     # when we get credentials
     $awsRegion = Get-VstsInput -Name 'regionName'
-    if ($awsRegion)
-    {
+    if ($awsRegion) {
         Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskConfiguration')
     }
-    else
-    {
+    else {
         # as for credentials, region can also be set from a task variable
         $awsRegion = Get-VstsTaskVariable -Name 'AWS.Region'
-        if ($awsRegion)
-        {
+        if ($awsRegion) {
             Write-Host (Get-VstsLocString -Key 'ConfiguringRegionFromTaskVariable')
         }
     }
 
-    if ($awsRegion)
-    {
+    if ($awsRegion) {
         Write-Host (Get-VstsLocString -Key 'RegionConfiguredTo' -ArgumentList $awsRegion)
         $env:AWS_REGION = $awsRegion
     }
 
     $awsEndpoint = Get-VstsInput -Name 'awsCredentials'
-    if ($awsEndpoint)
-    {
+    if ($awsEndpoint) {
         $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
-        if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn)
-        {
+        if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn) {
             Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentials')
             $assumeRoleParameters = @{
-                'AccessKey' = $awsEndpointAuth.Auth.Parameters.UserName
-                'SecretKey' = $awsEndpointAuth.Auth.Parameters.Password
-                'RoleArn' = $awsEndpointAuth.Auth.Parameters.AssumeRoleArn
+                'AccessKey'    = $awsEndpointAuth.Auth.Parameters.UserName
+                'SecretKey'    = $awsEndpointAuth.Auth.Parameters.Password
+                'SessionToken' = $awsEndpointAuth.Auth.Parameters.sessionToken
+                'RoleArn'      = $awsEndpointAuth.Auth.Parameters.AssumeRoleArn
             }
-            if ($awsEndpointAuth.Auth.Parameters.RoleSessionName)
-            {
+            if ($awsEndpointAuth.Auth.Parameters.RoleSessionName) {
                 $assumeRoleParameters.Add('RoleSessionName', $awsEndpointAuth.Auth.Parameters.RoleSessionName)
             }
-            else
-            {
+            else {
                 $assumeRoleParameters.Add('RoleSessionName', 'aws-vsts-tools')
             }
-            if ($awsEndpointAuth.Auth.Parameters.ExternalId)
-            {
+            if ($awsEndpointAuth.Auth.Parameters.ExternalId) {
                 $assumeRoleParameters.Add('ExternalId', $awsEndpointAuth.Auth.Parameters.ExternalId)
             }
 
@@ -126,23 +113,20 @@ try
             $env:AWS_SECRET_ACCESS_KEY = $assumeRoleResponse.Credentials.SecretAccessKey
             $env:AWS_SESSION_TOKEN = $assumeRoleResponse.Credentials.SessionToken
         }
-        else
-        {
+        else {
             Write-Host (Get-VstsLocString -Key 'ConfiguringForStandardCredentials')
             $env:AWS_ACCESS_KEY_ID = $awsEndpointAuth.Auth.Parameters.UserName
             $env:AWS_SECRET_ACCESS_KEY = $awsEndpointAuth.Auth.Parameters.Password
+            $env:AWS_SESSION_TOKEN = $awsEndpointAuth.Auth.Parameters.sessionToken
         }
     }
-    else
-    {
+    else {
         # credentials may also be set in task variables, so try there before
         # assuming they are set in the process environment
         $accessKey = Get-VstsTaskVariable -Name 'AWS.AccessKeyID'
-        if ($accessKey)
-        {
+        if ($accessKey) {
             $secretKey = Get-VstsTaskVariable -Name 'AWS.SecretAccessKey'
-            if (!($secretKey))
-            {
+            if (!($secretKey)) {
                 throw (Get-VstsLocString -Key 'MissingSecretKeyVariable')
             }
 
@@ -151,8 +135,7 @@ try
             $env:AWS_SECRET_ACCESS_KEY = $secretKey
 
             $token = Get-VstsTaskVariable -Name 'AWS.SessionToken'
-            if ($token)
-            {
+            if ($token) {
                 $env:AWS_SESSION_TOKEN = $token
             }
         }
@@ -170,13 +153,11 @@ try
 
     $scriptType = Get-VstsInput -Name 'scriptType' -Require
     $input_errorActionPreference = Get-VstsInput -Name 'errorActionPreference' -Default 'Stop'
-    switch ($input_errorActionPreference.ToUpperInvariant())
-    {
+    switch ($input_errorActionPreference.ToUpperInvariant()) {
         'STOP' { }
         'CONTINUE' { }
         'SILENTLYCONTINUE' { }
-        default
-        {
+        default {
             Write-Error (Get-VstsLocString -Key 'PS_InvalidErrorActionPreference' -ArgumentList $input_errorActionPreference)
         }
     }
@@ -189,25 +170,20 @@ try
     $scriptType = Get-VstsInput -Name 'scriptType' -Require
     $input_arguments = Get-VstsInput -Name 'arguments'
 
-    if ("$scriptType".ToUpperInvariant() -eq "FILEPATH")
-    {
+    if ("$scriptType".ToUpperInvariant() -eq "FILEPATH") {
         $input_filePath = Get-VstsInput -Name 'filePath' -Require
-        try
-        {
+        try {
             Assert-VstsPath -LiteralPath $input_filePath -PathType Leaf
         }
-        catch
-        {
+        catch {
             Write-Error (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
         }
 
-        if (!$input_filePath.ToUpperInvariant().EndsWith('.PS1'))
-        {
+        if (!$input_filePath.ToUpperInvariant().EndsWith('.PS1')) {
             Write-Error (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
         }
     }
-    else
-    {
+    else {
         $input_script = Get-VstsInput -Name 'inlineScript' -Require
         # Construct a name to a temp file that will hold the inline script, so
         # we can pass arguments to it. We will delete this file on exit from
@@ -220,20 +196,17 @@ try
     $contents = @()
     $contents += "`$ErrorActionPreference = '$input_errorActionPreference'"
 
-    if ($agentProxyUrl)
-    {
+    if ($agentProxyUrl) {
         $proxyUri = [Uri]$agentProxyUrl
 
         $proxyCommand = "Set-AWSProxy"
         $proxyCommand += " -Hostname $($proxyUri.Host)"
         $proxyCommand += " -Port $($proxyUri.Port)"
 
-        if ($agentProxyUserName)
-        {
+        if ($agentProxyUserName) {
             $proxyCommand += " -Username $agentProxyUserName"
         }
-        if ($agentProxyPassword)
-        {
+        if ($agentProxyPassword) {
             $proxyCommand += " -Password $agentProxyPassword"
         }
 
@@ -246,8 +219,7 @@ try
     # the outer script we construct (ie behaving as if the user had chosen
     # filepath mode) we gain the ability to pass arguments to both modes.
     # We don't need to clean this file up on exit.
-    if ("$scriptType".ToUpperInvariant() -eq 'INLINE')
-    {
+    if ("$scriptType".ToUpperInvariant() -eq 'INLINE') {
         $userScript += "$input_script".Replace("`r`n", "`n").Replace("`n", "`r`n")
         $joinedContents = [System.String]::Join(([System.Environment]::NewLine), $userScript)
         Write-Host "Writing inline script to temporary file $input_filePath"
@@ -258,8 +230,7 @@ try
 
     Write-Host (Get-VstsLocString -Key 'PS_FormattedCommand' -ArgumentList ($contents[-1]))
 
-    if (!$input_ignoreLASTEXITCODE)
-    {
+    if (!$input_ignoreLASTEXITCODE) {
         $contents += 'if (!(Test-Path -LiteralPath variable:\LASTEXITCODE)) {'
         $contents += '    Write-Host ''##vso[task.debug]$LASTEXITCODE is not set.'''
         $contents += '} else {'
@@ -281,8 +252,8 @@ try
     Assert-VstsPath -LiteralPath $powershellPath -PathType 'Leaf'
     $arguments = "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -File `"$filePath`""
     $splat = @{
-        'FileName' = $powershellPath
-        'Arguments' = $arguments
+        'FileName'         = $powershellPath
+        'Arguments'        = $arguments
         'WorkingDirectory' = $input_workingDirectory
     }
 
@@ -291,83 +262,69 @@ try
     $failed = $false
 
     # Run the script.
-    if (!$input_failOnStderr)
-    {
+    if (!$input_failOnStderr) {
         Invoke-VstsTool @splat
     }
-    else
-    {
+    else {
         $inError = $false
         $errorLines = New-Object System.Text.StringBuilder
         Invoke-VstsTool @splat 2>&1 |
-            ForEach-Object {
-                if ($_ -is [System.Management.Automation.ErrorRecord])
-                {
-                    # Buffer the error lines.
-                    $failed = $true
-                    $inError = $true
-                    $null = $errorLines.AppendLine("$($_.Exception.Message)")
+        ForEach-Object {
+            if ($_ -is [System.Management.Automation.ErrorRecord]) {
+                # Buffer the error lines.
+                $failed = $true
+                $inError = $true
+                $null = $errorLines.AppendLine("$($_.Exception.Message)")
 
-                    # Write to verbose to mitigate if the process hangs.
-                    Write-Verbose "STDERR: $($_.Exception.Message)"
-                }
-                else
-                {
-                    # Flush the error buffer.
-                    if ($inError)
-                    {
-                        $inError = $false
-                        $message = $errorLines.ToString().Trim()
-                        $null = $errorLines.Clear()
-                        if ($message)
-                        {
-                            Write-VstsTaskError -Message $message
-                        }
-                    }
-
-                    Write-Host "$_"
-                }
+                # Write to verbose to mitigate if the process hangs.
+                Write-Verbose "STDERR: $($_.Exception.Message)"
             }
+            else {
+                # Flush the error buffer.
+                if ($inError) {
+                    $inError = $false
+                    $message = $errorLines.ToString().Trim()
+                    $null = $errorLines.Clear()
+                    if ($message) {
+                        Write-VstsTaskError -Message $message
+                    }
+                }
+
+                Write-Host "$_"
+            }
+        }
 
         # Flush the error buffer one last time.
-        if ($inError)
-        {
+        if ($inError) {
             $inError = $false
             $message = $errorLines.ToString().Trim()
             $null = $errorLines.Clear()
-            if ($message)
-            {
+            if ($message) {
                 Write-VstsTaskError -Message $message
             }
         }
     }
 
     # Fail on $LASTEXITCODE
-    if (!(Test-Path -LiteralPath 'variable:\LASTEXITCODE'))
-    {
+    if (!(Test-Path -LiteralPath 'variable:\LASTEXITCODE')) {
         $failed = $true
         Write-Verbose "Unable to determine exit code"
         Write-VstsTaskError -Message (Get-VstsLocString -Key 'PS_UnableToDetermineExitCode')
     }
-    else
-    {
-        if ($LASTEXITCODE -ne 0)
-        {
+    else {
+        if ($LASTEXITCODE -ne 0) {
             $failed = $true
             Write-VstsTaskError -Message (Get-VstsLocString -Key 'PS_ExitCode' -ArgumentList $LASTEXITCODE)
         }
     }
 
     # Fail if any errors.
-    if ($failed)
-    {
+    if ($failed) {
         Write-VstsSetResult -Result 'Failed' -Message "Error detected" -DoNotThrow
     }
 }
-finally
-{
-    if ($scriptType -And "$scriptType".ToUpperInvariant() -eq "INLINE")
-    {
+finally {
+    if ($scriptType -And "$scriptType".ToUpperInvariant() -eq "INLINE") {
         Write-Host "Cleaning up temporary script file $input_filePath"
         Remove-Item -Path $input_filePath -Force
     }

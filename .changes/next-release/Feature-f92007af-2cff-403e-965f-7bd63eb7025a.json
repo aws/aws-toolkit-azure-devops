@@ -1,0 +1,4 @@
+{
+    "type": "Feature",
+    "description": "Output image tag from ECR Pull task per issue #315"
+}
