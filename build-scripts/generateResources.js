@@ -166,10 +166,11 @@ var createResjson = function(task, taskPath) {
 }
 
 function addVersionToTask(task, versionInfo) {
+    versionInfo = versionInfo.split('.')
     task.version = {
-        Major: versionInfo.Major,
-        Minor: versionInfo.Minor,
-        Patch: versionInfo.Patch
+        Major: versionInfo[0],
+        Minor: versionInfo[1],
+        Patch: versionInfo[2]
     }
 }
 
