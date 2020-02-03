@@ -1,0 +1,4 @@
+{
+    "type": "Removal",
+    "description": "Removed nodejs8.10 Lambda runtime as updates are now disabled"
+}
