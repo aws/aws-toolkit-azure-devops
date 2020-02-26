@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document covers what we currently test, and how we test it. This document can be used to see what is tested without having to dig into the code and VSTS build definitions.
+This document covers what we currently test, and how we test it. This document can be used to see what is tested without having to dig into the code and Azure DevOps build definitions.
 
 ## Overview
 
@@ -12,7 +12,7 @@ We have three categories of tests in the project
 
 -   Unit Tests - Unit tests are used to test the various modules in `tasks/common`, including `cloudformationutils`, `sdkutils`, etc. They all test individual functions/small groups of functions.
 -   Functional Tests - Functional tests work by running the `execute` function of each of the tasks, and feeding it different combinations of mocked AWS objects and settings objects.
--   End to End Tests - End to end tests are handled with VSTS build definitions running on an on-prem VSTS server and a dedicated AWS account. We run tasks, then validate the result by querying AWS or the local filesystem. The tasks we run are available in tests/EndToEndTests.
+-   End to End Tests - End to end tests are handled with Azure DevOps build definitions running on an on-prem Azure DevOps server and a dedicated AWS account. We run tasks, then validate the result by querying AWS or the local filesystem. The tasks we run are available in tests/EndToEndTests.
 
 ### Testing
 
@@ -43,7 +43,7 @@ Each test hooks into a task like so:
                          Runs  |
                                |
                                | <----------<-----------<------------ End to end tests
-                    VSTS Agent |
+            Azure DevOps Agent |
                                +
 ```
 
@@ -52,7 +52,7 @@ Each test hooks into a task like so:
 
 ### How we test
 
--   We use [Jest](https://jestjs.io/) to run unit/functional tests, and VSTS build definitions to run end to end tests
+-   We use [Jest](https://jestjs.io/) to run unit/functional tests, and Azure DevOps build definitions to run end to end tests
 -   Tests are in the `tests` folder
     -   `taskTests` Holds unit tests and functional tests
         -   `taskTests/common` Holds all of our unit tests

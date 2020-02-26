@@ -14,7 +14,7 @@ When filing an issue, please check [existing open](https://github.com/aws/aws-vs
 reported the issue. Please try to include as much information as you can. Details like these are incredibly useful:
 
 -   A reproducible test case or series of steps
--   Your version of VSTS (if known) and if it is hosted or in house
+-   Your version of Azure DevOps (if known) and if it is hosted or in house
 -   Anything unusual about your environment
 
 ## Building
@@ -24,7 +24,7 @@ reported the issue. Please try to include as much information as you can. Detail
 3. At this point you can:
 
 -   Build for testing purposes. Run `npm run fullBuild`
--   Package for installation into VSTS. Run `npm run fullBuild publisher=<your-publisher-id-here>` VSTS uses this publisher ID to determine if a plugin can be installed, so make sure it matches the one in your VSTS instance.
+-   Package for installation into Azure DevOps. Run `npm run fullBuild publisher=<your-publisher-id-here>` Azure DevOps uses this publisher ID to determine if a plugin can be installed, so make sure it matches the one in your Azure DevOps instance.
 
 ## Project Architecture
 
@@ -56,7 +56,7 @@ Each Task looks like:
                          Runs  |
                                |
                                |
-                    VSTS Agent |
+            Azure DevOps Agent |
                                +
 ```
 
@@ -90,7 +90,7 @@ GitHub provides additional documentation on [forking a repository](https://help.
 
 We are still working out a good way to do this beyond writing tests.
 
-If you have a test VSTS server, you can upload the packaged plugin from "\_package". Keep in mind that VSTS expects you to bump the version number (located in \_package.json) every time you upload a new plugin, as well as that your pulibsher ID matches the publisher ID of the plugin already on the server.
+If you have a test Azure DevOps server, you can upload the packaged plugin from "\_package". Keep in mind that Azure DevOps expects you to bump the version number (located in \_package.json) every time you upload a new plugin. It also checks that your publisher ID matches the publisher ID of the plugin.
 
 ## Finding contributions to work on
 

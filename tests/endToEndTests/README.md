@@ -1,12 +1,12 @@
-# VSTS End to End Tests
+# Azure DevOps End to End Tests
 
-The end to end tests are VSTS tasks exported from VSTS. They are the set of tests run before a release is declared stable and cover a wide range of the tasks.
+The end to end tests are Azure DevOps tasks exported from Azure DevOps. They are the set of tests run before a release is declared stable and cover a wide range of the tasks.
 
 ## How to use them
 
 **NOTE** In general, no one else should have to run these tests, but if you want to:
 
-To use them on your own VSTS/Azure Devops instance, go to build and release then click on the button labeled "import". Then, select one of the JSON files. Next, set the missing info. Give it an agent to run on, and point the source towards the test projects (To be put on Github). Then, you can query builds to test the tasks.
+To use them on your own Azure DevOps instance, go to build and release then click on the button labeled "import". Then, select one of the JSON files. Next, set the missing info. Give it an agent to run on, and point the source towards the test projects (To be put on Github). Then, you can query builds to test the tasks.
 
 ## Variables You Might Have to Set
 
