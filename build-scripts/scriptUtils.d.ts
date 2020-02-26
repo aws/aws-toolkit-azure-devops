@@ -9,7 +9,7 @@ declare module scriptUtils {
     const buildRoot: string
     const buildTasks: string
     const packageRoot: string
-    const packageTask: string
+    const packageTasks: string
     const releaseVersion: string
 }
 
