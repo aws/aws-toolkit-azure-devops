@@ -17,6 +17,8 @@ module.exports = {
         'azure-pipelines-task-lib/task': 'require("azure-pipelines-task-lib/task")'
     },
     optimization: {
+        runtimeChunk: 'single',
+        minimize: true,
         minimizer: [new TerserPlugin({ cache: true, parallel: true, sourceMap: true })]
     }
 }
