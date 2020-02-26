@@ -39,11 +39,12 @@ function installNodePackages(directory: string) {
 
 function generateGitHashFile() {
     try {
-        const response = shell.exec('git rev-parse HEAD')
+        const response = shell.exec('git rev-parse HEAD', { silent: true })
         if (response.code !== 0) {
             console.log('Warning: unable to run git rev-parse to get commit hash!')
         } else {
-            fs.outputFileSync(path.join(folders.packageRoot, '.gitcommit'), response.stdout)
+            console.log(`Putting git hash ${response.stdout.trim()} into the package directory`)
+            fs.outputFileSync(path.join(folders.packageRoot, '.gitcommit'), response.stdout.trim())
         }
     } catch (e) {
         console.log(`Getting commit hash failed ${e}`)

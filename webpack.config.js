@@ -3,6 +3,7 @@ var TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
     target: 'node',
+    mode: 'production',
     node: {
         __dirname: false,
         __filename: false
@@ -17,7 +18,6 @@ module.exports = {
         'azure-pipelines-task-lib/task': 'require("azure-pipelines-task-lib/task")'
     },
     optimization: {
-        runtimeChunk: 'single',
         minimize: true,
         minimizer: [new TerserPlugin({ cache: true, parallel: true, sourceMap: true })]
     }
