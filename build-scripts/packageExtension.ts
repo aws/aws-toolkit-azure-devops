@@ -29,7 +29,7 @@ function installNodePackages(directory: string) {
     const npmCmd = `npm install --prefix ${directory} azure-pipelines-task-lib --only=production`
     try {
         const output = ncp.execSync(npmCmd)
-        console.log(output)
+        console.log(output.toString('utf8'))
     } catch (err) {
         // tslint:disable-next-line: no-unsafe-any
         console.error(err.output ? err.output.toString() : err?.message)
@@ -37,17 +37,7 @@ function installNodePackages(directory: string) {
     }
 }
 
-function packagePlugin(options: CommandLineOptions) {
-    fs.mkdirpSync(folders.packageRoot)
-
-    fs.copySync(path.join(folders.repoRoot, 'LICENSE'), path.join(folders.packageRoot, 'LICENSE'), { overwrite: true })
-    fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.packageRoot, 'README.md'), {
-        overwrite: true
-    })
-    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.packageRoot, manifestFile), {
-        overwrite: true
-    })
-    // Do a best effort job of generating a git hash and putting it into the package
+function generateGitHashFile() {
     try {
         const response = shell.exec('git rev-parse HEAD')
         if (response.code !== 0) {
@@ -57,15 +47,29 @@ function packagePlugin(options: CommandLineOptions) {
         }
     } catch (e) {
         console.log(`Getting commit hash failed ${e}`)
+        throw e
     }
+}
+
+function packagePlugin(options: CommandLineOptions) {
+    fs.mkdirpSync(folders.packageRoot)
+    fs.mkdirpSync(folders.packageTasks)
+    const npmFolder = path.join(folders.buildRoot, 'npmcache')
+
+    fs.copySync(path.join(folders.repoRoot, 'LICENSE'), path.join(folders.packageRoot, 'LICENSE'), { overwrite: true })
+    fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.packageRoot, 'README.md'), {
+        overwrite: true
+    })
+    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.packageRoot, manifestFile), {
+        overwrite: true
+    })
+
+    generateGitHashFile()
 
     // stage manifest images
     fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.packageRoot, 'images'), { overwrite: true })
 
-    fs.mkdirpSync(folders.packageTasks)
-
-    // get required npm package
-    const npmFolder = path.join(folders.buildRoot, 'npmcache')
+    // get required npm packages that will be coppied
     installNodePackages(npmFolder)
 
     // clean, dedupe and pack each task as needed
@@ -106,7 +110,8 @@ function packagePlugin(options: CommandLineOptions) {
         )} --output-filename ${taskName}.js`
         console.log(webpackCmd)
         try {
-            ncp.execSync(webpackCmd, { stdio: 'pipe' })
+            const output = ncp.execSync(webpackCmd, { stdio: 'pipe' })
+            console.log(output.toString('utf8'))
         } catch (err) {
             // tslint:disable-next-line: no-unsafe-any
             console.error(err.output ? err.output.toString() : err.message)
