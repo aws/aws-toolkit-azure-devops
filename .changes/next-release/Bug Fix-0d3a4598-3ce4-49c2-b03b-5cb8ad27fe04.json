@@ -1,0 +1,4 @@
+{
+    "type": "Bug Fix",
+    "description": "Fix issue #291 AWS CLI did not assume role if it was set in the service connection"
+}
