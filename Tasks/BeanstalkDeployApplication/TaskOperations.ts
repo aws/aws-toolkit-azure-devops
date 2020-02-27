@@ -8,6 +8,7 @@ import * as tl from 'azure-pipelines-task-lib/task'
 import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import { BeanstalkUtils } from 'Common/beanstalkUtils'
 import { SdkUtils } from 'Common/sdkutils'
+import { sleep } from 'Common/vstsUtils'
 import { basename } from 'path'
 import {
     applicationTypeAspNet,
@@ -179,11 +180,11 @@ export class TaskOperations {
         // deployments run in parallel they don't all start querying at the same time and
         // potentially trigger throttling from the outset
         const initialStartDelay = Math.floor(Math.random() * randomJitterUpperLimit) + 1
-        await this.sleep(initialStartDelay * 1000)
+        await sleep(initialStartDelay * 1000)
 
         do {
             tl.debug(`...event poll sleep for ${eventPollDelay}s`)
-            await this.sleep(eventPollDelay * 1000)
+            await sleep(eventPollDelay * 1000)
 
             // if any throttling exception escapes the sdk's default retry logic,
             // extend the user's selected poll delay by a random, sub-5 second, amount
@@ -246,11 +247,5 @@ export class TaskOperations {
         }
 
         return response.Events[0].EventDate
-    }
-
-    private async sleep(timeout: number): Promise<void> {
-        return new Promise((resolve, reject) => {
-            setTimeout(resolve, timeout)
-        })
     }
 }

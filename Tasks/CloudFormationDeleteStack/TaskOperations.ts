@@ -6,6 +6,7 @@
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import { Stack } from 'aws-sdk/clients/cloudformation'
 import * as tl from 'azure-pipelines-task-lib/task'
+import { sleep } from 'Common/vstsUtils'
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
@@ -19,7 +20,7 @@ export class TaskOperations {
 
         if (this.taskParameters.deleteUpdateInProgress && stack.StackStatus === 'UPDATE_IN_PROGRESS') {
             await this.cloudFormationClient.cancelUpdateStack({ StackName: this.taskParameters.stackName }).promise()
-            await this.waitForStackNoLongerInUpdate(this.taskParameters.stackName)
+            await this.waitForStackRollbackComplete(this.taskParameters.stackName)
         }
 
         console.log(tl.loc('RequestingStackDeletion', this.taskParameters.stackName))
@@ -50,11 +51,19 @@ export class TaskOperations {
         }
     }
 
-    private async waitForStackNoLongerInUpdate(stackName: string): Promise<void> {
+    private async waitForStackRollbackComplete(stackName: string): Promise<void> {
         console.log(tl.loc('WaitingForStackStopRollback', stackName))
         try {
-            await this.cloudFormationClient.waitFor('stackUpdateComplete', { StackName: stackName }).promise()
-            console.log(tl.loc('StackRollback'))
+            // Retry for 60 min. Cannot use normal waiter because we weant to listen for all final status.
+            for (let i = 0; i < 120; i++) {
+                await sleep(30 * 1000)
+                const stack = await this.verifyResourcesExist(stackName)
+                if (stack.StackStatus.endsWith('FAILED') || stack.StackStatus.endsWith('COMPLETE')) {
+                    console.log(tl.loc('StackDoneRollingBack', stackName, stack.StackStatus))
+
+                    return
+                }
+            }
         } catch (err) {
             throw new Error(tl.loc('StackRollbackFailed', stackName, (err as Error).message))
         }

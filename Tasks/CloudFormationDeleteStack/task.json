@@ -87,7 +87,7 @@
         "StackRollbackFailed": "Stack %s failed to rollback before deletion, error: %s",
         "StackDeletionFailed": "Stack %s failed to reach delete completion status, error: %s",
         "StackDeleted": "Stack deleted",
-        "StackRollback": "Stack rolled back",
+        "StackDoneRollingBack": "Stack %s done rolling back and in state %s, moving to deletion",
         "StackDoesNotExist": "Stack %s does not exist",
         "TaskCompleted": "Stack successfully deleted"
     }

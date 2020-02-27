@@ -37,3 +37,9 @@ export function getInputOptional(name: string): string | undefined {
 export function getInputOrEmpty(name: string): string {
     return getInput(name, false) || ''
 }
+
+export async function sleep(timeoutMs: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, timeoutMs)
+    })
+}
