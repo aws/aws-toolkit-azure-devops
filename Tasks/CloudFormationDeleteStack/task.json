@@ -48,6 +48,14 @@
             "helpMarkDown": "The name of the stack to delete."
         },
         {
+            "name": "deleteUpdateInProgress",
+            "type": "boolean",
+            "label": "Delete ",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "When selected, stacks that are in the state UPDATE_IN_PROGRESS will be cancelled before deletion"
+        },
+        {
             "name": "logRequest",
             "type": "boolean",
             "label": "Log Request",
@@ -75,8 +83,11 @@
     "messages": {
         "RequestingStackDeletion": "Requesting deletion for stack %s",
         "WaitingForStackDeletion": "Waiting for deletion of stack to complete",
+        "WaitingForStackStopRollback": "Waiting for stopping and rollback of stack to complete",
+        "StackRollbackFailed": "Stack %s failed to rollback before deletion, error: %s",
         "StackDeletionFailed": "Stack %s failed to reach delete completion status, error: %s",
         "StackDeleted": "Stack deleted",
+        "StackRollback": "Stack rolled back",
         "StackDoesNotExist": "Stack %s does not exist",
         "TaskCompleted": "Stack successfully deleted"
     }
