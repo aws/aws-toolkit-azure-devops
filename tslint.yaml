@@ -99,9 +99,6 @@ rules:
         options:
             - spaces
             - 4
-    max-line-length:
-        options:
-            - 120
     no-duplicate-imports: true
     prefer-const: true
     prefer-readonly: true

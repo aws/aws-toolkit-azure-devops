@@ -42,12 +42,16 @@ export class TaskOperations {
     private async configureAwsCli() {
         const env = process.env
 
-        const credentials = await getCredentials(this.taskParameters.awsConnectionParameters)
+        const connectionParams = this.taskParameters.awsConnectionParameters
+        const credentials = await getCredentials(connectionParams)
         if (credentials) {
             await credentials.getPromise()
             tl.debug('configure credentials into environment variables')
             env.AWS_ACCESS_KEY_ID = credentials.accessKeyId
             env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey
+            if (connectionParams.AssumeRoleARN) {
+                env.AWS_ROLE_ARN = connectionParams.AssumeRoleARN
+            }
             if (credentials.sessionToken) {
                 env.AWS_SESSION_TOKEN = credentials.sessionToken
             }
