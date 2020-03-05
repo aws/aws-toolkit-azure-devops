@@ -19,7 +19,7 @@ export class TaskOperations {
             FunctionName: this.taskParameters.functionName
         }
         if (this.taskParameters.payload) {
-            params.Payload = JSON.stringify(this.taskParameters.payload)
+            params.Payload = Buffer.from(this.taskParameters.payload)
         }
         if (this.taskParameters.invocationType) {
             params.InvocationType = this.taskParameters.invocationType
