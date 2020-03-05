@@ -82,4 +82,23 @@ describe('Lambda Invoke', () => {
         expect(lambda.invoke).toBeCalledTimes(2)
         expect(lambda.getFunctionConfiguration).toBeCalledTimes(2)
     })
+
+    test('Handles json property', async () => {
+        expect.assertions(3)
+        const taskParameters = { ...baseTaskParameters }
+        const payload = '{"key": "value"}'
+        taskParameters.payload = payload
+        const lambda = new Lambda() as any
+        lambda.getFunctionConfiguration = jest.fn(() => getFunctionSucceeds)
+        lambda.invoke = jest.fn(params => {
+            console.log(params)
+            expect(params.Payload.toString('utf8')).toBe(payload)
+
+            return invokeLambdaSucceeds
+        })
+        const taskOperations = new TaskOperations(lambda, taskParameters)
+        await taskOperations.execute()
+        expect(lambda.invoke).toBeCalledTimes(1)
+        expect(lambda.getFunctionConfiguration).toBeCalledTimes(1)
+    })
 })
