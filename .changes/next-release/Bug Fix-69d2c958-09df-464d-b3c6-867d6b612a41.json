@@ -1,4 +1,4 @@
 {
     "type": "Bug Fix",
-    "description": "Fix corrupting lambda invokations with JSON payloads"
+    "description": "Fix corrupting lambda invocations with JSON payloads"
 }
