@@ -56,8 +56,8 @@
             "name": "payload",
             "type": "multiLine",
             "label": "Payload",
-            "defaultValue": "",
-            "helpMarkDown": "The payload to pass to the function."
+            "defaultValue": "{}",
+            "helpMarkDown": "The payload to pass to the function. The payload must be JSON or a quoted string."
         },
         {
             "name": "invocationType",
