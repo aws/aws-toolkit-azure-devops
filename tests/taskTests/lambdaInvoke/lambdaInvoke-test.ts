@@ -107,79 +107,47 @@ describe('Lambda Invoke', () => {
     })
 
     test('Handles JSON Objects Property', async () => {
-        expect.assertions(3)
-        const taskParameters = { ...baseTaskParameters }
-        const payload = '{"key": "value"}'
-        taskParameters.payload = payload
-        await assertPayloadCorrect(
-            taskParameters,
-            jest.fn(params => {
-                expect(params.Payload.toString('utf8')).toBe(payload)
-
-                return invokeLambdaSucceeds
-            })
-        )
+        await testPayloadsAndOutputs('{"key": "value"}', '{"key": "value"}')
     })
 
     test('Handles JSON Arrays Property', async () => {
-        expect.assertions(3)
-        const taskParameters = { ...baseTaskParameters }
-        const payload = '   ["key", "value"]      '
-        taskParameters.payload = payload
-        await assertPayloadCorrect(
-            taskParameters,
-            jest.fn(params => {
-                expect(params.Payload.toString('utf8')).toBe(payload)
-
-                return invokeLambdaSucceeds
-            })
-        )
+        await testPayloadsAndOutputs('   ["key", "value"]  ', '   ["key", "value"]  ')
     })
 
     test('Handles JSON Strings Property', async () => {
-        expect.assertions(3)
-        const taskParameters = { ...baseTaskParameters }
-        const payload = '"key"'
-        taskParameters.payload = payload
-        await assertPayloadCorrect(
-            taskParameters,
-            jest.fn(params => {
-                expect(params.Payload.toString('utf8')).toBe(payload)
-
-                return invokeLambdaSucceeds
-            })
-        )
+        await testPayloadsAndOutputs('"key"', '"key"')
     })
 
     test('Sringifies non-json property', async () => {
-        expect.assertions(3)
-        const taskParameters = { ...baseTaskParameters }
-        const payload = 'This is a "string'
-        taskParameters.payload = payload
-        await assertPayloadCorrect(
-            taskParameters,
-            jest.fn(params => {
-                expect(params.Payload.toString('utf8')).toBe('"This is a \\"string"')
-
-                return invokeLambdaSucceeds
-            })
-        )
+        await testPayloadsAndOutputs('This is a "string', '"This is a \\"string"')
     })
 
     test('Sringifies tricky non-json property', async () => {
+        await testPayloadsAndOutputs('"This [is a strin{}"g', '"\\"This [is a strin{}\\"g"')
+    })
+
+    test('Quotes numbers for backwards compatability', async () => {
+        await testPayloadsAndOutputs('3', '"3"')
+    })
+
+    test('Does not stringify possibly valid JSON', async () => {
+        await testPayloadsAndOutputs('[{"abc": "def"}', '[{"abc": "def"}')
+    })
+
+    async function testPayloadsAndOutputs(input: string, expectedOutput: string) {
         expect.assertions(3)
         const taskParameters = { ...baseTaskParameters }
-        const payload = '"This [is a strin{}"g'
+        const payload = input
         taskParameters.payload = payload
         await assertPayloadCorrect(
             taskParameters,
             jest.fn(params => {
-                expect(params.Payload.toString('utf8')).toBe('"\\"This [is a strin{}\\"g"')
+                expect(params.Payload.toString('utf8')).toBe(expectedOutput)
 
                 return invokeLambdaSucceeds
             })
         )
-    })
+    }
 
     async function assertPayloadCorrect(taskParameters: any, callback: (params: any) => any) {
         const lambda = new Lambda() as any
