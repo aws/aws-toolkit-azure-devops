@@ -33,9 +33,17 @@ const getFunctionSucceeds = {
 }
 
 const invokeLambdaSucceeds = {
-    promise: function() {
+    promise: function(): Lambda.InvocationResponse {
         return {
             Payload: 'payload'
+        }
+    }
+}
+
+const invokeLambdaSucceedsNoResponse = {
+    promise: function() {
+        return {
+            Payload: undefined
         }
     }
 }
@@ -48,6 +56,21 @@ describe('Lambda Invoke', () => {
 
     test('Creates a TaskOperation', () => {
         expect(new TaskOperations(new Lambda(), baseTaskParameters)).not.toBeNull()
+    })
+
+    test('Handles a null service response', async () => {
+        expect.assertions(3)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.outputVariable = 'something'
+        await assertPayloadCorrect(
+            taskParameters,
+            jest.fn(params => {
+                // expectation to make sure the callback is called
+                expect(1).toBe(1)
+
+                return invokeLambdaSucceedsNoResponse
+            })
+        )
     })
 
     test("Fails when lambda doesn't exist", async () => {
@@ -83,22 +106,56 @@ describe('Lambda Invoke', () => {
         expect(lambda.getFunctionConfiguration).toBeCalledTimes(2)
     })
 
-    test('Handles json property', async () => {
+    test('Handles JSON Objects Property', async () => {
+        await testPayloadsAndOutputs('{"key": "value"}', '{"key": "value"}')
+    })
+
+    test('Handles JSON Arrays Property', async () => {
+        await testPayloadsAndOutputs('   ["key", "value"]  ', '   ["key", "value"]  ')
+    })
+
+    test('Handles JSON Strings Property', async () => {
+        await testPayloadsAndOutputs('"key"', '"key"')
+    })
+
+    test('Sringifies non-json property', async () => {
+        await testPayloadsAndOutputs('This is a "string', '"This is a \\"string"')
+    })
+
+    test('Sringifies tricky non-json property', async () => {
+        await testPayloadsAndOutputs('"This [is a strin{}"g', '"\\"This [is a strin{}\\"g"')
+    })
+
+    test('Quotes numbers for backwards compatability', async () => {
+        await testPayloadsAndOutputs('3', '"3"')
+    })
+
+    test('Does not stringify possibly valid JSON', async () => {
+        await testPayloadsAndOutputs('[{"abc": "def"}', '[{"abc": "def"}')
+    })
+
+    async function testPayloadsAndOutputs(input: string, expectedOutput: string) {
         expect.assertions(3)
         const taskParameters = { ...baseTaskParameters }
-        const payload = '{"key": "value"}'
+        const payload = input
         taskParameters.payload = payload
+        await assertPayloadCorrect(
+            taskParameters,
+            jest.fn(params => {
+                expect(params.Payload.toString('utf8')).toBe(expectedOutput)
+
+                return invokeLambdaSucceeds
+            })
+        )
+    }
+
+    async function assertPayloadCorrect(taskParameters: any, callback: (params: any) => any) {
         const lambda = new Lambda() as any
         lambda.getFunctionConfiguration = jest.fn(() => getFunctionSucceeds)
-        lambda.invoke = jest.fn(params => {
-            console.log(params)
-            expect(params.Payload.toString('utf8')).toBe(payload)
-
-            return invokeLambdaSucceeds
-        })
+        lambda.invoke = callback
         const taskOperations = new TaskOperations(lambda, taskParameters)
         await taskOperations.execute()
         expect(lambda.invoke).toBeCalledTimes(1)
         expect(lambda.getFunctionConfiguration).toBeCalledTimes(1)
-    })
+    }
 })

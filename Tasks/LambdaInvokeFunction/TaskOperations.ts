@@ -19,7 +19,11 @@ export class TaskOperations {
             FunctionName: this.taskParameters.functionName
         }
         if (this.taskParameters.payload) {
-            params.Payload = Buffer.from(this.taskParameters.payload)
+            if (this.isJson(this.taskParameters.payload)) {
+                params.Payload = Buffer.from(this.taskParameters.payload)
+            } else {
+                params.Payload = Buffer.from(JSON.stringify(this.taskParameters.payload))
+            }
         }
         if (this.taskParameters.invocationType) {
             params.InvocationType = this.taskParameters.invocationType
@@ -47,6 +51,17 @@ export class TaskOperations {
             console.error(tl.loc('FunctionInvokeFailed'), err)
             throw err
         }
+    }
+
+    // A quick heuristic for if it is json. In the past, it was possible to put in just a string
+    // which is not valid JSON. This heurstic checks for if it is a JSON string, object, or array
+    private isJson(input: string): boolean {
+        const i = input.trim()
+
+        return (
+            (i.startsWith('"') || i.startsWith('{') || i.startsWith('[')) &&
+            (i.endsWith('"') || i.endsWith(']') || i.endsWith('}'))
+        )
     }
 
     private async verifyResourcesExist(functionName: string): Promise<void> {
