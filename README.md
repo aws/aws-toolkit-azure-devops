@@ -3,7 +3,7 @@
 Build: ![TravisCI Build Status - master branch](https://travis-ci.org/aws/aws-vsts-tools.svg?branch=master)
 Coverage: [![codecov](https://codecov.io/gh/aws/aws-vsts-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/aws/aws-vsts-tools)
 
-The AWS Toolkit for Azure DevOps adds tasks to easily enable build and release pipelines in Azure DevOps and Team Foundation Server to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
+The AWS Toolkit for Azure DevOps adds tasks to easily enable build and release pipelines in Azure DevOps (formerly VSTS) and Azure DevOps Server (previously known as Team Foundation Server (TFS)) to work with AWS services including Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda, AWS CloudFormation, Amazon Simple Queue Service and Amazon Simple Notification Service, and run commands using the AWS Tools for Windows PowerShell module and the AWS CLI.
 
 The AWS Toolkit for Azure DevOps is available from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=AmazonWebServices.aws-vsts-tools).
 
@@ -64,7 +64,7 @@ Tasks can also use assumed role credentials by adding the Amazon Resource name (
 ## Supported environments
 
 -   Azure DevOps
--   Team Foundation Server 2015 Update 3 (or higher)
+-   Team Foundation Server 2015 Update 3 (or higher) (now called Azure DevOps Server)
 
 **Note for Team Foundation Server 2015 Users:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for extra fields in the _AWS_ endpoint type to support _Assume Role_ credentials. These fields, although marked optional, are unfortunately treated as required in TFS 2015 editions.
 
