@@ -1,3 +1,7 @@
+## 1.7.0 2020-03-31
+
+- **Feature** Added .NET Core 3.1 to Lambda runtimes
+
 ## 1.6.0 2020-03-13
 
 - **Bug Fix** Fix issue #291 AWS CLI did not assume role if it was set in the service connection

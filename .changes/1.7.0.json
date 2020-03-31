@@ -1,0 +1,10 @@
+{
+	"date": "2020-03-31",
+	"version": "1.7.0",
+	"entries": [
+		{
+			"type": "Feature",
+			"description": "Added .NET Core 3.1 to Lambda runtimes"
+		}
+	]
+}
