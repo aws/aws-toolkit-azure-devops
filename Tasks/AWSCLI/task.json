@@ -10,6 +10,7 @@
     "demands": [],
     "minimumAgentVersion": "1.91.0",
     "instanceNameFormat": "AWS CLI: $(awsCommand)",
+    "showEnvironmentVariables": true,
     "groups": [
         {
             "name": "advanced",
