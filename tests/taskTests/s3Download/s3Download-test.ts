@@ -35,12 +35,12 @@ describe('S3 Download', () => {
 
     const listObjectsResponse = {
         promise: function() {
-            return { NextContinuationToke: undefined, Contents: undefined }
+            return { NextContinuationToken: undefined, Contents: undefined }
         }
     }
     const listObjectsResponseWithContents = {
         promise: function() {
-            return { NextContinuationToke: undefined, Contents: [{ Key: 'test', Value: 'value' }] }
+            return { NextContinuationToken: undefined, Contents: [{ Key: 'test', Value: 'value' }] }
         }
     }
     const listObjectsResponseWithContentsPaginated = {
@@ -51,9 +51,9 @@ describe('S3 Download', () => {
                 // tslint:disable-next-line: no-invalid-this
                 this.returnToken = false
 
-                return { NextContinuationToke: 'abc', Contents: [{ Key: 'test', Value: 'value' }] }
+                return { NextContinuationToken: 'abc', Contents: [{ Key: 'test', Value: 'value' }] }
             } else {
-                return { NextContinuationToke: undefined, Contents: [{ Key: 'test2', Value: 'value2' }] }
+                return { NextContinuationToken: undefined, Contents: [{ Key: 'test2', Value: 'value2' }] }
             }
         }
     }
@@ -127,17 +127,17 @@ describe('S3 Download', () => {
 
     test('Happy path matches over multiple pages', async () => {
         try {
-            fs.unlinkSync(targetFolder + '2/test')
+            fs.unlinkSync(targetFolder + '3/test')
         } catch (e) {}
         try {
-            fs.rmdirSync(targetFolder + '2')
+            fs.rmdirSync(targetFolder + '3')
         } catch (e) {}
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjectsV2 = jest.fn((params, cb) => listObjectsResponseWithContentsPaginated)
         s3.getObject = jest.fn((params, cb) => getObjectWithContents)
         const taskParameters = baseTaskParameters
-        taskParameters.targetFolder = targetFolder + '2'
+        taskParameters.targetFolder = targetFolder + '3'
         taskParameters.bucketName = 'bucket'
         taskParameters.globExpressions = ['*']
         const taskOperation = new TaskOperations(s3, taskParameters)
@@ -154,6 +154,12 @@ describe('S3 Download', () => {
         } catch (e) {}
         try {
             fs.rmdirSync(targetFolder + '2')
+        } catch (e) {}
+        try {
+            fs.rmdirSync(targetFolder + '3/test')
+        } catch (e) {}
+        try {
+            fs.rmdirSync(targetFolder + '3')
         } catch (e) {}
     })
 })
