@@ -53,10 +53,11 @@ describe('S3 Download', () => {
 
                 return { NextContinuationToke: 'abc', Contents: [{ Key: 'test', Value: 'value' }] }
             } else {
-                return { NextContinuationToke: undefined, Contents: [{ Key: 'test', Value: 'value' }] }
+                return { NextContinuationToke: undefined, Contents: [{ Key: 'test2', Value: 'value2' }] }
             }
         }
     }
+
     const getObjectWithContents = {
         createReadStream: function() {
             const dataStream = new ReadableStream()
