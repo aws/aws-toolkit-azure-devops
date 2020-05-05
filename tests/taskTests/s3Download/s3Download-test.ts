@@ -5,8 +5,8 @@
 
 import { S3 } from 'aws-sdk'
 import { SdkUtils } from 'Common/sdkutils'
-import * as fs from 'fs'
 import { Readable as ReadableStream } from 'stream'
+import * as tmp from 'tmp'
 import { TaskOperations } from '../../../Tasks/S3Download/TaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Download/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
@@ -16,6 +16,8 @@ import { emptyConnectionParameters } from '../testCommon'
 jest.mock('aws-sdk')
 
 describe('S3 Download', () => {
+    let directory: tmp.DirResult
+
     const baseTaskParameters: TaskParameters = {
         awsConnectionParameters: emptyConnectionParameters,
         bucketName: '',
@@ -68,7 +70,6 @@ describe('S3 Download', () => {
             return dataStream
         }
     }
-    const targetFolder: string = 'folder'
 
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -98,7 +99,7 @@ describe('S3 Download', () => {
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjectsV2 = jest.fn((params, cb) => listObjectsResponse)
         const taskParameters = baseTaskParameters
-        taskParameters.targetFolder = targetFolder
+        taskParameters.targetFolder = directory.name
         taskParameters.bucketName = 'what'
         // required parameter
         taskParameters.globExpressions = []
@@ -107,18 +108,12 @@ describe('S3 Download', () => {
     })
 
     test('Happy path matches all', async () => {
-        try {
-            fs.unlinkSync(targetFolder + '2/test')
-        } catch (e) {}
-        try {
-            fs.rmdirSync(targetFolder + '2')
-        } catch (e) {}
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjectsV2 = jest.fn((params, cb) => listObjectsResponseWithContents)
         s3.getObject = jest.fn((params, cb) => getObjectWithContents)
         const taskParameters = baseTaskParameters
-        taskParameters.targetFolder = targetFolder + '2'
+        taskParameters.targetFolder = directory.name
         taskParameters.bucketName = 'bucket'
         taskParameters.globExpressions = ['*']
         const taskOperation = new TaskOperations(s3, taskParameters)
@@ -126,40 +121,20 @@ describe('S3 Download', () => {
     })
 
     test('Happy path matches over multiple pages', async () => {
-        try {
-            fs.unlinkSync(targetFolder + '3/test')
-        } catch (e) {}
-        try {
-            fs.rmdirSync(targetFolder + '3')
-        } catch (e) {}
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn((params, cb) => headBucketResponse)
         s3.listObjectsV2 = jest.fn((params, cb) => listObjectsResponseWithContentsPaginated)
         s3.getObject = jest.fn((params, cb) => getObjectWithContents)
         const taskParameters = baseTaskParameters
-        taskParameters.targetFolder = targetFolder + '3'
+        taskParameters.targetFolder = directory.name
         taskParameters.bucketName = 'bucket'
         taskParameters.globExpressions = ['*']
         const taskOperation = new TaskOperations(s3, taskParameters)
         await taskOperation.execute()
     })
 
-    afterAll(() => {
-        // cleanup created folders
-        try {
-            fs.rmdirSync(targetFolder)
-        } catch (e) {}
-        try {
-            fs.unlinkSync(targetFolder + '2/test')
-        } catch (e) {}
-        try {
-            fs.rmdirSync(targetFolder + '2')
-        } catch (e) {}
-        try {
-            fs.rmdirSync(targetFolder + '3/test')
-        } catch (e) {}
-        try {
-            fs.rmdirSync(targetFolder + '3')
-        } catch (e) {}
+    beforeEach(() => {
+        // unsafe cleanup so it removes with items in it
+        directory = tmp.dirSync({ unsafeCleanup: true })
     })
 })
