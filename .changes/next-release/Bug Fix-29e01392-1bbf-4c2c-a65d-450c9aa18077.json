@@ -1,0 +1,4 @@
+{
+    "type": "Bug Fix",
+    "description": "Fix downloading more than 1000 S3 items (#346)"
+}

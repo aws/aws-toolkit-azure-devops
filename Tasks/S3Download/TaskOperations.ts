@@ -109,14 +109,14 @@ export class TaskOperations {
         // tslint:disable-next-line:no-unnecessary-initializer
         let nextToken: string | undefined = undefined
         do {
-            const params: S3.ListObjectsRequest = {
+            const params: S3.ListObjectsV2Request = {
                 Bucket: this.taskParameters.bucketName,
                 Prefix: this.taskParameters.sourceFolder,
-                Marker: nextToken
+                ContinuationToken: nextToken
             }
             try {
-                const s3Data = await this.s3Client.listObjects(params).promise()
-                nextToken = s3Data.NextMarker
+                const s3Data = await this.s3Client.listObjectsV2(params).promise()
+                nextToken = s3Data.NextContinuationToken
                 if (s3Data.Contents) {
                     s3Data.Contents.forEach(s3object => {
                         // AWS IDE toolkits can cause 0 byte 'folder markers' to be in the bucket,
