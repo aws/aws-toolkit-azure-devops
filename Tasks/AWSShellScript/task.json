@@ -9,6 +9,7 @@
     "visibility": ["Build", "Release"],
     "demands": ["sh"],
     "instanceNameFormat": "AWS Shell Script",
+    "showEnvironmentVariables": true,
     "groups": [
         {
             "name": "advanced",

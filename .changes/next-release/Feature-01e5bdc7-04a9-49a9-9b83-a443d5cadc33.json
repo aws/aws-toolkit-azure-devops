@@ -1,0 +1,4 @@
+{
+    "type": "Feature",
+    "description": "Allow setting environment variables in Powershell, Shell Scripot, and AWS CLI tasks (#134)"
+}
