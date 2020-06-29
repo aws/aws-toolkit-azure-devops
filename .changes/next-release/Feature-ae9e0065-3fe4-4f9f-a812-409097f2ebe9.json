@@ -1,4 +1,4 @@
 {
     "type": "Feature",
-    "description": "Add enforceDockerNamingConventions to ECRPushImage"
+    "description": "Add checkbox option to ECR Push task that forces the repo name to adhere to Docker naming conventions (#357)"
 }
