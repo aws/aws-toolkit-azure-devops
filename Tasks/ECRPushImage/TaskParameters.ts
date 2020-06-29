@@ -19,7 +19,7 @@ export interface TaskParameters {
     repositoryName: string
     pushTag: string
     autoCreateRepository: boolean
-    enforceDockerNamingConventions: boolean
+    forceDockerNamingConventions: boolean
     outputVariable: string
 }
 
@@ -30,7 +30,7 @@ export function buildTaskParameters(): TaskParameters {
         repositoryName: getInputRequired('repositoryName'),
         pushTag: getInputOrEmpty('pushTag'),
         autoCreateRepository: tl.getBoolInput('autoCreateRepository', false),
-        enforceDockerNamingConventions: tl.getBoolInput('enforceDockerNamingConventions', false),
+        forceDockerNamingConventions: tl.getBoolInput('forceDockerNamingConventions', false),
         outputVariable: getInputOrEmpty('outputVariable'),
         sourceImageName: '',
         sourceImageId: '',

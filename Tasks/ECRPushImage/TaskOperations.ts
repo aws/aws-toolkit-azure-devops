@@ -24,7 +24,7 @@ export class TaskOperations {
 
         let sourceImageRef: string
 
-        if (this.taskParameters.enforceDockerNamingConventions) {
+        if (this.taskParameters.forceDockerNamingConventions) {
             // The repository name can only contain lowercase letters, numbers, or - and _.
             this.taskParameters.repositoryName = this.taskParameters.repositoryName
                 .toLowerCase()

@@ -23,7 +23,7 @@ const defaultTaskParameters: TaskParameters = {
     repositoryName: '',
     pushTag: '',
     autoCreateRepository: false,
-    enforceDockerNamingConventions: false,
+    forceDockerNamingConventions: false,
     outputVariable: ''
 }
 
@@ -150,7 +150,7 @@ describe('ECR Push image', () => {
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
         const taskParameters = { ...defaultTaskParameters }
-        taskParameters.enforceDockerNamingConventions = true
+        taskParameters.forceDockerNamingConventions = true
         taskParameters.repositoryName = 'RepoName'
         const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
         await taskOperations.execute()
@@ -166,7 +166,7 @@ describe('ECR Push image', () => {
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
         const taskParameters = { ...defaultTaskParameters }
-        taskParameters.enforceDockerNamingConventions = true
+        taskParameters.forceDockerNamingConventions = true
         taskParameters.repositoryName = 'my-repo.name_01'
         const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
         await taskOperations.execute()
@@ -182,7 +182,7 @@ describe('ECR Push image', () => {
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
         const taskParameters = { ...defaultTaskParameters }
-        taskParameters.enforceDockerNamingConventions = true
+        taskParameters.forceDockerNamingConventions = true
         taskParameters.repositoryName = 'm!y@r #e$p%o^n&a*m(e)'
         const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
         await taskOperations.execute()

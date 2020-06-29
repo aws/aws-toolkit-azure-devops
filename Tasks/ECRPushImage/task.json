@@ -110,7 +110,7 @@
             "helpMarkDown": "If selected the task will attempt to create the repository if it does not exist."
         },
         {
-            "name": "enforceDockerNamingConventions",
+            "name": "forceDockerNamingConventions",
             "label": "Force repository name to follow Docker naming conventions",
             "type": "boolean",
             "defaultValue": false,
