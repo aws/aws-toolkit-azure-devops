@@ -110,6 +110,14 @@
             "helpMarkDown": "If selected the task will attempt to create the repository if it does not exist."
         },
         {
+            "name": "forceDockerNamingConventions",
+            "label": "Force repository name to follow Docker naming conventions",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "If enabled, the Docker repository name will be modified to follow Docker naming conventions. Converts upper case characters to lower case. Removes all characters except 0-9, -, . and _ ."
+        },
+        {
             "name": "outputVariable",
             "type": "string",
             "label": "Image Tag Output Variable",

@@ -23,6 +23,7 @@ const defaultTaskParameters: TaskParameters = {
     repositoryName: '',
     pushTag: '',
     autoCreateRepository: false,
+    forceDockerNamingConventions: false,
     outputVariable: ''
 }
 
@@ -138,5 +139,53 @@ describe('ECR Push image', () => {
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
         expect(ecr.describeRepositories).toBeCalledTimes(1)
         expect(runDockerCommand.mock.calls[0][2]).toStrictEqual(['', 'example.com/name'])
+    })
+
+    test('Docker naming conventions; replace uppercase', async () => {
+        expect.assertions(1)
+        const dockerHandler = { ...defaultDocker }
+        const runDockerCommand = jest.fn(async (thing1, thing2, thing3) => undefined)
+        dockerHandler.runDockerCommand = runDockerCommand
+        const ecr = new ECR() as any
+        ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
+        ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.forceDockerNamingConventions = true
+        taskParameters.repositoryName = 'RepoName'
+        const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
+        await taskOperations.execute()
+        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual(['', 'example.com/reponame'])
+    })
+
+    test('Docker naming conventions; keep valid characters', async () => {
+        expect.assertions(1)
+        const dockerHandler = { ...defaultDocker }
+        const runDockerCommand = jest.fn(async (thing1, thing2, thing3) => undefined)
+        dockerHandler.runDockerCommand = runDockerCommand
+        const ecr = new ECR() as any
+        ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
+        ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.forceDockerNamingConventions = true
+        taskParameters.repositoryName = 'my-repo.name_01'
+        const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
+        await taskOperations.execute()
+        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual(['', 'example.com/my-repo.name_01'])
+    })
+
+    test('Docker naming conventions; remove invalid characters', async () => {
+        expect.assertions(1)
+        const dockerHandler = { ...defaultDocker }
+        const runDockerCommand = jest.fn(async (thing1, thing2, thing3) => undefined)
+        dockerHandler.runDockerCommand = runDockerCommand
+        const ecr = new ECR() as any
+        ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
+        ecr.describeRepositories = jest.fn(() => ecrFailNotFound)
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.forceDockerNamingConventions = true
+        taskParameters.repositoryName = 'm!y@r #e$p%o^n&a*m(e)'
+        const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
+        await taskOperations.execute()
+        expect(runDockerCommand.mock.calls[0][2]).toStrictEqual(['', 'example.com/myreponame'])
     })
 })

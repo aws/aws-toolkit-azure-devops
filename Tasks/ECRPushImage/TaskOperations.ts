@@ -23,6 +23,14 @@ export class TaskOperations {
         this.dockerPath = await this.dockerHandler.locateDockerExecutable()
 
         let sourceImageRef: string
+
+        if (this.taskParameters.forceDockerNamingConventions) {
+            // The repository name can only contain lowercase letters, numbers, or - and _.
+            this.taskParameters.repositoryName = this.taskParameters.repositoryName
+                .toLowerCase()
+                .replace(/[^a-z0-9-_.]/g, '')
+        }
+
         if (this.taskParameters.imageSource === imageNameSource) {
             sourceImageRef = constructTaggedImageName(
                 this.taskParameters.sourceImageName,
