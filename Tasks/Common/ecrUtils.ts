@@ -24,6 +24,10 @@ export async function loginToRegistry(
     })
 }
 
+export async function logoutFromRegistry(dockerHandler: DockerHandler, dockerPath: string, endpoint: string): Promise<void> {
+    await dockerHandler.runDockerCommand(dockerPath, 'logout', [endpoint])
+}
+
 export async function getEcrAuthorizationData(ecrClient: ECR): Promise<ECR.AuthorizationData | undefined> {
     try {
         console.log(tl.loc('RequestingAuthToken'))

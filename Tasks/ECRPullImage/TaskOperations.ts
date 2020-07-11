@@ -6,7 +6,7 @@
 import * as ECR from 'aws-sdk/clients/ecr'
 import * as tl from 'azure-pipelines-task-lib/task'
 import { DockerHandler } from 'Common/dockerUtils'
-import { getEcrAuthorizationData, loginToRegistry } from 'Common/ecrUtils'
+import { getEcrAuthorizationData, loginToRegistry, logoutFromRegistry } from 'Common/ecrUtils'
 import { parse } from 'url'
 import { imageTagSource, TaskParameters } from './TaskParameters'
 
@@ -63,6 +63,8 @@ export class TaskOperations {
             console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, targetImageRef))
             tl.setVariable(this.taskParameters.outputVariable, targetImageRef)
         }
+
+        await logoutFromRegistry(this.dockerHandler, this.dockerPath, proxyEndpoint)
 
         console.log(tl.loc('TaskCompleted'))
     }
