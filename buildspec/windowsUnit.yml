@@ -28,5 +28,5 @@ reports:
     unit-test:
         files:
             - '**/*'
-        base-directory: '$env:CODEBUILD_SRC_DIR/.test_reports'
+        base-directory: '$env:CODEBUILD_SRC_DIR/.test-reports'
         file-format: JunitXml
