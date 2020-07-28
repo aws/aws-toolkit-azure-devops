@@ -17,5 +17,7 @@ coverage/
 
 .idea
 
+.testReports
+
 # auto generated runners
 Tasks/**/*.runner.ts
