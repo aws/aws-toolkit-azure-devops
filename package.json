@@ -111,7 +111,7 @@
             [
                 "jest-junit",
                 {
-                    "outputDirectory": ".testReports",
+                    "outputDirectory": ".test-reports",
                     "outputName": "testReport"
                 }
             ]
