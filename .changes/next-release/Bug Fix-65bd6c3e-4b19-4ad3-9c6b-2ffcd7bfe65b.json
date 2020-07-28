@@ -1,0 +1,4 @@
+{
+    "type": "Bug Fix",
+    "description": "Added a docker logout call to the end of ECR Push and ECR Pull Image tasks"
+}
