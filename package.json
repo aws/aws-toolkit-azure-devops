@@ -74,7 +74,7 @@
     },
     "dependencies": {
         "aws-sdk": "^2.530.0",
-        "azure-pipelines-task-lib": "^2.10.0",
+        "azure-pipelines-task-lib": "^2.8.0",
         "base-64": "^0.1.0",
         "https-proxy-agent": "^2.2.4",
         "js-yaml": "^3.13.1",
