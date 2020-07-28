@@ -4,6 +4,7 @@
  */
 
 import { SdkUtils } from 'Common/sdkutils'
+import { join } from 'path'
 import { TaskOperations } from '../../../Tasks/LambdaNETCoreDeploy/TaskOperations'
 import { TaskParameters } from '../../../Tasks/LambdaNETCoreDeploy/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
@@ -25,6 +26,8 @@ const baseTaskParameters: TaskParameters = {
     additionalArgs: ''
 }
 
+const executable = join(__dirname, '../../resources/echo.bat')
+
 describe('Lambda NET Core Deploy', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -38,7 +41,7 @@ describe('Lambda NET Core Deploy', () => {
 
     test('Project path does not exist', async () => {
         expect.assertions(1)
-        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', baseTaskParameters)
+        const taskOperation = new TaskOperations(undefined, executable, 'echo', baseTaskParameters)
         await taskOperation.execute().catch(e => {
             expect(`${e}`).toContain('does not exist')
         })
@@ -49,7 +52,7 @@ describe('Lambda NET Core Deploy', () => {
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'Command that will throw'
-        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, executable, 'echo', taskParameters)
         await taskOperation.execute().catch(e => {
             expect(`${e}`).toContain('Unknown deployment type: Command that will throw')
         })
@@ -59,9 +62,9 @@ describe('Lambda NET Core Deploy', () => {
         expect.assertions(1)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
-        const taskOperation = new TaskOperations(undefined, ';437895834795', 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, '/invalid/path/', 'echo', taskParameters)
         await taskOperation.execute().catch(e => {
-            expect(`${e}`).toContain("Error: Unable to locate executable file: ';437895834795")
+            expect(`${e}`).toContain("Error: Unable to locate executable file: '/invalid/path/'")
         })
     })
 
@@ -69,7 +72,7 @@ describe('Lambda NET Core Deploy', () => {
         const taskParameters = { ...baseTaskParameters }
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployFunction'
-        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, executable, 'echo', taskParameters)
         await taskOperation.execute()
     })
 
@@ -78,7 +81,7 @@ describe('Lambda NET Core Deploy', () => {
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployFunction'
         taskParameters.packageOnly = true
-        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, executable, 'echo', taskParameters)
         await taskOperation.execute()
     })
 
@@ -87,7 +90,7 @@ describe('Lambda NET Core Deploy', () => {
         taskParameters.lambdaProjectPath = '.'
         taskParameters.command = 'deployServerless'
         taskParameters.functionTimeout = 60
-        const taskOperation = new TaskOperations(undefined, 'echo', 'echo', taskParameters)
+        const taskOperation = new TaskOperations(undefined, executable, 'echo', taskParameters)
         await taskOperation.execute()
     })
 })
