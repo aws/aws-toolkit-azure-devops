@@ -92,9 +92,10 @@ describe('ECR Pull image', () => {
         const taskOperations = new TaskOperations(ecr, dockerHandler, defaultTaskParameters)
         await taskOperations.execute()
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
-        expect(runDockerCommand).toBeCalledTimes(2)
+        expect(runDockerCommand).toBeCalledTimes(3)
         expect(runDockerCommand.mock.calls[0][1]).toBe('login')
         expect(runDockerCommand.mock.calls[1][1]).toBe('pull')
+        expect(runDockerCommand.mock.calls[2][1]).toBe('logout')
     })
 
     test('Happy path', async () => {

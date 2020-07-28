@@ -96,10 +96,11 @@ describe('ECR Push image', () => {
         const taskOperations = new TaskOperations(ecr, dockerHandler, defaultTaskParameters)
         await taskOperations.execute()
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
-        expect(runDockerCommand).toBeCalledTimes(3)
+        expect(runDockerCommand).toBeCalledTimes(4)
         expect(runDockerCommand.mock.calls[0][1]).toBe('tag')
         expect(runDockerCommand.mock.calls[1][1]).toBe('login')
         expect(runDockerCommand.mock.calls[2][1]).toBe('push')
+        expect(runDockerCommand.mock.calls[3][1]).toBe('logout')
     })
 
     test('autocreate creates repository', async () => {
