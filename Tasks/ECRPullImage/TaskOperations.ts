@@ -56,8 +56,7 @@ export class TaskOperations {
 
         const targetImageRef = `${endpoint}/${sourceImageRef}`
 
-        if (this.taskParameters.dockerLogin === false) {
-        } else {
+        if (this.taskParameters.dockerLogin === true) {
             await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
         }
 
@@ -68,7 +67,7 @@ export class TaskOperations {
             tl.setVariable(this.taskParameters.outputVariable, targetImageRef)
         }
 
-        if (this.taskParameters.dockerLogout === true && this.taskParameters.dockerLogin !== false) {
+        if (this.taskParameters.dockerLogout === true) {
             await logoutFromRegistry(this.dockerHandler, this.dockerPath, proxyEndpoint)
         }
 
