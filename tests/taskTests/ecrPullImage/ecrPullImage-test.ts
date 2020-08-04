@@ -20,7 +20,9 @@ const defaultTaskParameters: TaskParameters = {
     imageTag: '',
     imageDigest: '',
     repository: '',
-    outputVariable: ''
+    outputVariable: '',
+    dockerLogin: true,
+    dockerLogout: true
 }
 
 const defaultDocker: DockerHandler = {

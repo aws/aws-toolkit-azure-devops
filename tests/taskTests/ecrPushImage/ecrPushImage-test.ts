@@ -24,7 +24,9 @@ const defaultTaskParameters: TaskParameters = {
     pushTag: '',
     autoCreateRepository: false,
     forceDockerNamingConventions: false,
-    outputVariable: ''
+    outputVariable: '',
+    dockerLogin: true,
+    dockerLogout: true
 }
 
 const defaultDocker: DockerHandler = {

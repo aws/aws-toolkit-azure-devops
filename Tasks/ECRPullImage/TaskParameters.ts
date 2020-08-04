@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import tl = require('azure-pipelines-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
@@ -16,6 +17,8 @@ export interface TaskParameters {
     imageDigest: string
     repository: string
     outputVariable: string
+    dockerLogin: boolean
+    dockerLogout: boolean
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -25,7 +28,9 @@ export function buildTaskParameters(): TaskParameters {
         repository: getInputRequired('repository'),
         imageTag: getInputOrEmpty('imageTag'),
         imageDigest: getInputOrEmpty('imageDigest'),
-        outputVariable: getInputOrEmpty('outputVariable')
+        outputVariable: getInputOrEmpty('outputVariable'),
+        dockerLogin: tl.getBoolInput('dockerLogin'),
+        dockerLogout: tl.getBoolInput('dockerLogout')
     }
 
     return parameters

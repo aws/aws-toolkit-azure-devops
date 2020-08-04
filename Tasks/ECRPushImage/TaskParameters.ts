@@ -21,6 +21,8 @@ export interface TaskParameters {
     autoCreateRepository: boolean
     forceDockerNamingConventions: boolean
     outputVariable: string
+    dockerLogin: boolean
+    dockerLogout: boolean
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -34,7 +36,9 @@ export function buildTaskParameters(): TaskParameters {
         outputVariable: getInputOrEmpty('outputVariable'),
         sourceImageName: '',
         sourceImageId: '',
-        sourceImageTag: ''
+        sourceImageTag: '',
+        dockerLogin: tl.getBoolInput('dockerLogin'),
+        dockerLogout: tl.getBoolInput('dockerLogout')
     }
 
     if (parameters.imageSource === imageNameSource) {

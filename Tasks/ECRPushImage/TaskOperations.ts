@@ -74,7 +74,10 @@ export class TaskOperations {
         const targetImageRef = `${endpoint}/${targetImageName}`
         await this.tagImage(sourceImageRef, targetImageRef)
 
-        await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
+        if (this.taskParameters.dockerLogin === false) {
+        } else {
+            await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
+        }
 
         await this.pushImageToECR(targetImageRef)
 
@@ -83,7 +86,9 @@ export class TaskOperations {
             tl.setVariable(this.taskParameters.outputVariable, targetImageRef)
         }
 
-        await logoutFromRegistry(this.dockerHandler, this.dockerPath, proxyEndpoint)
+        if (this.taskParameters.dockerLogout === true && this.taskParameters.dockerLogin !== false) {
+            await logoutFromRegistry(this.dockerHandler, this.dockerPath, proxyEndpoint)
+        }
 
         console.log(tl.loc('TaskCompleted'))
     }
