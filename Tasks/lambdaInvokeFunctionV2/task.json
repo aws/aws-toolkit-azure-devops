@@ -127,7 +127,7 @@
     ],
     "execution": {
         "Node10": {
-            "target": "lambdaInvokeFunctionV2.js"
+            "target": "LambdaInvokeFunctionV2.js"
         }
     },
     "messages": {

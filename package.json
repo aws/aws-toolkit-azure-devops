@@ -1,6 +1,6 @@
 {
     "name": "aws-vsts-tools",
-    "version": "1.7.0",
+    "version": "1.7.3",
     "description": "AWS Tools for Azure DevOps",
     "private": true,
     "main": "_build/tasks",
@@ -58,7 +58,7 @@
         "readline-sync": "^1.4.10",
         "sync-request": "^6.1.0",
         "terser-webpack-plugin": "^2.3.5",
-        "tfx-cli": "^0.7.9",
+        "tfx-cli": "^0.8.1",
         "tmp": "^0.2.1",
         "ts-jest": "^26.1.4",
         "ts-loader": "^6.1.0",

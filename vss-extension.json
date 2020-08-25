@@ -112,6 +112,9 @@
             "path": "Tasks/LambdaInvokeFunction"
         },
         {
+            "path": "Tasks/LambdaInvokeFunctionV2"
+        },
+        {
             "path": "Tasks/LambdaNETCoreDeploy"
         },
         {
@@ -352,7 +355,7 @@
             "type": "ms.vss-distributed-task.task",
             "targets": ["ms.vss-distributed-task.tasks"],
             "properties": {
-                "name": "Tasks/LambdaInvokeFunction"
+                "name": "LambdaInvokeFunction"
             }
         },
         {
