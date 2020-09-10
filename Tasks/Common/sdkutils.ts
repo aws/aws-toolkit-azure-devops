@@ -38,18 +38,18 @@ export abstract class SdkUtils {
     // Injects a custom user agent conveying extension version and task being run into the
     // sdk so usage metrics can be tied to the tools.
     public static setSdkUserAgentFromManifest(taskManifestFilePath: string): void {
-        if (fs.existsSync(taskManifestFilePath)) {
-            const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
-            const version = taskManifest.version
-            const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${
-                    this.userAgentSuffix
-                }-${taskManifest.name}`
-                // tslint:disable-next-line:whitespace align
-            ;((AWS as any).util as any).userAgent = () => {
-                return userAgentString
-            }
-        } else {
+        if (!fs.existsSync(taskManifestFilePath)) {
             console.warn(`Task manifest ${taskManifestFilePath} not found, cannot set custom user agent!`)
+
+            return
+        }
+        const taskManifest = JSON.parse(fs.readFileSync(taskManifestFilePath, 'utf8')) as VSTSTaskManifest
+        const version = taskManifest.version
+        const agentVersion = tl.getVariable('agent.version') ?? 'unknown'
+        const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${this.userAgentSuffix}-${agentVersion}-${taskManifest.name}`
+            // tslint:disable-next-line:whitespace align
+        ;((AWS as any).util as any).userAgent = () => {
+            return userAgentString
         }
     }
 
