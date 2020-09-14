@@ -1,3 +1,10 @@
+## 1.8.0 2020-09-14
+
+- **Bug Fix** Fix downloading more than 1000 S3 items (#346)
+- **Bug Fix** add .json to list of knownMimeTypes
+- **Feature** Allow setting environment variables in Powershell, Shell Scripot, and AWS CLI tasks (#134)
+- **Feature** Add checkbox option to ECR Push task that forces the repo name to adhere to Docker naming conventions (#357)
+
 ## 1.7.0 2020-03-31
 
 - **Feature** Added .NET Core 3.1 to Lambda runtimes

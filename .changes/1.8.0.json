@@ -1,0 +1,22 @@
+{
+	"date": "2020-09-14",
+	"version": "1.8.0",
+	"entries": [
+		{
+			"type": "Bug Fix",
+			"description": "Fix downloading more than 1000 S3 items (#346)"
+		},
+		{
+			"type": "Bug Fix",
+			"description": "add .json to list of knownMimeTypes"
+		},
+		{
+			"type": "Feature",
+			"description": "Allow setting environment variables in Powershell, Shell Scripot, and AWS CLI tasks (#134)"
+		},
+		{
+			"type": "Feature",
+			"description": "Add checkbox option to ECR Push task that forces the repo name to adhere to Docker naming conventions (#357)"
+		}
+	]
+}
