@@ -39,6 +39,7 @@ function generate(
 import * as tl from 'azure-pipelines-task-lib/task'
 
 import { SdkUtils } from 'Common/sdkutils'
+import { warnIfBuildAgentTooLow } from 'Common/vstsUtils'
 ${
     clientTypes === undefined
         ? ''
@@ -76,11 +77,14 @@ async function run(): Promise<${returnType === undefined ? 'void' : returnType}>
 `
 
     const run = `
-run().then((result) =>
-    tl.setResult(tl.TaskResult.Succeeded, ${successResult === undefined ? "''" : successResult})
-).catch((error) =>
+run().then((result) => {
+    const tooLow = warnIfBuildAgentTooLow()
+    tl.setResult(tooLow ? tl.TaskResult.SucceededWithIssues : tl.TaskResult.Succeeded, ${
+        successResult === undefined ? "''" : successResult
+    })
+}).catch((error) => {
     tl.setResult(tl.TaskResult.Failed, \`\${error}\`)
-)
+})
 `
 
     const output = header + importStament + runStatement + run

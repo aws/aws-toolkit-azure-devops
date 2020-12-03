@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { getInput } from 'azure-pipelines-task-lib/task'
+import { getInput, getVariable, warning } from 'azure-pipelines-task-lib/task'
+import * as semver from 'semver'
 
 export interface VSTSManifestVersionInfo {
     Major: string
@@ -14,6 +15,23 @@ export interface VSTSManifestVersionInfo {
 export interface VSTSTaskManifest {
     name: string
     version: VSTSManifestVersionInfo
+}
+
+export function warnIfBuildAgentTooLow(): boolean {
+    const version = getVariable('agent.version') ?? '0.0.0'
+
+    if (semver.lt(version, '2.144.0')) {
+        warning(`The build agent version you are using ${version} is no longer supported`)
+        warning('by Microsoft. Future versions of the AWS Toolkit for Azure DevOps will')
+        warning('require an agent version of 2.144.0 or newer!')
+        warning(
+            'See the Azure DevOps documentation for how to upgrade: https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=browser#agent-version-and-upgrades'
+        )
+
+        return true
+    }
+
+    return false
 }
 
 /**
