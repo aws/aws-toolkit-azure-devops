@@ -16,6 +16,9 @@ import { format, parse, Url } from 'url'
 export const awsAccessKeyIdVariable: string = 'AWS.AccessKeyID'
 export const awsSecretAccessKeyVariable: string = 'AWS.SecretAccessKey'
 export const awsSessionTokenVariable: string = 'AWS.SessionToken'
+export const awsAssumeRoleArnVariable: string = 'AWS.AssumeRoleArn'
+export const awsExternalIdVariable: string = 'AWS.ExternalId'
+export const awsRoleSessionNameVariable: string = 'AWS.RoleSessionName'
 
 // Task variable name that can be used to supply the region setting to
 // a task.
@@ -107,8 +110,52 @@ function attemptEndpointCredentialConfiguration(
     const accessKey = awsparams.awsEndpointAuth.parameters.username
     const secretKey = awsparams.awsEndpointAuth.parameters.password
     const token = awsparams.awsEndpointAuth.parameters.sessionToken
-    awsparams.AssumeRoleARN = awsparams.awsEndpointAuth.parameters.assumeRoleArn
-    if (!awsparams.AssumeRoleARN) {
+    const assumeRoleArn = awsparams.awsEndpointAuth.parameters.assumeRoleArn
+    const externalId: string = awsparams.awsEndpointAuth.parameters.externalId
+    const roleSessionName: string = awsparams.awsEndpointAuth.parameters.roleSessionName
+
+    return createEndpointCredentials(accessKey, secretKey, token, assumeRoleArn, externalId, roleSessionName)
+}
+
+// credentials can also be set, using their environment variable names,
+// as variables set on the task or build - these do not appear to be
+// visible as environment vars for the AWS Node.js sdk to auto-recover
+// so treat as if a service endpoint had been set and return a credentials
+// instance.
+function attemptCredentialConfigurationFromVariables(): AWS.Credentials | undefined {
+    const accessKey = tl.getVariable(awsAccessKeyIdVariable)
+    if (!accessKey) {
+        return undefined
+    }
+
+    const secretKey = tl.getVariable(awsSecretAccessKeyVariable)
+    if (!secretKey) {
+        throw new Error(
+            'AWS access key ID present in task variables but secret key value is missing; ' +
+                'cannot configure task credentials.'
+        )
+    }
+
+    const token = tl.getVariable(awsSessionTokenVariable)
+    const assumeRoleArn = tl.getVariable(awsAssumeRoleArnVariable)
+    const externalId = tl.getVariable(awsExternalIdVariable)
+    const roleSessionName = tl.getVariable(awsRoleSessionNameVariable)
+
+    console.log('...configuring AWS credentials from task variables')
+
+    return createEndpointCredentials(accessKey, secretKey, token, assumeRoleArn, externalId, roleSessionName)
+}
+
+// Creates the AWS credentials to be used by the executing task.
+function createEndpointCredentials(
+    accessKey: string,
+    secretKey: string,
+    token: string,
+    assumeRoleARN: string | undefined,
+    externalId: string | undefined,
+    roleSessionName: string | undefined
+): AWS.Credentials {
+    if (!assumeRoleARN) {
         console.log('...endpoint defines standard access/secret key credentials')
 
         return new AWS.Credentials({
@@ -118,10 +165,8 @@ function attemptEndpointCredentialConfiguration(
         })
     }
 
-    console.log(`...endpoint defines role-based credentials for role ${awsparams.AssumeRoleARN}.`)
+    console.log(`...endpoint defines role-based credentials for role ${assumeRoleARN}.`)
 
-    const externalId: string = awsparams.awsEndpointAuth.parameters.externalId
-    let roleSessionName: string = awsparams.awsEndpointAuth.parameters.roleSessionName
     if (!roleSessionName) {
         roleSessionName = defaultRoleSessionName
     }
@@ -145,7 +190,7 @@ function attemptEndpointCredentialConfiguration(
         sessionToken: token
     })
     const options: STS.AssumeRoleRequest = {
-        RoleArn: awsparams.AssumeRoleARN,
+        RoleArn: assumeRoleARN,
         DurationSeconds: duration,
         RoleSessionName: roleSessionName
     }
@@ -154,36 +199,6 @@ function attemptEndpointCredentialConfiguration(
     }
 
     return new AWS.TemporaryCredentials(options, masterCredentials)
-}
-
-// credentials can also be set, using their environment variable names,
-// as variables set on the task or build - these do not appear to be
-// visible as environment vars for the AWS Node.js sdk to auto-recover
-// so treat as if a service endpoint had been set and return a credentials
-// instance.
-function attemptCredentialConfigurationFromVariables(): AWS.Credentials | undefined {
-    const accessKey = tl.getVariable(awsAccessKeyIdVariable)
-    if (!accessKey) {
-        return undefined
-    }
-
-    const secretKey = tl.getVariable(awsSecretAccessKeyVariable)
-    if (!secretKey) {
-        throw new Error(
-            'AWS access key ID present in task variables but secret key value is missing; ' +
-                'cannot configure task credentials.'
-        )
-    }
-
-    const token = tl.getVariable(awsSessionTokenVariable)
-
-    console.log('...configuring AWS credentials from task variables')
-
-    return new AWS.Credentials({
-        accessKeyId: accessKey,
-        secretAccessKey: secretKey,
-        sessionToken: token
-    })
 }
 
 // Probes for credentials to be used by the executing task. Credentials
