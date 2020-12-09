@@ -202,7 +202,7 @@
                             {
                                 "id": "assumeRoleArn",
                                 "name": "Role to Assume",
-                                "description": "The Amazon Resource Name (ARN) of the role to assume.\nIf a role ARN is specified the access and secret keys configured in the endpoint will be used to generate temporary session credentials, scoped to the specified role, and used be used by the task.\nThe generated credentials for each AWS task will be valid for a default duration of 15 minutes. If your tasks need a longer duration (up to a maximum of one hour) set the variable 'aws.rolecredential.maxduration' on your build or release definition to the required duration (in seconds, minimum 900 and maximum 3600). Note that this setting will affect all tasks that use AWS endpoints configured to assume a role.",
+                                "description": "The Amazon Resource Name (ARN) of the role to assume.\nIf a role ARN is specified the access and secret keys configured in the endpoint will be used to generate temporary session credentials, scoped to the specified role, and used be used by the task.\nThe generated credentials for each AWS task will be valid for a default duration of 15 minutes. If your tasks need a longer duration (up to a maximum of one hour) set the variable 'aws.rolecredential.maxduration' on your build or release definition to the required duration (in seconds, minimum 900 and maximum 43200). Note that this setting will affect all tasks that use AWS endpoints configured to assume a role.",
                                 "inputMode": "textbox",
                                 "isConfidential": false,
                                 "validation": {

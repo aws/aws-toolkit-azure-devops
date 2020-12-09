@@ -29,9 +29,9 @@ export const awsRegionVariable: string = 'AWS.Region'
 export const defaultRoleSessionName: string = 'aws-vsts-tools'
 // The minimum duration, 15mins, should be enough for a task
 export const minDuration: number = 900
-export const maxduration: number = 3600
+export const maxduration: number = 43200
 // To have a longer duration, users can set this variable in their build or
-// release definitions to the required duration (in seconds, min 900 max 3600).
+// release definitions to the required duration (in seconds, min 900 max 43200).
 export const roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration'
 
 export interface AWSConnectionParameters {
