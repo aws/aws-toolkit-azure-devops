@@ -1,0 +1,4 @@
+{
+    "type": "Feature",
+    "description": "Aligning aws.rolecredential.maxduration with STS max"
+}
