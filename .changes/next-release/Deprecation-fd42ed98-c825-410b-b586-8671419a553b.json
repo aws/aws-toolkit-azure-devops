@@ -1,0 +1,4 @@
+{
+    "type": "Deprecation",
+    "description": "Build agents < 2.144.0 will no longer be supported in future versions of the AWS Toolkit for Azure DevOps"
+}
