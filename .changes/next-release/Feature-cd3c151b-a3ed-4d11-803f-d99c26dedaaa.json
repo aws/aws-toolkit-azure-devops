@@ -1,4 +1,4 @@
 {
     "type": "Feature",
-    "description": "Aligning aws.rolecredential.maxduration with STS max"
+    "description": "Update aws.rolecredential.maxduration to the STS max of 12 hours"
 }
