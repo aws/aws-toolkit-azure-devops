@@ -1,3 +1,9 @@
+## 1.9.0 2021-01-04
+
+- **Deprecation** Build agents < 2.144.0 will no longer be supported in future versions of the AWS Toolkit for Azure DevOps
+- **Feature** Add assume role capability when configuring connection via variables.
+- **Feature** Update aws.rolecredential.maxduration to the STS max of 12 hours
+
 ## 1.8.0 2020-09-14
 
 - **Bug Fix** Fix downloading more than 1000 S3 items (#346)
