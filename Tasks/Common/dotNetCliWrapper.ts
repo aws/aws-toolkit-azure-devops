@@ -48,7 +48,15 @@ export class DotNetCliWrapper {
 
     private async updateGlobalTools(): Promise<boolean> {
         try {
-            const returnCode = await this.execute(['tool', 'update', '-g', 'Amazon.Lambda.Tools'], '')
+            const returnCode = await this.execute(
+                [
+                    'tool',
+                    'update',
+                    "-g --ignore-failed-sourced --add-source https://api.nuget.org/v3/index.json --version '*'",
+                    'Amazon.Lambda.Tools'
+                ],
+                ''
+            )
             if (returnCode === 0) {
                 return true
             } else {
@@ -65,7 +73,15 @@ export class DotNetCliWrapper {
 
     private async installGlobalTools(): Promise<boolean> {
         try {
-            const returnCode = await this.execute(['tool', 'install', '-g', 'Amazon.Lambda.Tools'], '')
+            const returnCode = await this.execute(
+                [
+                    'tool',
+                    'install',
+                    "-g --ignore-failed-sourced --add-source https://api.nuget.org/v3/index.json --version '*'",
+                    'Amazon.Lambda.Tools'
+                ],
+                ''
+            )
             if (returnCode === 0) {
                 return true
             } else {

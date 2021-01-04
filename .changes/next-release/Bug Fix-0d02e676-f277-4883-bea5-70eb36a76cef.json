@@ -1,0 +1,4 @@
+{
+    "type": "Bug Fix",
+    "description": "Fix for installing aws.lambda.tools along side nuget.config with private nuget-feed."
+}
