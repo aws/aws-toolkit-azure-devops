@@ -1,0 +1,18 @@
+{
+	"date": "2021-01-04",
+	"version": "1.9.0",
+	"entries": [
+		{
+			"type": "Deprecation",
+			"description": "Build agents < 2.144.0 will no longer be supported in future versions of the AWS Toolkit for Azure DevOps"
+		},
+		{
+			"type": "Feature",
+			"description": "Add assume role capability when configuring connection via variables."
+		},
+		{
+			"type": "Feature",
+			"description": "Update aws.rolecredential.maxduration to the STS max of 12 hours"
+		}
+	]
+}

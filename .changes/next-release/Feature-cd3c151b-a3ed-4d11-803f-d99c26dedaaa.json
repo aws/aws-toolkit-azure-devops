@@ -1,4 +1,0 @@
-{
-    "type": "Feature",
-    "description": "Update aws.rolecredential.maxduration to the STS max of 12 hours"
-}
