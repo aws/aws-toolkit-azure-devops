@@ -4,6 +4,7 @@
  */
 
 import ncp = require('child_process')
+import esbuild = require('esbuild')
 import fs = require('fs-extra')
 import path = require('path')
 import shell = require('shelljs')
@@ -105,20 +106,23 @@ function packagePlugin(options: CommandLineOptions) {
         const inputFilename = taskName + '.runner.js'
 
         console.log('packing node-based task')
-        const webpackConfig = path.join(folders.repoRoot, 'webpack.config.js')
-        const webpackCmd = `webpack --config ${webpackConfig} ${inputFilename} --output-path ${path.join(
-            taskPackageFolder
-        )} --output-filename ${taskName}.js`
-        console.log(webpackCmd)
         try {
-            const output = ncp.execSync(webpackCmd, { stdio: 'pipe' })
-            console.log(output.toString('utf8'))
+            const result = esbuild.buildSync({
+                entryPoints: [inputFilename],
+                bundle: true,
+                platform: 'node',
+                target: ['node6'],
+                // external: ['azure-pipelines-task-lib'],
+                minify: true,
+                outfile: `${taskPackageFolder}/${taskName}.js`
+            })
+            result.warnings.forEach(warning => console.log(warning))
         } catch (err) {
             // tslint:disable-next-line: no-unsafe-any
             console.error(err.output ? err.output.toString() : err.message)
             process.exit(1)
         }
-        shell.cp('-rL', path.join(npmFolder, 'node_modules'), taskPackageFolder)
+        // shell.cp('-rL', path.join(npmFolder, 'node_modules'), taskPackageFolder)
         shell.cd(folders.repoRoot)
     })
 

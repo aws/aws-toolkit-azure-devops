@@ -78,6 +78,7 @@
         "aws-sdk": "^2.530.0",
         "azure-pipelines-task-lib": "2.8.0",
         "base-64": "^0.1.0",
+        "esbuild": "^0.8.30",
         "https-proxy-agent": "^2.2.4",
         "js-yaml": "^3.13.1",
         "q": "^1.5.1",
