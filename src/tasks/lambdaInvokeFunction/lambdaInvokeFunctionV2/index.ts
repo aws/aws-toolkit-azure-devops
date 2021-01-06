@@ -9,3 +9,5 @@ function abc() {
     const client = new Lambda({})
     client.config.customUserAgent = 'abc'
 }
+
+abc()

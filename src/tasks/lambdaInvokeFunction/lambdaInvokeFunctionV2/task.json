@@ -110,8 +110,8 @@
         }
     ],
     "execution": {
-        "Node": {
-            "target": "LambdaInvokeFunction.js",
+        "Node10": {
+            "target": "index.js",
             "argumentFormat": ""
         }
     },
