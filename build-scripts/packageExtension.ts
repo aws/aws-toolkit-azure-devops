@@ -112,7 +112,6 @@ function packagePlugin(options: CommandLineOptions) {
                 bundle: true,
                 platform: 'node',
                 target: ['node6'],
-                // external: ['azure-pipelines-task-lib'],
                 minify: true,
                 outfile: `${taskPackageFolder}/${taskName}.js`
             })
@@ -122,7 +121,6 @@ function packagePlugin(options: CommandLineOptions) {
             console.error(err.output ? err.output.toString() : err.message)
             process.exit(1)
         }
-        // shell.cp('-rL', path.join(npmFolder, 'node_modules'), taskPackageFolder)
         shell.cd(folders.repoRoot)
     })
 
