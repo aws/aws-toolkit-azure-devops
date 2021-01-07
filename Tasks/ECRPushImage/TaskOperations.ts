@@ -112,11 +112,11 @@ export class TaskOperations {
 
     private async tagImage(sourceImageRef: string, imageTag: string): Promise<void> {
         console.log(tl.loc('AddingTag', imageTag, sourceImageRef))
-        await this.dockerHandler.runDockerCommand('tag', [sourceImageRef, imageTag])
+        await this.dockerHandler.runDockerCommand(this.dockerPath, 'tag', [sourceImageRef, imageTag])
     }
 
     private async pushImageToECR(imageRef: string): Promise<void> {
         console.log(tl.loc('PushingImage', imageRef))
-        await this.dockerHandler.runDockerCommand('push', [imageRef])
+        await this.dockerHandler.runDockerCommand(this.dockerPath, 'push', [imageRef])
     }
 }

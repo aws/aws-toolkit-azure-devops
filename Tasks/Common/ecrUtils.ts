@@ -19,7 +19,7 @@ export async function loginToRegistry(
         .decode(encodedAuthToken)
         .trim()
         .split(':')
-    await dockerHandler.runDockerCommand('login', ['-u', tokens[0], '-p', tokens[1], endpoint], {
+    await dockerHandler.runDockerCommand(dockerPath, 'login', ['-u', tokens[0], '-p', tokens[1], endpoint], {
         silent: true
     })
 }
