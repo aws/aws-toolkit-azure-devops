@@ -61,7 +61,7 @@ function packagePlugin(options: CommandLineOptions) {
     fs.copySync(path.join(folders.repoRoot, 'README.md'), path.join(folders.packageRoot, 'README.md'), {
         overwrite: true
     })
-    fs.copySync(path.join(folders.repoRoot, '_build', manifestFile), path.join(folders.packageRoot, manifestFile), {
+    fs.copySync(path.join(folders.repoRoot, 'build', manifestFile), path.join(folders.packageRoot, manifestFile), {
         overwrite: true
     })
 
@@ -90,8 +90,8 @@ function packagePlugin(options: CommandLineOptions) {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const taskDef = require(path.join(taskBuildFolder, 'task.json'))
         if (
-            !Object.hasOwnProperty.call(taskDef.execution, 'Node') ||
-            !Object.hasOwnProperty.call(taskDef.execution, 'Node10') ||
+            !Object.hasOwnProperty.call(taskDef.execution, 'Node') &&
+            !Object.hasOwnProperty.call(taskDef.execution, 'Node10') &&
             !Object.hasOwnProperty.call(taskDef.execution, 'Node14')
         ) {
             console.log('Copying non-node task ' + taskName)
@@ -99,14 +99,14 @@ function packagePlugin(options: CommandLineOptions) {
 
             return
         }
-        shell.cd(taskBuildFolder)
+
         for (const resourceFile of vstsFiles) {
             fs.copySync(path.join(taskBuildFolder, resourceFile), path.join(taskPackageFolder, resourceFile), {
                 overwrite: true
             })
         }
 
-        const inputFilename = taskName + '.runner.js'
+        const inputFilename = path.join(taskBuildFolder, taskName + '.runner.js')
 
         console.log('packing node-based task')
         try {
@@ -123,7 +123,6 @@ function packagePlugin(options: CommandLineOptions) {
             console.error(err.output ? err.output.toString() : err.message)
             process.exit(1)
         }
-        shell.cd(folders.repoRoot)
     })
 
     console.log('Creating deployment vsix')

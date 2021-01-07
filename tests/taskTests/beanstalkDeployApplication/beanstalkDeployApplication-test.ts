@@ -34,7 +34,7 @@ const defaultTaskParameters: TaskParameters = {
 describe('Beanstalk Deploy Application', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/BeanstalkDeployApplication/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/BeanstalkDeployApplication/task.json')
     })
 
     test('Creates a TaskOperation', () => {

@@ -46,7 +46,7 @@ const secretsManagerReturnsValidBase64 = {
 describe('Secrets Manger Get Secret', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/SecretsManagerGetSecret/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SecretsManagerGetSecret/task.json')
     })
 
     test('Creates a TaskOperation', () => {

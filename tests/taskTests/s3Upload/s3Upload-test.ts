@@ -56,7 +56,7 @@ const validateUpload = {
 describe('S3 Upload', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/S3Upload/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/S3Upload/task.json')
     })
 
     test('Creates a TaskOperation', () => {

@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "target": "ES6",
-        "outDir": "_build",
+        "outDir": "build",
         "module": "commonjs",
         "sourceMap": true,
         "incremental": true,
@@ -14,5 +14,5 @@
         },
         "rootDirs": ["src"]
     },
-    "exclude": ["node_modules", "_build", "_package"]
+    "exclude": ["node_modules", "build", "_package"]
 }

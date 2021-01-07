@@ -9,6 +9,6 @@
     "author": "",
     "license": "MIT",
     "dependencies": {
-        "sdkutils": "file:../../_build/Tasks/Common/sdkutils"
+        "sdkutils": "file:../../build/src/lib/sdkutils"
     }
 }

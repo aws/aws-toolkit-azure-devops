@@ -3,7 +3,7 @@
     "version": "1.9.0",
     "description": "AWS Tools for Azure DevOps",
     "private": true,
-    "main": "_build/tasks",
+    "main": "build/tasks",
     "scripts": {
         "build": "npm run generateCode && npm run compileTypescript",
         "generateCode": "ts-node ./build-scripts/generateRunners.ts",

@@ -54,7 +54,7 @@ const ecrFailNotFound = {
 describe('ECR Pull image', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/ECRPullImage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/ECRPullImage/task.json')
     })
 
     test('Creates a TaskOperation', () => {

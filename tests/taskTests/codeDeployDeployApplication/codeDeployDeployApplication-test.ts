@@ -45,7 +45,7 @@ const codeDeployDeploymentId = {
 describe('CodeDeploy Deploy Application', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/CodeDeployDeployApplication/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/CodeDeployDeployApplication/task.json')
     })
 
     test('Creates a TaskOperation', () => {

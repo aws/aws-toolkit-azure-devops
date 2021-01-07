@@ -2,7 +2,7 @@
 **/.vs/
 
 **/node_modules/
-**/_build/
+**/build/
 **/_package/
 
 **/*.log

@@ -14,7 +14,7 @@ const timeMessage = 'Generated resources'
 const taskJson = 'task.json'
 const taskLocJson = 'task.loc.json'
 const vssPath = path.join(folders.repoRoot, 'vss-extension.json')
-const vssBuildPath = path.join(folders.repoRoot, '_build', 'vss-extension.json')
+const vssBuildPath = path.join(folders.repoRoot, 'build', 'vss-extension.json')
 
 function findMatchingFiles(directory) {
     return fs.readdirSync(directory)

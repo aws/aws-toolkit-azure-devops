@@ -58,7 +58,7 @@ const ecrReturnsToken = {
 describe('ECR Push image', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/ECRPushImage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/ECRPushImage/task.json')
     })
 
     test('Creates a TaskOperation', () => {

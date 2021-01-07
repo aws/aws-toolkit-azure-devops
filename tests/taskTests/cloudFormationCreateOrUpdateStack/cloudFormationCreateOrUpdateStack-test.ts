@@ -49,7 +49,7 @@ const defaultTaskParameters: TaskParameters = {
 describe('Cloud Formation create or update', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/SendMessage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SendMessage/task.json')
     })
 
     test('Creates a TaskOperation', () => {

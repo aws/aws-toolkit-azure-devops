@@ -7,6 +7,6 @@
     "license": "MIT",
     "dependencies": {
         "archiver": "^2.0.0",
-        "sdkutils": "file:../../_build/Tasks/Common/sdkutils"
+        "sdkutils": "file:../../build/src/lib/sdkutils"
     }
 }

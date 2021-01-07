@@ -1,5 +1,5 @@
-_build
-_package
+build
+package
 .idea
 .test-reports
 .changes
