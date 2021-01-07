@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SdkUtils } from 'Common/sdkutils'
+import { SdkUtils } from 'lib/sdkutils'
 import { join } from 'path'
-import { TaskOperations } from '../../../Tasks/LambdaNETCoreDeploy/TaskOperations'
-import { TaskParameters } from '../../../Tasks/LambdaNETCoreDeploy/TaskParameters'
+import { TaskOperations } from 'tasks/LambdaNETCoreDeploy/TaskOperations'
+import { TaskParameters } from 'tasks/LambdaNETCoreDeploy/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 const baseTaskParameters: TaskParameters = {

@@ -20,4 +20,4 @@ coverage/
 .test-reports
 
 # auto generated runners
-Tasks/**/*.runner.ts
+**/*.runner.ts

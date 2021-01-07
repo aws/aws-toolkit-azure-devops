@@ -38,12 +38,12 @@ function generate(
     const importStament = `
 import * as tl from 'azure-pipelines-task-lib/task'
 
-import { SdkUtils } from 'Common/sdkutils'
-import { warnIfBuildAgentTooLow } from 'Common/vstsUtils'
+import { SdkUtils } from 'lib/sdkutils'
+import { warnIfBuildAgentTooLow } from 'lib/vstsUtils'
 ${
     clientTypes === undefined
         ? ''
-        : `\nimport { ${clientTypes.map(it => 'createDefault' + it).join(', ')} } from 'Common/defaultClients'`
+        : `\nimport { ${clientTypes.map(it => 'createDefault' + it).join(', ')} } from 'lib/defaultClients'`
 }
 import { TaskOperations } from './TaskOperations'
 import { buildTaskParameters } from './TaskParameters'${
@@ -88,7 +88,7 @@ run().then((result) => {
 `
 
     const output = header + importStament + runStatement + run
-    fs.writeFileSync(`Tasks/${filename}/${filename}.runner.ts`, output)
+    fs.writeFileSync(`src/tasks/${filename}/${filename}.runner.ts`, output)
 }
 
 const generateFile = path.join(repoRoot, 'generate.json')

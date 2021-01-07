@@ -12,7 +12,7 @@ import {
     testStackHasResources,
     waitForStackCreation,
     waitForStackUpdate
-} from 'Common/cloudformationutils'
+} from 'lib/cloudformationutils'
 
 jest.mock('aws-sdk')
 

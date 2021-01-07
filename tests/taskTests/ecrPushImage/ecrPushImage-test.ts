@@ -4,10 +4,10 @@
  */
 
 import { ECR } from 'aws-sdk'
-import { DockerHandler } from 'Common/dockerUtils'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/ECRPushImage/TaskOperations'
-import { imageNameSource, TaskParameters } from '../../../Tasks/ECRPushImage/TaskParameters'
+import { DockerHandler } from 'lib/dockerUtils'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/ECRPushImage/TaskOperations'
+import { imageNameSource, TaskParameters } from 'tasks/ECRPushImage/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')

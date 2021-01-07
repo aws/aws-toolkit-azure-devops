@@ -4,9 +4,9 @@
  */
 
 import { Lambda } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/LambdaInvokeFunction/TaskOperations'
-import { TaskParameters } from '../../../Tasks/LambdaInvokeFunction/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/LambdaInvokeFunction/TaskOperations'
+import { TaskParameters } from 'tasks/LambdaInvokeFunction/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')

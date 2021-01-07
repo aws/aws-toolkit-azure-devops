@@ -4,8 +4,8 @@
  */
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
-import { BeanstalkUtils } from 'Common/beanstalkUtils'
-import { SdkUtils } from 'Common/sdkutils'
+import { BeanstalkUtils } from 'lib/beanstalkUtils'
+import { SdkUtils } from 'lib/sdkutils'
 import path = require('path')
 
 jest.mock('aws-sdk')

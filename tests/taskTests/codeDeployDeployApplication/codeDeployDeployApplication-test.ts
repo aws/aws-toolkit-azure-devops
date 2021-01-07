@@ -4,15 +4,15 @@
  */
 
 import { CodeDeploy, S3 } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
+import { SdkUtils } from 'lib/sdkutils'
 import fs = require('fs')
 import path = require('path')
-import { TaskOperations } from '../../../Tasks/CodeDeployDeployApplication/TaskOperations'
+import { TaskOperations } from 'tasks/CodeDeployDeployApplication/TaskOperations'
 import {
     revisionSourceFromS3,
     revisionSourceFromWorkspace,
     TaskParameters
-} from '../../../Tasks/CodeDeployDeployApplication/TaskParameters'
+} from 'tasks/CodeDeployDeployApplication/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')

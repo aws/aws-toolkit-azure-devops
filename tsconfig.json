@@ -9,9 +9,10 @@
         "strict": true,
         "paths": {
             "aws-sdk*": ["node_modules/aws-sdk/*"],
-            "Common/*": ["Tasks/Common/*"]
+            "lib/*": ["src/lib/*"],
+            "tasks/*": ["src/tasks/*"]
         },
-        "rootDirs": ["Tasks"]
+        "rootDirs": ["src"]
     },
     "exclude": ["node_modules", "_build", "_package"]
 }

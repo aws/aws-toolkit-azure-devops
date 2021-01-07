@@ -4,9 +4,9 @@
  */
 
 import { CloudFormation } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/CloudFormationDeleteStack/TaskOperations'
-import { TaskParameters } from '../../../Tasks/CloudFormationDeleteStack/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/CloudFormationDeleteStack/TaskOperations'
+import { TaskParameters } from 'tasks/CloudFormationDeleteStack/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')

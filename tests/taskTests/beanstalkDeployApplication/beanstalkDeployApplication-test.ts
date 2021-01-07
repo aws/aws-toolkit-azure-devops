@@ -5,9 +5,9 @@
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
 
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/BeanstalkDeployApplication/TaskOperations'
-import { TaskParameters } from '../../../Tasks/BeanstalkDeployApplication/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/BeanstalkDeployApplication/TaskOperations'
+import { TaskParameters } from 'tasks/BeanstalkDeployApplication/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')

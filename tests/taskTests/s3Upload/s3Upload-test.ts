@@ -4,9 +4,9 @@
  */
 
 import { S3 } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/S3Upload/TaskOperations'
-import { TaskParameters } from '../../../Tasks/S3Upload/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/S3Upload/TaskOperations'
+import { TaskParameters } from 'tasks/S3Upload/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')

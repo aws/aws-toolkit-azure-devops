@@ -4,9 +4,9 @@
  */
 
 import { SSM } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SystemsManagerSetParameter/TaskOperations'
-import { secureStringType, TaskParameters } from '../../../Tasks/SystemsManagerSetParameter/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SystemsManagerSetParameter/TaskOperations'
+import { secureStringType, TaskParameters } from 'tasks/SystemsManagerSetParameter/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 const defaultTaskParameters: TaskParameters = {

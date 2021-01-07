@@ -4,9 +4,9 @@
  */
 
 import { SNS, SQS } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SendMessage/TaskOperations'
-import { TaskParameters } from '../../../Tasks/SendMessage/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SendMessage/TaskOperations'
+import { TaskParameters } from 'tasks/SendMessage/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')

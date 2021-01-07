@@ -4,9 +4,9 @@
  */
 
 import { SecretsManager } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SecretsManagerCreateOrUpdateSecret/TaskOperations'
-import { inlineSecretSource, TaskParameters } from '../../../Tasks/SecretsManagerCreateOrUpdateSecret/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SecretsManagerCreateOrUpdateSecret/TaskOperations'
+import { inlineSecretSource, TaskParameters } from 'tasks/SecretsManagerCreateOrUpdateSecret/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
