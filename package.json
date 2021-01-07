@@ -49,6 +49,7 @@
         "@types/tmp": "^0.2.0",
         "@types/uuid": "^3.4.5",
         "archiver": "^3.1.1",
+        "esbuild": "^0.8.30",
         "fs-extra": "^8.0.0",
         "husky": "^4.2.3",
         "jest": "^26.6.3",
@@ -58,7 +59,6 @@
         "pretty-quick": "^2.0.1",
         "readline-sync": "^1.4.10",
         "sync-request": "^6.1.0",
-        "terser-webpack-plugin": "^2.3.5",
         "tfx-cli": "^0.8.3",
         "tmp": "^0.2.1",
         "ts-jest": "^26.4.4",
@@ -69,10 +69,7 @@
         "tslint-no-circular-imports": "^0.7.0",
         "typescript": "^3.8.2",
         "uuid": "^3.3.3",
-        "validator": "^11.1.0",
-        "webpack": "^4.41.6",
-        "webpack-cli": "^3.3.12",
-        "webpack-node-externals": "^1.7.2"
+        "validator": "^11.1.0"
     },
     "dependencies": {
         "aws-sdk": "^2.530.0",
