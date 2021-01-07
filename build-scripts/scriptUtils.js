@@ -6,8 +6,8 @@
 const path = require('path')
 
 const repoRoot = path.dirname(__dirname)
-const tasksDirectory = 'Tasks'
-const sourceTasks = path.join(repoRoot, tasksDirectory)
+const tasksDirectory = 'tasks'
+const sourceTasks = path.join(repoRoot, 'src', tasksDirectory)
 const buildRoot = path.join(repoRoot, '_build')
 const buildTasks = path.join(buildRoot, tasksDirectory)
 const packageRoot = path.join(repoRoot, '_package')

@@ -9,7 +9,7 @@ import * as fs from 'fs'
 import * as mm from 'minimatch'
 import * as path from 'path'
 
-import { testBucketExists } from 'src/lib/s3'
+import { testBucketExists } from 'lib/s3'
 import { aes256AlgorithmValue, customerManagedKeyValue, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

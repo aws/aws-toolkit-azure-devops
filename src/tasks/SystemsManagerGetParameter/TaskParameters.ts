@@ -4,9 +4,9 @@
  */
 
 import * as tl from 'azure-pipelines-task-lib/task'
-import { AWSConnectionParameters, buildConnectionParameters } from 'src/lib/awsConnectionParameters'
-import { readModeHierarchy, readModeSingle } from 'src/lib/ssm'
-import { getInputOptional, getInputOrEmpty, getInputRequired } from 'src/lib/vstsUtils'
+import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
+import { readModeHierarchy, readModeSingle } from 'lib/ssm'
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

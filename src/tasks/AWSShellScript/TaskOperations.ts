@@ -5,8 +5,8 @@
 
 import { debug, exist, loc, mkdirP, tool, which } from 'azure-pipelines-task-lib/task'
 import { IExecOptions } from 'azure-pipelines-task-lib/toolrunner'
-import { getCredentials, getRegion } from 'src/lib/awsConnectionParameters'
-import { SdkUtils } from 'src/lib/sdkutils'
+import { getCredentials, getRegion } from 'lib/awsConnectionParameters'
+import { SdkUtils } from 'lib/sdkutils'
 import { unlinkSync, writeFileSync } from 'fs'
 import { basename, dirname, join, posix } from 'path'
 import { inlineScriptType, TaskParameters } from './TaskParameters'

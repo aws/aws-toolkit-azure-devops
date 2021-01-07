@@ -5,8 +5,8 @@
 
 import ECR = require('aws-sdk/clients/ecr')
 import tl = require('azure-pipelines-task-lib/task')
-import { DockerHandler } from 'src/lib/dockerUtils'
-import { constructTaggedImageName, getEcrAuthorizationData, loginToRegistry } from 'src/lib/ecrUtils'
+import { DockerHandler } from 'lib/dockerUtils'
+import { constructTaggedImageName, getEcrAuthorizationData, loginToRegistry } from 'lib/ecrUtils'
 import { parse } from 'url'
 import { imageNameSource, TaskParameters } from './TaskParameters'
 

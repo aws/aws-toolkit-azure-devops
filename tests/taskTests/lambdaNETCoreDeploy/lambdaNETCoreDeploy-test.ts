@@ -32,7 +32,7 @@ describe('Lambda NET Core Deploy', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         process.env.AWS_REGION = 'region'
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/LambdaNETCoreDeploy/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/LambdaNETCoreDeploy/task.json')
     })
 
     test('Creates a TaskOperation', () => {

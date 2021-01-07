@@ -45,7 +45,7 @@ const cloudFormationHasResourcesSucceeds = {
 describe('Cloud Formation Execute Change Set', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/CloudFormationExecuteChangeSet/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/CloudFormationExecuteChangeSet/task.json')
     })
 
     test('Creates a TaskOperation', () => {

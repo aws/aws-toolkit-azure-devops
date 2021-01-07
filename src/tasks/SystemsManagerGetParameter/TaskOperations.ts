@@ -5,7 +5,7 @@
 
 import SSM = require('aws-sdk/clients/ssm')
 import tl = require('azure-pipelines-task-lib/task')
-import { readModeHierarchy, readModeSingle, transformParameterToVariableName } from 'src/lib/ssm'
+import { readModeHierarchy, readModeSingle, transformParameterToVariableName } from 'lib/ssm'
 import { TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

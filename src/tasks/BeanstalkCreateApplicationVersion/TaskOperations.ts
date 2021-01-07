@@ -6,8 +6,8 @@
 import Beanstalk = require('aws-sdk/clients/elasticbeanstalk')
 import S3 = require('aws-sdk/clients/s3')
 import * as tl from 'azure-pipelines-task-lib/task'
-import { BeanstalkUtils } from 'src/lib/beanstalkUtils'
-import { SdkUtils } from 'src/lib/sdkutils'
+import { BeanstalkUtils } from 'lib/beanstalkUtils'
+import { SdkUtils } from 'lib/sdkutils'
 import path = require('path')
 import { applicationTypeAspNetCoreForWindows, applicationTypeS3Archive, TaskParameters } from './TaskParameters'
 

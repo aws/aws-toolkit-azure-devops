@@ -6,8 +6,8 @@
 import * as tl from 'azure-pipelines-task-lib/task'
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
-import { BeanstalkUtils } from 'src/lib/beanstalkUtils'
-import { SdkUtils } from 'src/lib/sdkutils'
+import { BeanstalkUtils } from 'lib/beanstalkUtils'
+import { SdkUtils } from 'lib/sdkutils'
 import { basename } from 'path'
 import {
     applicationTypeAspNet,

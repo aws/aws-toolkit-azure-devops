@@ -4,8 +4,8 @@
  */
 
 import * as tl from 'azure-pipelines-task-lib/task'
-import { AWSConnectionParameters, buildConnectionParameters } from 'src/lib/awsConnectionParameters'
-import { getInputOptional, getInputOrEmpty, getInputRequired } from 'src/lib/vstsUtils'
+import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 
 export const fromInstanceIds = 'fromInstanceIds'
 export const fromTags = 'fromTags'

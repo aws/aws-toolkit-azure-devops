@@ -4,8 +4,8 @@
  */
 
 import tl = require('azure-pipelines-task-lib/task')
-import { AWSConnectionParameters, buildConnectionParameters } from 'src/lib/awsConnectionParameters'
-import { getInputOptional, getInputOrEmpty, getInputRequired } from 'src/lib/vstsUtils'
+import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
+import { getInputOptional, getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 
 export const stringSecretType = 'string'
 export const binarySecretType = 'binary'

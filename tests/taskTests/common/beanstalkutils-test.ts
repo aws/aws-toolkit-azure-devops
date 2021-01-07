@@ -37,7 +37,7 @@ const verifyEnvironmentsExistsDoesNot = {
 describe('BeanstalkUtils', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/BeanstalkDeployApplication/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/BeanstalkDeployApplication/task.json')
     })
 
     test('DetermineS3Bucket succeds', async () => {

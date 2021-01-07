@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSConnectionParameters, buildConnectionParameters } from 'src/lib/awsConnectionParameters'
-import { getInputRequired } from 'src/lib/vstsUtils'
+import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
+import { getInputRequired } from 'lib/vstsUtils'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

@@ -5,7 +5,7 @@
 
 import * as S3 from 'aws-sdk/clients/s3'
 import * as tl from 'azure-pipelines-task-lib/task'
-import { knownMimeTypes, testBucketExists } from 'src/lib/s3'
+import { knownMimeTypes, testBucketExists } from 'lib/s3'
 import * as fs from 'fs'
 import * as path from 'path'
 import {

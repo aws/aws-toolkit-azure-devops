@@ -89,17 +89,17 @@
         "coverageDirectory": "./coverage/",
         "collectCoverage": true,
         "collectCoverageFrom": [
-            "Tasks/**",
-            "!Tasks/**/*.runner.ts"
+            "src/**",
+            "!src/tasks/**/*.runner.ts"
         ],
         "moduleFileExtensions": [
             "js",
             "ts"
         ],
         "moduleNameMapper": {
-            "^sdkutils/(.*)": "<rootDir>/Tasks/Common/sdkutils/$1.ts",
-            "^Common/(.*)": "<rootDir>/Tasks/Common/$1.ts",
-            "^aws-sdk/(.*)": "<rootDir>/node_modules/aws-sdk/$1.js"
+            "^lib/(.*)$": "<rootDir>/src/lib/$1",
+            "^aws-sdk/(.*)$": "<rootDir>/node_modules/aws-sdk/$1",
+            "^tasks/(.*)$": "<rootDir>/src/tasks/$1"
         },
         "transform": {
             "\\.ts$": "ts-jest"

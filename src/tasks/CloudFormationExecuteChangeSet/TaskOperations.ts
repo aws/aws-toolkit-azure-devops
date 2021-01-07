@@ -10,7 +10,7 @@ import {
     testStackHasResources,
     waitForStackCreation,
     waitForStackUpdate
-} from 'src/lib/cloudformationutils'
+} from 'lib/cloudformationutils'
 import { ignoreStackOutputs, stackOutputsAsJson, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {

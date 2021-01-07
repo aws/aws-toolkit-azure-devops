@@ -14,8 +14,8 @@ import {
     testStackHasResources,
     waitForStackCreation,
     waitForStackUpdate
-} from 'src/lib/cloudformationutils'
-import { SdkUtils } from 'src/lib/sdkutils'
+} from 'lib/cloudformationutils'
+import { SdkUtils } from 'lib/sdkutils'
 import fs = require('fs')
 import yaml = require('js-yaml')
 import path = require('path')

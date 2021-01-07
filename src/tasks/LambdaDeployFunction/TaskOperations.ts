@@ -6,7 +6,7 @@
 import IAM = require('aws-sdk/clients/iam')
 import Lambda = require('aws-sdk/clients/lambda')
 import * as tl from 'azure-pipelines-task-lib/task'
-import { SdkUtils } from 'src/lib/sdkutils'
+import { SdkUtils } from 'lib/sdkutils'
 import { readFileSync } from 'fs'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
 

@@ -4,9 +4,9 @@
  */
 
 import * as tl from 'azure-pipelines-task-lib/task'
-import { AWSConnectionParameters, buildConnectionParameters } from 'src/lib/awsConnectionParameters'
-import { defaultTimeoutInMins } from 'src/lib/cloudformationutils'
-import { getInputOrEmpty, getInputRequired } from 'src/lib/vstsUtils'
+import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
+import { defaultTimeoutInMins } from 'lib/cloudformationutils'
+import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 import { statSync } from 'fs'
 
 export const fileSource = 'file'

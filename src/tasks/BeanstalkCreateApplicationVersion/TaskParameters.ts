@@ -4,8 +4,8 @@
  */
 
 import * as tl from 'azure-pipelines-task-lib/task'
-import { AWSConnectionParameters, buildConnectionParameters } from 'src/lib/awsConnectionParameters'
-import { getInputOrEmpty, getInputRequired } from 'src/lib/vstsUtils'
+import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
+import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 
 export const applicationTypeAspNet = 'aspnet'
 export const applicationTypeAspNetCoreForWindows = 'aspnetCoreWindows'

@@ -35,7 +35,7 @@ const promiseSucceeds = {
 describe('Send Message', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SendMessage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/SendMessage/task.json')
     })
 
     test('Creates a TaskOperation', () => {

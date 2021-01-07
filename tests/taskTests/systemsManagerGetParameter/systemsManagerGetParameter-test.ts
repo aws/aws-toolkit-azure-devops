@@ -69,7 +69,7 @@ const hierarchyParameterResponseMultiple = {
 describe('Systems Manager Get Parameter', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SystemsManagerGetParameter/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../_build/tasks/SystemsManagerGetParameter/task.json')
     })
 
     test('Creates a TaskOperation', () => {

@@ -4,8 +4,8 @@
  */
 
 import { getBoolInput, getPathInput } from 'azure-pipelines-task-lib/task'
-import { AWSConnectionParameters, buildConnectionParameters } from 'src/lib/awsConnectionParameters'
-import { getInputOrEmpty, getInputRequired } from 'src/lib/vstsUtils'
+import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
+import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 
 export const inlineScriptType = 'inline'
 export const fileScriptType = 'filePath'

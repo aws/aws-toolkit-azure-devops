@@ -16,7 +16,7 @@ import {
     SQS,
     SSM
 } from 'aws-sdk/clients/all'
-import { SdkUtils } from 'src/lib/sdkutils'
+import { SdkUtils } from 'lib/sdkutils'
 import { AWSConnectionParameters } from './awsConnectionParameters'
 
 interface GenericClientConfiguration {
