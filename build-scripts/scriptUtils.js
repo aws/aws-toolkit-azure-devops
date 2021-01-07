@@ -6,12 +6,12 @@
 const path = require('path')
 
 const repoRoot = path.dirname(__dirname)
-const tasksDirectory = 'tasks'
-const sourceTasks = path.join(repoRoot, 'src', tasksDirectory)
+const sourceTasks = path.join(repoRoot, 'src', 'tasks')
 const buildRoot = path.join(repoRoot, 'build')
-const buildTasks = path.join(buildRoot, 'src', tasksDirectory)
+const buildTasks = path.join(buildRoot, 'src', 'tasks')
 const packageRoot = path.join(repoRoot, 'package')
-const packageTasks = path.join(packageRoot, tasksDirectory)
+// This is uppercase for backwards compatibility
+const packageTasks = path.join(packageRoot, 'Tasks')
 const releaseVersion = require(path.join(repoRoot, 'package.json')).version
 
 module.exports = {
