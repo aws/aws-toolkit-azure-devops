@@ -152,7 +152,7 @@ export class TaskOperations {
         // upper limit to the random amount we add to the initial event poll start delay
         // and any extensions during event polling when throttling exhausts the sdk's
         // auto-retry ability
-        const randomJitterUpperLimit: number = 5
+        const randomJitterUpperLimit = 5
 
         const requestEnvironment: ElasticBeanstalk.DescribeEnvironmentsMessage = {
             ApplicationName: applicationName,

@@ -7,8 +7,8 @@ import tl = require('azure-pipelines-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const imageNameSource: string = 'imagename'
-export const imageIdSource: string = 'imageid'
+export const imageNameSource = 'imagename'
+export const imageIdSource = 'imageid'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

@@ -11,7 +11,7 @@ import { parse } from 'url'
 import { imageNameSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    private dockerPath: string = ''
+    private dockerPath = ''
 
     public constructor(
         public readonly ecrClient: ECR,

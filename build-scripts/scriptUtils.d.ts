@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-declare module scriptUtils {
+declare namespace scriptUtils {
     const repoRoot: string
     const sourceTasks: string
     const buildRoot: string

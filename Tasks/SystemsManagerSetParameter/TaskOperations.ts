@@ -39,7 +39,7 @@ export class TaskOperations {
     }
 
     private async testParameterExistsAndIsSecureStringType(parameterName: string): Promise<boolean> {
-        let result: boolean = false
+        let result = false
 
         try {
             const response = await this.ssmClient

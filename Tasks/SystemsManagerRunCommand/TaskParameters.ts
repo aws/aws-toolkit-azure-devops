@@ -7,9 +7,9 @@ import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const fromInstanceIds: string = 'fromInstanceIds'
-export const fromTags: string = 'fromTags'
-export const fromBuildVariable: string = 'fromBuildVariable'
+export const fromInstanceIds = 'fromInstanceIds'
+export const fromTags = 'fromTags'
+export const fromBuildVariable = 'fromBuildVariable'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

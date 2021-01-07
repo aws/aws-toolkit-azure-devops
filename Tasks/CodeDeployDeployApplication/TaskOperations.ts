@@ -101,7 +101,7 @@ export class TaskOperations {
 
     private async uploadBundle(): Promise<string> {
         let archiveName: string
-        let autoCreatedArchive: boolean = false
+        let autoCreatedArchive = false
         if (tl.stats(this.taskParameters.revisionBundle).isDirectory()) {
             autoCreatedArchive = true
             archiveName = await this.createDeploymentArchive(
@@ -246,7 +246,7 @@ export class TaskOperations {
             console.log(tl.loc('WaitingForDeployment'))
 
             const params: any = this.setWaiterParams(deploymentId, timeout)
-            this.codeDeployClient.waitFor('deploymentSuccessful', params as any, function(
+            this.codeDeployClient.waitFor('deploymentSuccessful', params, function(
                 err: AWSError,
                 data: CodeDeploy.GetDeploymentOutput
             ) {

@@ -6,8 +6,8 @@
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const imageTagSource: string = 'imagetag'
-export const imageIdSource: string = 'imagedigest'
+export const imageTagSource = 'imagetag'
+export const imageIdSource = 'imagedigest'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

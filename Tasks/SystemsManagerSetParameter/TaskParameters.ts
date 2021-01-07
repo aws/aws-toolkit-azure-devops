@@ -6,9 +6,9 @@
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const simpleStringType: string = 'String'
-export const stringListType: string = 'StringList'
-export const secureStringType: string = 'SecureString'
+export const simpleStringType = 'String'
+export const stringListType = 'StringList'
+export const secureStringType = 'SecureString'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

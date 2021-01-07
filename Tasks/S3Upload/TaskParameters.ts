@@ -8,14 +8,14 @@ import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsCo
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
 // options for Server-side encryption Key Management; 'none' disables SSE
-export const noKeyManagementValue: string = 'none'
-export const awsKeyManagementValue: string = 'awsManaged'
-export const customerKeyManagementValue: string = 'customerManaged'
+export const noKeyManagementValue = 'none'
+export const awsKeyManagementValue = 'awsManaged'
+export const customerKeyManagementValue = 'customerManaged'
 
 // options for encryption algorithm when key management is set to 'aws';
 // customer managed keys always use AES256
-export const awskmsAlgorithmValue: string = 'KMS' // translated to aws:kms when used in api call
-export const aes256AlgorithmValue: string = 'AES256'
+export const awskmsAlgorithmValue = 'KMS' // translated to aws:kms when used in api call
+export const aes256AlgorithmValue = 'AES256'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

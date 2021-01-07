@@ -79,7 +79,7 @@ export class TaskOperations {
         }
 
         const response = await this.ssmClient.sendCommand(request).promise()
-        let commandId: string = ''
+        let commandId = ''
         if (response.Command) {
             commandId = `${response.Command.CommandId}`
         } else {

@@ -7,8 +7,8 @@ import { getBoolInput, getPathInput } from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const inlineScriptType: string = 'inline'
-export const fileScriptType: string = 'filePath'
+export const inlineScriptType = 'inline'
+export const fileScriptType = 'filePath'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

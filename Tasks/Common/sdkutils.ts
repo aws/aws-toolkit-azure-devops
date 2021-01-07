@@ -48,8 +48,8 @@ export abstract class SdkUtils {
         const version = taskManifest.version
         const agentVersion = tl.getVariable('agent.version') ?? 'unknown'
         const userAgentString = `${this.userAgentPrefix}/${version.Major}.${version.Minor}.${version.Patch} ${this.userAgentSuffix}-${agentVersion}-${taskManifest.name}`
-        // tslint:disable-next-line:whitespace align
-        ;((AWS as any).util as any).userAgent = () => {
+            // tslint:disable-next-line:whitespace align
+        ;(AWS as any).util.userAgent = () => {
             return userAgentString
         }
     }

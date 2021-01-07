@@ -9,20 +9,20 @@ import { defaultTimeoutInMins } from 'Common/cloudformationutils'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 import { statSync } from 'fs'
 
-export const fileSource: string = 'file'
-export const urlSource: string = 'url'
-export const s3Source: string = 's3'
-export const usePreviousTemplate: string = 'usePrevious'
+export const fileSource = 'file'
+export const urlSource = 'url'
+export const s3Source = 's3'
+export const usePreviousTemplate = 'usePrevious'
 
-export const maxRollbackTriggers: number = 5
-export const maxTriggerMonitoringTime: number = 180
+export const maxRollbackTriggers = 5
+export const maxTriggerMonitoringTime = 180
 
-export const loadTemplateParametersFromFile: string = 'file'
-export const loadTemplateParametersInline: string = 'inline'
+export const loadTemplateParametersFromFile = 'file'
+export const loadTemplateParametersInline = 'inline'
 
-export const ignoreStackOutputs: string = 'ignore'
-export const stackOutputsAsVariables: string = 'asVariables'
-export const stackOutputsAsJson: string = 'asJSON'
+export const ignoreStackOutputs = 'ignore'
+export const stackOutputsAsVariables = 'asVariables'
+export const stackOutputsAsJson = 'asJSON'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

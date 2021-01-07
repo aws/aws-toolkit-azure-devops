@@ -7,9 +7,9 @@ import tl = require('azure-pipelines-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const revisionSourceFromWorkspace: string = 'workspace'
-export const revisionSourceFromS3: string = 's3'
-export const defaultTimeoutInMins: number = 30
+export const revisionSourceFromWorkspace = 'workspace'
+export const revisionSourceFromS3 = 's3'
+export const defaultTimeoutInMins = 30
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
