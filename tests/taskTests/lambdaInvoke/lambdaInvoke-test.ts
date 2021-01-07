@@ -64,7 +64,7 @@ describe('Lambda Invoke', () => {
         taskParameters.outputVariable = 'something'
         await assertPayloadCorrect(
             taskParameters,
-            jest.fn(params => {
+            jest.fn(() => {
                 // expectation to make sure the callback is called
                 expect(1).toBe(1)
 
@@ -137,8 +137,7 @@ describe('Lambda Invoke', () => {
     async function testPayloadsAndOutputs(input: string, expectedOutput: string) {
         expect.assertions(3)
         const taskParameters = { ...baseTaskParameters }
-        const payload = input
-        taskParameters.payload = payload
+        taskParameters.payload = input
         await assertPayloadCorrect(
             taskParameters,
             jest.fn(params => {

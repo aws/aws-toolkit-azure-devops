@@ -15,8 +15,8 @@ export interface TaskParameters {
     outputVariable: string
 }
 
-export function buildTaskParameters() {
-    const paramters: TaskParameters = {
+export function buildTaskParameters(): TaskParameters {
+    return {
         awsConnectionParameters: buildConnectionParameters(),
         functionName: getInputRequired('functionName'),
         payload: getInputOrEmpty('payload'),
@@ -24,6 +24,4 @@ export function buildTaskParameters() {
         logType: getInputOrEmpty('logType'),
         outputVariable: getInputOrEmpty('outputVariable')
     }
-
-    return paramters
 }

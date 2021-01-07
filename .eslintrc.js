@@ -18,7 +18,16 @@ module.exports = {
         'prettier/@typescript-eslint'
     ],
     rules: {
+        // These need to be fixed
+        'no-case-declarations': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/no-floating-promises': 'off',
+        // breaks while(true)
+        'no-constant-condition': 'off',
         // The ones turned off below are used a lot in tests
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/require-await': 'off',
         'no-empty': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/restrict-template-expressions': 'off',

@@ -69,6 +69,6 @@ export class TaskOperations {
 
     private async pullImageFromECR(imageRef: string): Promise<void> {
         console.log(tl.loc('PullingImage', imageRef))
-        await this.dockerHandler.runDockerCommand(this.dockerPath, 'pull', [imageRef])
+        await this.dockerHandler.runDockerCommand('pull', [imageRef])
     }
 }

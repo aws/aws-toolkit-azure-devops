@@ -53,6 +53,7 @@ export class TaskOperations {
                     const t: SSM.Target = {}
                     t.Key = 'tag:' + kv[0].trim()
                     t.Values = kv[1].split(',')
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     request.Targets!.push(t)
                 })
                 break

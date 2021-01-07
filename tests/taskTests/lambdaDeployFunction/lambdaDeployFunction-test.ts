@@ -246,7 +246,9 @@ describe('Lambda Deploy Function', () => {
         const iam = new IAM() as any
         iam.getRole = jest.fn(() => getIamRoleSucceeds)
         const taskOperations = new TaskOperations(iam, lambda, taskParameters)
-        await taskOperations.execute().catch(e => undefined)
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
         expect(iam.getRole).toBeCalledTimes(1)
     })
 })

@@ -29,7 +29,7 @@ const defaultTaskParameters: TaskParameters = {
 
 const defaultDocker: DockerHandler = {
     locateDockerExecutable: async () => '',
-    runDockerCommand: async (s1, s2, s3) => undefined
+    runDockerCommand: async () => undefined
 }
 
 const ecrFail = {

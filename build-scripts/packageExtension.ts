@@ -88,9 +88,13 @@ function packagePlugin(options: CommandLineOptions) {
         const taskPackageFolder = path.join(folders.packageTasks, taskName)
         fs.mkdirpSync(taskPackageFolder)
 
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const taskDef = require(path.join(taskBuildFolder, 'task.json'))
-        // tslint:disable-next-line: no-unsafe-any
-        if (!taskDef.execution.hasOwnProperty('Node')) {
+        if (
+            !Object.hasOwnProperty.call(taskDef.execution, 'Node') ||
+            !Object.hasOwnProperty.call(taskDef.execution, 'Node10') ||
+            !Object.hasOwnProperty.call(taskDef.execution, 'Node14')
+        ) {
             console.log('Copying non-node task ' + taskName)
             fs.copySync(taskBuildFolder, taskPackageFolder)
 
