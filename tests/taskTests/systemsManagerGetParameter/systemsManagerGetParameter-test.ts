@@ -78,7 +78,7 @@ describe('Systems Manager Get Parameter', () => {
         expect(new TaskOperations(new SSM(), defaultTaskParameters)).not.toBeNull()
     })
 
-    test('Read mode unknown throws', async () => {
+    test('Read mode unknown throws', () => {
         expect.assertions(1)
         const taskOperations = new TaskOperations(new SSM(), defaultTaskParameters)
         taskOperations.execute().catch(e => expect(e).toContain('is not a valid parameter'))

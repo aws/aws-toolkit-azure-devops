@@ -64,7 +64,8 @@ describe('S3 Download', () => {
         createReadStream: function() {
             const dataStream = new ReadableStream()
             dataStream.push('data')
-            // tslint:disable-next-line:no-null-keyword
+            // MUST be null or else it will not stop reading
+            // eslint-disable-next-line no-null/no-null
             dataStream.push(null)
 
             return dataStream
@@ -83,11 +84,10 @@ describe('S3 Download', () => {
 
     test('Handles not being able to connect to a bucket', async () => {
         const s3 = new S3({ region: 'us-east-1' })
-        s3.headBucket = jest.fn()((params: any, cb: any) => {
+        s3.headBucket = jest.fn()(() => {
             throw new Error("doesn't exist dummy")
         })
-        const taskParameters = baseTaskParameters
-        const taskOperation = new TaskOperations(s3, taskParameters)
+        const taskOperation = new TaskOperations(s3, baseTaskParameters)
         expect.assertions(1)
         await taskOperation.execute().catch(e => {
             expect(e.message).toContain('not exist')
@@ -96,8 +96,8 @@ describe('S3 Download', () => {
 
     test('Deals with null list objects succeeds', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
-        s3.headBucket = jest.fn((params, cb) => headBucketResponse)
-        s3.listObjectsV2 = jest.fn((params, cb) => listObjectsResponse)
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.listObjectsV2 = jest.fn(() => listObjectsResponse)
         const taskParameters = baseTaskParameters
         taskParameters.targetFolder = directory.name
         taskParameters.bucketName = 'what'
@@ -109,9 +109,9 @@ describe('S3 Download', () => {
 
     test('Happy path matches all', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
-        s3.headBucket = jest.fn((params, cb) => headBucketResponse)
-        s3.listObjectsV2 = jest.fn((params, cb) => listObjectsResponseWithContents)
-        s3.getObject = jest.fn((params, cb) => getObjectWithContents)
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.listObjectsV2 = jest.fn(() => listObjectsResponseWithContents)
+        s3.getObject = jest.fn(() => getObjectWithContents)
         const taskParameters = baseTaskParameters
         taskParameters.targetFolder = directory.name
         taskParameters.bucketName = 'bucket'
@@ -122,9 +122,9 @@ describe('S3 Download', () => {
 
     test('Happy path matches over multiple pages', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
-        s3.headBucket = jest.fn((params, cb) => headBucketResponse)
-        s3.listObjectsV2 = jest.fn((params, cb) => listObjectsResponseWithContentsPaginated)
-        s3.getObject = jest.fn((params, cb) => getObjectWithContents)
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.listObjectsV2 = jest.fn(() => listObjectsResponseWithContentsPaginated)
+        s3.getObject = jest.fn(() => getObjectWithContents)
         const taskParameters = baseTaskParameters
         taskParameters.targetFolder = directory.name
         taskParameters.bucketName = 'bucket'

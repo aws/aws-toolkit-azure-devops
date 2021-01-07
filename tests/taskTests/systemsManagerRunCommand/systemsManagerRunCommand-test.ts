@@ -70,7 +70,7 @@ describe('Systems Manager Run Command', () => {
         taskOperations.execute().catch(e => expect(`${e}`).toContain('SyntaxError'))
     })
 
-    test('Instance from instance ids', () => {
+    test('Instance from instance ids', async () => {
         expect.assertions(2)
         const ssm = new SSM() as any
         ssm.sendCommand = jest.fn(args => {
@@ -82,7 +82,9 @@ describe('Systems Manager Run Command', () => {
         taskParameters.instanceSelector = fromInstanceIds
         taskParameters.instanceIds = ['watermelon']
         const taskOperations = new TaskOperations(ssm, taskParameters)
-        taskOperations.execute().catch()
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
         expect(ssm.sendCommand).toBeCalledTimes(1)
     })
 
@@ -97,7 +99,7 @@ describe('Systems Manager Run Command', () => {
         taskOperations.execute().catch(e => expect(`${e}`).toContain('Failed to retrieve'))
     })
 
-    test('Instance from tags', () => {
+    test('Instance from tags', async () => {
         expect.assertions(2)
         const ssm = new SSM() as any
         ssm.sendCommand = jest.fn(args => {
@@ -109,11 +111,13 @@ describe('Systems Manager Run Command', () => {
         taskParameters.instanceSelector = fromTags
         taskParameters.instanceTags = ['watermelon=fruit,green']
         const taskOperations = new TaskOperations(ssm, taskParameters)
-        taskOperations.execute().catch()
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
         expect(ssm.sendCommand).toBeCalledTimes(1)
     })
 
-    test('Adds notification arn if it exists', () => {
+    test('Adds notification arn if it exists', async () => {
         expect.assertions(2)
         const ssm = new SSM() as any
         ssm.sendCommand = jest.fn(args => {
@@ -124,14 +128,16 @@ describe('Systems Manager Run Command', () => {
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.notificationArn = 'arn'
         const taskOperations = new TaskOperations(ssm, taskParameters)
-        taskOperations.execute().catch()
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
         expect(ssm.sendCommand).toBeCalledTimes(1)
     })
 
     test('Happy path', async () => {
         expect.assertions(1)
         const ssm = new SSM() as any
-        ssm.sendCommand = jest.fn(args => {
+        ssm.sendCommand = jest.fn(() => {
             return systemsManagerSucceeds
         })
         const taskOperations = new TaskOperations(ssm, defaultTaskParameters)

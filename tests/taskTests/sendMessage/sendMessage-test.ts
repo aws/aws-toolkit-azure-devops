@@ -44,23 +44,27 @@ describe('Send Message', () => {
         expect(new TaskOperations(new SNS(), new SQS(), defaultTaskParameters)).not.toBeNull()
     })
 
-    test('Send message to sqs when message target is not topic', () => {
+    test('Send message to sqs when message target is not topic', async () => {
         expect.assertions(1)
         const sqs = new SQS() as any
         sqs.getQueueAttributes = jest.fn(() => undefined)
         const taskOperations = new TaskOperations(new SNS(), sqs, defaultTaskParameters)
-        taskOperations.execute().catch()
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
         expect(sqs.getQueueAttributes).toBeCalled()
     })
 
-    test('Send message to sns when message target is topic', () => {
+    test('Send message to sns when message target is topic', async () => {
         expect.assertions(1)
         const taskParams = { ...defaultTaskParameters }
         taskParams.messageTarget = 'topic'
         const sns = new SNS() as any
         sns.getTopicAttributes = jest.fn(() => undefined)
         const taskOperations = new TaskOperations(sns, new SQS(), taskParams)
-        taskOperations.execute().catch()
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
         expect(sns.getTopicAttributes).toBeCalled()
     })
 
