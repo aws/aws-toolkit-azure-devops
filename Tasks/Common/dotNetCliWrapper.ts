@@ -35,14 +35,11 @@ export class DotNetCliWrapper {
         }
 
         if (additionalCommandLineOptions) {
-            // tslint:disable-next-line: no-unsafe-any
             for (const key of Object.keys(additionalCommandLineOptions)) {
-                // tslint:disable-next-line: no-unsafe-any
                 execOptions.key = additionalCommandLineOptions[key]
             }
         }
 
-        // tslint:disable-next-line: no-unsafe-any
         return await dotnet.exec(execOptions)
     }
 
@@ -257,14 +254,11 @@ export class DotNetLambdaWrapper {
         }
 
         if (additionalCommandLineOptions) {
-            // tslint:disable-next-line: no-unsafe-any
             for (const key of Object.keys(additionalCommandLineOptions)) {
-                // tslint:disable-next-line: no-unsafe-any
                 execOptions.key = additionalCommandLineOptions[key]
             }
         }
 
-        // tslint:disable-next-line: no-unsafe-any
         return await dotnet.exec(execOptions)
     }
 

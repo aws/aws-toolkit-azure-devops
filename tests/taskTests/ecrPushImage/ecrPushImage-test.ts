@@ -10,8 +10,6 @@ import { TaskOperations } from '../../../Tasks/ECRPushImage/TaskOperations'
 import { imageNameSource, TaskParameters } from '../../../Tasks/ECRPushImage/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {

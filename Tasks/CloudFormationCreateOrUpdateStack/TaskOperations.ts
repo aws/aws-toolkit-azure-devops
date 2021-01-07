@@ -227,7 +227,6 @@ export class TaskOperations {
                 .promise()
             await waitForStackUpdate(this.cloudFormationClient, request.StackName)
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
                 console.error(tl.loc('StackUpdateRequestFailed', (err as Error).message), err)
                 throw err

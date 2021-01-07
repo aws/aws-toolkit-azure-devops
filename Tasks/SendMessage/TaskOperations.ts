@@ -54,7 +54,6 @@ export class TaskOperations {
                 })
                 .promise()
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             throw new Error(tl.loc('SendError', err.message))
         }
     }
@@ -75,7 +74,6 @@ export class TaskOperations {
             }
             await this.sqsClient.sendMessage(request).promise()
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             throw new Error(tl.loc('SendError', err.message))
         }
     }

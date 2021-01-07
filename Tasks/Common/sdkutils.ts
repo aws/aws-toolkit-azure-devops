@@ -68,8 +68,6 @@ export abstract class SdkUtils {
 
     // This next block has a huge amount of unsafe any. This is needed because it does a bunch of
     // hacking around with the prototype. I'm scared to touch it so I will not.
-    // tslint:disable: no-unsafe-any
-
     // Returns a new instance of a service client, having attached request handlers
     // to enable tracing of request/response data if the task is so configured. The
     // default behavior for all clients is to simply emit the service request ID
@@ -165,7 +163,6 @@ export abstract class SdkUtils {
         })
     }
 
-    // tslint:enable: no-unsafe-any
     public static async roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {
         if (roleName.startsWith('arn:')) {
             return roleName

@@ -9,8 +9,6 @@ import { TaskOperations } from '../../../Tasks/S3Upload/TaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Upload/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const baseTaskParameters: TaskParameters = {

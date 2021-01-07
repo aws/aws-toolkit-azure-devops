@@ -58,7 +58,6 @@ export class TaskOperations {
                 console.log(tl.loc('ParameterExistsAndIsNotSecureString', parameterName))
             }
         } catch (error) {
-            // tslint:disable-next-line: no-unsafe-any
             if (error.code === 'ParameterNotFound') {
                 console.log(tl.loc('ParameterDoesNotExist', parameterName))
             } else {

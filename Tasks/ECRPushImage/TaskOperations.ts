@@ -96,7 +96,6 @@ export class TaskOperations {
                 })
                 .promise()
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             if (err.code === 'RepositoryNotFoundException') {
                 console.log(tl.loc('CreatingRepository'))
                 await this.ecrClient

@@ -36,7 +36,6 @@ export class TaskOperations {
             request.Comment = this.taskParameters.comment
         }
         if (this.taskParameters.documentParameters) {
-            // tslint:disable-next-line: no-unsafe-any
             request.Parameters = JSON.parse(this.taskParameters.documentParameters)
         }
 

@@ -36,20 +36,16 @@ const changelog: any = {
 
 for (const changeFile of changeFiles) {
     const file = JSON.parse(fs.readFileSync(path.join(nextReleaseDirectory, changeFile)).toString())
-    // tslint:disable-next-line: no-unsafe-any
     changelog.entries.push(file)
 }
 
-// tslint:disable-next-line: no-unsafe-any
 changelog.entries.sort((x: { type: string }, y: { type: string }) => x.type.localeCompare(y.type))
 
 // Write changelog file
 fs.writeFileSync(changesFile, JSON.stringify(changelog, undefined, '\t'))
 const fileData = fs.readFileSync('CHANGELOG.md')
 let append = `## ${releaseVersion} ${timestamp}\n\n`
-// tslint:disable-next-line: no-unsafe-any
 for (const file of changelog.entries) {
-    // tslint:disable-next-line: no-unsafe-any
     append += `- **${file.type}** ${file.description}\n`
 }
 

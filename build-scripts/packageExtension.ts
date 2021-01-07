@@ -32,7 +32,6 @@ function installNodePackages(directory: string) {
         const output = ncp.execSync(npmCmd)
         console.log(output.toString('utf8'))
     } catch (err) {
-        // tslint:disable-next-line: no-unsafe-any
         console.error(err.output ? err.output.toString() : err?.message)
         process.exit(1)
     }
@@ -121,7 +120,6 @@ function packagePlugin(options: CommandLineOptions) {
             })
             result.warnings.forEach(warning => console.log(warning))
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             console.error(err.output ? err.output.toString() : err.message)
             process.exit(1)
         }

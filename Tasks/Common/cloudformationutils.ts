@@ -85,7 +85,6 @@ export async function waitForStackCreation(
         await cloudFormationClient.waitFor('stackCreateComplete', parms).promise()
         console.log(tl.loc('StackCreated', stackName))
     } catch (err) {
-        // tslint:disable-next-line: no-unsafe-any
         throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
     }
 }
@@ -105,7 +104,6 @@ export function setWaiterParams(stackName: string, timeout: number, changeSetNam
     }
 
     if (changeSetName) {
-        // tslint:disable-next-line: no-unsafe-any
         p.ChangeSetName = changeSetName
     }
 
