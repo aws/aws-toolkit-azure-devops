@@ -3,7 +3,7 @@
 
 **/node_modules/
 **/build/
-**/_package/
+**/package/
 
 **/*.log
 **/*.map

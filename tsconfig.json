@@ -14,5 +14,5 @@
         },
         "rootDirs": ["src"]
     },
-    "exclude": ["node_modules", "build", "_package"]
+    "exclude": ["node_modules", "build", "package"]
 }

@@ -10,7 +10,7 @@ const tasksDirectory = 'tasks'
 const sourceTasks = path.join(repoRoot, 'src', tasksDirectory)
 const buildRoot = path.join(repoRoot, 'build')
 const buildTasks = path.join(buildRoot, 'src', tasksDirectory)
-const packageRoot = path.join(repoRoot, '_package')
+const packageRoot = path.join(repoRoot, 'package')
 const packageTasks = path.join(packageRoot, tasksDirectory)
 const releaseVersion = require(path.join(repoRoot, 'package.json')).version
 
