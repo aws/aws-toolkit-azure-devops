@@ -1,6 +1,6 @@
 {
     "name": "aws-vsts-tools",
-    "version": "1.9.3",
+    "version": "1.9.0",
     "description": "AWS Tools for Azure DevOps",
     "private": true,
     "main": "build/tasks",

@@ -105,6 +105,12 @@ function packagePlugin(options: CommandLineOptions) {
                 overwrite: true
             })
         }
+        // we also need lib.json from azure pipelines task lib or else localization will not work properly
+        fs.copySync(
+            path.join(folders.repoRoot, 'node_modules/azure-pipelines-task-lib/lib.json'),
+            path.join(taskPackageFolder, 'lib.json'),
+            { overwrite: true }
+        )
 
         const inputFilename = path.join(taskBuildFolder, taskName + '.runner.js')
 

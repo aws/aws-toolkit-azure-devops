@@ -7,7 +7,7 @@ import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 import { getPathInputRequiredCheck } from 'lib/vstsUtils'
-import { getPathInputRequired } from '../../lib/vstsUtils'
+import { getPathInputRequired } from 'lib/vstsUtils'
 
 // option values for the 'deploymentType' property
 export const deployFunction = 'deployFunction'
