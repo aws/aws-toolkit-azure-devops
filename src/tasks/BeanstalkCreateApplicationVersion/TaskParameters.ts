@@ -5,7 +5,7 @@
 
 import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
-import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputOrEmpty, getInputRequired, getPathInputRequired } from 'lib/vstsUtils'
 
 export const applicationTypeAspNet = 'aspnet'
 export const applicationTypeAspNetCoreForWindows = 'aspnetCoreWindows'
@@ -40,11 +40,11 @@ export function buildTaskParameters(): TaskParameters {
 
     switch (parameters.applicationType) {
         case applicationTypeAspNet:
-            parameters.webDeploymentArchive = tl.getPathInput('webDeploymentArchive', true)
+            parameters.webDeploymentArchive = getPathInputRequired('webDeploymentArchive')
             break
 
         case applicationTypeAspNetCoreForWindows:
-            parameters.dotnetPublishPath = tl.getPathInput('dotnetPublishPath', true)
+            parameters.dotnetPublishPath = getPathInputRequired('dotnetPublishPath')
             break
 
         case applicationTypeS3Archive:

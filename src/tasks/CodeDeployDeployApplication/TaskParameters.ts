@@ -5,7 +5,7 @@
 
 import tl = require('azure-pipelines-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
-import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputOrEmpty, getInputRequired, getPathInputRequiredCheck } from 'lib/vstsUtils'
 
 export const revisionSourceFromWorkspace = 'workspace'
 export const revisionSourceFromS3 = 's3'
@@ -48,7 +48,7 @@ export function buildTaskParameters(): TaskParameters {
 
     switch (parameters.deploymentRevisionSource) {
         case revisionSourceFromWorkspace:
-            parameters.revisionBundle = tl.getPathInput('revisionBundle', true, true)
+            parameters.revisionBundle = getPathInputRequiredCheck('revisionBundle')
             parameters.bundlePrefix = getInputOrEmpty('bundlePrefix')
             break
 

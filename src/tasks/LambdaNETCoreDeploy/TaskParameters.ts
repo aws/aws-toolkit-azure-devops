@@ -6,6 +6,8 @@
 import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getPathInputRequiredCheck } from 'lib/vstsUtils'
+import { getPathInputRequired } from '../../lib/vstsUtils'
 
 // option values for the 'deploymentType' property
 export const deployFunction = 'deployFunction'
@@ -36,7 +38,7 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         command: getInputRequired('command'),
         packageOnly: tl.getBoolInput('packageOnly', true),
-        lambdaProjectPath: tl.getPathInput('lambdaProjectPath', true, true),
+        lambdaProjectPath: getPathInputRequiredCheck('lambdaProjectPath'),
         packageOutputFile: '',
         functionHandler: getInputOrEmpty('functionHandler'),
         functionName: getInputOrEmpty('functionName'),
@@ -50,7 +52,7 @@ export function buildTaskParameters(): TaskParameters {
     }
 
     if (parameters.packageOnly) {
-        parameters.packageOutputFile = tl.getPathInput('packageOutputFile', true, false)
+        parameters.packageOutputFile = getPathInputRequired('packageOutputFile')
     }
     if (tl.getInput('functionMemory', false)) {
         parameters.functionMemory = parseInt(getInputRequired('functionMemory'), 10)

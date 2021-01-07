@@ -5,7 +5,7 @@
 
 import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
-import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputOrEmpty, getInputRequired, getPathInputRequiredCheck } from 'lib/vstsUtils'
 
 // possible values for the deploymentMode parameter
 export const deployCodeOnly = 'codeonly'
@@ -81,7 +81,7 @@ export function buildTaskParameters(): TaskParameters {
     }
 
     if (parameters.codeLocation === updateFromLocalFile) {
-        parameters.localZipFile = tl.getPathInput('localZipFile', true, true)
+        parameters.localZipFile = getPathInputRequiredCheck('localZipFile')
     } else {
         parameters.s3Bucket = getInputRequired('s3Bucket')
         parameters.s3ObjectKey = getInputRequired('s3ObjectKey')

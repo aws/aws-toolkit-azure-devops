@@ -5,7 +5,7 @@
 
 import tl = require('azure-pipelines-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
-import { getInputOptional, getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputOptional, getInputOrEmpty, getInputRequired, getPathInputRequiredCheck } from 'lib/vstsUtils'
 
 export const stringSecretType = 'string'
 export const binarySecretType = 'binary'
@@ -50,7 +50,7 @@ export function buildTaskParameters(): TaskParameters {
     if (parameters.secretValueSource === inlineSecretSource) {
         parameters.secretValue = getInputRequired('secretValue')
     } else {
-        parameters.secretValueFile = tl.getPathInput('secretValueFile', true, true)
+        parameters.secretValueFile = getPathInputRequiredCheck('secretValueFile')
     }
 
     if (parameters.autoCreateSecret) {

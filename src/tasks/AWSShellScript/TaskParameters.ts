@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { getBoolInput, getPathInput } from 'azure-pipelines-task-lib/task'
+import { getBoolInput } from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
-import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputOrEmpty, getInputRequired, getPathInputRequired, getPathInputRequiredCheck } from 'lib/vstsUtils'
 
 export const inlineScriptType = 'inline'
 export const fileScriptType = 'filePath'
@@ -34,13 +34,13 @@ export function buildTaskParameters(): TaskParameters {
     }
 
     if (parameters.scriptType === fileScriptType) {
-        parameters.filePath = getPathInput('filePath', true, true)
+        parameters.filePath = getPathInputRequiredCheck('filePath')
     } else {
         parameters.inlineScript = getInputRequired('inlineScript')
     }
 
     if (parameters.disableAutoCwd) {
-        parameters.workingDirectory = getPathInput('workingDirectory', true, false)
+        parameters.workingDirectory = getPathInputRequired('workingDirectory')
     }
 
     return parameters

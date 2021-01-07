@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { getInput, getVariable, warning } from 'azure-pipelines-task-lib/task'
+import { getInput, getPathInput, getVariable, warning } from 'azure-pipelines-task-lib/task'
 import * as semver from 'semver'
 
 export interface VSTSManifestVersionInfo {
@@ -54,4 +54,22 @@ export function getInputOptional(name: string): string | undefined {
 
 export function getInputOrEmpty(name: string): string {
     return getInput(name, false) || ''
+}
+
+export function getPathInputRequired(name: string): string {
+    const input = getPathInput(name, true, false)
+    if (!input) {
+        throw new Error('unreachable code, required input returned undefined and did not throw!')
+    }
+
+    return input
+}
+
+export function getPathInputRequiredCheck(name: string): string {
+    const input = getPathInput(name, true, true)
+    if (!input) {
+        throw new Error('unreachable code, required input returned undefined and did not throw!')
+    }
+
+    return input
 }

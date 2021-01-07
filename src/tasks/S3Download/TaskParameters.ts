@@ -5,7 +5,7 @@
 
 import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
-import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputOrEmpty, getInputRequired, getPathInputRequired } from 'lib/vstsUtils'
 
 // options for Server-side encryption Key Management
 export const noneOrAWSManagedKeyValue = 'noneOrAWSManaged'
@@ -29,8 +29,8 @@ export function buildTaskParameters(): TaskParameters {
     const parameters: TaskParameters = {
         awsConnectionParameters: buildConnectionParameters(),
         bucketName: getInputRequired('bucketName'),
-        sourceFolder: tl.getPathInput('sourceFolder', false, false),
-        targetFolder: tl.getPathInput('targetFolder', true, false),
+        sourceFolder: tl.getPathInput('sourceFolder', false, false) ?? '',
+        targetFolder: getPathInputRequired('targetFolder'),
         globExpressions: tl.getDelimitedInput('globExpressions', '\n', true),
         overwrite: tl.getBoolInput('overwrite', false),
         forcePathStyleAddressing: tl.getBoolInput('forcePathStyleAddressing', false),

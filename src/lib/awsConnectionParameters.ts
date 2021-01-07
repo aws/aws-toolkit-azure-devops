@@ -36,7 +36,7 @@ export const roleCredentialMaxDurationVariableName = 'aws.rolecredential.maxdura
 
 export interface AWSConnectionParameters {
     // pre-formatted url string, or azure-pipelines-task-lib/ProxyConfiguration
-    proxyConfiguration: string | tl.ProxyConfiguration
+    proxyConfiguration: string | tl.ProxyConfiguration | undefined
     // If set, the task should expect to receive temporary session credentials
     // scoped to the role.
     AssumeRoleARN: string | undefined
@@ -97,7 +97,7 @@ export function buildConnectionParameters(): AWSConnectionParameters {
 // Unpacks credentials from the specified endpoint configuration, if defined
 function attemptEndpointCredentialConfiguration(
     awsparams: AWSConnectionParameters,
-    endpointName: string
+    endpointName: string | undefined
 ): AWS.Credentials | undefined {
     if (!endpointName) {
         return undefined
@@ -106,12 +106,12 @@ function attemptEndpointCredentialConfiguration(
     awsparams.awsEndpointAuth = tl.getEndpointAuthorization(endpointName, false)
     console.log(`...configuring AWS credentials from service endpoint '${endpointName}'`)
 
-    const accessKey = awsparams.awsEndpointAuth.parameters.username
-    const secretKey = awsparams.awsEndpointAuth.parameters.password
-    const token = awsparams.awsEndpointAuth.parameters.sessionToken
-    const assumeRoleArn = awsparams.awsEndpointAuth.parameters.assumeRoleArn
-    const externalId: string = awsparams.awsEndpointAuth.parameters.externalId
-    const roleSessionName: string = awsparams.awsEndpointAuth.parameters.roleSessionName
+    const accessKey = awsparams.awsEndpointAuth?.parameters?.username ?? ''
+    const secretKey = awsparams.awsEndpointAuth?.parameters?.password ?? ''
+    const token = awsparams.awsEndpointAuth?.parameters?.sessionToken
+    const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
+    const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
+    const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
 
     return createEndpointCredentials(accessKey, secretKey, token, assumeRoleArn, externalId, roleSessionName)
 }
@@ -149,7 +149,7 @@ function attemptCredentialConfigurationFromVariables(): AWS.Credentials | undefi
 function createEndpointCredentials(
     accessKey: string,
     secretKey: string,
-    token: string,
+    token: string | undefined,
     assumeRoleARN: string | undefined,
     externalId: string | undefined,
     roleSessionName: string | undefined

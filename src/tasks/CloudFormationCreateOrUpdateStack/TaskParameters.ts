@@ -6,7 +6,7 @@
 import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
 import { defaultTimeoutInMins } from 'lib/cloudformationutils'
-import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputOrEmpty, getInputRequired, getPathInputRequiredCheck } from 'lib/vstsUtils'
 import { statSync } from 'fs'
 
 export const fileSource = 'file'
@@ -93,7 +93,7 @@ export function buildTaskParameters(): TaskParameters {
 
     switch (parameters.templateSource) {
         case fileSource:
-            parameters.templateFile = tl.getPathInput('templateFile', true, true)
+            parameters.templateFile = getPathInputRequiredCheck('templateFile')
             parameters.s3BucketName = getInputOrEmpty('s3BucketName')
             break
 
@@ -123,7 +123,7 @@ export function buildTaskParameters(): TaskParameters {
             // of the repository path. To solve this without needing to add a task parameter
             // to indicate we should use a parameter file (a breaking change) we do a simple
             // directory vs file test
-            parameters.templateParametersFile = tl.getPathInput('templateParametersFile', false, true)
+            parameters.templateParametersFile = tl.getPathInput('templateParametersFile', false, true) ?? ''
             if (parameters.templateParametersFile) {
                 if (statSync(parameters.templateParametersFile).isDirectory()) {
                     parameters.templateParametersFile = ''
