@@ -9,8 +9,6 @@ import { TaskOperations } from '../../../Tasks/SecretsManagerGetSecret/TaskOpera
 import { TaskParameters } from '../../../Tasks/SecretsManagerGetSecret/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {
@@ -57,7 +55,7 @@ describe('Secrets Manger Get Secret', () => {
 
     test('Fails on exception thrown', async () => {
         const badSecretsManager = new SecretsManager() as any
-        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerFails)
+        badSecretsManager.getSecretValue = jest.fn(() => secretsManagerFails)
         const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
         await taskOperations.execute().catch(e => {
             expect(e.message).toContain("doesn't exist")
@@ -66,7 +64,7 @@ describe('Secrets Manger Get Secret', () => {
 
     test('Fails on bad base64', async () => {
         const badSecretsManager = new SecretsManager() as any
-        badSecretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsBadBase64)
+        badSecretsManager.getSecretValue = jest.fn(() => secretsManagerReturnsBadBase64)
         const taskOperations = new TaskOperations(badSecretsManager, defaultTaskParameters)
         await taskOperations.execute().catch(e => {
             expect(e.message).toContain('the string to be decoded is not correctly encoded')
@@ -78,7 +76,7 @@ describe('Secrets Manger Get Secret', () => {
     // good way to mock it
     test('Handles secret string', async () => {
         const secretsManager = new SecretsManager() as any
-        secretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsString)
+        secretsManager.getSecretValue = jest.fn(() => secretsManagerReturnsString)
         const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
         await taskOperations.execute()
     })
@@ -88,7 +86,7 @@ describe('Secrets Manger Get Secret', () => {
     // good way to mock it
     test('Handles and decodes secret binary', async () => {
         const secretsManager = new SecretsManager() as any
-        secretsManager.getSecretValue = jest.fn((params: any, cb: any) => secretsManagerReturnsValidBase64)
+        secretsManager.getSecretValue = jest.fn(() => secretsManagerReturnsValidBase64)
         const taskOperations = new TaskOperations(secretsManager, defaultTaskParameters)
         await taskOperations.execute()
     })
@@ -98,7 +96,7 @@ describe('Secrets Manger Get Secret', () => {
         taskParametersWithExtraFields.versionId = 'abc'
         taskParametersWithExtraFields.versionStage = 'def'
         const secretsManager = new SecretsManager() as any
-        secretsManager.getSecretValue = jest.fn((params: any, cb: any) => {
+        secretsManager.getSecretValue = jest.fn((params: any) => {
             expect(params.VersionId).toBe('abc')
             expect(params.versionStage).toBe(undefined)
 

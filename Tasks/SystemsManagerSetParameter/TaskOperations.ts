@@ -39,7 +39,7 @@ export class TaskOperations {
     }
 
     private async testParameterExistsAndIsSecureStringType(parameterName: string): Promise<boolean> {
-        let result: boolean = false
+        let result = false
 
         try {
             const response = await this.ssmClient
@@ -58,7 +58,6 @@ export class TaskOperations {
                 console.log(tl.loc('ParameterExistsAndIsNotSecureString', parameterName))
             }
         } catch (error) {
-            // tslint:disable-next-line: no-unsafe-any
             if (error.code === 'ParameterNotFound') {
                 console.log(tl.loc('ParameterDoesNotExist', parameterName))
             } else {

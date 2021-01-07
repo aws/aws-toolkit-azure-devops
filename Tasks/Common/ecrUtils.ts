@@ -14,7 +14,6 @@ export async function loginToRegistry(
     encodedAuthToken: string,
     endpoint: string
 ): Promise<void> {
-    // tslint:disable-next-line: no-unsafe-any
     const tokens: string[] = base64
         .decode(encodedAuthToken)
         .trim()

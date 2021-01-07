@@ -24,7 +24,7 @@ export class TaskOperations {
             this.taskParameters.changeSetName,
             this.taskParameters.stackName
         )
-        let waitForUpdate: boolean = false
+        let waitForUpdate = false
         if (stackId) {
             waitForUpdate = await testStackHasResources(this.cloudFormationClient, this.taskParameters.stackName)
         }

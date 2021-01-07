@@ -8,13 +8,13 @@ import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const applicationTypeAspNet: string = 'aspnet'
-export const applicationTypeAspNetCoreForWindows: string = 'aspnetCoreWindows'
-export const applicationTypeS3Archive: string = 's3'
-export const applicationTypeExistingVersion: string = 'version'
+export const applicationTypeAspNet = 'aspnet'
+export const applicationTypeAspNetCoreForWindows = 'aspnetCoreWindows'
+export const applicationTypeS3Archive = 's3'
+export const applicationTypeExistingVersion = 'version'
 
-export const defaultEventPollingDelaySeconds: number = 5
-export const maxEventPollingDelaySeconds: number = 300
+export const defaultEventPollingDelaySeconds = 5
+export const maxEventPollingDelaySeconds = 300
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

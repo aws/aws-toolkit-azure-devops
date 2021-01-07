@@ -7,14 +7,14 @@ import tl = require('azure-pipelines-task-lib/task')
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOptional, getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const stringSecretType: string = 'string'
-export const binarySecretType: string = 'binary'
+export const stringSecretType = 'string'
+export const binarySecretType = 'binary'
 
-export const inlineSecretSource: string = 'inline'
-export const fileSecretSource: string = 'file'
+export const inlineSecretSource = 'inline'
+export const fileSecretSource = 'file'
 
-export const maxVersionStages: number = 20
-export const maxTags: number = 50
+export const maxVersionStages = 20
+export const maxTags = 50
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

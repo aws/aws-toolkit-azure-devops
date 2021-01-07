@@ -7,9 +7,9 @@ import { getBoolInput } from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
-export const ignoreStackOutputs: string = 'ignore'
-export const stackOutputsAsVariables: string = 'asVariables'
-export const stackOutputsAsJson: string = 'asJSON'
+export const ignoreStackOutputs = 'ignore'
+export const stackOutputsAsVariables = 'asVariables'
+export const stackOutputsAsJson = 'asJSON'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

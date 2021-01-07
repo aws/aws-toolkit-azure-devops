@@ -57,8 +57,6 @@ const putParameterSucceeds = {
     promise: function() {}
 }
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 describe('Systems Manager Set Parameter', () => {

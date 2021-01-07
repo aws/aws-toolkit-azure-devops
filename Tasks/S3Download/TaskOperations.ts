@@ -138,7 +138,7 @@ export class TaskOperations {
     }
 
     private async matchObjectKeys(allKeys: string[], sourcePrefix: string, glob: string): Promise<string[]> {
-        let sourcePrefixLen: number = 0
+        let sourcePrefixLen = 0
         if (sourcePrefix) {
             console.log(tl.loc('GlobbingFromPrefix', sourcePrefix, glob))
             sourcePrefixLen = sourcePrefix.length + 1

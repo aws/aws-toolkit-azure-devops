@@ -8,12 +8,12 @@ import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsCo
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
 // possible values for the deploymentMode parameter
-export const deployCodeOnly: string = 'codeonly'
-export const deployCodeAndConfig: string = 'codeandconfiguration'
+export const deployCodeOnly = 'codeonly'
+export const deployCodeAndConfig = 'codeandconfiguration'
 
 // possible values for the codeLocation parameter
-export const updateFromLocalFile: string = 'localfile'
-export const updateFromS3Object: string = 's3object'
+export const updateFromLocalFile = 'localfile'
+export const updateFromS3Object = 's3object'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters

@@ -227,7 +227,6 @@ export class TaskOperations {
                 .promise()
             await waitForStackUpdate(this.cloudFormationClient, request.StackName)
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
                 console.error(tl.loc('StackUpdateRequestFailed', (err as Error).message), err)
                 throw err
@@ -530,7 +529,7 @@ export class TaskOperations {
     // change. So now detect either of the errors, and for either if the message indicates
     // a no-op.
     private isNoWorkToDoValidationError(errCodeOrStatus: string, errMessage: string): boolean {
-        let noWorkToDo: boolean = false
+        let noWorkToDo = false
         const knownNoOpErrorMessages = [
             /^No updates are to be performed./,
             /^The submitted information didn't contain changes./
@@ -561,7 +560,7 @@ export class TaskOperations {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName))
         try {
             const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
-            await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms as any).promise()
+            await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms).promise()
             console.log(tl.loc('ChangeSetValidated'))
         } catch (err) {
             // Inspect to see if the error was down to the service reporting (as an exception trapped

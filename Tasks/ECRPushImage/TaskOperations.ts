@@ -11,7 +11,7 @@ import { parse } from 'url'
 import { imageNameSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
-    private dockerPath: string = ''
+    private dockerPath = ''
 
     public constructor(
         public readonly ecrClient: ECR,
@@ -96,7 +96,6 @@ export class TaskOperations {
                 })
                 .promise()
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             if (err.code === 'RepositoryNotFoundException') {
                 console.log(tl.loc('CreatingRepository'))
                 await this.ecrClient

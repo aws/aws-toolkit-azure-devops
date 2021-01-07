@@ -9,8 +9,6 @@ import { TaskOperations } from '../../../Tasks/S3Upload/TaskOperations'
 import { TaskParameters } from '../../../Tasks/S3Upload/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const baseTaskParameters: TaskParameters = {
@@ -62,15 +60,13 @@ describe('S3 Upload', () => {
     })
 
     test('Creates a TaskOperation', () => {
-        const taskParameters = baseTaskParameters
-        expect(new TaskOperations(new S3(), '', taskParameters)).not.toBeNull()
+        expect(new TaskOperations(new S3(), '', baseTaskParameters)).not.toBeNull()
     })
 
     test('Handles bucket not existing (and not being able to create one)', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn()(() => headBucketResponseFails)
-        const taskParameters = baseTaskParameters
-        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        const taskOperation = new TaskOperations(s3, '', baseTaskParameters)
         expect.assertions(1)
         await taskOperation.execute().catch(e => {
             expect(e.message).toContain('not exist')
@@ -106,7 +102,7 @@ describe('S3 Upload', () => {
     test('No matching files found', async () => {
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
-        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
+        s3.upload = jest.fn(() => {
             throw new Error('should not be called')
         })
         const taskParameters = { ...baseTaskParameters }

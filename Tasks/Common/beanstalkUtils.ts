@@ -128,7 +128,7 @@ export class BeanstalkUtils {
         beanstalkClient: ElasticBeanstalk,
         applicationName: string
     ): Promise<void> {
-        let appExists: boolean = false
+        let appExists = false
 
         try {
             const response = await beanstalkClient
@@ -166,7 +166,7 @@ export class BeanstalkUtils {
         applicationName: string,
         environmentName: string
     ): Promise<void> {
-        let envExists: boolean = false
+        let envExists = false
 
         try {
             const response = await beanstalkClient

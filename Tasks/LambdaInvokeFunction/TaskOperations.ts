@@ -33,7 +33,7 @@ export class TaskOperations {
         }
         try {
             const data: Lambda.InvocationResponse = await this.lambdaClient.invoke(params).promise()
-            let outValue: string = ''
+            let outValue = ''
             if (data.Payload) {
                 outValue = data.Payload.toString()
             }

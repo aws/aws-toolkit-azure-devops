@@ -152,7 +152,7 @@ export class TaskOperations {
         // upper limit to the random amount we add to the initial event poll start delay
         // and any extensions during event polling when throttling exhausts the sdk's
         // auto-retry ability
-        const randomJitterUpperLimit: number = 5
+        const randomJitterUpperLimit = 5
 
         const requestEnvironment: ElasticBeanstalk.DescribeEnvironmentsMessage = {
             ApplicationName: applicationName,
@@ -219,7 +219,6 @@ export class TaskOperations {
                 }
             } catch (err) {
                 // if we are still encountering throttles, increase the poll delay some more
-                // tslint:disable-next-line: no-unsafe-any
                 if (err.code === 'Throttling') {
                     eventPollDelay += Math.floor(Math.random() * randomJitterUpperLimit) + 1
                     console.log(tl.loc('EventPollWaitExtended', eventPollDelay))

@@ -9,8 +9,6 @@ import { TaskOperations } from '../../../Tasks/LambdaInvokeFunction/TaskOperatio
 import { TaskParameters } from '../../../Tasks/LambdaInvokeFunction/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const baseTaskParameters: TaskParameters = {
@@ -64,7 +62,7 @@ describe('Lambda Invoke', () => {
         taskParameters.outputVariable = 'something'
         await assertPayloadCorrect(
             taskParameters,
-            jest.fn(params => {
+            jest.fn(() => {
                 // expectation to make sure the callback is called
                 expect(1).toBe(1)
 
@@ -137,8 +135,7 @@ describe('Lambda Invoke', () => {
     async function testPayloadsAndOutputs(input: string, expectedOutput: string) {
         expect.assertions(3)
         const taskParameters = { ...baseTaskParameters }
-        const payload = input
-        taskParameters.payload = payload
+        taskParameters.payload = input
         await assertPayloadCorrect(
             taskParameters,
             jest.fn(params => {

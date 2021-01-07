@@ -10,8 +10,6 @@ import { TaskOperations } from '../../../Tasks/BeanstalkDeployApplication/TaskOp
 import { TaskParameters } from '../../../Tasks/BeanstalkDeployApplication/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const defaultTaskParameters: TaskParameters = {

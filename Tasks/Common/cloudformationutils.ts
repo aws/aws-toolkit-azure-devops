@@ -6,7 +6,7 @@
 import CloudFormation = require('aws-sdk/clients/cloudformation')
 import tl = require('azure-pipelines-task-lib/task')
 
-export const defaultTimeoutInMins: number = 60
+export const defaultTimeoutInMins = 60
 
 // Retrieves the declared outputs of the stack and posts as either individual variables,
 // using the output member key as variable name, or a json-formatted blob with a variable
@@ -82,10 +82,9 @@ export async function waitForStackCreation(
     console.log(tl.loc('WaitingForStackCreation', stackName))
     try {
         const parms: any = setWaiterParams(stackName, timeoutInMins)
-        await cloudFormationClient.waitFor('stackCreateComplete', parms as any).promise()
+        await cloudFormationClient.waitFor('stackCreateComplete', parms).promise()
         console.log(tl.loc('StackCreated', stackName))
     } catch (err) {
-        // tslint:disable-next-line: no-unsafe-any
         throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
     }
 }
@@ -105,7 +104,6 @@ export function setWaiterParams(stackName: string, timeout: number, changeSetNam
     }
 
     if (changeSetName) {
-        // tslint:disable-next-line: no-unsafe-any
         p.ChangeSetName = changeSetName
     }
 

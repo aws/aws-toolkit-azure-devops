@@ -50,6 +50,5 @@ export async function runDockerCommand(
         docker.arg(arg)
     }
 
-    // tslint:disable-next-line: no-unsafe-any
     await docker.exec(additionalCommandLineOptions)
 }

@@ -14,8 +14,6 @@ import {
     waitForStackUpdate
 } from 'Common/cloudformationutils'
 
-// unsafe any's is how jest mocking works, so this needs to be disabled for all test files
-// tslint:disable: no-unsafe-any
 jest.mock('aws-sdk')
 
 const cloudFormationDescribeStacksSucceeds = {

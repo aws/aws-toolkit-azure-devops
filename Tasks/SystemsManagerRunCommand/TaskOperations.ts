@@ -36,7 +36,6 @@ export class TaskOperations {
             request.Comment = this.taskParameters.comment
         }
         if (this.taskParameters.documentParameters) {
-            // tslint:disable-next-line: no-unsafe-any
             request.Parameters = JSON.parse(this.taskParameters.documentParameters)
         }
 
@@ -53,6 +52,7 @@ export class TaskOperations {
                     const t: SSM.Target = {}
                     t.Key = 'tag:' + kv[0].trim()
                     t.Values = kv[1].split(',')
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     request.Targets!.push(t)
                 })
                 break
@@ -79,7 +79,7 @@ export class TaskOperations {
         }
 
         const response = await this.ssmClient.sendCommand(request).promise()
-        let commandId: string = ''
+        let commandId = ''
         if (response.Command) {
             commandId = `${response.Command.CommandId}`
         } else {

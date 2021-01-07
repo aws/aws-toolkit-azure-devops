@@ -52,7 +52,7 @@ export function transformParameterToVariableName(
             break
 
         case 'substitute':
-            let flags: string = ''
+            let flags = ''
             if (taskParameters.globalMatch) {
                 flags += 'g'
             }

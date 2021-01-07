@@ -20,7 +20,6 @@ export class TaskOperations {
             await this.updateSecret()
             console.log(tl.loc('UpdateSecretCompleted'))
         } catch (err) {
-            // tslint:disable-next-line: no-unsafe-any
             if (err !== undefined && err.code === 'ResourceNotFoundException') {
                 if (this.taskParameters.autoCreateSecret) {
                     await this.createSecret()

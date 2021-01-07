@@ -1,0 +1,4 @@
+node_modules/**
+**/*.json
+**/*.gen.ts
+**/*.runner.ts

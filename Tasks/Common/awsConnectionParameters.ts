@@ -13,26 +13,26 @@ import { format, parse, Url } from 'url'
 // Task variable names that can be used to supply the AWS credentials
 // to a task (in addition to using a service endpoint, or environment
 // variables, or EC2 instance metadata)
-export const awsAccessKeyIdVariable: string = 'AWS.AccessKeyID'
-export const awsSecretAccessKeyVariable: string = 'AWS.SecretAccessKey'
-export const awsSessionTokenVariable: string = 'AWS.SessionToken'
-export const awsAssumeRoleArnVariable: string = 'AWS.AssumeRoleArn'
-export const awsExternalIdVariable: string = 'AWS.ExternalId'
-export const awsRoleSessionNameVariable: string = 'AWS.RoleSessionName'
+export const awsAccessKeyIdVariable = 'AWS.AccessKeyID'
+export const awsSecretAccessKeyVariable = 'AWS.SecretAccessKey'
+export const awsSessionTokenVariable = 'AWS.SessionToken'
+export const awsAssumeRoleArnVariable = 'AWS.AssumeRoleArn'
+export const awsExternalIdVariable = 'AWS.ExternalId'
+export const awsRoleSessionNameVariable = 'AWS.RoleSessionName'
 
 // Task variable name that can be used to supply the region setting to
 // a task.
-export const awsRegionVariable: string = 'AWS.Region'
+export const awsRegionVariable = 'AWS.Region'
 
 // default session name to apply to the generated credentials if not overridden
 // in the endpoint definition
-export const defaultRoleSessionName: string = 'aws-vsts-tools'
+export const defaultRoleSessionName = 'aws-vsts-tools'
 // The minimum duration, 15mins, should be enough for a task
-export const minDuration: number = 900
-export const maxduration: number = 43200
+export const minDuration = 900
+export const maxduration = 43200
 // To have a longer duration, users can set this variable in their build or
 // release definitions to the required duration (in seconds, min 900 max 43200).
-export const roleCredentialMaxDurationVariableName: string = 'aws.rolecredential.maxduration'
+export const roleCredentialMaxDurationVariableName = 'aws.rolecredential.maxduration'
 
 export interface AWSConnectionParameters {
     // pre-formatted url string, or azure-pipelines-task-lib/ProxyConfiguration
@@ -63,7 +63,7 @@ function completeProxySetup(connectionParamaters: AWSConnectionParameters): void
         if (typeof connectionParamaters.proxyConfiguration === 'string') {
             proxy = parse(connectionParamaters.proxyConfiguration)
         } else {
-            const config = connectionParamaters.proxyConfiguration as tl.ProxyConfiguration
+            const config = connectionParamaters.proxyConfiguration
             proxy = parse(config.proxyUrl)
             if (config.proxyUsername || config.proxyPassword) {
                 proxy.auth = `${config.proxyUsername}:${config.proxyPassword}`
@@ -73,7 +73,6 @@ function completeProxySetup(connectionParamaters: AWSConnectionParameters): void
         // do not want any auth in the logged url
         tl.debug(`Configuring task for proxy host ${proxy.host}, protocol ${proxy.protocol}`)
         AWS.config.update({
-            // tslint:disable-next-line: no-unsafe-any
             httpOptions: { agent: new HttpsProxyAgent(format(proxy)) }
         })
     } catch (err) {
@@ -240,9 +239,7 @@ async function queryRegionFromMetadata(): Promise<string> {
 
                 console.log('...received instance identity document from metadata')
                 const identity = JSON.parse(data)
-                // tslint:disable-next-line: no-unsafe-any
                 if (identity.region) {
-                    // tslint:disable-next-line: no-unsafe-any
                     resolve(identity.region)
                 } else {
                     throw new Error('...region value not found in instance identity metadata')

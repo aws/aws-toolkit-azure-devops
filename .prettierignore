@@ -1,0 +1,6 @@
+_build
+_package
+.idea
+.test-reports
+.changes
+CHANGELOG.md

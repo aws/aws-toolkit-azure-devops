@@ -8,8 +8,8 @@ import { AWSConnectionParameters, buildConnectionParameters } from 'Common/awsCo
 import { getInputOrEmpty, getInputRequired } from 'Common/vstsUtils'
 
 // option values for the 'deploymentType' property
-export const deployFunction: string = 'deployFunction'
-export const deployServerless: string = 'deployServerless'
+export const deployFunction = 'deployFunction'
+export const deployServerless = 'deployServerless'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
