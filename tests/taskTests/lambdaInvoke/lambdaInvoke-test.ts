@@ -49,7 +49,9 @@ const invokeLambdaSucceedsNoResponse = {
 describe('Lambda Invoke', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/LambdaInvokeFunction/task.json')
+        SdkUtils.readResourcesFromRelativePath(
+            '../../build/src/tasks/LambdaInvokeFunction/LambdaInvokeFunctionV1/task.json'
+        )
     })
 
     test('Creates a TaskOperation', () => {

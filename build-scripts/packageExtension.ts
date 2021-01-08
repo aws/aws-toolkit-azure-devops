@@ -9,7 +9,7 @@ import fs = require('fs-extra')
 import path = require('path')
 import shell = require('shelljs')
 import folders = require('./scriptUtils')
-import { sourceTasks } from './scriptUtils'
+import { findMatchingFiles } from './scriptUtils'
 
 const timeMessage = 'Packaged extension'
 const manifestFile = 'vss-extension.json'
@@ -18,25 +18,6 @@ const vstsFiles = ['task.json', 'task.loc.json', 'package.json', 'icon.png', 'St
 
 interface CommandLineOptions {
     publisher?: string
-}
-
-function findMatchingFiles(directory: string) {
-    const folders = fs
-        .readdirSync(directory, { withFileTypes: true })
-        .filter(file => file.isDirectory())
-        .map(file => file.name)
-    // if it's a task with multiple versions, it will have the form <parent>V<version>
-    const finalFolders: string[] = []
-    folders.forEach(folder => {
-        const subFiles = fs.readdirSync(path.join(sourceTasks, folder), { withFileTypes: true })
-        if (subFiles.every(subFile => subFile.isDirectory() && subFile.name.match(`${folder}V[0-9]`) !== undefined)) {
-            finalFolders.push(...subFiles.map(subFile => path.join(folder, subFile.name)))
-        } else {
-            finalFolders.push(folder)
-        }
-    })
-    console.log(JSON.stringify(finalFolders))
-    return finalFolders
 }
 
 function installNodePackages(directory: string) {
@@ -88,11 +69,12 @@ function packagePlugin(options: CommandLineOptions) {
     installNodePackages(npmFolder)
 
     // clean, dedupe and pack each task as needed
-    findMatchingFiles(folders.sourceTasks).forEach(function(taskName) {
+    findMatchingFiles(folders.sourceTasks).forEach(function(taskDirectory) {
+        const taskName = taskDirectory.split(path.sep)[0]
         console.log('Processing task ' + taskName)
 
-        const taskBuildFolder = path.join(folders.buildTasks, taskName)
-        const taskPackageFolder = path.join(folders.packageTasks, taskName)
+        const taskBuildFolder = path.join(folders.buildTasks, taskDirectory)
+        const taskPackageFolder = path.join(folders.packageTasks, taskDirectory)
         fs.mkdirpSync(taskPackageFolder)
 
         // eslint-disable-next-line @typescript-eslint/no-var-requires

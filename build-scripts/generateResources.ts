@@ -8,7 +8,7 @@ import * as jsonQuery from 'json-query'
 import * as path from 'path'
 import validator from 'validator'
 
-import { buildTasks, releaseVersion, repoRoot, sourceTasks } from './scriptUtils'
+import { buildTasks, findMatchingFiles, releaseVersion, repoRoot, sourceTasks } from './scriptUtils'
 import syncRequest from 'sync-request'
 import isUUID = validator.isUUID
 import isAlphanumeric = validator.isAlphanumeric
@@ -19,10 +19,6 @@ const taskJson = 'task.json'
 const taskLocJson = 'task.loc.json'
 const vssPath = path.join(repoRoot, 'vss-extension.json')
 const vssBuildPath = path.join(repoRoot, 'build', 'vss-extension.json')
-
-function findMatchingFiles(directory: string): string[] {
-    return fs.readdirSync(directory)
-}
 
 // Downloads the latest known AWS regions file used by the various
 // AWS toolkits and constructs an object we can inject into each

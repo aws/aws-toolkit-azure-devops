@@ -7,7 +7,7 @@ import { Lambda } from '@aws-sdk/client-lambda'
 
 function abc() {
     const client = new Lambda({})
-    client.config.customUserAgent = 'abc'
+    client.config.customUserAgent = [['abc', '1']]
 }
 
 abc()
