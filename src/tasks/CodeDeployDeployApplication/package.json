@@ -4,9 +4,5 @@
     "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
     "main": "CodeDeployDeployApplication.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "archiver": "^2.0.0",
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }
