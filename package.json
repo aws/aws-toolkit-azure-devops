@@ -12,7 +12,7 @@
         "clean": "ts-node ./build-scripts/clean.ts",
         "lint": "eslint -c .eslintrc.js --ext .ts .",
         "lintFix": "eslint -c .eslintrc.js --fix --ext .ts .",
-        "generateResources": "node ./build-scripts/generateResources.js",
+        "generateResources": "ts-node ./build-scripts/generateResources.ts",
         "copyResources": "ts-node ./build-scripts/copyResources.ts",
         "package": "ts-node ./build-scripts/packageExtension.ts",
         "fullBuild": "npm run build && npm run lint && npm run copyResources && npm run generateResources && npm run test && npm run package",
@@ -42,6 +42,7 @@
         "@types/fs-extra": "^8.0.0",
         "@types/jest": "^26.0.19",
         "@types/js-yaml": "^3.12.1",
+        "@types/json-query": "^2.2.0",
         "@types/node": "^10.17.28",
         "@types/q": "^1.5.2",
         "@types/readline-sync": "^1.4.3",
@@ -49,6 +50,7 @@
         "@types/shelljs": "^0.8.6",
         "@types/tmp": "^0.2.0",
         "@types/uuid": "^3.4.5",
+        "@types/validator": "^13.1.2",
         "@typescript-eslint/eslint-plugin": "^4.12.0",
         "@typescript-eslint/parser": "^4.12.0",
         "archiver": "^3.1.1",
@@ -73,7 +75,7 @@
         "ts-node": "^8.4.1",
         "typescript": "^3.8.2",
         "uuid": "^3.3.3",
-        "validator": "^11.1.0"
+        "validator": "^13.5.2"
     },
     "dependencies": {
         "aws-sdk": "^2.530.0",
