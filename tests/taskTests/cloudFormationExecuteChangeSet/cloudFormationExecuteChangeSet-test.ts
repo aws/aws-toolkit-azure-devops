@@ -4,9 +4,9 @@
  */
 
 import { CloudFormation, S3 } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/CloudFormationExecuteChangeSet/TaskOperations'
-import { ignoreStackOutputs, TaskParameters } from '../../../Tasks/CloudFormationExecuteChangeSet/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/CloudFormationExecuteChangeSet/TaskOperations'
+import { ignoreStackOutputs, TaskParameters } from 'tasks/CloudFormationExecuteChangeSet/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -45,7 +45,7 @@ const cloudFormationHasResourcesSucceeds = {
 describe('Cloud Formation Execute Change Set', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/CloudFormationExecuteChangeSet/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/CloudFormationExecuteChangeSet/task.json')
     })
 
     test('Creates a TaskOperation', () => {

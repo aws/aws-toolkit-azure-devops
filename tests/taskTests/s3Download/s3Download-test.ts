@@ -4,11 +4,11 @@
  */
 
 import { S3 } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
+import { SdkUtils } from 'lib/sdkutils'
 import { Readable as ReadableStream } from 'stream'
 import * as tmp from 'tmp'
-import { TaskOperations } from '../../../Tasks/S3Download/TaskOperations'
-import { TaskParameters } from '../../../Tasks/S3Download/TaskParameters'
+import { TaskOperations } from 'tasks/S3Download/TaskOperations'
+import { TaskParameters } from 'tasks/S3Download/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -72,7 +72,7 @@ describe('S3 Download', () => {
 
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/S3Download/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/S3Download/task.json')
     })
 
     test('Creates a TaskOperation', () => {

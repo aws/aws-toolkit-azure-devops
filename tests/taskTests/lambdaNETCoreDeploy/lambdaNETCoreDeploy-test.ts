@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SdkUtils } from 'Common/sdkutils'
+import { SdkUtils } from 'lib/sdkutils'
 import { join } from 'path'
-import { TaskOperations } from '../../../Tasks/LambdaNETCoreDeploy/TaskOperations'
-import { TaskParameters } from '../../../Tasks/LambdaNETCoreDeploy/TaskParameters'
+import { TaskOperations } from 'tasks/LambdaNETCoreDeploy/TaskOperations'
+import { TaskParameters } from 'tasks/LambdaNETCoreDeploy/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 const baseTaskParameters: TaskParameters = {
@@ -32,7 +32,7 @@ describe('Lambda NET Core Deploy', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         process.env.AWS_REGION = 'region'
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/LambdaNETCoreDeploy/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/LambdaNETCoreDeploy/task.json')
     })
 
     test('Creates a TaskOperation', () => {

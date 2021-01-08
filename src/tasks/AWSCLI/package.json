@@ -1,0 +1,11 @@
+{
+    "name": "awscli",
+    "version": "1.1.8",
+    "description": "Run a Shell or Batch script with AWS CLI commands against an AWS connection",
+    "main": "AWSCLI.js",
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "sdkutils": "file:../../build/src/lib/sdkutils"
+    }
+}

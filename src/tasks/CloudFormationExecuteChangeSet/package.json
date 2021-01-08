@@ -1,0 +1,11 @@
+{
+    "name": "cloudformationexecutechangeset",
+    "version": "1.1.8",
+    "description": "Executes an AWS CloudFormation change set",
+    "main": "CloudFormationExecuteChangeSet.js",
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "sdkutils": "file:../../build/src/lib/sdkutils"
+    }
+}

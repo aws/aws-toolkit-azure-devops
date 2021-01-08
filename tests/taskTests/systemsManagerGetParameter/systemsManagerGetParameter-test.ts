@@ -5,9 +5,9 @@
 
 import { SSM } from 'aws-sdk'
 
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SystemsManagerGetParameter/TaskOperations'
-import { TaskParameters } from '../../../Tasks/SystemsManagerGetParameter/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SystemsManagerGetParameter/TaskOperations'
+import { TaskParameters } from 'tasks/SystemsManagerGetParameter/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -69,7 +69,7 @@ const hierarchyParameterResponseMultiple = {
 describe('Systems Manager Get Parameter', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SystemsManagerGetParameter/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SystemsManagerGetParameter/task.json')
     })
 
     test('Creates a TaskOperation', () => {

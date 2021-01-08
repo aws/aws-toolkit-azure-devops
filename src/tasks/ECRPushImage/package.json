@@ -1,0 +1,14 @@
+{
+    "name": "ecrpushimage",
+    "version": "1.1.8",
+    "description": "Pushes a local Docker image to Elastic Container Registry",
+    "main": "ECRPushImage.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "sdkutils": "file:../../build/src/lib/sdkutils"
+    }
+}

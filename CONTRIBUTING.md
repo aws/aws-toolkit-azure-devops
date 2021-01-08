@@ -90,7 +90,7 @@ GitHub provides additional documentation on [forking a repository](https://help.
 
 We are still working out a good way to do this beyond writing tests.
 
-If you have a test Azure DevOps server, you can upload the packaged plugin from "\_package". Keep in mind that Azure DevOps expects you to bump the version number (located in \_package.json) every time you upload a new plugin. It also checks that your publisher ID matches the publisher ID of the plugin.
+If you have a test Azure DevOps server, you can upload the packaged plugin from "\package". Keep in mind that Azure DevOps expects you to bump the version number (located in \_package.json) every time you upload a new plugin. It also checks that your publisher ID matches the publisher ID of the plugin.
 
 ## Finding contributions to work on
 

@@ -1,0 +1,11 @@
+{
+    "name": "s3download",
+    "version": "1.1.8",
+    "description": "Download content from an AWS Simple Storage Service (S3) Bucket",
+    "main": "S3Download.js",
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "sdkutils": "file:../../build/src/lib/sdkutils"
+    }
+}

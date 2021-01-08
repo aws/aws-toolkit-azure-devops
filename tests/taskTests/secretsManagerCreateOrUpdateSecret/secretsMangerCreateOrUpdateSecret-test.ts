@@ -4,9 +4,9 @@
  */
 
 import { SecretsManager } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SecretsManagerCreateOrUpdateSecret/TaskOperations'
-import { inlineSecretSource, TaskParameters } from '../../../Tasks/SecretsManagerCreateOrUpdateSecret/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SecretsManagerCreateOrUpdateSecret/TaskOperations'
+import { inlineSecretSource, TaskParameters } from 'tasks/SecretsManagerCreateOrUpdateSecret/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -47,7 +47,7 @@ const secretsManagerReturnsCreate = {
 describe('Secrets Manger Create Or Update Secret', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SecretsManagerCreateOrUpdateSecret/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SecretsManagerCreateOrUpdateSecret/task.json')
     })
 
     test('Creates a TaskOperation', () => {

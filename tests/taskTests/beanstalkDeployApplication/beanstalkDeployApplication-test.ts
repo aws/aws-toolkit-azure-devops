@@ -5,9 +5,9 @@
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
 
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/BeanstalkDeployApplication/TaskOperations'
-import { TaskParameters } from '../../../Tasks/BeanstalkDeployApplication/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/BeanstalkDeployApplication/TaskOperations'
+import { TaskParameters } from 'tasks/BeanstalkDeployApplication/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -34,7 +34,7 @@ const defaultTaskParameters: TaskParameters = {
 describe('Beanstalk Deploy Application', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/BeanstalkDeployApplication/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/BeanstalkDeployApplication/task.json')
     })
 
     test('Creates a TaskOperation', () => {

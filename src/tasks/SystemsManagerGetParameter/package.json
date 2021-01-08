@@ -1,0 +1,11 @@
+{
+    "name": "systemsmanagergetparameter",
+    "version": "1.1.8",
+    "description": "Gets the value of one or more parameters from the Systems Manager Parameter Store and adds them as variables to the current build or release definition.",
+    "main": "SystemsManagerGetParameter.js",
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "sdkutils": "file:../../build/src/lib/sdkutils"
+    }
+}

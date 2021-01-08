@@ -36,7 +36,7 @@
     {
         "taskName": "ECRPullImage",
         "taskClients": ["ECR"],
-        "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],
+        "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'lib/dockerUtils'"],
         "additionalArguments": [
             "{ runDockerCommand: runDockerCommand, locateDockerExecutable: locateDockerExecutable }"
         ]
@@ -44,7 +44,7 @@
     {
         "taskName": "ECRPushImage",
         "taskClients": ["ECR"],
-        "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'Common/dockerUtils'"],
+        "additionalImports": ["import { locateDockerExecutable, runDockerCommand } from 'lib/dockerUtils'"],
         "additionalArguments": [
             "{ runDockerCommand: runDockerCommand, locateDockerExecutable: locateDockerExecutable }"
         ]
@@ -59,7 +59,7 @@
     },
     {
         "taskName": "LambdaNETCoreDeploy",
-        "additionalImports": ["import { getCredentials } from 'Common/awsConnectionParameters'"],
+        "additionalImports": ["import { getCredentials } from 'lib/awsConnectionParameters'"],
         "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-LambdaNETCoreDeploy'"],
         "additionalArguments": [
             "await getCredentials(taskParameters.awsConnectionParameters)",
@@ -73,7 +73,7 @@
     },
     {
         "taskName": "S3Upload",
-        "additionalImports": ["import { getRegion } from 'Common/awsConnectionParameters'"],
+        "additionalImports": ["import { getRegion } from 'lib/awsConnectionParameters'"],
         "additionalArguments": ["await getRegion()"],
         "taskClients": ["S3"]
     },

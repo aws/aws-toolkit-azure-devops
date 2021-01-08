@@ -4,10 +4,10 @@
  */
 
 import { ECR } from 'aws-sdk'
-import { DockerHandler } from 'Common/dockerUtils'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/ECRPullImage/TaskOperations'
-import { TaskParameters } from '../../../Tasks/ECRPullImage/TaskParameters'
+import { DockerHandler } from 'lib/dockerUtils'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/ECRPullImage/TaskOperations'
+import { TaskParameters } from 'tasks/ECRPullImage/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -54,7 +54,7 @@ const ecrFailNotFound = {
 describe('ECR Pull image', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/ECRPullImage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/ECRPullImage/task.json')
     })
 
     test('Creates a TaskOperation', () => {

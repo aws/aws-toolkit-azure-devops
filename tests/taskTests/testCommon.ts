@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { AWSConnectionParameters } from 'Common/awsConnectionParameters'
+import { AWSConnectionParameters } from 'lib/awsConnectionParameters'
 
 export const emptyConnectionParameters: AWSConnectionParameters = {
     proxyConfiguration: '',

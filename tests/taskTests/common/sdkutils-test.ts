@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { SdkUtils } from 'Common/sdkutils'
+import { SdkUtils } from 'lib/sdkutils'
 
 interface KeyValue {
     Key?: string

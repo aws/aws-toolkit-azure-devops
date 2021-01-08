@@ -1,13 +1,13 @@
 {
     "files.exclude": {
-        "_build": true,
-        "_package": true,
+        "build": true,
+        "package": true,
         "package-lock.json": true,
         ".vscode": true
     },
     "search.exclude": {
-        "_build": true,
-        "_package": true,
+        "build": true,
+        "package": true,
         ".vscode": true
     }
 }

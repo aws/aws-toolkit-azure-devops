@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { transformParameterToVariableName } from 'Common/ssm'
+import { transformParameterToVariableName } from 'lib/ssm'
 
 const defaultTaskParameters = {
     parameterName: '',

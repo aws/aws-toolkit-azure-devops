@@ -4,10 +4,10 @@
  */
 
 import { ECR } from 'aws-sdk'
-import { DockerHandler } from 'Common/dockerUtils'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/ECRPushImage/TaskOperations'
-import { imageNameSource, TaskParameters } from '../../../Tasks/ECRPushImage/TaskParameters'
+import { DockerHandler } from 'lib/dockerUtils'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/ECRPushImage/TaskOperations'
+import { imageNameSource, TaskParameters } from 'tasks/ECRPushImage/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -58,7 +58,7 @@ const ecrReturnsToken = {
 describe('ECR Push image', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/ECRPushImage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/ECRPushImage/task.json')
     })
 
     test('Creates a TaskOperation', () => {

@@ -4,8 +4,8 @@
  */
 
 import { ElasticBeanstalk, S3 } from 'aws-sdk'
-import { BeanstalkUtils } from 'Common/beanstalkUtils'
-import { SdkUtils } from 'Common/sdkutils'
+import { BeanstalkUtils } from 'lib/beanstalkUtils'
+import { SdkUtils } from 'lib/sdkutils'
 import path = require('path')
 
 jest.mock('aws-sdk')
@@ -37,7 +37,7 @@ const verifyEnvironmentsExistsDoesNot = {
 describe('BeanstalkUtils', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/BeanstalkDeployApplication/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/BeanstalkDeployApplication/task.json')
     })
 
     test('DetermineS3Bucket succeds', async () => {

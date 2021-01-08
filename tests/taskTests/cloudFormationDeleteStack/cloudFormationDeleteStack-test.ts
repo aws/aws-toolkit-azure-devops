@@ -4,9 +4,9 @@
  */
 
 import { CloudFormation } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/CloudFormationDeleteStack/TaskOperations'
-import { TaskParameters } from '../../../Tasks/CloudFormationDeleteStack/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/CloudFormationDeleteStack/TaskOperations'
+import { TaskParameters } from 'tasks/CloudFormationDeleteStack/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -29,7 +29,7 @@ const describeSucceeds = {
 describe('Cloud formation delete stack', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/CloudFormationDeleteStack/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/CloudFormationDeleteStack/task.json')
     })
 
     test('Creates a TaskOperation', () => {

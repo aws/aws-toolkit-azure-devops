@@ -2,8 +2,8 @@
 **/.vs/
 
 **/node_modules/
-**/_build/
-**/_package/
+**/build/
+**/package/
 
 **/*.log
 **/*.map
@@ -20,4 +20,4 @@ coverage/
 .test-reports
 
 # auto generated runners
-Tasks/**/*.runner.ts
+**/*.runner.ts

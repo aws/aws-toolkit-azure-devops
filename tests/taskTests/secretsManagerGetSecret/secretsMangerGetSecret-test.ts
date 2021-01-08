@@ -4,9 +4,9 @@
  */
 
 import { SecretsManager } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SecretsManagerGetSecret/TaskOperations'
-import { TaskParameters } from '../../../Tasks/SecretsManagerGetSecret/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SecretsManagerGetSecret/TaskOperations'
+import { TaskParameters } from 'tasks/SecretsManagerGetSecret/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -46,7 +46,7 @@ const secretsManagerReturnsValidBase64 = {
 describe('Secrets Manger Get Secret', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SecretsManagerGetSecret/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SecretsManagerGetSecret/task.json')
     })
 
     test('Creates a TaskOperation', () => {

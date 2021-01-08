@@ -4,14 +4,14 @@
  */
 
 import { SSM } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SystemsManagerRunCommand/TaskOperations'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SystemsManagerRunCommand/TaskOperations'
 import {
     fromBuildVariable,
     fromInstanceIds,
     fromTags,
     TaskParameters
-} from '../../../Tasks/SystemsManagerRunCommand/TaskParameters'
+} from 'tasks/SystemsManagerRunCommand/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -52,7 +52,7 @@ const systemsManagerSucceeds = {
 describe('Systems Manager Run Command', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SystemsManagerRunCommand/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SystemsManagerRunCommand/task.json')
     })
 
     test('Creates a TaskOperation', () => {

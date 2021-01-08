@@ -4,9 +4,9 @@
  */
 
 import { SNS, SQS } from 'aws-sdk'
-import { SdkUtils } from 'Common/sdkutils'
-import { TaskOperations } from '../../../Tasks/SendMessage/TaskOperations'
-import { TaskParameters } from '../../../Tasks/SendMessage/TaskParameters'
+import { SdkUtils } from 'lib/sdkutils'
+import { TaskOperations } from 'tasks/SendMessage/TaskOperations'
+import { TaskParameters } from 'tasks/SendMessage/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
 
 jest.mock('aws-sdk')
@@ -35,7 +35,7 @@ const promiseSucceeds = {
 describe('Send Message', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
-        SdkUtils.readResourcesFromRelativePath('../../_build/Tasks/SendMessage/task.json')
+        SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SendMessage/task.json')
     })
 
     test('Creates a TaskOperation', () => {
