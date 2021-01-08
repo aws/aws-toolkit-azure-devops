@@ -21,5 +21,6 @@ phases:
 reports:
     unit-test:
         files:
-            - '*'
+            - testReport.xml
         base-directory: '.test-reports'
+        file-format: JUNITXML
