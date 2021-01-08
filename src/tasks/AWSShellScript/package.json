@@ -4,8 +4,5 @@
     "description": "Run a shell script using bash with AWS credentials",
     "main": "AWSShellScript.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }
