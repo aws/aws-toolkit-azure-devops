@@ -29,4 +29,3 @@ reports:
         files:
             - '**/*'
         base-directory: '$env:CODEBUILD_SRC_DIR/.test-reports'
-        file-format: JunitXml

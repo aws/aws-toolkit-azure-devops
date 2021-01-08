@@ -23,4 +23,3 @@ reports:
         files:
             - '*'
         base-directory: '.test-reports'
-        file-format: JunitXml
