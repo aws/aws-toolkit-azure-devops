@@ -4,8 +4,5 @@
     "description": "Run a command remotely on a fleet of EC2 instances and/or on-premise machines.",
     "main": "SystemsManagerRunCommand.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }

@@ -4,8 +4,5 @@
     "description": "Sends a message to an SQS queue or SNS topic.",
     "main": "SendMessage.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }

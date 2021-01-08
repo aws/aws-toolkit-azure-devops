@@ -4,8 +4,5 @@
     "description": "Creates or updates a parameter in the Systems Manager Parameter Store.",
     "main": "SystemsManagerSetParameter.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }

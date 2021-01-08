@@ -4,8 +4,5 @@
     "description": "Invokes an AWS Lambda function with an arbitrary payload.",
     "main": "LambdaInvokeFunction.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }
