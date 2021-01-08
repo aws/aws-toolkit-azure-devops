@@ -12,20 +12,8 @@ const ignoreExtensions = ['.ts']
 
 const filterFunc = (src: string, dest: string) => {
     return (
-        ignoredFiles.every(element => {
-            if (src.endsWith(element)) {
-                return false
-            }
-
-            return true
-        }) &&
-        ignoreExtensions.every(element => {
-            if (src.endsWith(element)) {
-                return false
-            }
-
-            return true
-        })
+        ignoredFiles.every(element => !src.endsWith(element)) &&
+        ignoreExtensions.every(element => !src.endsWith(element))
     )
 }
 
