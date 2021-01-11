@@ -8,7 +8,7 @@
     "category": "Deploy",
     "visibility": ["Build", "Release"],
     "demands": [],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "instanceNameFormat": "Secrets Manager Create/Update Secret: $(secretName)",
     "groups": [
         {
@@ -165,7 +165,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "SecretsManagerCreateOrUpdateSecret.js",
             "argumentFormat": ""
         }

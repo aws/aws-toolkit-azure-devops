@@ -6,7 +6,7 @@
 import * as fs from 'fs-extra'
 import * as jsonQuery from 'json-query'
 import * as path from 'path'
-const http = require('http')
+import { default as axios } from 'axios'
 import validator from 'validator'
 
 import { buildTasks, findMatchingFiles, releaseVersion, repoRoot, sourceTasks } from './scriptUtils'
@@ -30,9 +30,8 @@ async function fetchLatestRegions(): Promise<string[]> {
 
     const availableRegions: any = {}
 
-    const res = await http.get(endpointsFileUrl)
-    // TODO remove syncRequest
-    const allEndpoints = JSON.parse(res.getBody() as string)
+    const res = await axios.get(endpointsFileUrl)
+    const allEndpoints = res.data
 
     for (let p = 0; p < allEndpoints.partitions.length; p++) {
         const partition = allEndpoints.partitions[p]

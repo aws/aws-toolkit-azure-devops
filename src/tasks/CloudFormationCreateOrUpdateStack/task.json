@@ -9,7 +9,7 @@
     "visibility": ["Build", "Release"],
     "demands": [],
     "runsOn": ["Agent"],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "groups": [
         {
             "name": "Capabilities",
@@ -368,7 +368,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "CloudFormationCreateOrUpdateStack.js",
             "argumentFormat": ""
         }

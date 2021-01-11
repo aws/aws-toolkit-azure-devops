@@ -14,7 +14,7 @@ import { findMatchingFiles } from './scriptUtils'
 const timeMessage = 'Packaged extension'
 const manifestFile = 'vss-extension.json'
 
-const vstsFiles = ['task.json', 'task.loc.json', 'package.json', 'icon.png', 'Strings']
+const vstsFiles = ['task.json', 'task.loc.json', 'icon.png', 'Strings']
 
 interface CommandLineOptions {
     publisher?: string
@@ -110,8 +110,8 @@ function packagePlugin(options: CommandLineOptions) {
                 entryPoints: [inputFilename],
                 bundle: true,
                 platform: 'node',
-                target: ['node10'],
-                minify: true,
+                target: 'es2018',
+                minify: false,
                 outfile: `${taskPackageFolder}/${taskName}.js`
             })
             result.warnings.forEach(warning => console.log(warning))
