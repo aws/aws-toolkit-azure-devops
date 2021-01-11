@@ -6,10 +6,10 @@
 import * as fs from 'fs-extra'
 import * as jsonQuery from 'json-query'
 import * as path from 'path'
+const http = require('http')
 import validator from 'validator'
 
 import { buildTasks, findMatchingFiles, releaseVersion, repoRoot, sourceTasks } from './scriptUtils'
-import syncRequest from 'sync-request'
 import isUUID = validator.isUUID
 import isAlphanumeric = validator.isAlphanumeric
 import isLength = validator.isLength
@@ -23,14 +23,14 @@ const vssBuildPath = path.join(repoRoot, 'build', 'vss-extension.json')
 // Downloads the latest known AWS regions file used by the various
 // AWS toolkits and constructs an object we can inject into each
 // task's region picker options.
-function fetchLatestRegions(): string[] {
+async function fetchLatestRegions(): Promise<string[]> {
     console.log('Fetching AWS regions')
 
     const endpointsFileUrl = 'https://aws-toolkit-endpoints.s3.amazonaws.com/endpoints.json'
 
     const availableRegions: any = {}
 
-    const res = syncRequest('GET', endpointsFileUrl)
+    const res = await http.get(endpointsFileUrl)
     // TODO remove syncRequest
     const allEndpoints = JSON.parse(res.getBody() as string)
 
@@ -203,10 +203,12 @@ function addVersionToVssExtension(versionInfo: string): void {
     fs.writeFileSync(vssBuildPath, JSON.stringify(vss, undefined, 2))
 }
 
-console.time(timeMessage)
-const knownRegions = fetchLatestRegions()
-findMatchingFiles(sourceTasks).forEach(path => {
-    generateTaskResources(path, knownRegions, releaseVersion)
-})
-addVersionToVssExtension(releaseVersion)
-console.timeEnd(timeMessage)
+;(async () => {
+    console.time(timeMessage)
+    const knownRegions = await fetchLatestRegions()
+    findMatchingFiles(sourceTasks).forEach(path => {
+        generateTaskResources(path, knownRegions, releaseVersion)
+    })
+    addVersionToVssExtension(releaseVersion)
+    console.timeEnd(timeMessage)
+})()

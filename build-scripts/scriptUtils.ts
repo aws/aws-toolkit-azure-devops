@@ -27,7 +27,7 @@ export function findMatchingFiles(directory: string) {
         const subFiles = fs.readdirSync(path.join(sourceTasks, folder), { withFileTypes: true })
         if (
             subFiles.every(
-                subFile => subFile.isDirectory() && RegExp(`${folder}V[0-9]`).exec(subFile.name) !== undefined
+                subFile => subFile.isDirectory() && RegExp(`^${folder}V[0-9]*$`).exec(subFile.name) !== undefined
             )
         ) {
             finalFolders.push(...subFiles.map(subFile => path.join(folder, subFile.name)))

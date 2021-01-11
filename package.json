@@ -67,7 +67,6 @@
         "prettier": "1.19.1",
         "pretty-quick": "^2.0.1",
         "readline-sync": "^1.4.10",
-        "sync-request": "^6.1.0",
         "tfx-cli": "^0.8.3",
         "tmp": "^0.2.1",
         "ts-jest": "^26.4.4",

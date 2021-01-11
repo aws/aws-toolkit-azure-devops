@@ -5,7 +5,8 @@
     "author": "Amazon Web Services",
     "license": "MIT",
     "devDependencies": {
-        "@aws-sdk/types": "^3.1.0"
+        "@aws-sdk/types": "^3.1.0",
+        "@types/node": "^10.17.28"
     },
     "dependencies": {
         "@aws-sdk/client-lambda": "3.1.0",
