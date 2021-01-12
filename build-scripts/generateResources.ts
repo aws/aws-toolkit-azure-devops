@@ -108,7 +108,7 @@ function generateTaskLoc(taskLoc: any, taskPath: string) {
 function addVersionToTask(task: any, majorVersion: number, versionInfo: string) {
     const info = versionInfo.split('.')
     task.version = {
-        Major: majorVersion,
+        Major: majorVersion.toString(),
         Minor: info[1],
         Patch: info[2]
     }

@@ -1,7 +1,9 @@
-import * as AWS from 'aws-sdkglobal'
+/*!
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: MIT
+ */
+
 import * as tl from 'azure-pipelines-task-lib'
-import * as fs from 'fs'
-import { VSTSTaskManifest } from 'lib/vstsUtils'
 import * as path from 'path'
 
 export function setup(): void {

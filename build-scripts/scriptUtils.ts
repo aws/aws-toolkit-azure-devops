@@ -39,8 +39,13 @@ export function findMatchingFiles(directory: string): Task[] {
         ) {
             finalFolders.push(
                 ...subFiles.map(subFile => {
-                    const version = parseInt(taskVersionRegex(folder).exec(subFile.name)!![1])
-                    return { taskPath: path.join(folder, subFile.name), majorVersion: version }
+                    const versionString = taskVersionRegex(folder).exec(subFile.name)?.[1]
+                    if (versionString === undefined) {
+                        throw Error(
+                            `Tasks with multiple versions must be in the form <TaskName>V<version>! Was: ${subFile.name}`
+                        )
+                    }
+                    return { taskPath: path.join(folder, subFile.name), majorVersion: parseInt(versionString) }
                 })
             )
         } else {
