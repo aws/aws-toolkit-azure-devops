@@ -16,23 +16,35 @@ export const packageTasks = path.join(packageRoot, 'Tasks')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 export const releaseVersion = require(path.join(repoRoot, 'package.json')).version
 
-export function findMatchingFiles(directory: string) {
+export interface Task {
+    taskPath: string
+    majorVersion: number
+}
+
+const taskVersionRegex = (folder: string) => RegExp(`^${folder}V([0-9]*)$`)
+
+export function findMatchingFiles(directory: string): Task[] {
     const folders = fs
         .readdirSync(directory, { withFileTypes: true })
         .filter(file => file.isDirectory())
         .map(file => file.name)
     // if it's a task with multiple versions, it will have the form <parent>V<version>
-    const finalFolders: string[] = []
+    const finalFolders: Task[] = []
     folders.forEach(folder => {
         const subFiles = fs.readdirSync(path.join(sourceTasks, folder), { withFileTypes: true })
         if (
             subFiles.every(
-                subFile => subFile.isDirectory() && RegExp(`^${folder}V[0-9]*$`).exec(subFile.name) !== undefined
+                subFile => subFile.isDirectory() && taskVersionRegex(folder).exec(subFile.name) !== undefined
             )
         ) {
-            finalFolders.push(...subFiles.map(subFile => path.join(folder, subFile.name)))
+            finalFolders.push(
+                ...subFiles.map(subFile => {
+                    const version = parseInt(taskVersionRegex(folder).exec(subFile.name)!![1])
+                    return { taskPath: path.join(folder, subFile.name), majorVersion: version }
+                })
+            )
         } else {
-            finalFolders.push(folder)
+            finalFolders.push({ taskPath: folder, majorVersion: 1 })
         }
     })
     return finalFolders

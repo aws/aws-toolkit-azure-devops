@@ -9,14 +9,14 @@ import * as path from 'path'
 import { default as axios } from 'axios'
 import validator from 'validator'
 
-import { buildTasks, findMatchingFiles, releaseVersion, repoRoot, sourceTasks } from './scriptUtils'
+import { buildTasks, findMatchingFiles, releaseVersion, repoRoot, sourceTasks, Task } from './scriptUtils'
 import isUUID = validator.isUUID
 import isAlphanumeric = validator.isAlphanumeric
 import isLength = validator.isLength
 
 const timeMessage = 'Generated resources'
-const taskJson = 'task.json'
-const taskLocJson = 'task.loc.json'
+const taskJsonName = 'task.json'
+const taskLocJsonName = 'task.loc.json'
 const vssPath = path.join(repoRoot, 'vss-extension.json')
 const vssBuildPath = path.join(repoRoot, 'build', 'vss-extension.json')
 
@@ -102,13 +102,13 @@ function generateTaskLoc(taskLoc: any, taskPath: string) {
         })
     }
 
-    fs.writeFileSync(path.join(buildTasks, taskPath, taskLocJson), JSON.stringify(taskLoc, undefined, 2))
+    fs.writeFileSync(path.join(buildTasks, taskPath, taskLocJsonName), JSON.stringify(taskLoc, undefined, 2))
 }
 
-function addVersionToTask(task: any, versionInfo: string) {
+function addVersionToTask(task: any, majorVersion: number, versionInfo: string) {
     const info = versionInfo.split('.')
     task.version = {
-        Major: info[0],
+        Major: majorVersion,
         Minor: info[1],
         Patch: info[2]
     }
@@ -123,7 +123,7 @@ function addAWSRegionsToTask(task: any, knownRegions: string[]) {
 }
 
 function writeTask(task: any, taskPath: string): void {
-    fs.writeFileSync(path.join(buildTasks, taskPath, taskJson), JSON.stringify(task, undefined, 2))
+    fs.writeFileSync(path.join(buildTasks, taskPath, taskJsonName), JSON.stringify(task, undefined, 2))
 }
 
 function createResjson(task: any, taskPath: string): void {
@@ -179,21 +179,21 @@ function createResjson(task: any, taskPath: string): void {
     fs.writeFileSync(resjsonPath, JSON.stringify(resources, undefined, 2))
 }
 
-function generateTaskResources(taskPath: string, knownRegions: string[], versionInfo: string): void {
-    const taskJsonPath = path.join(sourceTasks, taskPath, taskJson)
+function generateTaskResources(task: Task, knownRegions: string[], versionInfo: string): void {
+    const taskJsonPath = path.join(sourceTasks, task.taskPath, taskJsonName)
     try {
         fs.accessSync(taskJsonPath)
     } catch (e) {
         return
     }
 
-    const task = JSON.parse(fs.readFileSync(taskJsonPath, 'utf-8'))
-    validateTask(task)
-    addVersionToTask(task, versionInfo)
-    addAWSRegionsToTask(task, knownRegions)
-    writeTask(task, taskPath)
-    createResjson(task, taskPath)
-    generateTaskLoc(task, taskPath)
+    const taskJson = JSON.parse(fs.readFileSync(taskJsonPath, 'utf-8'))
+    validateTask(taskJson)
+    addVersionToTask(taskJson, task.majorVersion, versionInfo)
+    addAWSRegionsToTask(taskJson, knownRegions)
+    writeTask(taskJson, task.taskPath)
+    createResjson(taskJson, task.taskPath)
+    generateTaskLoc(taskJson, task.taskPath)
 }
 
 function addVersionToVssExtension(versionInfo: string): void {
@@ -205,8 +205,8 @@ function addVersionToVssExtension(versionInfo: string): void {
 ;(async () => {
     console.time(timeMessage)
     const knownRegions = await fetchLatestRegions()
-    findMatchingFiles(sourceTasks).forEach(path => {
-        generateTaskResources(path, knownRegions, releaseVersion)
+    findMatchingFiles(sourceTasks).forEach(task => {
+        generateTaskResources(task, knownRegions, releaseVersion)
     })
     addVersionToVssExtension(releaseVersion)
     console.timeEnd(timeMessage)

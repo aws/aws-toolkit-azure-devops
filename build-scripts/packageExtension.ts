@@ -69,12 +69,12 @@ function packagePlugin(options: CommandLineOptions) {
     installNodePackages(npmFolder)
 
     // clean, dedupe and pack each task as needed
-    findMatchingFiles(folders.sourceTasks).forEach(function(taskDirectory) {
-        const taskName = taskDirectory.split(path.sep)[0]
+    findMatchingFiles(folders.sourceTasks).forEach(function(task) {
+        const taskName = task.taskPath.split(path.sep)[0]
         console.log('Processing task ' + taskName)
 
-        const taskBuildFolder = path.join(folders.buildTasks, taskDirectory)
-        const taskPackageFolder = path.join(folders.packageTasks, taskDirectory)
+        const taskBuildFolder = path.join(folders.buildTasks, task.taskPath)
+        const taskPackageFolder = path.join(folders.packageTasks, task.taskPath)
         fs.mkdirpSync(taskPackageFolder)
 
         // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -102,7 +102,12 @@ function packagePlugin(options: CommandLineOptions) {
             { overwrite: true }
         )
 
-        const inputFilename = path.join(taskBuildFolder, taskName + '.runner.js')
+        let inputFilename = ''
+        if (fs.existsSync(path.join(taskBuildFolder, taskName + '.runner.js'))) {
+            inputFilename = path.join(taskBuildFolder, taskName + '.runner.js')
+        } else {
+            inputFilename = path.join(taskBuildFolder, taskName + '.js')
+        }
 
         console.log('packing node-based task')
         try {
