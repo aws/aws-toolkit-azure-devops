@@ -4,5 +4,8 @@
     "description": "Download content from an AWS Simple Storage Service (S3) Bucket",
     "main": "S3Download.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

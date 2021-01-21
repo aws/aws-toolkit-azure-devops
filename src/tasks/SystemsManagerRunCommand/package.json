@@ -4,5 +4,8 @@
     "description": "Run a command remotely on a fleet of EC2 instances and/or on-premise machines.",
     "main": "SystemsManagerRunCommand.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

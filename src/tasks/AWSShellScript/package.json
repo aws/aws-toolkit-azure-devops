@@ -4,5 +4,8 @@
     "description": "Run a shell script using bash with AWS credentials",
     "main": "AWSShellScript.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

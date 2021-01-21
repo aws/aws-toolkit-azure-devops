@@ -4,5 +4,8 @@
     "description": "Creates or updates a parameter in the Systems Manager Parameter Store.",
     "main": "SystemsManagerSetParameter.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

@@ -4,5 +4,8 @@
     "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
     "main": "BeanstalkDeployApplication.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

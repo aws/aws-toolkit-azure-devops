@@ -4,5 +4,8 @@
     "description": "Create an AWS CloudFormation stacks",
     "main": "CloudFormationCreateOrUpdateStack.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

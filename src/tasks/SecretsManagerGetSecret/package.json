@@ -4,5 +4,8 @@
     "description": "Retrieves the value of a secret from the Secrets Manager store and sets it into a build variable.",
     "main": "SecretsManagerGetSecret.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

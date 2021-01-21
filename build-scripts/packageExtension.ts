@@ -104,6 +104,7 @@ async function packagePlugin(options: CommandLineOptions): Promise<void> {
         if (!packageJson?.main) {
             throw Error(`${taskName} does not specify a "main" in its package.json`)
         }
+
         const inputFilename = path.join(taskBuildFolder, packageJson?.main)
 
         console.log('packing node-based task')
@@ -112,9 +113,10 @@ async function packagePlugin(options: CommandLineOptions): Promise<void> {
                 entryPoints: [inputFilename],
                 bundle: true,
                 platform: 'node',
-                target: 'es2018',
+                //target: 'es2018',
                 minify: false,
-                outfile: `${taskPackageFolder}/${taskName}.js`
+                outfile: `${taskPackageFolder}/${taskName}.js`,
+                ...(packageJson?.esbuild ?? {})
             })
             result.warnings.forEach(warning => console.log(warning))
         } catch (err) {

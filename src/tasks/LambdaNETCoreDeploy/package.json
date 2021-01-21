@@ -4,5 +4,8 @@
     "description": "Builds and deploys an AWS Lambda function.",
     "main": "LambdaNETCoreDeploy.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

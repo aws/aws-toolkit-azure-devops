@@ -4,5 +4,8 @@
     "description": "Invokes an AWS Lambda function with an arbitrary payload.",
     "main": "LambdaInvokeFunction.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }

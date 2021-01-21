@@ -4,5 +4,8 @@
     "description": "Sends a message to an SQS queue or SNS topic.",
     "main": "SendMessage.js",
     "author": "",
-    "license": "MIT"
+    "license": "MIT",
+    "esbuild": {
+        "target": "node10"
+    }
 }
