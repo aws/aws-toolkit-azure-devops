@@ -4,7 +4,7 @@
  */
 
 import * as fs from 'fs-extra'
-import * as jsonQuery from 'json-query'
+import JsonQuery from 'json-query'
 import * as path from 'path'
 import validator from 'validator'
 
@@ -120,7 +120,7 @@ function addVersionToTask(task: any, versionInfo: string) {
 }
 
 function addAWSRegionsToTask(task: any, knownRegions: string[]) {
-    const regionNameInput = jsonQuery('inputs[name=regionName]', {
+    const regionNameInput = JsonQuery('inputs[name=regionName]', {
         data: task
     }).value
 
