@@ -4,9 +4,9 @@
  */
 
 import * as fs from 'fs-extra'
-import * as jsonQuery from 'json-query'
+import JsonQuery from 'json-query'
 import * as path from 'path'
-import { default as axios } from 'axios'
+import axios from 'axios'
 import validator from 'validator'
 
 import { buildTasks, findMatchingFiles, releaseVersion, repoRoot, sourceTasks, Task } from './scriptUtils'
@@ -115,7 +115,7 @@ function addVersionToTask(task: any, majorVersion: number, versionInfo: string) 
 }
 
 function addAWSRegionsToTask(task: any, knownRegions: string[]) {
-    const regionNameInput = jsonQuery('inputs[name=regionName]', {
+    const regionNameInput = JsonQuery('inputs[name=regionName]', {
         data: task
     }).value
 

@@ -7,7 +7,7 @@ import * as tl from 'azure-pipelines-task-lib/task'
 
 import { STS } from 'aws-sdk/clients/all'
 import * as AWS from 'aws-sdk/global'
-import * as HttpsProxyAgent from 'https-proxy-agent'
+import { HttpsProxyAgent } from 'https-proxy-agent'
 import { format, parse, Url } from 'url'
 
 // Task variable names that can be used to supply the AWS credentials

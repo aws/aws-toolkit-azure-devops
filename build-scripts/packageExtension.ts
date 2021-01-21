@@ -85,7 +85,7 @@ async function packagePlugin(options: CommandLineOptions): Promise<void> {
             console.log('Copying non-node task ' + taskName)
             await fs.copy(taskBuildFolder, taskPackageFolder)
 
-            return
+            continue
         }
 
         for (const resourceFile of vstsFiles) {
