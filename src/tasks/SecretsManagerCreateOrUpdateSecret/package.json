@@ -3,9 +3,6 @@
     "version": "1.1.8",
     "description": "Updates a secret, optionally creating a secret if it does not exist.",
     "main": "SecretsManagerCreateOrUpdateSecret.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "author": "",
     "license": "MIT"
 }

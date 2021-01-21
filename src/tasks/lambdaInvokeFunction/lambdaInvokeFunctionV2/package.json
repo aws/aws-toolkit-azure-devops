@@ -1,7 +1,7 @@
 {
     "name": "lambdainvokefunctionv2",
     "description": "Invokes an AWS Lambda function with an arbitrary payload.",
-    "main": "index.js",
+    "main": "LambdaInvokeFunction.js",
     "author": "Amazon Web Services",
     "license": "MIT",
     "devDependencies": {

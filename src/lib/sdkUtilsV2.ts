@@ -17,3 +17,30 @@ export function setup(): void {
 function setSdkUserAgentFromManifest(taskManifestFilePath: string): void {
     // TODO
 }
+
+function getEndpointConfiguration() {
+    const type = tl.getVariable('credentialsType')
+    switch (type) {
+        case 'environment':
+            break
+        case 'serviceConnection':
+            break
+        case undefined:
+            throw Error('abc!!!!')
+    }
+}
+
+export interface AWSConnectionParameters {
+    // pre-formatted url string, or azure-pipelines-task-lib/ProxyConfiguration
+    proxyConfiguration: string | tl.ProxyConfiguration | undefined
+    // If set, the task should expect to receive temporary session credentials
+    // scoped to the role.
+    AssumeRoleARN: string | undefined
+    // Optional diagnostic logging switches
+    logRequestData: boolean
+    logResponseData: boolean
+    // Original task credentials configured by the task user; if we are in assume-role
+    // mode, these credentials were used to generate the temporary credential
+    // fields above
+    awsEndpointAuth: tl.EndpointAuthorization | undefined
+}

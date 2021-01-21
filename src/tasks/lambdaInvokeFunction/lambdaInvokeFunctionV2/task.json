@@ -85,7 +85,7 @@
     ],
     "execution": {
         "Node10": {
-            "target": "lambdaInvokeFunction.js",
+            "target": "LambdaInvokeFunction.js",
             "argumentFormat": ""
         }
     },

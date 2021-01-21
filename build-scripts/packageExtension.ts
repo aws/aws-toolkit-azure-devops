@@ -47,7 +47,7 @@ function generateGitHashFile() {
     }
 }
 
-function packagePlugin(options: CommandLineOptions) {
+async function packagePlugin(options: CommandLineOptions): Promise<void> {
     fs.mkdirpSync(folders.packageRoot)
     fs.mkdirpSync(folders.packageTasks)
     const npmFolder = path.join(folders.buildRoot, 'npmcache')
@@ -65,53 +65,50 @@ function packagePlugin(options: CommandLineOptions) {
     // stage manifest images
     fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.packageRoot, 'images'), { overwrite: true })
 
-    // get required npm packages that will be coppied
+    // get required npm packages that will be copied
     installNodePackages(npmFolder)
 
-    // clean, dedupe and pack each task as needed
-    findMatchingFiles(folders.sourceTasks).forEach(function(task) {
+    for await (const task of findMatchingFiles(folders.sourceTasks)) {
         const taskName = task.taskPath.split(path.sep)[0]
         console.log('Processing task ' + taskName)
 
         const taskBuildFolder = path.join(folders.buildTasks, task.taskPath)
         const taskPackageFolder = path.join(folders.packageTasks, task.taskPath)
-        fs.mkdirpSync(taskPackageFolder)
+        await fs.mkdirp(taskPackageFolder)
 
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const taskDef = require(path.join(taskBuildFolder, 'task.json'))
+        const taskDef = JSON.parse(await fs.readFile(path.join(taskBuildFolder, 'task.json'), 'utf-8'))
         if (
             !Object.hasOwnProperty.call(taskDef.execution, 'Node') &&
             !Object.hasOwnProperty.call(taskDef.execution, 'Node10') &&
             !Object.hasOwnProperty.call(taskDef.execution, 'Node14')
         ) {
             console.log('Copying non-node task ' + taskName)
-            fs.copySync(taskBuildFolder, taskPackageFolder)
+            await fs.copy(taskBuildFolder, taskPackageFolder)
 
             return
         }
 
         for (const resourceFile of vstsFiles) {
-            fs.copySync(path.join(taskBuildFolder, resourceFile), path.join(taskPackageFolder, resourceFile), {
+            await fs.copy(path.join(taskBuildFolder, resourceFile), path.join(taskPackageFolder, resourceFile), {
                 overwrite: true
             })
         }
         // we also need lib.json from azure pipelines task lib or else localization will not work properly
-        fs.copySync(
+        await fs.copy(
             path.join(folders.repoRoot, 'node_modules/azure-pipelines-task-lib/lib.json'),
             path.join(taskPackageFolder, 'lib.json'),
             { overwrite: true }
         )
 
-        let inputFilename = ''
-        if (fs.existsSync(path.join(taskBuildFolder, taskName + '.runner.js'))) {
-            inputFilename = path.join(taskBuildFolder, taskName + '.runner.js')
-        } else {
-            inputFilename = path.join(taskBuildFolder, taskName + '.js')
+        const packageJson = JSON.parse(await fs.readFile(path.join(taskBuildFolder, 'package.json'), 'utf-8'))
+        if (!packageJson?.main) {
+            throw Error(`${taskName} does not specify a "main" in its package.json`)
         }
+        const inputFilename = path.join(taskBuildFolder, packageJson?.main)
 
         console.log('packing node-based task')
         try {
-            const result = esbuild.buildSync({
+            const result = await esbuild.build({
                 entryPoints: [inputFilename],
                 bundle: true,
                 platform: 'node',
@@ -124,7 +121,7 @@ function packagePlugin(options: CommandLineOptions) {
             console.error(err.output ? err.output.toString() : err.message)
             process.exit(1)
         }
-    })
+    }
 
     console.log('Creating deployment vsix')
     let tfxcmd = `tfx extension create --root ${folders.packageRoot} --output-path ${
@@ -141,11 +138,13 @@ function packagePlugin(options: CommandLineOptions) {
     console.log('Packaging successful')
 }
 
-console.time(timeMessage)
-const commandLineInput = process.argv.slice(2) ?? ''
-const parsedOptions: CommandLineOptions = {}
-if (commandLineInput.length > 0 && commandLineInput[0].split('=')[0] === 'publisher') {
-    parsedOptions.publisher = commandLineInput[0].split('=')[1]
-}
-packagePlugin(parsedOptions)
-console.timeEnd(timeMessage)
+;(async () => {
+    console.time(timeMessage)
+    const commandLineInput = process.argv.slice(2) ?? ''
+    const parsedOptions: CommandLineOptions = {}
+    if (commandLineInput.length > 0 && commandLineInput[0].split('=')[0] === 'publisher') {
+        parsedOptions.publisher = commandLineInput[0].split('=')[1]
+    }
+    await packagePlugin(parsedOptions)
+    console.timeEnd(timeMessage)
+})()
