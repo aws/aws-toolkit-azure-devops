@@ -6,6 +6,10 @@
 import { ClientDefaults, Lambda } from '@aws-sdk/client-lambda'
 import { S3 } from '@aws-sdk/client-s3'
 import { NodeHttpHandler } from '@aws-sdk/node-http-handler'
+import * as tl from 'azure-pipelines-task-lib'
+import { Agent as HttpsAgent } from 'https'
+import { buildConnectionParameters } from 'lib/awsConnectionParametersV2'
+import { HttpsProxyAgent } from 'https-proxy-agent'
 import proxy from 'proxy-agent'
 
 function setClientVersion(): ClientDefaults {
@@ -31,4 +35,27 @@ function abc() {
     client.config.customUserAgent = [['abc', '1']]
 }
 
-abc()
+async function run(): Promise<void> {
+    const params = buildConnectionParameters()
+    let proxyConfiguration = {}
+    if (params.proxyConfiguration) {
+        proxyConfiguration = {
+            requestHandler: new NodeHttpHandler({
+                httpsAgent: new HttpsProxyAgent(params.proxyConfiguration)
+            })
+        }
+    }
+    const client = new Lambda({
+        credentials: params.credentials,
+        region: params.region,
+        ...proxyConfiguration
+    })
+}
+
+run()
+    .then(result => {
+        tl.setResult(tl.TaskResult.Succeeded, '')
+    })
+    .catch(error => {
+        tl.setResult(tl.TaskResult.Failed, `${error}`)
+    })
