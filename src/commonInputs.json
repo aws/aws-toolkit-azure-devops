@@ -31,24 +31,6 @@
             "properties": {
                 "EditableOptions": "True"
             }
-        },
-        {
-            "name": "logRequest",
-            "type": "boolean",
-            "label": "Log Request",
-            "defaultValue": "false",
-            "required": false,
-            "helpMarkDown": "If selected, request headers and other data for calls to AWS services are logged to the task's debug log.",
-            "groupName": "diagnostic"
-        },
-        {
-            "name": "logResponse",
-            "type": "boolean",
-            "label": "Log Response",
-            "defaultValue": "false",
-            "required": false,
-            "helpMarkDown": "If selected, the response metadata and body content of non-streaming responses from calls to AWS services are output to the task's debug log. The unique request ID, which can be useful when contacting AWS for support, is always logged to the task output regardless of this option setting.",
-            "groupName": "diagnostic"
         }
     ]
 }
