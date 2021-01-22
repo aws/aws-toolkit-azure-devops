@@ -3,39 +3,16 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ClientDefaults, Lambda } from '@aws-sdk/client-lambda'
-import { S3 } from '@aws-sdk/client-s3'
+import { Lambda } from '@aws-sdk/client-lambda'
 import { NodeHttpHandler } from '@aws-sdk/node-http-handler'
 import * as tl from 'azure-pipelines-task-lib'
-import { Agent as HttpsAgent } from 'https'
 import { buildConnectionParameters } from 'lib/awsConnectionParametersV2'
 import { HttpsProxyAgent } from 'https-proxy-agent'
-import proxy from 'proxy-agent'
-
-function setClientVersion(): ClientDefaults {
-    proxy({ timeout: 1000 })
-    return {
-        region: '',
-        defaultUserAgentProvider: async () => {
-            return [['abc', '1']]
-        },
-
-        requestHandler: new NodeHttpHandler({
-            httpAgent: proxy('https://example.com'),
-            httpsAgent: proxy('https://example.com')
-        })
-    }
-}
-
-function abc() {
-    const client = new Lambda(setClientVersion())
-    new Lambda({ credentials: { accessKeyId: '33', secretAccessKey: '333' } })
-    const client2 = new S3({ region: '' })
-    client2.createBucket({ Bucket: 'b' })
-    client.config.customUserAgent = [['abc', '1']]
-}
+import path from 'path'
 
 async function run(): Promise<void> {
+    const taskManifestFile = path.join(__dirname, 'task.json')
+    tl.setResourcePath(taskManifestFile)
     const params = buildConnectionParameters()
     let proxyConfiguration = {}
     if (params.proxyConfiguration) {
@@ -48,7 +25,22 @@ async function run(): Promise<void> {
     const client = new Lambda({
         credentials: params.credentials,
         region: params.region,
-        ...proxyConfiguration
+        ...proxyConfiguration,
+        defaultUserAgentProvider: async () => {
+            return [['abc', '1']]
+        }
+    })
+
+    const functionName = tl.getInput('functionName', true) ?? ''
+    const payload = tl.getInput('payload')
+    const invocationType = tl.getInput('invocationType')
+    const LogType = tl.getInput('logType', false)
+
+    await client.invoke({
+        FunctionName: functionName,
+        Payload: new TextEncoder().encode(payload),
+        InvocationType: invocationType,
+        LogType: LogType
     })
 }
 

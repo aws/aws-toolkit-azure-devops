@@ -78,7 +78,8 @@
             "defaultValue": "RequestResponse",
             "options": {
                 "Event": "Asynchronous execution",
-                "RequestResponse": "Synchronous execution, returning the output from the function."
+                "RequestResponse": "Synchronous execution, returning the output from the function.",
+                "DryRun": "Dry run execution"
             }
         },
         {
