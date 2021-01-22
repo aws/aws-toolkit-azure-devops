@@ -3,12 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-// Task variable names that can be used to supply the AWS credentials
-// to a task (in addition to using a service endpoint, or environment
-// variables, or EC2 instance metadata)
 import * as tl from 'azure-pipelines-task-lib'
-import { HttpsProxyAgent } from 'https-proxy-agent'
-import { format, parse, Url } from 'url'
+
+import { parse, Url } from 'url'
 import { Credentials } from '@aws-sdk/types'
 
 export const credentialsType = 'credentialsType'

@@ -3,17 +3,19 @@
  * SPDX-License-Identifier: MIT
  */
 
+import * as tl from 'azure-pipelines-task-lib'
 import { Lambda } from '@aws-sdk/client-lambda'
 import { NodeHttpHandler } from '@aws-sdk/node-http-handler'
-import * as tl from 'azure-pipelines-task-lib'
-import { buildConnectionParameters } from 'lib/awsConnectionParametersV2'
+import { buildConnectionParameters } from 'lib/v2/awsConnectionParameters'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import path from 'path'
 
 async function run(): Promise<void> {
     const taskManifestFile = path.join(__dirname, 'task.json')
     tl.setResourcePath(taskManifestFile)
+
     const params = buildConnectionParameters()
+
     let proxyConfiguration = {}
     if (params.proxyConfiguration) {
         proxyConfiguration = {
@@ -26,6 +28,7 @@ async function run(): Promise<void> {
         credentials: params.credentials,
         region: params.region,
         ...proxyConfiguration,
+        // TODO
         defaultUserAgentProvider: async () => {
             return [['abc', '1']]
         }
