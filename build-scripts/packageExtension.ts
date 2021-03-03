@@ -113,7 +113,7 @@ async function packagePlugin(options: CommandLineOptions): Promise<void> {
                 entryPoints: [inputFilename],
                 bundle: true,
                 platform: 'node',
-                //target: 'es2018',
+                external: ['azure-pipelines-task-lib'],
                 minify: false,
                 outfile: `${taskPackageFolder}/${taskName}.js`,
                 ...(packageJson?.esbuild ?? {})

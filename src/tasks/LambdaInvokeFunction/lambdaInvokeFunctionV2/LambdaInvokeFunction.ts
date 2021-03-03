@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import * as tl from 'azure-pipelines-task-lib'
+import { getInput, setResourcePath, TaskResult, setResult } from 'azure-pipelines-task-lib/task'
 import { Lambda } from '@aws-sdk/client-lambda'
 import { NodeHttpHandler } from '@aws-sdk/node-http-handler'
 import { buildConnectionParameters } from 'lib/v2/awsConnectionParameters'
@@ -12,7 +12,7 @@ import path from 'path'
 
 async function run(): Promise<void> {
     const taskManifestFile = path.join(__dirname, 'task.json')
-    tl.setResourcePath(taskManifestFile)
+    setResourcePath(taskManifestFile)
 
     const params = buildConnectionParameters()
 
@@ -34,10 +34,10 @@ async function run(): Promise<void> {
         }
     })
 
-    const functionName = tl.getInput('functionName', true) ?? ''
-    const payload = tl.getInput('payload')
-    const invocationType = tl.getInput('invocationType')
-    const LogType = tl.getInput('logType', false)
+    const functionName = getInput('functionName', true) ?? ''
+    const payload = getInput('payload')
+    const invocationType = getInput('invocationType')
+    const LogType = getInput('logType', false)
 
     await client.invoke({
         FunctionName: functionName,
@@ -49,8 +49,8 @@ async function run(): Promise<void> {
 
 run()
     .then(result => {
-        tl.setResult(tl.TaskResult.Succeeded, '')
+        setResult(TaskResult.Succeeded, '')
     })
     .catch(error => {
-        tl.setResult(tl.TaskResult.Failed, `${error}`)
+        setResult(TaskResult.Failed, `${error}`)
     })

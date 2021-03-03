@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import * as tl from 'azure-pipelines-task-lib'
+import {
+    getInput,
+    ProxyConfiguration,
+    warning,
+    getVariable,
+    getEndpointAuthorization,
+    getHttpProxyConfiguration
+} from 'azure-pipelines-task-lib/task'
 
 import { parse, Url } from 'url'
 import { Credentials } from '@aws-sdk/types'
@@ -41,7 +48,7 @@ export interface AWSConnectionParameters {
 // If those are not set, fall back to checking HTTP(s)_PROXY that some customers are using
 // instead. If HTTP(s)_PROXY is in use we deconstruct the url to make up a ProxyConfiguration
 // instance, and then reform to configure the SDK. This allows us to work with either approach.
-function setupProxy(proxyConfiguration: tl.ProxyConfiguration | string): Url | undefined {
+function setupProxy(proxyConfiguration: ProxyConfiguration | string): Url | undefined {
     try {
         if (typeof proxyConfiguration === 'string') {
             return parse(proxyConfiguration)
@@ -54,14 +61,14 @@ function setupProxy(proxyConfiguration: tl.ProxyConfiguration | string): Url | u
             return proxy
         }
     } catch (err) {
-        tl.warning(`Failed to process proxy configuration, error ${err}`)
+        warning(`Failed to process proxy configuration, error ${err}`)
         return undefined
     }
 }
 
 function getRegion(): string | undefined {
     console.log('Configuring region for task')
-    let region = tl.getInput('regionName', false)
+    let region = getInput('regionName', false)
     if (region) {
         // lowercase it because the picker we know have can return mixed case
         // data if the user typed in a region whose prefix (US- etc) exists
@@ -71,7 +78,7 @@ function getRegion(): string | undefined {
 
         return region
     }
-    region = tl.getVariable(awsRegionVariable)
+    region = getVariable(awsRegionVariable)
     if (region) {
         console.log(`...configured to use region ${region}, defined in task variable ${awsRegionVariable}.`)
 
@@ -93,11 +100,11 @@ function getRegion(): string | undefined {
 }
 
 function configureCredentialsFromConnection(): Credentials | undefined {
-    const credentialsEndpoint = tl.getInput('awsCredentials')
+    const credentialsEndpoint = getInput('awsCredentials')
     if (!credentialsEndpoint) {
         throw Error('Task configured to use service connection credentials, but none configured!')
     }
-    const endpointAuth = tl.getEndpointAuthorization(credentialsEndpoint, false)
+    const endpointAuth = getEndpointAuthorization(credentialsEndpoint, false)
     console.log(`...configuring AWS credentials from service endpoint '${credentialsEndpoint}'`)
 
     const accessKey = endpointAuth?.parameters?.username
@@ -119,7 +126,7 @@ function configureCredentialsFromConnection(): Credentials | undefined {
 }
 
 function getCredentials(): Credentials | undefined {
-    switch (tl.getVariable(credentialsType)) {
+    switch (getVariable(credentialsType)) {
         case credentialsTypeEnvironment:
             console.log('Credentials will be configured from the environment')
             // TODO
@@ -134,7 +141,7 @@ function getCredentials(): Credentials | undefined {
 
 export function buildConnectionParameters(): AWSConnectionParameters {
     let proxy = undefined
-    const proxyConfiguration = tl.getHttpProxyConfiguration() ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY
+    const proxyConfiguration = getHttpProxyConfiguration() ?? process.env.HTTPS_PROXY ?? process.env.HTTP_PROXY
     if (proxyConfiguration) {
         proxy = setupProxy(proxyConfiguration)
     }
