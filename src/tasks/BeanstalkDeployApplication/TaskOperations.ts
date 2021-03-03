@@ -12,6 +12,7 @@ import { basename } from 'path'
 import {
     applicationTypeAspNet,
     applicationTypeAspNetCoreForWindows,
+    applicationTypeAspNetCoreForLinux,
     applicationTypeExistingVersion,
     TaskParameters
 } from './TaskParameters'
@@ -38,13 +39,20 @@ export class TaskOperations {
 
         if (
             this.taskParameters.applicationType === applicationTypeAspNet ||
-            this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows
+            this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows ||
+            this.taskParameters.applicationType === applicationTypeAspNetCoreForLinux
         ) {
             s3Bucket = await BeanstalkUtils.determineS3Bucket(this.beanstalkClient)
             let deploymentBundle: string
             if (this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows) {
                 const tempDirectory = SdkUtils.getTempLocation()
-                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundle(
+                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundleWindows(
+                    this.taskParameters.dotnetPublishPath,
+                    tempDirectory
+                )
+            } else if (this.taskParameters.applicationType === applicationTypeAspNetCoreForLinux) {
+                const tempDirectory = SdkUtils.getTempLocation()
+                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundleLinux(
                     this.taskParameters.dotnetPublishPath,
                     tempDirectory
                 )

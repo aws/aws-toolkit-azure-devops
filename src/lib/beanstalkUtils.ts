@@ -23,7 +23,10 @@ export class BeanstalkUtils {
         return response.S3Bucket
     }
 
-    public static async prepareAspNetCoreBundle(dotnetPublishPath: string, tempDirectory: string): Promise<string> {
+    public static async prepareAspNetCoreBundleWindows(
+        dotnetPublishPath: string,
+        tempDirectory: string
+    ): Promise<string> {
         const defer = Q.defer()
 
         const deploymentBundle = path.join(tempDirectory, 'ebDeploymentBundle.zip')
@@ -65,6 +68,25 @@ export class BeanstalkUtils {
         // tslint:disable-next-line: no-floating-promises
         archive.finalize()
         await defer.promise
+
+        console.log(tl.loc('BundleComplete'))
+
+        return deploymentBundle
+    }
+
+    public static async prepareAspNetCoreBundleLinux(
+        dotnetPublishPath: string,
+        tempDirectory: string
+    ): Promise<string> {
+        const deploymentBundle = path.join(tempDirectory, 'ebDeploymentBundle.zip')
+        const output = fs.createWriteStream(deploymentBundle)
+
+        console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle))
+
+        const archive = archiver('zip')
+        archive.pipe(output)
+        archive.directory(dotnetPublishPath, false)
+        await archive.finalize()
 
         console.log(tl.loc('BundleComplete'))
 

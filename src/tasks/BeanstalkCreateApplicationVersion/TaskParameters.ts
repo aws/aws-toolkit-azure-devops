@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: MIT
  */
 
-import * as tl from 'azure-pipelines-task-lib/task'
 import { AWSConnectionParameters, buildConnectionParameters } from 'lib/awsConnectionParameters'
 import { getInputOrEmpty, getInputRequired, getPathInputRequired } from 'lib/vstsUtils'
 
 export const applicationTypeAspNet = 'aspnet'
 export const applicationTypeAspNetCoreForWindows = 'aspnetCoreWindows'
+export const applicationTypeAspNetCoreForLinux = 'aspnetCoreLinux'
 export const applicationTypeS3Archive = 's3'
 
 export interface TaskParameters {
@@ -44,6 +44,7 @@ export function buildTaskParameters(): TaskParameters {
             break
 
         case applicationTypeAspNetCoreForWindows:
+        case applicationTypeAspNetCoreForLinux:
             parameters.dotnetPublishPath = getPathInputRequired('dotnetPublishPath')
             break
 

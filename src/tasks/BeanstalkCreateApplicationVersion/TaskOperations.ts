@@ -9,7 +9,12 @@ import * as tl from 'azure-pipelines-task-lib/task'
 import { BeanstalkUtils } from 'lib/beanstalkUtils'
 import { SdkUtils } from 'lib/sdkutils'
 import path = require('path')
-import { applicationTypeAspNetCoreForWindows, applicationTypeS3Archive, TaskParameters } from './TaskParameters'
+import {
+    applicationTypeAspNetCoreForWindows,
+    applicationTypeAspNetCoreForLinux,
+    applicationTypeS3Archive,
+    TaskParameters
+} from './TaskParameters'
 
 export class TaskOperations {
     public constructor(
@@ -31,7 +36,13 @@ export class TaskOperations {
             let deploymentBundle: string
             if (this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows) {
                 const tempDirectory = SdkUtils.getTempLocation()
-                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundle(
+                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundleWindows(
+                    this.taskParameters.dotnetPublishPath,
+                    tempDirectory
+                )
+            } else if (this.taskParameters.applicationType === applicationTypeAspNetCoreForLinux) {
+                const tempDirectory = SdkUtils.getTempLocation()
+                deploymentBundle = await BeanstalkUtils.prepareAspNetCoreBundleLinux(
                     this.taskParameters.dotnetPublishPath,
                     tempDirectory
                 )

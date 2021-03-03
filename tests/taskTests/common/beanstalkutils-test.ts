@@ -70,7 +70,7 @@ describe('BeanstalkUtils', () => {
     test('PrepareAspNet bundle succeeds', async () => {
         const temp = path.join(__dirname, '../../resources/beanstalkBundle')
         const code = path.join(__dirname, '../../resources/beanstalkBundle')
-        await BeanstalkUtils.prepareAspNetCoreBundle(temp, code)
+        await BeanstalkUtils.prepareAspNetCoreBundleWindows(temp, code)
     })
 
     test('ConstructVersionLabel succeeds', async () => {

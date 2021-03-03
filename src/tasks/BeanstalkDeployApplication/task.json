@@ -63,7 +63,8 @@
             "helpMarkDown": "Select the type of .NET web application to deploy, or a previously uploaded bundle in S3, or an application version previously registered with Elastic Beanstalk.",
             "options": {
                 "aspnet": "ASP.NET (Source: Web Deploy Archive)",
-                "aspnetCoreWindows": "ASP.NET Core (Source: dotnet publish)",
+                "aspnetCoreWindows": "ASP.NET Core Windows (Source: dotnet publish)",
+                "aspnetCoreLinux": "ASP.NET Core Linux (Source: dotnet publish)",
                 "s3": "Existing deployment bundle in Amazon S3",
                 "version": "Existing application version"
             }
@@ -84,7 +85,7 @@
             "required": false,
             "defaultValue": "",
             "helpMarkDown": "The output location where the _dotnet publish_ command in your previous build steps placed the deployment artifact(s) to be published. Configure using either:\n\n* The path to the output folder containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to not create a zip file of the published application.\n* The path and filename of the zip file containing the artifacts. Use this if the _dotnet publish_ command in your build was configured to create a zip file of the application artifacts.\n\nRequired if *Deployment Bundle Type* is set to _ASP.NET Core_.",
-            "visibleRule": "applicationType = aspnetCoreWindows"
+            "visibleRule": "applicationType = aspnetCoreWindows || applicationType = aspnetCoreLinux"
         },
         {
             "name": "deploymentBundleBucket",
