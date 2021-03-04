@@ -92,7 +92,7 @@ describe('Beanstalk Create Application Version', () => {
         await taskOperations.execute()
     })
 
-    test('Happy path, aspnet core windows uploads new object to S3', async () => {
+    test('Happy path, aspnet core Windows uploads new object to S3', async () => {
         expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNetCoreForWindows
@@ -111,7 +111,7 @@ describe('Beanstalk Create Application Version', () => {
         await taskOperations.execute()
     })
 
-    test('Happy path, aspnet core windows uploads new object to S3', async () => {
+    test('Happy path, aspnet core Linux uploads new object to S3', async () => {
         expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNetCoreForLinux
