@@ -10,6 +10,8 @@ import * as path from 'path'
 import { TaskOperations } from 'tasks/BeanstalkCreateApplicationVersion/TaskOperations'
 import {
     applicationTypeAspNet,
+    applicationTypeAspNetCoreForLinux,
+    applicationTypeAspNetCoreForWindows,
     applicationTypeS3Archive,
     TaskParameters
 } from 'tasks/BeanstalkCreateApplicationVersion/TaskParameters'
@@ -23,10 +25,6 @@ const s3BucketResponse = {
 
 const verifyApplicationExistsResponse = {
     promise: () => ({ Applications: ['yes'] })
-}
-
-const prepareAspNetCoreBundleResponse = {
-    promise: () => 'yes'
 }
 
 const defaultTaskParameters: TaskParameters = {
@@ -75,7 +73,7 @@ describe('Beanstalk Create Application Version', () => {
         await taskOperations.execute()
     })
 
-    test('Happy path, uploads new object to S3', async () => {
+    test('Happy path, aspnet uploads new object to S3', async () => {
         expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.applicationType = applicationTypeAspNet
@@ -83,6 +81,44 @@ describe('Beanstalk Create Application Version', () => {
         const s3 = new S3() as any
         s3.upload = jest.fn((args: any) => {
             expect(args.Key).toContain('doc.txt')
+
+            return s3BucketResponse
+        })
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
+        beanstalk.createApplicationVersion = jest.fn(() => verifyApplicationExistsResponse)
+        beanstalk.createStorageLocation = jest.fn(() => s3BucketResponse)
+        const taskOperations = new TaskOperations(beanstalk, s3, taskParameters)
+        await taskOperations.execute()
+    })
+
+    test('Happy path, aspnet core windows uploads new object to S3', async () => {
+        expect.assertions(1)
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.applicationType = applicationTypeAspNetCoreForWindows
+        taskParameters.dotnetPublishPath = path.join(__dirname, '../../resources/beanstalkBundle/')
+        const s3 = new S3() as any
+        s3.upload = jest.fn((args: any) => {
+            expect(args.Key).toContain('ebDeploymentBundle')
+
+            return s3BucketResponse
+        })
+        const beanstalk = new ElasticBeanstalk() as any
+        beanstalk.describeApplications = jest.fn(() => verifyApplicationExistsResponse)
+        beanstalk.createApplicationVersion = jest.fn(() => verifyApplicationExistsResponse)
+        beanstalk.createStorageLocation = jest.fn(() => s3BucketResponse)
+        const taskOperations = new TaskOperations(beanstalk, s3, taskParameters)
+        await taskOperations.execute()
+    })
+
+    test('Happy path, aspnet core windows uploads new object to S3', async () => {
+        expect.assertions(1)
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.applicationType = applicationTypeAspNetCoreForLinux
+        taskParameters.dotnetPublishPath = path.join(__dirname, '../../resources/beanstalkBundle/')
+        const s3 = new S3() as any
+        s3.upload = jest.fn((args: any) => {
+            expect(args.Key).toContain('ebDeploymentBundle')
 
             return s3BucketResponse
         })
