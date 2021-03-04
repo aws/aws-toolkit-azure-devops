@@ -86,18 +86,17 @@ describe('BeanstalkUtils', () => {
         const code = path.join(__dirname, '../../resources/beanstalkBundle/doc.txt')
         const p = await BeanstalkUtils.prepareAspNetCoreBundleWindows(code, temp)
         const beanstalkBundle = new AdmZip(p)
-        const entries = beanstalkBundle.getEntries()
+        const entries = beanstalkBundle.getEntries().map(it => it.entryName)
         expect(entries.length).toBe(2)
-        expect(entries[0].entryName).toBe('aws-windows-deployment-manifest.json')
-        expect(entries[1].entryName).toBe('doc.txt')
+        expect(entries).toContain('aws-windows-deployment-manifest.json')
+        expect(entries).toContain('doc.txt')
     })
 
     test('Prepare AspNetcore bundle Linux single file returns the code path', async () => {
         const temp = await makeTemporaryFolder('beanstalkBundle')
         const code = path.join(__dirname, '../../resources/beanstalkBundle/doc.txt')
         const p = await BeanstalkUtils.prepareAspNetCoreBundleLinux(code, temp)
-        expect(p).toContain('beanstalkBundle')
-        expect(p).toContain('doc.txt')
+        expect(p).toContain(`beanstalkBundle${path.sep}doc.txt`)
     })
 
     test('Prepare AspNetcore bundle Linux succeeds', async () => {
@@ -105,9 +104,9 @@ describe('BeanstalkUtils', () => {
         const code = path.join(__dirname, '../../resources/beanstalkBundle')
         const p = await BeanstalkUtils.prepareAspNetCoreBundleLinux(code, temp)
         const beanstalkBundle = new AdmZip(p)
-        const entries = beanstalkBundle.getEntries()
+        const entries = beanstalkBundle.getEntries().map(it => it.entryName)
         expect(entries.length).toBe(3)
-        expect(entries[0].entryName).toBe('doc.txt')
+        expect(entries).toContain('doc.txt')
     })
 
     test('ConstructVersionLabel succeeds', async () => {
