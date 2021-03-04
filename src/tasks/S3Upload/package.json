@@ -4,8 +4,5 @@
     "description": "Upload content to an AWS Simple Storage Service (S3) Bucket",
     "main": "S3Upload.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }

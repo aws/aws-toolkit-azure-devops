@@ -4,8 +4,5 @@
     "description": "Retrieves the value of a secret from the Secrets Manager store and sets it into a build variable.",
     "main": "SecretsManagerGetSecret.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }

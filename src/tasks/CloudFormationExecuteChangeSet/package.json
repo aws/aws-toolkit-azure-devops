@@ -4,8 +4,5 @@
     "description": "Executes an AWS CloudFormation change set",
     "main": "CloudFormationExecuteChangeSet.js",
     "author": "",
-    "license": "MIT",
-    "dependencies": {
-        "sdkutils": "file:../../build/src/lib/sdkutils"
-    }
+    "license": "MIT"
 }
