@@ -27,6 +27,6 @@ phases:
 reports:
     unit-test:
         files:
-            - '**/*'
+            - 'testReport.xml'
         base-directory: '$env:CODEBUILD_SRC_DIR/.test-reports'
-        file-format: JunitXml
+        file-format: JUNITXML
