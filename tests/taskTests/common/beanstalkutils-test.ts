@@ -7,6 +7,8 @@ import { ElasticBeanstalk, S3 } from 'aws-sdk'
 import { BeanstalkUtils } from 'lib/beanstalkUtils'
 import { SdkUtils } from 'lib/sdkutils'
 import path = require('path')
+import AdmZip = require('adm-zip')
+import { makeTemporaryFolder } from '../testCommon'
 
 jest.mock('aws-sdk')
 
@@ -40,7 +42,7 @@ describe('BeanstalkUtils', () => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/BeanstalkDeployApplication/task.json')
     })
 
-    test('DetermineS3Bucket succeds', async () => {
+    test('DetermineS3Bucket succeeds', async () => {
         expect.assertions(1)
         const beanstalk = new ElasticBeanstalk() as any
         beanstalk.createStorageLocation = jest.fn(() => s3BucketResponse)
@@ -67,10 +69,44 @@ describe('BeanstalkUtils', () => {
         expect(response).toBe('')
     })
 
-    test('PrepareAspNet bundle succeeds', async () => {
-        const temp = path.join(__dirname, '../../resources/beanstalkBundle')
+    test('Prepare AspNetcore bundle Windows succeeds', async () => {
+        const temp = await makeTemporaryFolder('beanstalkBundle')
         const code = path.join(__dirname, '../../resources/beanstalkBundle')
-        await BeanstalkUtils.prepareAspNetCoreBundle(temp, code)
+        const p = await BeanstalkUtils.prepareAspNetCoreBundleWindows(code, temp)
+        const beanstalkBundle = new AdmZip(p)
+        const entries = beanstalkBundle.getEntries()
+        expect(entries.length).toBe(4)
+        expect(entries[0].entryName).toBe('aws-windows-deployment-manifest.json')
+        expect(entries[1].entryName).toBe('app/doc.txt')
+    })
+
+    // This is so we don't regress functionality, but the behavior difference is weird
+    test('Prepare AspNetcore bundle single entry Windows succeeds', async () => {
+        const temp = await makeTemporaryFolder('beanstalkBundle')
+        const code = path.join(__dirname, '../../resources/beanstalkBundle/doc.txt')
+        const p = await BeanstalkUtils.prepareAspNetCoreBundleWindows(code, temp)
+        const beanstalkBundle = new AdmZip(p)
+        const entries = beanstalkBundle.getEntries().map(it => it.entryName)
+        expect(entries.length).toBe(2)
+        expect(entries).toContain('aws-windows-deployment-manifest.json')
+        expect(entries).toContain('doc.txt')
+    })
+
+    test('Prepare AspNetcore bundle Linux single file returns the code path', async () => {
+        const temp = await makeTemporaryFolder('beanstalkBundle')
+        const code = path.join(__dirname, '../../resources/beanstalkBundle/doc.txt')
+        const p = await BeanstalkUtils.prepareAspNetCoreBundleLinux(code, temp)
+        expect(p).toContain(`beanstalkBundle${path.sep}doc.txt`)
+    })
+
+    test('Prepare AspNetcore bundle Linux succeeds', async () => {
+        const temp = await makeTemporaryFolder('beanstalkBundle')
+        const code = path.join(__dirname, '../../resources/beanstalkBundle')
+        const p = await BeanstalkUtils.prepareAspNetCoreBundleLinux(code, temp)
+        const beanstalkBundle = new AdmZip(p)
+        const entries = beanstalkBundle.getEntries().map(it => it.entryName)
+        expect(entries.length).toBe(3)
+        expect(entries).toContain('doc.txt')
     })
 
     test('ConstructVersionLabel succeeds', async () => {

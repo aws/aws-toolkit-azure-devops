@@ -10,6 +10,7 @@ import { getInputOrEmpty, getInputRequired, getPathInputRequired } from 'lib/vst
 
 export const applicationTypeAspNet = 'aspnet'
 export const applicationTypeAspNetCoreForWindows = 'aspnetCoreWindows'
+export const applicationTypeAspNetCoreForLinux = 'aspnetCoreLinux'
 export const applicationTypeS3Archive = 's3'
 export const applicationTypeExistingVersion = 'version'
 
@@ -55,6 +56,7 @@ export function buildTaskParameters(): TaskParameters {
             break
 
         case applicationTypeAspNetCoreForWindows:
+        case applicationTypeAspNetCoreForLinux:
             parameters.dotnetPublishPath = getPathInputRequired('dotnetPublishPath')
             break
 

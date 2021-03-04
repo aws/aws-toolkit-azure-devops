@@ -10,6 +10,7 @@ import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import fs = require('fs')
 import path = require('path')
 import Q = require('q')
+import AdmZip = require('adm-zip')
 
 export class BeanstalkUtils {
     public static async determineS3Bucket(beanstalkClient: ElasticBeanstalk): Promise<string> {
@@ -23,7 +24,10 @@ export class BeanstalkUtils {
         return response.S3Bucket
     }
 
-    public static async prepareAspNetCoreBundle(dotnetPublishPath: string, tempDirectory: string): Promise<string> {
+    public static async prepareAspNetCoreBundleWindows(
+        dotnetPublishPath: string,
+        tempDirectory: string
+    ): Promise<string> {
         const defer = Q.defer()
 
         const deploymentBundle = path.join(tempDirectory, 'ebDeploymentBundle.zip')
@@ -65,6 +69,31 @@ export class BeanstalkUtils {
         // tslint:disable-next-line: no-floating-promises
         archive.finalize()
         await defer.promise
+
+        console.log(tl.loc('BundleComplete'))
+
+        return deploymentBundle
+    }
+
+    public static async prepareAspNetCoreBundleLinux(
+        dotnetPublishPath: string,
+        tempDirectory: string
+    ): Promise<string> {
+        const zip = new AdmZip()
+
+        const deploymentBundle = path.join(tempDirectory, 'ebDeploymentBundle.zip')
+
+        console.log(tl.loc('PublishingPath', dotnetPublishPath))
+
+        const stat = fs.statSync(dotnetPublishPath)
+        if (stat.isFile()) {
+            console.log(tl.loc('UsingExistingBeanstalkBundle', dotnetPublishPath))
+            return dotnetPublishPath
+        } else {
+            console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle))
+            zip.addLocalFolder(dotnetPublishPath)
+            zip.writeZip(deploymentBundle)
+        }
 
         console.log(tl.loc('BundleComplete'))
 
