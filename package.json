@@ -77,9 +77,9 @@
     },
     "dependencies": {
         "@typescript-eslint/typescript-estree": "^4.16.1",
+        "adm-zip": "^0.5.3",
         "aws-sdk": "^2.530.0",
         "azure-pipelines-task-lib": "^2.12.2",
-        "adm-zip": "^0.5.3",
         "base-64": "^0.1.0",
         "https-proxy-agent": "^5.0.0",
         "js-yaml": "^3.13.1",
