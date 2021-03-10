@@ -14,6 +14,7 @@ import {
     TaskParameters
 } from 'tasks/CodeDeployDeployApplication/TaskParameters'
 import { emptyConnectionParameters } from '../testCommon'
+import AdmZip = require('adm-zip')
 
 jest.mock('aws-sdk')
 
@@ -103,7 +104,7 @@ describe('CodeDeploy Deploy Application', () => {
     })
 
     test('Upload needed, packages properly, succeeds', async () => {
-        expect.assertions(3)
+        expect.assertions(6)
         process.env.TEMP = __dirname
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.deploymentRevisionSource = revisionSourceFromWorkspace
@@ -116,9 +117,13 @@ describe('CodeDeploy Deploy Application', () => {
             const dir = fs.readdirSync(__dirname)
             for (const file of dir) {
                 if (path.extname(file) === '.zip') {
-                    const stats = fs.statSync(path.join(__dirname, file))
-                    const size = stats.size
-                    expect(size).toBe(141)
+                    const f = path.join(__dirname, file)
+                    const zip = new AdmZip(f)
+                    const entries = zip.getEntries().map(it => it.entryName)
+                    expect(entries.length).toBe(3)
+                    expect(entries).toContain('test.txt')
+                    expect(entries).toContain('subpath/')
+                    expect(entries).toContain('subpath/abc.txt')
                     break
                 }
             }

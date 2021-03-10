@@ -5,11 +5,9 @@
 
 import * as tl from 'azure-pipelines-task-lib/task'
 
-import archiver = require('archiver')
 import { ElasticBeanstalk, S3 } from 'aws-sdk/clients/all'
 import fs = require('fs')
 import path = require('path')
-import Q = require('q')
 import AdmZip = require('adm-zip')
 
 export class BeanstalkUtils {
@@ -28,47 +26,28 @@ export class BeanstalkUtils {
         dotnetPublishPath: string,
         tempDirectory: string
     ): Promise<string> {
-        const defer = Q.defer()
+        const zip = new AdmZip()
 
         const deploymentBundle = path.join(tempDirectory, 'ebDeploymentBundle.zip')
-        const output = fs.createWriteStream(deploymentBundle)
+
         console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle))
-
-        const archive = archiver('zip')
-
-        output.on('close', function() {
-            console.log(tl.loc('ArchiveSize', archive.pointer()))
-            defer.resolve(deploymentBundle)
-        })
-
-        archive.on('error', function(err: any) {
-            console.log(tl.loc('ZipError', err))
-            defer.reject(err)
-        })
-
-        archive.pipe(output)
-
         console.log(tl.loc('PublishingPath', dotnetPublishPath))
         const stat = fs.statSync(dotnetPublishPath)
         if (stat.isFile()) {
-            archive.file(dotnetPublishPath, { name: path.basename(dotnetPublishPath) })
             console.log(tl.loc('AddingAspNetCoreBundle', dotnetPublishPath))
-
+            zip.addFile(path.basename(dotnetPublishPath), fs.readFileSync(dotnetPublishPath))
             const manifest = this.generateManifest('./' + path.basename(dotnetPublishPath), '/')
-            archive.append(manifest, { name: 'aws-windows-deployment-manifest.json' })
             console.log(tl.loc('AddingManifest'))
+            zip.addFile('aws-windows-deployment-manifest.json', Buffer.from(manifest))
         } else {
-            archive.directory(dotnetPublishPath, '/app/')
             console.log(tl.loc('AddingFilesFromDotnetPublish'))
-
+            zip.addLocalFolder(dotnetPublishPath, '/app/')
             const manifest = this.generateManifest('/app/', '/')
-            archive.append(manifest, { name: 'aws-windows-deployment-manifest.json' })
             console.log(tl.loc('AddingManifest'))
+            zip.addFile('aws-windows-deployment-manifest.json', Buffer.from(manifest))
         }
 
-        // tslint:disable-next-line: no-floating-promises
-        archive.finalize()
-        await defer.promise
+        zip.writeZip(deploymentBundle)
 
         console.log(tl.loc('BundleComplete'))
 
