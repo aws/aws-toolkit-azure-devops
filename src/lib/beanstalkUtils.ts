@@ -33,21 +33,26 @@ export class BeanstalkUtils {
         console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle))
         console.log(tl.loc('PublishingPath', dotnetPublishPath))
         const stat = fs.statSync(dotnetPublishPath)
-        if (stat.isFile()) {
-            console.log(tl.loc('AddingAspNetCoreBundle', dotnetPublishPath))
-            zip.addFile(path.basename(dotnetPublishPath), fs.readFileSync(dotnetPublishPath))
-            const manifest = this.generateManifest('./' + path.basename(dotnetPublishPath), '/')
-            console.log(tl.loc('AddingManifest'))
-            zip.addFile('aws-windows-deployment-manifest.json', Buffer.from(manifest))
-        } else {
-            console.log(tl.loc('AddingFilesFromDotnetPublish'))
-            zip.addLocalFolder(dotnetPublishPath, '/app/')
-            const manifest = this.generateManifest('/app/', '/')
-            console.log(tl.loc('AddingManifest'))
-            zip.addFile('aws-windows-deployment-manifest.json', Buffer.from(manifest))
-        }
+        try {
+            if (stat.isFile()) {
+                console.log(tl.loc('AddingAspNetCoreBundle', dotnetPublishPath))
+                zip.addFile(path.basename(dotnetPublishPath), fs.readFileSync(dotnetPublishPath))
+                const manifest = this.generateManifest('./' + path.basename(dotnetPublishPath), '/')
+                console.log(tl.loc('AddingManifest'))
+                zip.addFile('aws-windows-deployment-manifest.json', Buffer.from(manifest))
+            } else {
+                console.log(tl.loc('AddingFilesFromDotnetPublish'))
+                zip.addLocalFolder(dotnetPublishPath, '/app/')
+                const manifest = this.generateManifest('/app/', '/')
+                console.log(tl.loc('AddingManifest'))
+                zip.addFile('aws-windows-deployment-manifest.json', Buffer.from(manifest))
+            }
 
-        zip.writeZip(deploymentBundle)
+            zip.writeZip(deploymentBundle)
+        } catch (err) {
+            console.log(tl.loc('ZipError', err))
+            throw err
+        }
 
         console.log(tl.loc('BundleComplete'))
 
@@ -65,13 +70,18 @@ export class BeanstalkUtils {
         console.log(tl.loc('PublishingPath', dotnetPublishPath))
 
         const stat = fs.statSync(dotnetPublishPath)
-        if (stat.isFile()) {
-            console.log(tl.loc('UsingExistingBeanstalkBundle', dotnetPublishPath))
-            return dotnetPublishPath
-        } else {
-            console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle))
-            zip.addLocalFolder(dotnetPublishPath)
-            zip.writeZip(deploymentBundle)
+        try {
+            if (stat.isFile()) {
+                console.log(tl.loc('UsingExistingBeanstalkBundle', dotnetPublishPath))
+                return dotnetPublishPath
+            } else {
+                console.log(tl.loc('CreatingBeanstalkBundle', deploymentBundle))
+                zip.addLocalFolder(dotnetPublishPath)
+                zip.writeZip(deploymentBundle)
+            }
+        } catch (err) {
+            console.log(tl.loc('ZipError', err))
+            throw err
         }
 
         console.log(tl.loc('BundleComplete'))
