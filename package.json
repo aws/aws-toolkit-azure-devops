@@ -44,6 +44,7 @@
         "@types/js-yaml": "^3.12.1",
         "@types/json-query": "^2.2.0",
         "@types/node": "^10.17.28",
+        "@types/q": "^1.5.4",
         "@types/readline-sync": "^1.4.3",
         "@types/semver": "^7.3.4",
         "@types/shelljs": "^0.8.6",
@@ -76,7 +77,7 @@
         "validator": "^13.5.2"
     },
     "dependencies": {
-        "@typescript-eslint/typescript-estree": "^4.16.1",
+        "@typescript-eslint/typescript-estree": "^4.17.0",
         "adm-zip": "^0.5.3",
         "aws-sdk": "^2.530.0",
         "azure-pipelines-task-lib": "^2.12.2",
