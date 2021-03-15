@@ -3,15 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import archiver = require('archiver')
 import CodeDeploy = require('aws-sdk/clients/codedeploy')
+import AdmZip = require('adm-zip')
 import S3 = require('aws-sdk/clients/s3')
 import { AWSError } from 'aws-sdk/lib/error'
 import * as tl from 'azure-pipelines-task-lib/task'
 import { SdkUtils } from 'lib/sdkutils'
 import fs = require('fs')
 import path = require('path')
-import Q = require('q')
 import {
     defaultTimeoutInMins,
     revisionSourceFromS3,
@@ -152,32 +151,21 @@ export class TaskOperations {
         // creating the zip file inside the supplied folder
         const versionSuffix = `.v${new Date().getTime()}`
         const tempDir = SdkUtils.getTempLocation()
-        const archiveName = path.join(tempDir, `${applicationName}${versionSuffix}.zip`)
+        const archive = path.join(tempDir, `${applicationName}${versionSuffix}.zip`)
 
-        const output = fs.createWriteStream(archiveName)
-        const archive = archiver('zip')
-        const defer = Q.defer()
+        const zip = new AdmZip()
 
-        output.on('close', function() {
-            console.log(tl.loc('ArchiveSize', archive.pointer()))
-            defer.resolve(archiveName)
-        })
-
-        archive.on('error', function(err: any) {
+        try {
+            zip.addLocalFolder(bundleFolder)
+            zip.writeZip(archive)
+        } catch (err) {
             console.log(tl.loc('ZipError', err))
-            defer.reject(err)
-        })
+            throw err
+        }
 
-        archive.pipe(output)
+        console.log(tl.loc('CreatedBundleArchive', archive))
 
-        archive.directory(bundleFolder, false)
-        // tslint:disable-next-line: no-floating-promises
-        archive.finalize()
-        await defer.promise
-
-        console.log(tl.loc('CreatedBundleArchive', archiveName))
-
-        return archiveName
+        return archive
     }
 
     private async deployRevision(bundleKey: string): Promise<string> {

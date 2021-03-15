@@ -74,10 +74,10 @@ describe('BeanstalkUtils', () => {
         const code = path.join(__dirname, '../../resources/beanstalkBundle')
         const p = await BeanstalkUtils.prepareAspNetCoreBundleWindows(code, temp)
         const beanstalkBundle = new AdmZip(p)
-        const entries = beanstalkBundle.getEntries()
+        const entries = beanstalkBundle.getEntries().map(it => it.entryName)
         expect(entries.length).toBe(4)
-        expect(entries[0].entryName).toBe('aws-windows-deployment-manifest.json')
-        expect(entries[1].entryName).toBe('app/doc.txt')
+        expect(entries).toContain('aws-windows-deployment-manifest.json')
+        expect(entries).toContain('app/doc.txt')
     })
 
     // This is so we don't regress functionality, but the behavior difference is weird
