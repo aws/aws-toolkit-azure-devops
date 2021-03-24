@@ -157,6 +157,20 @@ export abstract class SdkUtils {
 
         const credentials = await getCredentials(taskParams)
 
+        // resolve credentials
+        await credentials?.getPromise()
+
+        // Mask credentials from logs if they are accidentially printed somehow
+        if (credentials?.accessKeyId) {
+            tl.setSecret(credentials?.accessKeyId)
+        }
+        if (credentials?.secretAccessKey) {
+            tl.setSecret(credentials?.secretAccessKey)
+        }
+        if (credentials?.sessionToken) {
+            tl.setSecret(credentials?.sessionToken)
+        }
+
         return new awsService({
             credentials: credentials ? credentials.getPromise() : undefined,
             region: await getRegion()
