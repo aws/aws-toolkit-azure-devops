@@ -63,7 +63,7 @@ Tasks can also use assumed role credentials by adding the Amazon Resource name (
 ## Supported environments
 
 -   Azure DevOps
--   Team Foundation Server 2017 Update 3 (or higher) (now called Azure DevOps Server)
+-   Team Foundation Server 2017 Update 1 (or higher) (now called Azure DevOps Server)
 
 ## License
 
