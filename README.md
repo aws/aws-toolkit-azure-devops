@@ -63,9 +63,7 @@ Tasks can also use assumed role credentials by adding the Amazon Resource name (
 ## Supported environments
 
 -   Azure DevOps
--   Team Foundation Server 2015 Update 3 (or higher) (now called Azure DevOps Server)
-
-**Note for Team Foundation Server 2015 Users:** Team Foundation Server 2015 users should download the extension from [here](https://sdk-for-net.amazonwebservices.com/latest/amazonwebservices.aws-vsts-tools-tfs2015.vsix). This temporary version contains the same tasks as the version in the marketplace but removes the support for extra fields in the _AWS_ endpoint type to support _Assume Role_ credentials. These fields, although marked optional, are unfortunately treated as required in TFS 2015 editions.
+-   Team Foundation Server 2017 Update 1 (or higher) (now called Azure DevOps Server)
 
 ## License
 
