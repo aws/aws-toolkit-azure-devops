@@ -1,0 +1,14 @@
+{
+	"date": "2021-04-10",
+	"version": "1.10.0",
+	"entries": [
+		{
+			"type": "Feature",
+			"description": "Add support for Linux .NET Core EB environments (#393)"
+		},
+		{
+			"type": "Feature",
+			"description": "Mask assume role credentials (#399)"
+		}
+	]
+}

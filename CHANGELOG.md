@@ -1,3 +1,8 @@
+## 1.10.0 2021-04-10
+
+- **Feature** Add support for Linux .NET Core EB environments (#393)
+- **Feature** Mask assume role credentials (#399)
+
 ## 1.9.0 2021-01-04
 
 - **Deprecation** Build agents < 2.144.0 will no longer be supported in future versions of the AWS Toolkit for Azure DevOps
