@@ -160,6 +160,7 @@ export const knownMimeTypes: Map<string, string> = new Map<string, string>([
     ['.vcd', 'application/x-cdlink'],
     ['.vda', 'application/vda'],
     ['.vrml', 'model/vrml'],
+    ['.wasm', 'application/wasm'],
     ['.wav', 'audio/x-wav'],
     ['.wrl', 'model/vrml'],
     ['.xbm', 'image/x-xbitmap'],
