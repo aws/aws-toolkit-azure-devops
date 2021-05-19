@@ -172,7 +172,7 @@ export class TaskOperations {
             if (!stats.isDirectory()) {
                 const fileBuffer = fs.createReadStream(matchedFile)
                 try {
-                    let contentType: string | false | undefined
+                    let contentType: string | false
                     if (this.taskParameters.contentType) {
                         contentType = this.taskParameters.contentType
                     } else {

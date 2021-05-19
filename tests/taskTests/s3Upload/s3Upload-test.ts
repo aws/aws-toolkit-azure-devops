@@ -196,7 +196,7 @@ describe('S3 Upload', () => {
     })
 
     test('A couple different MIME types', async () => {
-        expect.assertions(3)
+        expect.assertions(4)
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
         s3.upload = jest.fn((params: S3.PutObjectRequest) => {
@@ -204,6 +204,8 @@ describe('S3 Upload', () => {
                 expect(params.ContentType).toBe('text/plain')
             } else if (params.Key.includes('bat')) {
                 expect(params.ContentType).toBe('application/x-msdownload')
+            } else if (params.Key.includes('nomimetype')) {
+                expect(params.ContentType).toBe('application/octet-stream')
             } else {
                 fail('Glob pattern picked up an unexpected file')
             }
@@ -215,9 +217,9 @@ describe('S3 Upload', () => {
         taskParameters.bucketName = 'potato'
         taskParameters.sourceFolder = path.join(__dirname, '..', '..', 'resources')
         // as of 19 May 2021: tests/resources/echo.bat and tests/resources/codeDeployCode/test.txt
-        taskParameters.globExpressions = ['**/test.txt', '**/echo.bat']
+        taskParameters.globExpressions = ['**/test.txt', '**/echo.bat', '**/.nomimetype']
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         await taskOperation.execute()
-        expect(s3.upload.mock.calls.length).toBe(2)
+        expect(s3.upload.mock.calls.length).toBe(3)
     })
 })
