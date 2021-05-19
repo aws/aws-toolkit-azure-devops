@@ -5,8 +5,9 @@
 
 import * as S3 from 'aws-sdk/clients/s3'
 import * as tl from 'azure-pipelines-task-lib/task'
-import { knownMimeTypes, testBucketExists } from 'lib/s3'
+import { testBucketExists } from 'lib/s3'
 import * as fs from 'fs'
+import { lookup } from 'mime-types'
 import * as path from 'path'
 import {
     awsKeyManagementValue,
@@ -171,11 +172,11 @@ export class TaskOperations {
             if (!stats.isDirectory()) {
                 const fileBuffer = fs.createReadStream(matchedFile)
                 try {
-                    let contentType: string | undefined
+                    let contentType: string | false | undefined
                     if (this.taskParameters.contentType) {
                         contentType = this.taskParameters.contentType
                     } else {
-                        contentType = knownMimeTypes.get(path.extname(matchedFile))
+                        contentType = lookup(path.extname(matchedFile))
                         if (!contentType) {
                             contentType = 'application/octet-stream'
                         }

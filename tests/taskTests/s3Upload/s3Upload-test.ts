@@ -4,6 +4,7 @@
  */
 
 import { S3 } from 'aws-sdk'
+import * as path from 'path'
 import { SdkUtils } from 'lib/sdkutils'
 import { TaskOperations } from 'tasks/S3Upload/TaskOperations'
 import { TaskParameters } from 'tasks/S3Upload/TaskParameters'
@@ -192,5 +193,31 @@ describe('S3 Upload', () => {
         await taskOperation.execute().catch(e => {
             expect(e.message).toContain('Invalid match expression =false')
         })
+    })
+
+    test('A couple different MIME types', async () => {
+        expect.assertions(3)
+        const s3 = new S3({ region: 'us-east-1' }) as any
+        s3.headBucket = jest.fn(() => headBucketResponse)
+        s3.upload = jest.fn((params: S3.PutObjectRequest) => {
+            if (params.Key.includes('txt')) {
+                expect(params.ContentType).toBe('text/plain')
+            } else if (params.Key.includes('bat')) {
+                expect(params.ContentType).toBe('application/x-msdownload')
+            } else {
+                fail('Glob pattern picked up an unexpected file')
+            }
+
+            return validateUpload
+        })
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.createBucket = true
+        taskParameters.bucketName = 'potato'
+        taskParameters.sourceFolder = path.join(__dirname, '..', '..', 'resources')
+        // as of 19 May 2021: tests/resources/echo.bat and tests/resources/codeDeployCode/test.txt
+        taskParameters.globExpressions = ['**/test.txt', '**/echo.bat']
+        const taskOperation = new TaskOperations(s3, '', taskParameters)
+        await taskOperation.execute()
+        expect(s3.upload.mock.calls.length).toBe(2)
     })
 })
