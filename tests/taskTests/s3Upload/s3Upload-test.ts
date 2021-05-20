@@ -195,7 +195,7 @@ describe('S3 Upload', () => {
         })
     })
 
-    test('A couple different MIME types', async () => {
+    test('MIME types', async () => {
         expect.assertions(4)
         const s3 = new S3({ region: 'us-east-1' }) as any
         s3.headBucket = jest.fn(() => headBucketResponse)
@@ -215,9 +215,9 @@ describe('S3 Upload', () => {
         const taskParameters = { ...baseTaskParameters }
         taskParameters.createBucket = true
         taskParameters.bucketName = 'potato'
-        taskParameters.sourceFolder = path.join(__dirname, '..', '..', 'resources')
+        taskParameters.sourceFolder = path.join(__dirname, '..', '..', 'resources', 'mimeTypes')
         // as of 19 May 2021: tests/resources/echo.bat and tests/resources/codeDeployCode/test.txt
-        taskParameters.globExpressions = ['**/test.txt', '**/echo.bat', '**/.nomimetype']
+        taskParameters.globExpressions = ['**/text.txt', '**/msdownload.bat', '**/.nomimetype']
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         await taskOperation.execute()
         expect(s3.upload.mock.calls.length).toBe(3)
