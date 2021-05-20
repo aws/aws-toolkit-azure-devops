@@ -216,7 +216,6 @@ describe('S3 Upload', () => {
         taskParameters.createBucket = true
         taskParameters.bucketName = 'potato'
         taskParameters.sourceFolder = path.join(__dirname, '..', '..', 'resources', 'mimeTypes')
-        // as of 19 May 2021: tests/resources/echo.bat and tests/resources/codeDeployCode/test.txt
         taskParameters.globExpressions = ['**/text.txt', '**/msdownload.bat', '**/.nomimetype']
         const taskOperation = new TaskOperations(s3, '', taskParameters)
         await taskOperation.execute()
