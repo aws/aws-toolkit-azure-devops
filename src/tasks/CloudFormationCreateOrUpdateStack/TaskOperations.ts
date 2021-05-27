@@ -295,6 +295,7 @@ export class TaskOperations {
             this.taskParameters.capabilityAutoExpand
         )
         request.Tags = SdkUtils.getTags<CloudFormation.Tag[]>(this.taskParameters.tags)
+        request.IncludeNestedStacks = this.taskParameters.includeNestedStacks
 
         if (this.taskParameters.monitorRollbackTriggers) {
             request.RollbackConfiguration = {
