@@ -41,7 +41,8 @@ const defaultTaskParameters: TaskParameters = {
     outputVariable: '',
     captureStackOutputs: '',
     captureAsSecuredVars: false,
-    timeoutInMins: 30
+    timeoutInMins: 30,
+    includeNestedStacks: false
 }
 
 // NOTE: these tests are too hard to write, fucntional tests will not work the module as is. We need to break

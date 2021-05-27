@@ -170,6 +170,15 @@
             "helpMarkDown": "A description to help you identify this change set. Max length 1024 characters."
         },
         {
+            "name": "includeNestedStacks",
+            "type": "boolean",
+            "label": "Include nested stacks in change set",
+            "defaultValue": "false",
+            "required": false,
+            "visibleRule": "useChangeSet = true",
+            "helpMarkDown": "Creates a change set for the all nested stacks specified in the template."
+        },
+        {
             "name": "autoExecuteChangeSet",
             "type": "boolean",
             "label": "Automatically execute the change set",
