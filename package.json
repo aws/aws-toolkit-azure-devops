@@ -80,7 +80,7 @@
     "dependencies": {
         "@typescript-eslint/typescript-estree": "^4.17.0",
         "adm-zip": "^0.5.3",
-        "aws-sdk": "^2.530.0",
+        "aws-sdk": "^2.916.0",
         "azure-pipelines-task-lib": "^2.12.2",
         "base-64": "^0.1.0",
         "https-proxy-agent": "^5.0.0",

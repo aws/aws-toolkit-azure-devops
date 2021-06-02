@@ -54,7 +54,8 @@ export interface TaskParameters {
     outputVariable: string
     captureStackOutputs: string
     captureAsSecuredVars: boolean
-    timeoutInMins: number
+    timeoutInMins: number,
+    includeNestedStacks: boolean
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -88,7 +89,8 @@ export function buildTaskParameters(): TaskParameters {
         outputVariable: getInputOrEmpty('outputVariable'),
         captureStackOutputs: getInputOrEmpty('captureStackOutputs'),
         captureAsSecuredVars: tl.getBoolInput('captureAsSecuredVars', false),
-        timeoutInMins: defaultTimeoutInMins
+        timeoutInMins: defaultTimeoutInMins,
+        includeNestedStacks: tl.getBoolInput('includeNestedStacks', false)
     }
 
     switch (parameters.templateSource) {
