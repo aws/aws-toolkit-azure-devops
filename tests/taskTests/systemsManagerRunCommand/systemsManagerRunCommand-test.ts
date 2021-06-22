@@ -34,7 +34,9 @@ const defaultTaskParameters: TaskParameters = {
     notificationType: '',
     outputS3BucketName: '',
     outputS3KeyPrefix: '',
-    commandIdOutputVariable: ''
+    cloudWatchOutputEnabled: false,
+    cloudWatchLogGroupName: '',
+    commandIdOutputVariable: '',
 }
 
 const systemsManagerFails = {
@@ -125,6 +127,40 @@ describe('Systems Manager Run Command', () => {
         })
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.notificationArn = 'arn'
+        const taskOperations = new TaskOperations(ssm, taskParameters)
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
+        expect(ssm.sendCommand).toBeCalledTimes(1)
+    })
+
+    test('Adds Cloudwatch output config if it exists', async () => {
+        expect.assertions(2)
+        const ssm = new SSM() as any
+        ssm.sendCommand = jest.fn(args => {
+            expect(args.CloudWatchOutputConfig.CloudWatchLogGroupName).toBe('ssm')
+
+            return systemsManagerFails
+        })
+        const taskParameters: TaskParameters = { ...defaultTaskParameters, cloudWatchOutputEnabled: true }
+        taskParameters.cloudWatchLogGroupName = 'cloudWatchLogGroupName'
+        const taskOperations = new TaskOperations(ssm, taskParameters)
+        try {
+            await taskOperations.execute()
+        } catch (e) {}
+        expect(ssm.sendCommand).toBeCalledTimes(1)
+    })
+
+    test('Do not add Cloudwatch output config if CloudWatch output is disabled', async () => {
+        expect.assertions(2)
+        const ssm = new SSM() as any
+        ssm.sendCommand = jest.fn(args => {
+            expect(args.CloudWatchOutputConfig).toBeNull()
+
+            return systemsManagerFails
+        })
+        const taskParameters: TaskParameters = { ...defaultTaskParameters }
+        taskParameters.cloudWatchLogGroupName = 'cloudWatchLogGroupName'
         const taskOperations = new TaskOperations(ssm, taskParameters)
         try {
             await taskOperations.execute()

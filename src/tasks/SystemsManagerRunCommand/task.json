@@ -27,6 +27,11 @@
             "isExpanded": false
         },
         {
+            "name": "cloudWatchOutput",
+            "displayName": "Cloud Watch Options",
+            "isExpanded": false
+        },
+        {
             "name": "diagnostic",
             "displayName": "Diagnostic",
             "isExpanded": false
@@ -226,6 +231,24 @@
             "groupName": "output",
             "helpMarkDown": "The name of a variable that will contain the unique ID assigned to the command. The command ID can be used future references to the request.",
             "required": false
+        },
+        {
+            "name": "cloudWatchOutputEnabled",
+            "label": "Enable CloudWatch Logs",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": false,
+            "groupName": "cloudWatchOutput",
+            "helpMarkDown": "Enables Systems Manager to send command output to CloudWatch Logs."
+        },
+        {
+            "name": "cloudWatchLogGroupName",
+            "label": "CloudWatch Log Group Name",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "groupName": "cloudWatchOutput",
+            "helpMarkDown": "The name of the CloudWatch log group where you want to send command output. If you don’t specify a group name, Systems Manager automatically creates a log group for you. The log group uses the following naming format: <em>aws/ssm/SystemsManagerDocumentName</em> ."
         },
         {
             "name": "logRequest",
