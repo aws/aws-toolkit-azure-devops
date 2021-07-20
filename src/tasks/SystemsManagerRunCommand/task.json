@@ -28,7 +28,7 @@
         },
         {
             "name": "cloudWatchOutput",
-            "displayName": "Cloud Watch Options",
+            "displayName": "CloudWatch Options",
             "isExpanded": false
         },
         {
@@ -248,7 +248,8 @@
             "required": false,
             "defaultValue": "",
             "groupName": "cloudWatchOutput",
-            "helpMarkDown": "The name of the CloudWatch log group where you want to send command output. If you don’t specify a group name, Systems Manager automatically creates a log group for you. The log group uses the following naming format: <em>aws/ssm/SystemsManagerDocumentName</em> ."
+            "visibleRule": "cloudWatchOutputEnabled = true",
+            "helpMarkDown": "The name of the CloudWatch log group where you want to send command output. If you don’t specify a group name, Systems Manager automatically creates a log group for you. The log group uses the following naming format: <em>aws/ssm/<systems_manager_document_name></em>."
         },
         {
             "name": "logRequest",
