@@ -38,6 +38,15 @@ export class TaskOperations {
         if (this.taskParameters.documentParameters) {
             request.Parameters = JSON.parse(this.taskParameters.documentParameters)
         }
+        if (this.taskParameters.cloudWatchOutputEnabled) {
+            request.CloudWatchOutputConfig = {
+                CloudWatchOutputEnabled: true
+            }
+
+            if (this.taskParameters.cloudWatchLogGroupName) {
+                request.CloudWatchOutputConfig.CloudWatchLogGroupName = this.taskParameters.cloudWatchLogGroupName
+            }
+        }
 
         switch (this.taskParameters.instanceSelector) {
             case fromInstanceIds:

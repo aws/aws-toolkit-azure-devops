@@ -29,6 +29,8 @@ export interface TaskParameters {
     notificationType: string | undefined
     outputS3BucketName: string
     outputS3KeyPrefix: string
+    cloudWatchOutputEnabled: boolean;
+    cloudWatchLogGroupName: string;
     commandIdOutputVariable: string
 }
 
@@ -48,6 +50,8 @@ export function buildTaskParameters(): TaskParameters {
         notificationType: getInputOptional('notificationType'),
         outputS3BucketName: getInputOrEmpty('outputS3BucketName'),
         outputS3KeyPrefix: getInputOrEmpty('outputS3KeyPrefix'),
+        cloudWatchOutputEnabled: tl.getBoolInput('cloudWatchOutputEnabled'),
+        cloudWatchLogGroupName: getInputOrEmpty('cloudWatchLogGroupName'),
         commandIdOutputVariable: getInputOrEmpty('commandIdOutputVariable'),
         instanceIds: [],
         instanceTags: [],
