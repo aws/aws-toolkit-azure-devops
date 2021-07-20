@@ -36,7 +36,7 @@ const defaultTaskParameters: TaskParameters = {
     outputS3KeyPrefix: '',
     cloudWatchOutputEnabled: false,
     cloudWatchLogGroupName: '',
-    commandIdOutputVariable: '',
+    commandIdOutputVariable: ''
 }
 
 const systemsManagerFails = {
@@ -138,7 +138,7 @@ describe('Systems Manager Run Command', () => {
         expect.assertions(2)
         const ssm = new SSM() as any
         ssm.sendCommand = jest.fn(args => {
-            expect(args.CloudWatchOutputConfig.CloudWatchLogGroupName).toBe('ssm')
+            expect(args.CloudWatchOutputConfig.CloudWatchLogGroupName).toBe('cloudWatchLogGroupName')
 
             return systemsManagerFails
         })
@@ -155,7 +155,7 @@ describe('Systems Manager Run Command', () => {
         expect.assertions(2)
         const ssm = new SSM() as any
         ssm.sendCommand = jest.fn(args => {
-            expect(args.CloudWatchOutputConfig).toBeNull()
+            expect(args.CloudWatchOutputConfig).toBeFalsy()
 
             return systemsManagerFails
         })
