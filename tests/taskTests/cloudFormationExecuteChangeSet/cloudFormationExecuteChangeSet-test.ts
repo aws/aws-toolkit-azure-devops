@@ -32,6 +32,17 @@ const changeSetFound = {
     }
 }
 
+const changeSetFoundWithNoChanges = {
+    promise: () => {
+        return {
+            StackId: 'yes',
+            Status: 'FAILED',
+            StatusReason:
+                "The submitted information didn't contain changes. Submit different information to create a change set."
+        }
+    }
+}
+
 const cloudFormationHasResourcesSucceeds = {
     promise: function() {
         return {
@@ -82,6 +93,30 @@ describe('Cloud Formation Execute Change Set', () => {
             expect(`${err}`).toContain('executeChangeSet is not a function')
         })
         expect(cloudFormation.describeStackResources).toBeCalledTimes(1)
+    })
+
+    test('Resource exists works, change set has no changes, ignores stack output', async () => {
+        expect.assertions(3)
+
+        const cloudFormation = new CloudFormation() as any
+        cloudFormation.describeChangeSet = jest.fn(() => changeSetFoundWithNoChanges)
+        cloudFormation.describeStackResources = jest.fn()
+        cloudFormation.executeChangeSet = jest.fn()
+
+        const deleteSucceeded = {
+            promise: () => undefined
+        }
+        cloudFormation.deleteChangeSet = jest.fn(() => deleteSucceeded)
+
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.captureStackOutputs = ignoreStackOutputs
+
+        const taskOperations = new TaskOperations(cloudFormation, taskParameters)
+        await taskOperations.execute()
+
+        expect(cloudFormation.describeChangeSet).toBeCalledTimes(1)
+        expect(cloudFormation.describeStackResources).toBeCalledTimes(1)
+        expect(cloudFormation.deleteChangeSet).toBeCalledTimes(1)
     })
 
     test('Execute change set fails, fails task', async () => {
