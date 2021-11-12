@@ -20,34 +20,53 @@ export class TaskOperations {
     ) {}
 
     public async execute(): Promise<void> {
-        const stackId = await this.verifyResourcesExist(
+        const changeSet = await this.verifyResourcesExist(
             this.taskParameters.changeSetName,
             this.taskParameters.stackName
         )
         let waitForUpdate = false
-        if (stackId) {
+        if (changeSet) {
             waitForUpdate = await testStackHasResources(this.cloudFormationClient, this.taskParameters.stackName)
         }
 
         console.log(tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName))
 
         try {
-            await this.cloudFormationClient
-                .executeChangeSet({
-                    ChangeSetName: this.taskParameters.changeSetName,
-                    StackName: this.taskParameters.stackName
-                })
-                .promise()
+            // TODO: Test for Failed State
+            const changeSetHasNoChanges =
+                changeSet.Status === 'FAILED' &&
+                changeSet.StatusReason ===
+                    "The submitted information didn't contain changes. Submit different information to create a change set."
+            if (changeSetHasNoChanges) {
+                console.log(tl.loc('ExecutionSkipped', this.taskParameters.changeSetName))
 
-            if (waitForUpdate) {
-                await waitForStackUpdate(this.cloudFormationClient, this.taskParameters.stackName)
+                // Should we delete the failed change set?
+                const request: CloudFormation.DeleteChangeSetInput = {
+                    ChangeSetName: this.taskParameters.changeSetName
+                }
+                if (this.taskParameters.stackName) {
+                    request.StackName = this.taskParameters.stackName
+                }
+
+                await this.cloudFormationClient.deleteChangeSet(request).promise()
             } else {
-                await waitForStackCreation(this.cloudFormationClient, this.taskParameters.stackName)
+                await this.cloudFormationClient
+                    .executeChangeSet({
+                        ChangeSetName: this.taskParameters.changeSetName,
+                        StackName: this.taskParameters.stackName
+                    })
+                    .promise()
+
+                if (waitForUpdate) {
+                    await waitForStackUpdate(this.cloudFormationClient, this.taskParameters.stackName)
+                } else {
+                    await waitForStackCreation(this.cloudFormationClient, this.taskParameters.stackName)
+                }
             }
 
             if (this.taskParameters.outputVariable) {
                 console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable))
-                tl.setVariable(this.taskParameters.outputVariable, stackId)
+                tl.setVariable(this.taskParameters.outputVariable, changeSet.StackId || '')
             }
 
             if (this.taskParameters.captureStackOutputs !== ignoreStackOutputs) {
@@ -66,7 +85,10 @@ export class TaskOperations {
         }
     }
 
-    private async verifyResourcesExist(changeSetName: string, stackName: string): Promise<string> {
+    private async verifyResourcesExist(
+        changeSetName: string,
+        stackName: string
+    ): Promise<CloudFormation.DescribeChangeSetOutput> {
         try {
             const request: CloudFormation.DescribeChangeSetInput = {
                 ChangeSetName: changeSetName
@@ -78,10 +100,10 @@ export class TaskOperations {
             const response = await this.cloudFormationClient.describeChangeSet(request).promise()
 
             if (!response.StackId) {
-                return ''
+                throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName))
             }
 
-            return response.StackId
+            return response
         } catch (err) {
             throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName))
         }
