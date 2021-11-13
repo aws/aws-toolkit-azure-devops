@@ -72,6 +72,18 @@ const getIamRoleSucceeds = {
     }
 }
 
+const waitForSucceeds = {
+    promise: function() {
+        return {}
+    }
+}
+
+const waitForFails = {
+    promise: function() {
+        throw new Error('waited too long')
+    }
+}
+
 describe('Lambda Deploy Function', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -120,35 +132,71 @@ describe('Lambda Deploy Function', () => {
     })
 
     test('Deploy only Function exists calls update', async () => {
-        expect.assertions(2)
+        expect.assertions(3)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.deploymentMode = deployCodeOnly
         taskParameters.roleARN = 'arn:yes'
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionSucceeds)
         lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForSucceeds)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
         await taskOperations.execute()
         expect(lambda.getFunction).toBeCalledTimes(1)
         expect(lambda.updateFunctionCode).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(1)
+    })
+
+    test('Deploy only Function exists calls update but fails if status does not update', async () => {
+        expect.assertions(4)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeOnly
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForFails)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('waited too long'))
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.updateFunctionCode).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(1)
     })
 
     test('Deploy and config does not exist calls create', async () => {
-        expect.assertions(2)
+        expect.assertions(3)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.deploymentMode = deployCodeAndConfig
         taskParameters.roleARN = 'arn:yes'
         const lambda = new Lambda() as any
         lambda.getFunction = jest.fn(() => getFunctionFails)
         lambda.createFunction = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForSucceeds)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
         await taskOperations.execute()
         expect(lambda.getFunction).toBeCalledTimes(1)
         expect(lambda.createFunction).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(1)
+    })
+
+    test('Deploy and config does not exist calls create but fails if status does not update', async () => {
+        expect.assertions(4)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionFails)
+        lambda.createFunction = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForFails)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('waited too long'))
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.createFunction).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(1)
     })
 
     test('Deploy and config exists calls update', async () => {
-        expect.assertions(3)
+        expect.assertions(4)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.deploymentMode = deployCodeAndConfig
         taskParameters.roleARN = 'arn:yes'
@@ -156,11 +204,52 @@ describe('Lambda Deploy Function', () => {
         lambda.getFunction = jest.fn(() => getFunctionSucceeds)
         lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
         lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForSucceeds)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
         await taskOperations.execute()
         expect(lambda.getFunction).toBeCalledTimes(1)
         expect(lambda.updateFunctionCode).toBeCalledTimes(1)
         expect(lambda.updateFunctionConfiguration).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(2)
+    })
+
+    test('Deploy and config exists calls update but fails if status does not update after config update', async () => {
+        expect.assertions(5)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForFails)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('waited too long'))
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.updateFunctionCode).toBeCalledTimes(0)
+        expect(lambda.updateFunctionConfiguration).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(1)
+    })
+
+    test('Deploy and config exists calls update but fails if status does not update after code update', async () => {
+        expect.assertions(5)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest
+            .fn()
+            .mockReturnValueOnce(waitForSucceeds)
+            .mockReturnValueOnce(waitForFails)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('waited too long'))
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.updateFunctionCode).toBeCalledTimes(1)
+        expect(lambda.updateFunctionConfiguration).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(2)
     })
 
     test('Create function adds fields if they exist', async () => {
@@ -184,6 +273,7 @@ describe('Lambda Deploy Function', () => {
 
             return updateFunctionSucceeds
         })
+        lambda.waitFor = jest.fn(() => waitForSucceeds)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
         await taskOperations.execute()
     })
@@ -207,6 +297,7 @@ describe('Lambda Deploy Function', () => {
 
             return updateFunctionSucceeds
         })
+        lambda.waitFor = jest.fn(() => waitForSucceeds)
         lambda.tagResource = jest.fn(args => {
             expect(args.Tags).toStrictEqual({ tag1: '5', tag: 'abc' })
 
@@ -227,6 +318,7 @@ describe('Lambda Deploy Function', () => {
         lambda.getFunction = jest.fn(() => getFunctionSucceeds)
         lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
         lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForSucceeds)
         const tagResourceFunction = jest.fn()
         lambda.tagResource = tagResourceFunction
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
