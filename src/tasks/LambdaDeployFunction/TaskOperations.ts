@@ -73,11 +73,7 @@ export class TaskOperations {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
-            console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, FUNCTION_UPDATED))
-            await this.lambdaClient
-                .waitFor(FUNCTION_UPDATED, { FunctionName: this.taskParameters.functionName })
-                .promise()
-            console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, FUNCTION_UPDATED))
+            await this.waitForUpdate()
 
             return response.FunctionArn
         } catch (err) {
@@ -132,11 +128,7 @@ export class TaskOperations {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
-            console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, FUNCTION_UPDATED))
-            await this.lambdaClient
-                .waitFor(FUNCTION_UPDATED, { FunctionName: this.taskParameters.functionName })
-                .promise()
-            console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, FUNCTION_UPDATED))
+            await this.waitForUpdate()
 
             // Update tags if we have them
             const tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
@@ -241,5 +233,11 @@ export class TaskOperations {
         } catch (err) {
             return false
         }
+    }
+
+    private async waitForUpdate(): Promise<void> {
+        console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, FUNCTION_UPDATED))
+        await this.lambdaClient.waitFor(FUNCTION_UPDATED, { FunctionName: this.taskParameters.functionName }).promise()
+        console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, FUNCTION_UPDATED))
     }
 }
