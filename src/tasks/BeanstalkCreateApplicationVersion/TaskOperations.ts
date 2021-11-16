@@ -31,7 +31,12 @@ export class TaskOperations {
         let s3Bucket: string
         let s3Key: string
 
-        if (this.taskParameters.applicationType !== applicationTypeS3Archive) {
+        if (!this.taskParameters.deploymentBundleBucket || !this.taskParameters.deploymentBundleKey) {
+            if (this.taskParameters.deploymentBundleBucket === applicationTypeS3Archive) {
+                throw new Error(tl.loc('S3BucketRequired'))
+            }
+            console.log(tl.loc('GeneratingS3Bucket'))
+
             s3Bucket = await BeanstalkUtils.determineS3Bucket(this.beanstalkClient)
             let deploymentBundle: string
             if (this.taskParameters.applicationType === applicationTypeAspNetCoreForWindows) {

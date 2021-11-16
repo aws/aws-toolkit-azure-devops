@@ -34,8 +34,8 @@ const defaultTaskParameters: TaskParameters = {
     versionLabel: '',
     webDeploymentArchive: '',
     dotnetPublishPath: '',
-    deploymentBundleBucket: '',
-    deploymentBundleKey: '',
+    deploymentBundleBucket: 'bucket',
+    deploymentBundleKey: 'key',
     description: '',
     outputVariable: ''
 }
