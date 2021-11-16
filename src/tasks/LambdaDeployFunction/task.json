@@ -315,6 +315,9 @@
         "FunctionNotFound": "Function %s does not exist, cannot update code only",
         "TaskCompleted": "Completed create or update of Lambda function %s, function ARN %s",
         "AddingTag": "Adding tag. Key '%s', Value '%s'",
-        "NoFunctionArnReturned": "No function ARN returned from the service! Deployment failed!"
+        "NoFunctionArnReturned": "No function ARN returned from the service! Deployment failed!",
+        "SettingOutputVariable": "Setting output variable %s with the function output",
+        "AwaitingStatus": "Waiting for function %s to reach %s state...",
+        "AwaitingStatusComplete": "Function %s has reached %s state"
     }
 }

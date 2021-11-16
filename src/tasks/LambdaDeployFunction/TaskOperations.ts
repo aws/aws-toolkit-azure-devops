@@ -10,6 +10,9 @@ import { SdkUtils } from 'lib/sdkutils'
 import { readFileSync } from 'fs'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
 
+const FUNCTION_UPDATED = 'functionUpdated'
+const FUNCTION_ACTIVE = 'functionActive'
+
 export class TaskOperations {
     public constructor(
         public readonly iamClient: IAM,
@@ -66,10 +69,11 @@ export class TaskOperations {
             }
 
             const response = await this.lambdaClient.updateFunctionCode(updateCodeRequest).promise()
-
             if (!response.FunctionArn) {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
+
+            await this.waitForUpdate()
 
             return response.FunctionArn
         } catch (err) {
@@ -123,6 +127,8 @@ export class TaskOperations {
             if (!response.FunctionArn) {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
+
+            await this.waitForUpdate()
 
             // Update tags if we have them
             const tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
@@ -203,6 +209,12 @@ export class TaskOperations {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
+            console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, FUNCTION_ACTIVE))
+            await this.lambdaClient
+                .waitFor(FUNCTION_ACTIVE, { FunctionName: this.taskParameters.functionName })
+                .promise()
+            console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, FUNCTION_ACTIVE))
+
             return response.FunctionArn
         } catch (err) {
             throw new Error(`Failed to create function, error ${err}`)
@@ -211,7 +223,7 @@ export class TaskOperations {
 
     private async testFunctionExists(functionName: string): Promise<boolean> {
         try {
-            const response = await this.lambdaClient
+            await this.lambdaClient
                 .getFunction({
                     FunctionName: functionName
                 })
@@ -221,5 +233,11 @@ export class TaskOperations {
         } catch (err) {
             return false
         }
+    }
+
+    private async waitForUpdate(): Promise<void> {
+        console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, FUNCTION_UPDATED))
+        await this.lambdaClient.waitFor(FUNCTION_UPDATED, { FunctionName: this.taskParameters.functionName }).promise()
+        console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, FUNCTION_UPDATED))
     }
 }
