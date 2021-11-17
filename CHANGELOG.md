@@ -1,3 +1,8 @@
+## 1.11.0 2021-06-02
+
+- **Feature** Detect more MIME types for S3 uploads
+- **Feature** Add support for include nested stack in change sets (#392)
+
 ## 1.10.0 2021-04-10
 
 - **Feature** Add support for Linux .NET Core EB environments (#393)

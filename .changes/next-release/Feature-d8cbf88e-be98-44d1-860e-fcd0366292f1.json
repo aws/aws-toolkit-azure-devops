@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "Lambda create and update tasks utilize Lambda function states to signal completion"
+}

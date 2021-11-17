@@ -1,0 +1,14 @@
+{
+	"date": "2021-06-02",
+	"version": "1.11.0",
+	"entries": [
+		{
+			"type": "Feature",
+			"description": "Detect more MIME types for S3 uploads"
+		},
+		{
+			"type": "Feature",
+			"description": "Add support for include nested stack in change sets (#392)"
+		}
+	]
+}
