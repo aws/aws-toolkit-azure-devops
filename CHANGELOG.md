@@ -1,3 +1,8 @@
+## 1.12.0 2021-11-16
+
+- **Feature** Add support for CloudWatch output config in SSM RunCommand task
+- **Feature** Lambda create and update tasks utilize Lambda function states to signal completion
+
 ## 1.11.0 2021-06-02
 
 - **Feature** Detect more MIME types for S3 uploads

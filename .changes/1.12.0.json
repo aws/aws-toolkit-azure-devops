@@ -1,0 +1,14 @@
+{
+	"date": "2021-11-16",
+	"version": "1.12.0",
+	"entries": [
+		{
+			"type": "Feature",
+			"description": "Add support for CloudWatch output config in SSM RunCommand task"
+		},
+		{
+			"type": "Feature",
+			"description": "Lambda create and update tasks utilize Lambda function states to signal completion"
+		}
+	]
+}
