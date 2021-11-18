@@ -7,6 +7,7 @@ import CloudFormation = require('aws-sdk/clients/cloudformation')
 import * as tl from 'azure-pipelines-task-lib/task'
 import {
     captureStackOutputs,
+    isNoWorkToDoValidationError,
     testStackHasResources,
     waitForStackCreation,
     waitForStackUpdate
@@ -31,12 +32,7 @@ export class TaskOperations {
         }
 
         try {
-            const changeSetHasNoChanges =
-                changeSet.Status === 'FAILED' &&
-                changeSet.StatusReason ===
-                    "The submitted information didn't contain changes. Submit different information to create a change set."
-
-            if (changeSetHasNoChanges) {
+            if (isNoWorkToDoValidationError(changeSet.Status, changeSet.StatusReason)) {
                 console.log(tl.loc('ExecutionSkipped', this.taskParameters.changeSetName))
 
                 // Should we delete the failed change set?

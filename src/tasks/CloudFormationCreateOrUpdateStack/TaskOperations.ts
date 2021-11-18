@@ -4,10 +4,12 @@
  */
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
+import { AWSError } from 'aws-sdk/lib/error'
 import S3 = require('aws-sdk/clients/s3')
 import * as tl from 'azure-pipelines-task-lib/task'
 import {
     captureStackOutputs,
+    isNoWorkToDoValidationError,
     setWaiterParams,
     testChangeSetExists,
     testStackExists,
@@ -222,15 +224,20 @@ export class TaskOperations {
         }
 
         try {
-            const response: CloudFormation.UpdateStackOutput = await this.cloudFormationClient
-                .updateStack(request)
-                .promise()
+            await this.cloudFormationClient.updateStack(request).promise()
             await waitForStackUpdate(this.cloudFormationClient, request.StackName)
         } catch (err) {
-            if (!this.isNoWorkToDoValidationError(err.code, err.message)) {
-                console.error(tl.loc('StackUpdateRequestFailed', (err as Error).message), err)
-                throw err
+            const e = <AWSError>err
+            if (isNoWorkToDoValidationError(e.code, e.message)) {
+                if (this.taskParameters.warnWhenNoWorkNeeded) {
+                    tl.warning(tl.loc('NoWorkToDo'))
+                }
+
+                return
             }
+
+            console.error(tl.loc('StackUpdateRequestFailed', e.message), err)
+            throw err
         }
     }
 
@@ -523,40 +530,6 @@ export class TaskOperations {
         return templateParameters
     }
 
-    // If there were no changes, a validation error is thrown which we want to suppress
-    // (issue #28) instead of erroring out and failing the build. The only way to determine
-    // this is to inspect the message in conjunction with the status code, and over time
-    // there has been some variance in service behavior based on how we attempted to make the
-    // change. So now detect either of the errors, and for either if the message indicates
-    // a no-op.
-    private isNoWorkToDoValidationError(errCodeOrStatus: string, errMessage: string): boolean {
-        let noWorkToDo = false
-        const knownNoOpErrorMessages = [
-            /^No updates are to be performed./,
-            /^The submitted information didn't contain changes./
-        ]
-
-        try {
-            if (errCodeOrStatus.search(/ValidationError/) !== -1 || errCodeOrStatus.search(/FAILED/) !== -1) {
-                knownNoOpErrorMessages.forEach(element => {
-                    if (errMessage.search(element) !== -1) {
-                        noWorkToDo = true
-                    }
-                })
-            }
-            if (noWorkToDo) {
-                if (this.taskParameters.warnWhenNoWorkNeeded) {
-                    tl.warning(tl.loc('NoWorkToDo'))
-                }
-
-                return true
-            }
-            // tslint:disable-next-line:no-empty
-        } catch (err) {}
-
-        return false
-    }
-
     private async waitForChangeSetCreation(changeSetName: string, stackName: string): Promise<boolean> {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName))
         try {
@@ -572,11 +545,11 @@ export class TaskOperations {
             const response = await this.cloudFormationClient
                 .describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
                 .promise()
-            if (
-                response.Status &&
-                response.StatusReason &&
-                this.isNoWorkToDoValidationError(response.Status, response.StatusReason)
-            ) {
+            if (isNoWorkToDoValidationError(response.Status, response.StatusReason)) {
+                if (this.taskParameters.warnWhenNoWorkNeeded) {
+                    tl.warning(tl.loc('NoWorkToDo'))
+                }
+
                 return false
             } else {
                 throw new Error(tl.loc('ChangeSetValidationFailed', stackName, changeSetName, (err as Error).message))

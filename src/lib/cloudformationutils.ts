@@ -148,3 +148,29 @@ export async function testChangeSetExists(
 
     return false
 }
+
+// If there were no changes, a validation error is thrown which we want to suppress
+// (issue #28) instead of erroring out and failing the build. The only way to determine
+// this is to inspect the message in conjunction with the status code, and over time
+// there has been some variance in service behavior based on how we attempted to make the
+// change. So now detect either of the errors, and for either if the message indicates
+// a no-op.
+export function isNoWorkToDoValidationError(errCodeOrStatus?: string, errMessage?: string): boolean {
+    let noWorkToDo = false
+    const knownNoOpErrorMessages = [
+        /^No updates are to be performed./,
+        /^The submitted information didn't contain changes./
+    ]
+
+    errCodeOrStatus = errCodeOrStatus || ''
+    const message = errMessage || ''
+    if (errCodeOrStatus.search(/ValidationError/) !== -1 || errCodeOrStatus.search(/FAILED/) !== -1) {
+        knownNoOpErrorMessages.forEach(element => {
+            if (message.search(element) !== -1) {
+                noWorkToDo = true
+            }
+        })
+    }
+
+    return noWorkToDo
+}
