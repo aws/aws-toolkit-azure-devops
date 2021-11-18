@@ -74,7 +74,8 @@
             "label": "Delete Empty Change Set",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "Toggles the deletion of an empty change set.  Only used if `noFailOnEmptyChangeSet=true`."
+            "visibleRule": "noFailOnEmptyChangeSet = true",
+            "helpMarkDown": "Automatically delete change set if empty."
         },
         {
             "name": "outputVariable",
