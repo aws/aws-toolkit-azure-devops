@@ -61,6 +61,22 @@
             "helpMarkDown": "The stack name or Amazon Resource Name (ARN) of the stack associated with the change set. This value is required if you specified the name of a change set to execute. If the ARN of the change set was specified this field is optional.\n\nThe name must be unique in the region in which you are creating the stack. A stack name can contain only alphanumeric characters (case-sensitive) and hyphens. It must start with an alphabetic character and cannot be longer than 128 characters."
         },
         {
+            "name": "noFailOnEmptyChangeSet",
+            "type": "boolean",
+            "label": "Do Not Fail On Empty Change Set",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "Causes the task to identify an empty change set and skip its excution without throwing an error."
+        },
+        {
+            "name": "deleteEmptyChangeSet",
+            "type": "boolean",
+            "label": "Delete Empty Change Set",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "Toggles the deletion of an empty change set.  Only used if `noFailOnEmptyChangeSet=true`."
+        },
+        {
             "name": "outputVariable",
             "type": "string",
             "label": "Output Variable",
