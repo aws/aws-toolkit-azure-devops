@@ -15,6 +15,7 @@ const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: emptyConnectionParameters,
     changeSetName: '',
     stackName: '',
+    deleteEmptyChangeSet: false,
     outputVariable: '',
     captureStackOutputs: '',
     captureAsSecuredVars: false
@@ -96,7 +97,28 @@ describe('Cloud Formation Execute Change Set', () => {
     })
 
     test('Resource exists works, change set has no changes, ignores stack output', async () => {
-        expect.assertions(3)
+        expect.assertions(4)
+
+        const cloudFormation = new CloudFormation() as any
+        cloudFormation.describeChangeSet = jest.fn(() => changeSetFoundWithNoChanges)
+        cloudFormation.describeStackResources = jest.fn()
+        cloudFormation.executeChangeSet = jest.fn()
+        cloudFormation.deleteChangeSet = jest.fn()
+
+        const taskParameters = { ...defaultTaskParameters }
+        taskParameters.captureStackOutputs = ignoreStackOutputs
+
+        const taskOperations = new TaskOperations(cloudFormation, taskParameters)
+        await taskOperations.execute()
+
+        expect(cloudFormation.describeChangeSet).toBeCalledTimes(1)
+        expect(cloudFormation.describeStackResources).toBeCalledTimes(1)
+        expect(cloudFormation.executeChangeSet).toBeCalledTimes(0)
+        expect(cloudFormation.deleteChangeSet).toBeCalledTimes(0)
+    })
+
+    test('Resource exists works, change set has no changes, deletes empty change set, ignores stack output', async () => {
+        expect.assertions(4)
 
         const cloudFormation = new CloudFormation() as any
         cloudFormation.describeChangeSet = jest.fn(() => changeSetFoundWithNoChanges)
@@ -110,12 +132,14 @@ describe('Cloud Formation Execute Change Set', () => {
 
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.captureStackOutputs = ignoreStackOutputs
+        taskParameters.deleteEmptyChangeSet = true
 
         const taskOperations = new TaskOperations(cloudFormation, taskParameters)
         await taskOperations.execute()
 
         expect(cloudFormation.describeChangeSet).toBeCalledTimes(1)
         expect(cloudFormation.describeStackResources).toBeCalledTimes(1)
+        expect(cloudFormation.executeChangeSet).toBeCalledTimes(0)
         expect(cloudFormation.deleteChangeSet).toBeCalledTimes(1)
     })
 

@@ -35,15 +35,17 @@ export class TaskOperations {
             if (isNoWorkToDoValidationError(changeSet.Status, changeSet.StatusReason)) {
                 console.log(tl.loc('ExecutionSkipped', this.taskParameters.changeSetName))
 
-                // Should we delete the failed change set?
-                const request: CloudFormation.DeleteChangeSetInput = {
-                    ChangeSetName: this.taskParameters.changeSetName
-                }
-                if (this.taskParameters.stackName) {
-                    request.StackName = this.taskParameters.stackName
-                }
+                if (this.taskParameters.deleteEmptyChangeSet) {
+                    const request: CloudFormation.DeleteChangeSetInput = {
+                        ChangeSetName: this.taskParameters.changeSetName
+                    }
+                    if (this.taskParameters.stackName) {
+                        request.StackName = this.taskParameters.stackName
+                    }
 
-                await this.cloudFormationClient.deleteChangeSet(request).promise()
+                    await this.cloudFormationClient.deleteChangeSet(request).promise()
+                    console.log(tl.loc('DeletingChangeSet', this.taskParameters.changeSetName))
+                }
             } else {
                 console.log(
                     tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName)

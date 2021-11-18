@@ -120,7 +120,8 @@
     },
     "messages": {
         "ExecutingChangeSet": "Executing change set %s, associated with stack %s",
-        "ExecutionSkipped": "Skipping execution of change set %s since has no pending changes",
+        "DeletingChangeSet": "Deleting change set %s since it has no pending changes",
+        "ExecutionSkipped": "Skipping execution of change set %s since it has no pending changes",
         "ExecuteChangeSetFailed": "Request to execute change set failed with message: %s",
         "WaitingForStackUpdate": "Waiting for stack %s to reach update complete status",
         "WaitingForStackCreation": "Waiting for stack %s to reach create complete status",
