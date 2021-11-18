@@ -32,7 +32,10 @@ export class TaskOperations {
         }
 
         try {
-            if (isNoWorkToDoValidationError(changeSet.Status, changeSet.StatusReason)) {
+            if (
+                this.taskParameters.noFailOnEmptyChangeSet &&
+                isNoWorkToDoValidationError(changeSet.Status, changeSet.StatusReason)
+            ) {
                 console.log(tl.loc('ExecutionSkipped', this.taskParameters.changeSetName))
 
                 if (this.taskParameters.deleteEmptyChangeSet) {

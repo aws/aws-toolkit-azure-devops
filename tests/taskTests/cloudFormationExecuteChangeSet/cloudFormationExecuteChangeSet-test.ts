@@ -15,6 +15,7 @@ const defaultTaskParameters: TaskParameters = {
     awsConnectionParameters: emptyConnectionParameters,
     changeSetName: '',
     stackName: '',
+    noFailOnEmptyChangeSet: false,
     deleteEmptyChangeSet: false,
     outputVariable: '',
     captureStackOutputs: '',
@@ -96,7 +97,26 @@ describe('Cloud Formation Execute Change Set', () => {
         expect(cloudFormation.describeStackResources).toBeCalledTimes(1)
     })
 
-    test('Resource exists works, change set has no changes, ignores stack output', async () => {
+    test('Resource exists works, change set has no changes, fails on execute', async () => {
+        expect.assertions(2)
+
+        const cloudFormation = new CloudFormation() as any
+        cloudFormation.describeChangeSet = jest.fn(() => changeSetFoundWithNoChanges)
+        cloudFormation.describeStackResources = jest.fn()
+        cloudFormation.executeChangeSet = jest.fn(() => ({
+            promise: () => {
+                throw new Error('no')
+            }
+        }))
+        const taskOperations = new TaskOperations(cloudFormation, defaultTaskParameters)
+        await taskOperations.execute().catch(err => {
+            expect(err).toStrictEqual(new Error('no'))
+        })
+
+        expect(cloudFormation.executeChangeSet).toBeCalledTimes(1)
+    })
+
+    test('Resource exists works, change set has no changes, skips execute, ignores stack output', async () => {
         expect.assertions(4)
 
         const cloudFormation = new CloudFormation() as any
@@ -106,6 +126,8 @@ describe('Cloud Formation Execute Change Set', () => {
         cloudFormation.deleteChangeSet = jest.fn()
 
         const taskParameters = { ...defaultTaskParameters }
+        taskParameters.captureStackOutputs = ignoreStackOutputs
+        taskParameters.noFailOnEmptyChangeSet = true
         taskParameters.captureStackOutputs = ignoreStackOutputs
 
         const taskOperations = new TaskOperations(cloudFormation, taskParameters)
@@ -131,8 +153,9 @@ describe('Cloud Formation Execute Change Set', () => {
         cloudFormation.deleteChangeSet = jest.fn(() => deleteSucceeded)
 
         const taskParameters = { ...defaultTaskParameters }
-        taskParameters.captureStackOutputs = ignoreStackOutputs
+        taskParameters.noFailOnEmptyChangeSet = true
         taskParameters.deleteEmptyChangeSet = true
+        taskParameters.captureStackOutputs = ignoreStackOutputs
 
         const taskOperations = new TaskOperations(cloudFormation, taskParameters)
         await taskOperations.execute()
