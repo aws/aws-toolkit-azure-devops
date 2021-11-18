@@ -66,7 +66,7 @@
             "label": "Do Not Fail On Empty Change Set",
             "defaultValue": "false",
             "required": false,
-            "helpMarkDown": "Causes the task to identify an empty change set and skip its excution without throwing an error."
+            "helpMarkDown": "Causes the task to identify an empty change set and skip its execution without throwing an error."
         },
         {
             "name": "deleteEmptyChangeSet",
