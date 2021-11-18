@@ -163,13 +163,8 @@ export function isNoWorkToDoValidationError(errCodeOrStatus?: string, errMessage
 
     errCodeOrStatus = errCodeOrStatus || ''
     const message = errMessage || ''
-    if (errCodeOrStatus.search(/ValidationError/) !== -1 || errCodeOrStatus.search(/FAILED/) !== -1) {
-        knownNoOpErrorMessages.forEach(element => {
-            if (message.search(element) !== -1) {
-                return true
-            }
-        })
-    }
-
-    return false
+    return (
+        (errCodeOrStatus.search(/ValidationError/) !== -1 || errCodeOrStatus.search(/FAILED/) !== -1) &&
+        knownNoOpErrorMessages.some(element => message.search(element) !== -1)
+    )
 }
