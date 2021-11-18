@@ -156,7 +156,6 @@ export async function testChangeSetExists(
 // change. So now detect either of the errors, and for either if the message indicates
 // a no-op.
 export function isNoWorkToDoValidationError(errCodeOrStatus?: string, errMessage?: string): boolean {
-    let noWorkToDo = false
     const knownNoOpErrorMessages = [
         /^No updates are to be performed./,
         /^The submitted information didn't contain changes./
@@ -167,10 +166,10 @@ export function isNoWorkToDoValidationError(errCodeOrStatus?: string, errMessage
     if (errCodeOrStatus.search(/ValidationError/) !== -1 || errCodeOrStatus.search(/FAILED/) !== -1) {
         knownNoOpErrorMessages.forEach(element => {
             if (message.search(element) !== -1) {
-                noWorkToDo = true
+                return true
             }
         })
     }
 
-    return noWorkToDo
+    return false
 }
