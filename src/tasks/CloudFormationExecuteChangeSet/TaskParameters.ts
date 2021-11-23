@@ -15,6 +15,8 @@ export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
     changeSetName: string
     stackName: string
+    noFailOnEmptyChangeSet: boolean
+    deleteEmptyChangeSet: boolean
     outputVariable: string
     captureStackOutputs: string
     captureAsSecuredVars: boolean
@@ -25,6 +27,8 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         changeSetName: getInputRequired('changeSetName'),
         stackName: getInputRequired('stackName'),
+        noFailOnEmptyChangeSet: getBoolInput('noFailOnEmptyChangeSet', false),
+        deleteEmptyChangeSet: getBoolInput('deleteEmptyChangeSet', false),
         outputVariable: getInputOrEmpty('outputVariable'),
         captureStackOutputs: getInputOrEmpty('captureStackOutputs'),
         captureAsSecuredVars: getBoolInput('captureAsSecuredVars', false)

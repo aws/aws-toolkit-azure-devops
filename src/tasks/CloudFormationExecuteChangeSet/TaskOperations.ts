@@ -7,6 +7,7 @@ import CloudFormation = require('aws-sdk/clients/cloudformation')
 import * as tl from 'azure-pipelines-task-lib/task'
 import {
     captureStackOutputs,
+    isNoWorkToDoValidationError,
     testStackHasResources,
     waitForStackCreation,
     waitForStackUpdate
@@ -20,29 +21,50 @@ export class TaskOperations {
     ) {}
 
     public async execute(): Promise<void> {
-        const stackId = await this.verifyResourcesExist(
+        const changeSet = await this.verifyResourcesExist(
             this.taskParameters.changeSetName,
             this.taskParameters.stackName
         )
         let waitForUpdate = false
+        const stackId = changeSet.StackId || ''
         if (stackId) {
             waitForUpdate = await testStackHasResources(this.cloudFormationClient, this.taskParameters.stackName)
         }
 
-        console.log(tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName))
-
         try {
-            await this.cloudFormationClient
-                .executeChangeSet({
-                    ChangeSetName: this.taskParameters.changeSetName,
-                    StackName: this.taskParameters.stackName
-                })
-                .promise()
+            if (
+                this.taskParameters.noFailOnEmptyChangeSet &&
+                isNoWorkToDoValidationError(changeSet.Status, changeSet.StatusReason)
+            ) {
+                console.log(tl.loc('ExecutionSkipped', this.taskParameters.changeSetName))
 
-            if (waitForUpdate) {
-                await waitForStackUpdate(this.cloudFormationClient, this.taskParameters.stackName)
+                if (this.taskParameters.deleteEmptyChangeSet) {
+                    const request: CloudFormation.DeleteChangeSetInput = {
+                        ChangeSetName: this.taskParameters.changeSetName
+                    }
+                    if (this.taskParameters.stackName) {
+                        request.StackName = this.taskParameters.stackName
+                    }
+
+                    await this.cloudFormationClient.deleteChangeSet(request).promise()
+                    console.log(tl.loc('DeletingChangeSet', this.taskParameters.changeSetName))
+                }
             } else {
-                await waitForStackCreation(this.cloudFormationClient, this.taskParameters.stackName)
+                console.log(
+                    tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName)
+                )
+                await this.cloudFormationClient
+                    .executeChangeSet({
+                        ChangeSetName: this.taskParameters.changeSetName,
+                        StackName: this.taskParameters.stackName
+                    })
+                    .promise()
+
+                if (waitForUpdate) {
+                    await waitForStackUpdate(this.cloudFormationClient, this.taskParameters.stackName)
+                } else {
+                    await waitForStackCreation(this.cloudFormationClient, this.taskParameters.stackName)
+                }
             }
 
             if (this.taskParameters.outputVariable) {
@@ -66,7 +88,10 @@ export class TaskOperations {
         }
     }
 
-    private async verifyResourcesExist(changeSetName: string, stackName: string): Promise<string> {
+    private async verifyResourcesExist(
+        changeSetName: string,
+        stackName: string
+    ): Promise<CloudFormation.DescribeChangeSetOutput> {
         try {
             const request: CloudFormation.DescribeChangeSetInput = {
                 ChangeSetName: changeSetName
@@ -75,13 +100,7 @@ export class TaskOperations {
                 request.StackName = stackName
             }
 
-            const response = await this.cloudFormationClient.describeChangeSet(request).promise()
-
-            if (!response.StackId) {
-                return ''
-            }
-
-            return response.StackId
+            return await this.cloudFormationClient.describeChangeSet(request).promise()
         } catch (err) {
             throw new Error(tl.loc('ChangeSetDoesNotExist', changeSetName))
         }

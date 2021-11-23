@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "Skips execution of and then deletes an empty change set"
+}
