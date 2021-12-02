@@ -4,7 +4,7 @@
     "friendlyName": "AWS Lambda Deploy Function",
     "description": "General purpose deployment of AWS Lambda functions for all supported language runtimes.",
     "author": "Amazon Web Services",
-    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/lambda-deploy.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* lambda:CreateFunction\n* lambda:GetFunction\n* lambda:UpdateFunctionCode\n* lambda:UpdateFunctionConfiguration",
+    "helpMarkDown": "Please refer to [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/) for more information on working with AWS Lambda.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/lambda-deploy.html).\n\n####Task Permissions\nThis task requires permissions to call the following AWS service APIs (depending on selected task options, not all APIs may be used):\n* lambda:CreateFunction\n* lambda:GetFunction\n* lambda:GetFunctionConfiguration\n* lambda:UpdateFunctionCode\n* lambda:UpdateFunctionConfiguration",
     "category": "Deploy",
     "visibility": ["Build", "Release"],
     "demands": [],
@@ -318,6 +318,7 @@
         "NoFunctionArnReturned": "No function ARN returned from the service! Deployment failed!",
         "SettingOutputVariable": "Setting output variable %s with the function output",
         "AwaitingStatus": "Waiting for function %s to reach %s state...",
-        "AwaitingStatusComplete": "Function %s has reached %s state"
+        "AwaitingStatusComplete": "Function %s has reached %s state",
+        "CantWaitWarning": "Role doesn't have Lambda States waiting permissions; will wait %s seconds and proceed. To avoid this in the future, grant %s permissions to the task role!"
     }
 }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { IAM, Lambda } from 'aws-sdk'
+import { AWSError, IAM, Lambda } from 'aws-sdk'
 import { SdkUtils } from 'lib/sdkutils'
 import { TaskOperations } from 'tasks/LambdaDeployFunction/TaskOperations'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters } from 'tasks/LambdaDeployFunction/TaskParameters'
@@ -84,6 +84,20 @@ const waitForFails = {
     }
 }
 
+const waitForPermissionsGetConfigurationFails = {
+    promise: function() {
+        const e = new Error() as AWSError
+        e.code = 'ResourceNotReady'
+        e.message = 'Resource is not in the state of denial'
+        e.originalError = {
+            code: 'AccessDeniedException',
+            message:
+                'User: youHaveNoPowerHere is not authorized to perform: lambda:GetFunctionConfiguration on resource: resource with an explicit deny in an identity-based policy'
+        } as AWSError
+        throw e
+    }
+}
+
 describe('Lambda Deploy Function', () => {
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
@@ -147,6 +161,22 @@ describe('Lambda Deploy Function', () => {
         expect(lambda.waitFor).toBeCalledTimes(1)
     })
 
+    test('Deploy only Function exists calls wait and still updates if wait fails due to waiter permissions', async () => {
+        expect.assertions(3)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeOnly
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForPermissionsGetConfigurationFails)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters, 0)
+        await taskOperations.execute()
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.updateFunctionCode).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(1)
+    })
+
     test('Deploy only Function exists calls update but fails if status does not update', async () => {
         expect.assertions(4)
         const taskParameters = { ...baseTaskParameters }
@@ -173,6 +203,22 @@ describe('Lambda Deploy Function', () => {
         lambda.createFunction = jest.fn(() => updateFunctionSucceeds)
         lambda.waitFor = jest.fn(() => waitForSucceeds)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.createFunction).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(1)
+    })
+
+    test('Deploy and config does not exist calls create and still updates if wait fails due to waiter permissions', async () => {
+        expect.assertions(3)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionFails)
+        lambda.createFunction = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForPermissionsGetConfigurationFails)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters, 0)
         await taskOperations.execute()
         expect(lambda.getFunction).toBeCalledTimes(1)
         expect(lambda.createFunction).toBeCalledTimes(1)
@@ -206,6 +252,24 @@ describe('Lambda Deploy Function', () => {
         lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
         lambda.waitFor = jest.fn(() => waitForSucceeds)
         const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters)
+        await taskOperations.execute()
+        expect(lambda.getFunction).toBeCalledTimes(1)
+        expect(lambda.updateFunctionCode).toBeCalledTimes(1)
+        expect(lambda.updateFunctionConfiguration).toBeCalledTimes(1)
+        expect(lambda.waitFor).toBeCalledTimes(2)
+    })
+
+    test('Deploy and config exists calls update and still updates if wait fails due to waiter permissions', async () => {
+        expect.assertions(4)
+        const taskParameters = { ...baseTaskParameters }
+        taskParameters.deploymentMode = deployCodeAndConfig
+        taskParameters.roleARN = 'arn:yes'
+        const lambda = new Lambda() as any
+        lambda.getFunction = jest.fn(() => getFunctionSucceeds)
+        lambda.updateFunctionCode = jest.fn(() => updateFunctionSucceeds)
+        lambda.updateFunctionConfiguration = jest.fn(() => updateFunctionSucceeds)
+        lambda.waitFor = jest.fn(() => waitForPermissionsGetConfigurationFails)
+        const taskOperations = new TaskOperations(new IAM(), lambda, taskParameters, 0)
         await taskOperations.execute()
         expect(lambda.getFunction).toBeCalledTimes(1)
         expect(lambda.updateFunctionCode).toBeCalledTimes(1)
