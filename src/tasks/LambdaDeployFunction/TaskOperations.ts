@@ -9,6 +9,7 @@ import * as tl from 'azure-pipelines-task-lib/task'
 import { SdkUtils } from 'lib/sdkutils'
 import { readFileSync } from 'fs'
 import { deployCodeAndConfig, deployCodeOnly, TaskParameters, updateFromLocalFile } from './TaskParameters'
+import { AWSError } from 'aws-sdk'
 
 const FUNCTION_UPDATED = 'functionUpdated'
 const FUNCTION_ACTIVE = 'functionActive'
@@ -17,7 +18,8 @@ export class TaskOperations {
     public constructor(
         public readonly iamClient: IAM,
         public readonly lambdaClient: Lambda,
-        public readonly taskParameters: TaskParameters
+        public readonly taskParameters: TaskParameters,
+        private readonly _timeoutSeconds: number = 5
     ) {}
 
     public async execute(): Promise<void> {
@@ -73,7 +75,7 @@ export class TaskOperations {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
-            await this.waitForUpdate()
+            await this.waitForStatus(FUNCTION_UPDATED)
 
             return response.FunctionArn
         } catch (err) {
@@ -128,7 +130,7 @@ export class TaskOperations {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
-            await this.waitForUpdate()
+            await this.waitForStatus(FUNCTION_UPDATED)
 
             // Update tags if we have them
             const tags = SdkUtils.getTagsDictonary<Lambda.Tags>(this.taskParameters.tags)
@@ -209,11 +211,7 @@ export class TaskOperations {
                 throw new Error(tl.loc('NoFunctionArnReturned'))
             }
 
-            console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, FUNCTION_ACTIVE))
-            await this.lambdaClient
-                .waitFor(FUNCTION_ACTIVE, { FunctionName: this.taskParameters.functionName })
-                .promise()
-            console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, FUNCTION_ACTIVE))
+            await this.waitForStatus(FUNCTION_ACTIVE)
 
             return response.FunctionArn
         } catch (err) {
@@ -235,9 +233,32 @@ export class TaskOperations {
         }
     }
 
-    private async waitForUpdate(): Promise<void> {
-        console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, FUNCTION_UPDATED))
-        await this.lambdaClient.waitFor(FUNCTION_UPDATED, { FunctionName: this.taskParameters.functionName }).promise()
-        console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, FUNCTION_UPDATED))
+    private async waitForStatus(status: typeof FUNCTION_ACTIVE | typeof FUNCTION_UPDATED): Promise<void> {
+        try {
+            console.log(tl.loc('AwaitingStatus', this.taskParameters.functionName, status))
+            // make the compiler happy: waitFor has different signatures depending on status...
+            if (status === FUNCTION_ACTIVE) {
+                await this.lambdaClient.waitFor(status, { FunctionName: this.taskParameters.functionName }).promise()
+            } else {
+                await this.lambdaClient.waitFor(status, { FunctionName: this.taskParameters.functionName }).promise()
+            }
+            console.log(tl.loc('AwaitingStatusComplete', this.taskParameters.functionName, status))
+        } catch (e) {
+            const err = e as AWSError
+            // waitFor lacking permissions: surface warning and sanely wait 5 seconds
+            if (
+                (err.originalError as AWSError | undefined)?.code === 'AccessDeniedException' &&
+                err.originalError?.message.includes('lambda:GetFunctionConfiguration')
+            ) {
+                tl.warning(
+                    tl.loc('CantWaitWarning', this._timeoutSeconds.toString(), 'lambda:GetFunctionConfiguration')
+                )
+                await new Promise(resolve => {
+                    setTimeout(resolve, this._timeoutSeconds * 1000)
+                })
+            } else {
+                throw err
+            }
+        }
     }
 }
