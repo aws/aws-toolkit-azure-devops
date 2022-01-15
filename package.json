@@ -87,7 +87,7 @@
         "js-yaml": "^3.13.1",
         "mime-types": "^2.1.30",
         "semver": "^7.3.4",
-        "shelljs": "^0.8.3"
+        "shelljs": "^0.8.5"
     },
     "jest": {
         "coverageDirectory": "./coverage/",
