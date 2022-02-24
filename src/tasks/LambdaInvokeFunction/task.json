@@ -79,6 +79,15 @@
             "required": false
         },
         {
+            "name": "outputLogsVariable",
+            "type": "string",
+            "label": "Output Logs Variable",
+            "defaultValue": "",
+            "groupName": "OutputOptions",
+            "helpMarkDown": "The name of the variable that will contain the last 4 KB of log data produced by your Lambda function. The variable can be used as $(variableName) to refer to the function result in subsequent tasks.",
+            "required": false
+        },
+        {
             "name": "logType",
             "type": "pickList",
             "label": "Log Type",
@@ -119,6 +128,7 @@
         "InvokingFunction": "Invoking function %s",
         "FunctionInvokeFailed": "Error invoking function",
         "SettingOutputVariable": "Setting output variable %s with the function output",
+        "SettingOutputLogsVariable": "Setting output logs variable %s with the function output logs",
         "ReceivedOutput": "Received output %s from function",
         "FunctionDoesNotExist": "Function %s does not exist",
         "TaskCompleted": "Completed invocation of Lambda function %s"
