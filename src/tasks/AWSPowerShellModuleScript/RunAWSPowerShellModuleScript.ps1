@@ -57,8 +57,6 @@ try {
         }
     }
 
-    Import-Module -Name AWSPowerShell
-
     ###############################################################################
     # If credentials and/or region are not defined on the task we assume them to be
     # already set in the host environment or, if on EC2, to be in instance metadata.
