@@ -8,7 +8,7 @@
     "category": "Deploy",
     "visibility": ["Build", "Release"],
     "demands": [],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "instanceNameFormat": "Push Image: ",
     "groups": [
         {
@@ -146,7 +146,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "ECRPushImage.js",
             "argumentFormat": ""
         }

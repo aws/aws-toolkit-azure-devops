@@ -8,7 +8,7 @@
     "category": "Deploy",
     "visibility": ["Build", "Release"],
     "demands": [],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "instanceNameFormat": "Send Message: $(topicArn) $(queueUrl)",
     "groups": [
         {
@@ -105,7 +105,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "SendMessage.js",
             "argumentFormat": ""
         }

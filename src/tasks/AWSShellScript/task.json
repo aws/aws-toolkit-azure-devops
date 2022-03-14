@@ -10,6 +10,7 @@
     "demands": ["sh"],
     "instanceNameFormat": "AWS Shell Script",
     "showEnvironmentVariables": true,
+    "minimumAgentVersion": "2.144.0",
     "groups": [
         {
             "name": "advanced",
@@ -111,7 +112,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "AWSShellScript.js",
             "argumentFormat": ""
         }

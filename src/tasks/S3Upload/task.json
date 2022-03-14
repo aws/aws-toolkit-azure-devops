@@ -8,7 +8,7 @@
     "category": "Deploy",
     "visibility": ["Build", "Release"],
     "demands": [],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "instanceNameFormat": "S3 Upload: $(bucketName)",
     "groups": [
         {
@@ -232,7 +232,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "S3Upload.js",
             "argumentFormat": ""
         }

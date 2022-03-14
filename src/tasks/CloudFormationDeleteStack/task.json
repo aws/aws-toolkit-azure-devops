@@ -9,7 +9,7 @@
     "visibility": ["Build", "Release"],
     "demands": [],
     "runsOn": ["Agent"],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "groups": [
         {
             "name": "diagnostic",
@@ -67,7 +67,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "CloudFormationDeleteStack.js",
             "argumentFormat": ""
         }
