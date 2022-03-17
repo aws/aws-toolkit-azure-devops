@@ -76,12 +76,10 @@ async function run(): Promise<${returnType === undefined ? 'void' : returnType}>
 }
 `
 
+    // TODO: Optionally output "TaskResult.SucceededWithIssues" depending on result?
     const run = `
 run().then((result) => {
-    const tooLow = warnIfBuildAgentTooLow()
-    tl.setResult(tooLow ? tl.TaskResult.SucceededWithIssues : tl.TaskResult.Succeeded, ${
-        successResult === undefined ? "''" : successResult
-    })
+    tl.setResult(tl.TaskResult.Succeeded, '')
 }).catch((error) => {
     tl.setResult(tl.TaskResult.Failed, \`\${error}\`)
 })
