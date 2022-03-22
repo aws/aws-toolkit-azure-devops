@@ -8,7 +8,7 @@
     "category": "Deploy",
     "visibility": ["Build", "Release"],
     "demands": [],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "instanceNameFormat": "Deploy with CodeDeploy: $(applicationName)",
     "groups": [
         {
@@ -185,7 +185,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "CodeDeployDeployApplication.js",
             "argumentFormat": ""
         }

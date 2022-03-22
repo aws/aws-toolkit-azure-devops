@@ -8,7 +8,7 @@
     "category": "Deploy",
     "visibility": ["Build", "Release"],
     "demands": ["DotNetFramework"],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",
     "showEnvironmentVariables": true,
     "groups": [

@@ -9,7 +9,7 @@
     "visibility": ["Build", "Release"],
     "demands": [],
     "runsOn": ["Agent"],
-    "minimumAgentVersion": "1.91.0",
+    "minimumAgentVersion": "2.144.0",
     "groups": [
         {
             "name": "OutputOptions",
@@ -130,7 +130,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node10": {
             "target": "CloudFormationExecuteChangeSet.js",
             "argumentFormat": ""
         }
