@@ -148,7 +148,7 @@ export class TaskOperations {
         for (const matchedFile of matchedFiles) {
             let relativePath = matchedFile.substring(this.taskParameters.sourceFolder.length)
             if (relativePath.startsWith(path.sep)) {
-                relativePath = relativePath.substr(1)
+                relativePath = relativePath.slice(1)
             }
             let targetPath = relativePath
 
