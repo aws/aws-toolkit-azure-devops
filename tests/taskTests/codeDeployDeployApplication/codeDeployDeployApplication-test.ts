@@ -28,6 +28,7 @@ const defaultTaskParameters: TaskParameters = {
     bundlePrefix: '',
     bundleKey: 'undefined',
     description: '',
+    filesAcl: '',
     fileExistsBehavior: '',
     updateOutdatedInstancesOnly: false,
     ignoreApplicationStopFailures: false,
@@ -103,44 +104,87 @@ describe('CodeDeploy Deploy Application', () => {
         })
     })
 
-    test('Upload needed, packages properly, succeeds', async () => {
-        expect.assertions(6)
-        process.env.TEMP = __dirname
-        const taskParameters = { ...defaultTaskParameters }
-        taskParameters.deploymentRevisionSource = revisionSourceFromWorkspace
-        taskParameters.revisionBundle = path.join(__dirname, '../../resources/codeDeployCode')
-        taskParameters.applicationName = 'test'
-        const s3 = new S3() as any
-        s3.upload = jest.fn(args => {
-            expect(args.Bucket).toBe('')
-            expect(args.Key).toContain('test.v')
-            const dir = fs.readdirSync(__dirname)
-            for (const file of dir) {
-                if (path.extname(file) === '.zip') {
-                    const f = path.join(__dirname, file)
-                    const zip = new AdmZip(f)
-                    const entries = zip.getEntries().map(it => it.entryName)
-                    expect(entries.length).toBe(3)
-                    expect(entries).toContain('test.txt')
-                    expect(entries).toContain('subpath/')
-                    expect(entries).toContain('subpath/abc.txt')
-                    break
+    describe('S3 upload needed', () => {
+        let codeDeploy: any
+        let parameters: TaskParameters
+
+        beforeEach(() => {
+            process.env.TEMP = __dirname
+
+            parameters = { ...defaultTaskParameters }
+            parameters.deploymentRevisionSource = revisionSourceFromWorkspace
+            parameters.revisionBundle = path.join(__dirname, '../../resources/codeDeployCode')
+            parameters.applicationName = 'test'
+
+            codeDeploy = new CodeDeploy() as any
+            codeDeploy.getApplication = jest.fn(() => emptyPromise)
+            codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
+            codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
+            codeDeploy.waitFor = jest.fn((thing, thing2, cb) => {
+                cb()
+
+                return { promise: () => undefined }
+            })
+        })
+
+        test('Upload needed, packages properly, succeeds', async () => {
+            expect.assertions(7)
+
+            const s3 = new S3() as any
+            s3.upload = jest.fn(args => {
+                expect(args.Bucket).toBe('')
+                expect(args.Key).toContain('test.v')
+                expect(args.ACL).toBeUndefined()
+                const dir = fs.readdirSync(__dirname)
+                for (const file of dir) {
+                    if (path.extname(file) === '.zip') {
+                        const f = path.join(__dirname, file)
+                        const zip = new AdmZip(f)
+                        const entries = zip.getEntries().map(it => it.entryName)
+                        expect(entries.length).toBe(3)
+                        expect(entries).toContain('test.txt')
+                        expect(entries).toContain('subpath/')
+                        expect(entries).toContain('subpath/abc.txt')
+                        break
+                    }
                 }
-            }
 
-            return emptyPromise
-        })
-        const codeDeploy = new CodeDeploy() as any
-        codeDeploy.getApplication = jest.fn(() => emptyPromise)
-        codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
-        codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
-        codeDeploy.waitFor = jest.fn((thing, thing2, cb) => {
-            cb()
+                return emptyPromise
+            })
 
-            return { promise: () => undefined }
+            const taskOperations = new TaskOperations(codeDeploy, s3, parameters)
+            await taskOperations.execute()
         })
-        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
-        await taskOperations.execute()
+
+        test('Uses ACL provided by task parameters', async () => {
+            expect.assertions(1)
+            parameters.filesAcl = 'bucket-owner-full-control'
+
+            const s3 = new S3() as any
+            s3.upload = jest.fn(args => {
+                expect(args.ACL).toBe('bucket-owner-full-control')
+
+                return emptyPromise
+            })
+
+            const taskOperations = new TaskOperations(codeDeploy, s3, parameters)
+            await taskOperations.execute()
+        })
+
+        test('Does not set ACL when using "none"', async () => {
+            expect.assertions(1)
+            parameters.filesAcl = 'none'
+
+            const s3 = new S3() as any
+            s3.upload = jest.fn(args => {
+                expect(args.ACL).toBeUndefined()
+
+                return emptyPromise
+            })
+
+            const taskOperations = new TaskOperations(codeDeploy, s3, parameters)
+            await taskOperations.execute()
+        })
     })
 
     test('Upload not needed, succeeds', async () => {
