@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "Added \"filesAcl\" parameter to CodeDeploy task when uploading to S3"
+}

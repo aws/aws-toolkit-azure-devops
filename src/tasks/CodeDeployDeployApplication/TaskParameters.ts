@@ -20,6 +20,7 @@ export interface TaskParameters {
     bucketName: string
     bundlePrefix: string
     bundleKey: string
+    filesAcl: string
     description: string
     fileExistsBehavior: string | undefined
     updateOutdatedInstancesOnly: boolean
@@ -38,6 +39,7 @@ export function buildTaskParameters(): TaskParameters {
         bucketName: getInputRequired('bucketName'),
         bundlePrefix: '',
         bundleKey: '',
+        filesAcl: '',
         description: getInputOrEmpty('description'),
         fileExistsBehavior: tl.getInput('fileExistsBehavior', false),
         updateOutdatedInstancesOnly: tl.getBoolInput('updateOutdatedInstancesOnly', false),
@@ -50,6 +52,7 @@ export function buildTaskParameters(): TaskParameters {
         case revisionSourceFromWorkspace:
             parameters.revisionBundle = getPathInputRequiredCheck('revisionBundle')
             parameters.bundlePrefix = getInputOrEmpty('bundlePrefix')
+            parameters.filesAcl = getInputOrEmpty('filesAcl')
             break
 
         case revisionSourceFromS3:

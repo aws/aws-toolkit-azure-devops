@@ -122,13 +122,17 @@ export class TaskOperations {
         console.log(tl.loc('UploadingBundle', archiveName, key, this.taskParameters.bucketName))
         const fileBuffer = fs.createReadStream(archiveName)
         try {
-            const response: S3.ManagedUpload.SendData = await this.s3Client
-                .upload({
-                    Bucket: this.taskParameters.bucketName,
-                    Key: key,
-                    Body: fileBuffer
-                })
-                .promise()
+            const request: S3.PutObjectRequest = {
+                Bucket: this.taskParameters.bucketName,
+                Key: key,
+                Body: fileBuffer
+            }
+
+            if (this.taskParameters.filesAcl && this.taskParameters.filesAcl !== 'none') {
+                request.ACL = this.taskParameters.filesAcl
+            }
+
+            await this.s3Client.upload(request).promise()
             console.log(tl.loc('BundleUploadCompleted'))
 
             // clean up the archive if we created one
