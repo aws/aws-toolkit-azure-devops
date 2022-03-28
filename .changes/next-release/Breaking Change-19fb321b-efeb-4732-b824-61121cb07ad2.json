@@ -1,4 +1,0 @@
-{
-	"type": "Breaking Change",
-	"description": "Bumped Minimum Azure Pipelines Agent version to 2.144.0 due to Node6 Execution Handler Deprecation: see https://github.com/aws/aws-toolkit-azure-devops/issues/453"
-}

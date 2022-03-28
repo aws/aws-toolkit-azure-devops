@@ -1,3 +1,10 @@
+## 1.13.0 2022-03-28
+
+- **Breaking Change** Bumped Minimum Azure Pipelines Agent version to 2.144.0 due to Node6 Execution Handler Deprecation: see https://github.com/aws/aws-toolkit-azure-devops/issues/453
+- **Feature** Added "filesAcl" parameter to CodeDeploy task when uploading to S3
+- **Feature** Skips execution of and then deletes an empty change set
+- **Feature** Lambda Deploy Function gracefully handles missing lambda:GetFunctionConfiguration with a warning and a 5-second wait
+
 ## 1.12.0 2021-11-16
 
 - **Feature** Add support for CloudWatch output config in SSM RunCommand task
