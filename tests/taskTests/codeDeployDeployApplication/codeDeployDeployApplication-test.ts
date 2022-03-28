@@ -45,6 +45,21 @@ const codeDeployDeploymentId = {
 }
 
 describe('CodeDeploy Deploy Application', () => {
+    // Creates a simple mock that always succeeds (at least for these tests)
+    function createSuccessfulCodeDeploy(): CodeDeploy {
+        const codeDeploy = new CodeDeploy() as any
+        codeDeploy.getApplication = jest.fn(() => emptyPromise)
+        codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
+        codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
+        codeDeploy.waitFor = jest.fn((thing, thing2, cb) => {
+            cb()
+
+            return { promise: () => undefined }
+        })
+
+        return codeDeploy
+    }
+
     // TODO https://github.com/aws/aws-vsts-tools/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/CodeDeployDeployApplication/task.json')
@@ -76,10 +91,7 @@ describe('CodeDeploy Deploy Application', () => {
         expect.assertions(1)
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.deploymentRevisionSource = revisionSourceFromS3
-        const codeDeploy = new CodeDeploy() as any
-        codeDeploy.getApplication = jest.fn(() => emptyPromise)
-        codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
-        const taskOperations = new TaskOperations(codeDeploy, new S3(), taskParameters)
+        const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), new S3(), taskParameters)
         await taskOperations.execute().catch(err => {
             expect(`${err}`).toContain('Archive with key undefined does not exist')
         })
@@ -90,10 +102,7 @@ describe('CodeDeploy Deploy Application', () => {
         const taskParameters = { ...defaultTaskParameters }
         taskParameters.deploymentRevisionSource = revisionSourceFromS3
         taskParameters.bundleKey = '/whatever/wahtever'
-        const codeDeploy = new CodeDeploy() as any
-        codeDeploy.getApplication = jest.fn(() => emptyPromise)
-        codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
-        codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
+        const codeDeploy = createSuccessfulCodeDeploy() as any
         // the first argument of the callback is error so pass in an "error"
         codeDeploy.waitFor = jest.fn((arr1, arr2, cb) => cb(new Error('22'), undefined))
         const s3 = new S3() as any
@@ -105,7 +114,6 @@ describe('CodeDeploy Deploy Application', () => {
     })
 
     describe('S3 upload needed', () => {
-        let codeDeploy: any
         let parameters: TaskParameters
 
         beforeEach(() => {
@@ -115,16 +123,6 @@ describe('CodeDeploy Deploy Application', () => {
             parameters.deploymentRevisionSource = revisionSourceFromWorkspace
             parameters.revisionBundle = path.join(__dirname, '../../resources/codeDeployCode')
             parameters.applicationName = 'test'
-
-            codeDeploy = new CodeDeploy() as any
-            codeDeploy.getApplication = jest.fn(() => emptyPromise)
-            codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
-            codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
-            codeDeploy.waitFor = jest.fn((thing, thing2, cb) => {
-                cb()
-
-                return { promise: () => undefined }
-            })
         })
 
         test('Upload needed, packages properly, succeeds', async () => {
@@ -152,7 +150,7 @@ describe('CodeDeploy Deploy Application', () => {
                 return emptyPromise
             })
 
-            const taskOperations = new TaskOperations(codeDeploy, s3, parameters)
+            const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), s3, parameters)
             await taskOperations.execute()
         })
 
@@ -167,7 +165,7 @@ describe('CodeDeploy Deploy Application', () => {
                 return emptyPromise
             })
 
-            const taskOperations = new TaskOperations(codeDeploy, s3, parameters)
+            const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), s3, parameters)
             await taskOperations.execute()
         })
 
@@ -182,7 +180,7 @@ describe('CodeDeploy Deploy Application', () => {
                 return emptyPromise
             })
 
-            const taskOperations = new TaskOperations(codeDeploy, s3, parameters)
+            const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), s3, parameters)
             await taskOperations.execute()
         })
     })
@@ -194,16 +192,7 @@ describe('CodeDeploy Deploy Application', () => {
         taskParameters.bundleKey = path.join(__dirname, '../../resources/codeDeployCode.zip')
         const s3 = new S3() as any
         s3.headObject = jest.fn(() => emptyPromise)
-        const codeDeploy = new CodeDeploy() as any
-        codeDeploy.getApplication = jest.fn(() => emptyPromise)
-        codeDeploy.getDeploymentGroup = jest.fn(() => emptyPromise)
-        codeDeploy.createDeployment = jest.fn(() => codeDeployDeploymentId)
-        codeDeploy.waitFor = jest.fn((thing, thing2, cb) => {
-            cb()
-
-            return { promise: () => undefined }
-        })
-        const taskOperations = new TaskOperations(codeDeploy, s3, taskParameters)
+        const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), s3, taskParameters)
         await taskOperations.execute()
     })
 })
