@@ -55,7 +55,7 @@
                 "imageid": "Image ID"
             },
             "properties": {
-                "EditableOptions": "false"
+                "EditableOptions": "False"
             }
         },
         {
@@ -118,6 +118,14 @@
             "helpMarkDown": "If enabled, the Docker repository name will be modified to follow Docker naming conventions. Converts upper case characters to lower case. Removes all characters except 0-9, -, . and _ ."
         },
         {
+            "name": "removeDockerImage",
+            "label": "Remove Docker image after ECR push",
+            "type": "boolean",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "If enabled, this command removes the image and untags any references to it"
+        },
+        {
             "name": "outputVariable",
             "type": "string",
             "label": "Image Tag Output Variable",
@@ -157,6 +165,7 @@
         "RequestingAuthToken": "Obtaining authentication token for ECR login",
         "AddingTag": "Adding tag '%s' to image '%s'",
         "PushingImage": "Pushing image '%s' to Elastic Container Registry",
+        "RemovingImage": "Removing image '%s' and untagging any references to the image",
         "InvokingDockerCommand": "Invoking '%s' with command '%s'",
         "TestingForRepository": "Testing existence of repository '%s'",
         "CreatingRepository": "Repository not found, attempting to create",

@@ -83,6 +83,10 @@ export class TaskOperations {
             tl.setVariable(this.taskParameters.outputVariable, targetImageRef)
         }
 
+        if (this.taskParameters.removeDockerImage) {
+            await this.removeDockerImage(sourceImageRef)
+        }
+
         console.log(tl.loc('TaskCompleted'))
     }
 
@@ -117,5 +121,10 @@ export class TaskOperations {
     private async pushImageToECR(imageRef: string): Promise<void> {
         console.log(tl.loc('PushingImage', imageRef))
         await this.dockerHandler.runDockerCommand(this.dockerPath, 'push', [imageRef])
+    }
+
+    private async removeDockerImage(imageRef: string): Promise<void> {
+        console.log(tl.loc('RemovingImage', imageRef))
+        await this.dockerHandler.runDockerCommand(this.dockerPath, 'rmi', [imageRef], '-f')
     }
 }
