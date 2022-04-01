@@ -92,8 +92,7 @@ describe('ECR Push image', () => {
         const dockerHandler = { ...defaultDocker }
         const runDockerCommand = jest.fn(async (thing1, thing2, thing3, thing4) => undefined)
         dockerHandler.runDockerCommand = runDockerCommand
-        const taskParameters = { ...defaultTaskParameters }
-        taskParameters.removeDockerImage = true
+        const taskParameters = { ...defaultTaskParameters, removeDockerImage: true }
         const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
         await taskOperations.execute()
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
