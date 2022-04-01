@@ -20,6 +20,7 @@ export interface TaskParameters {
     pushTag: string
     autoCreateRepository: boolean
     forceDockerNamingConventions: boolean
+    removeDockerImage: boolean
     outputVariable: string
 }
 
@@ -31,6 +32,7 @@ export function buildTaskParameters(): TaskParameters {
         pushTag: getInputOrEmpty('pushTag'),
         autoCreateRepository: tl.getBoolInput('autoCreateRepository', false),
         forceDockerNamingConventions: tl.getBoolInput('forceDockerNamingConventions', false),
+        removeDockerImage: tl.getBoolInput('removeDockerImage', false),
         outputVariable: getInputOrEmpty('outputVariable'),
         sourceImageName: '',
         sourceImageId: '',
