@@ -7,7 +7,6 @@ import ncp = require('child_process')
 import esbuild = require('esbuild')
 import fs = require('fs-extra')
 import path = require('path')
-import shell = require('shelljs')
 import folders = require('./scriptUtils')
 import os = require('os')
 
@@ -40,13 +39,9 @@ function installNodePackages(directory: string) {
 
 function generateGitHashFile() {
     try {
-        const response = shell.exec('git rev-parse HEAD', { silent: true })
-        if (response.code !== 0) {
-            console.log('Warning: unable to run git rev-parse to get commit hash!')
-        } else {
-            console.log(`Putting git hash ${response.stdout.trim()} into the package directory`)
-            fs.outputFileSync(path.join(folders.packageRoot, '.gitcommit'), response.stdout.trim())
-        }
+        const response = ncp.execSync('git rev-parse HEAD', { encoding: 'utf-8' }).toString()
+        console.log(`Putting git hash ${response.trim()} into the package directory`)
+        fs.outputFileSync(path.join(folders.packageRoot, '.gitcommit'), response.trim())
     } catch (e) {
         console.log(`Getting commit hash failed ${e}`)
         throw e
