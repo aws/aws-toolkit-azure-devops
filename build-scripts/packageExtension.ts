@@ -9,6 +9,7 @@ import fs = require('fs-extra')
 import path = require('path')
 import shell = require('shelljs')
 import folders = require('./scriptUtils')
+import os = require('os')
 
 const timeMessage = 'Packaged extension'
 const manifestFile = 'vss-extension.json'
@@ -133,7 +134,8 @@ function packagePlugin(options: CommandLineOptions) {
 
     console.log('Creating deployment vsix')
 
-    const tfx = path.join(process.cwd(), 'node_modules', '.bin', 'tfx')
+    const binName = os.platform() === 'win32' ? `tfx.cmd` : 'tfx'
+    const tfx = path.join(process.cwd(), 'node_modules', '.bin', binName)
     const args: string[] = ['extension', 'create', '--root', folders.packageRoot]
 
     args.push('--output-path', folders.packageRoot)
