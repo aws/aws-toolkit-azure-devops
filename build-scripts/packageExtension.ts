@@ -132,16 +132,20 @@ function packagePlugin(options: CommandLineOptions) {
     })
 
     console.log('Creating deployment vsix')
-    let tfxcmd = `tfx extension create --root ${folders.packageRoot} --output-path ${
-        folders.packageRoot
-    } --manifests ${path.join(folders.packageRoot, manifestFile)}`
+
+    const tfx = path.join(process.cwd(), 'node_modules', '.bin', 'tfx')
+    const args: string[] = ['extension', 'create', '--root', folders.packageRoot]
+
+    args.push('--output-path', folders.packageRoot)
+    args.push('--manifests', path.join(folders.packageRoot, manifestFile))
+
     if (options.publisher) {
-        tfxcmd += ' --publisher ' + options.publisher
+        args.push('--publisher', options.publisher)
     }
 
-    console.log('Packaging with:' + tfxcmd)
+    console.log('Packaging with:' + `${tfx} ${args.join(' ')}`)
 
-    ncp.execSync(tfxcmd, { stdio: 'pipe' })
+    ncp.execFileSync(tfx, args, { stdio: 'pipe' })
 
     console.log('Packaging successful')
 }
