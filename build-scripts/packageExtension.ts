@@ -9,6 +9,7 @@ import fs = require('fs-extra')
 import path = require('path')
 import shell = require('shelljs')
 import folders = require('./scriptUtils')
+import os = require('os')
 
 const timeMessage = 'Packaged extension'
 const manifestFile = 'vss-extension.json'
@@ -132,16 +133,21 @@ function packagePlugin(options: CommandLineOptions) {
     })
 
     console.log('Creating deployment vsix')
-    let tfxcmd = `tfx extension create --root ${folders.packageRoot} --output-path ${
-        folders.packageRoot
-    } --manifests ${path.join(folders.packageRoot, manifestFile)}`
+
+    const binName = os.platform() === 'win32' ? `tfx.cmd` : 'tfx'
+    const tfx = path.join(process.cwd(), 'node_modules', '.bin', binName)
+    const args: string[] = ['extension', 'create', '--root', folders.packageRoot]
+
+    args.push('--output-path', folders.packageRoot)
+    args.push('--manifests', path.join(folders.packageRoot, manifestFile))
+
     if (options.publisher) {
-        tfxcmd += ' --publisher ' + options.publisher
+        args.push('--publisher', options.publisher)
     }
 
-    console.log('Packaging with:' + tfxcmd)
+    console.log('Packaging with:' + `${tfx} ${args.join(' ')}`)
 
-    ncp.execSync(tfxcmd, { stdio: 'pipe' })
+    ncp.execFileSync(tfx, args, { stdio: 'pipe' })
 
     console.log('Packaging successful')
 }
