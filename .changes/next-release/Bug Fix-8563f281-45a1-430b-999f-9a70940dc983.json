@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "s3 download handle folders with mkdirp instead of stream writer"
+}
