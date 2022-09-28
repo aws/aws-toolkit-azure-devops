@@ -225,7 +225,7 @@ export class TaskOperations {
 
         try {
             await this.cloudFormationClient.updateStack(request).promise()
-            await waitForStackUpdate(this.cloudFormationClient, request.StackName)
+            await waitForStackUpdate(this.cloudFormationClient, request.StackName, this.taskParameters.timeoutInMins)
         } catch (err) {
             const e = <AWSError>err
             if (isNoWorkToDoValidationError(e.code, e.message)) {
@@ -365,7 +365,7 @@ export class TaskOperations {
                 .promise()
 
             if (await testStackHasResources(this.cloudFormationClient, stackName)) {
-                await waitForStackUpdate(this.cloudFormationClient, stackName)
+                await waitForStackUpdate(this.cloudFormationClient, stackName, this.taskParameters.timeoutInMins)
             } else {
                 await waitForStackCreation(this.cloudFormationClient, stackName, this.taskParameters.timeoutInMins)
             }
