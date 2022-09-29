@@ -533,8 +533,8 @@ export class TaskOperations {
     private async waitForChangeSetCreation(changeSetName: string, stackName: string): Promise<boolean> {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName))
         try {
-            const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
-            await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms).promise()
+            const params: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
+            await this.cloudFormationClient.waitFor('changeSetCreateComplete', params).promise()
             console.log(tl.loc('ChangeSetValidated'))
         } catch (err) {
             // Inspect to see if the error was down to the service reporting (as an exception trapped

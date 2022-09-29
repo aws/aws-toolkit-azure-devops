@@ -71,8 +71,8 @@ export async function waitForStackUpdate(
 ): Promise<void> {
     console.log(tl.loc('WaitingForStackUpdate', stackName))
     try {
-        const parms: any = setWaiterParams(stackName, timeoutInMins)
-        await cloudFormationClient.waitFor('stackUpdateComplete', parms).promise()
+        const params: any = setWaiterParams(stackName, timeoutInMins)
+        await cloudFormationClient.waitFor('stackUpdateComplete', params).promise()
         console.log(tl.loc('StackUpdated', stackName))
     } catch (err) {
         throw new Error(tl.loc('StackUpdateFailed', stackName, (err as Error).message))
@@ -86,8 +86,8 @@ export async function waitForStackCreation(
 ): Promise<void> {
     console.log(tl.loc('WaitingForStackCreation', stackName))
     try {
-        const parms: any = setWaiterParams(stackName, timeoutInMins)
-        await cloudFormationClient.waitFor('stackCreateComplete', parms).promise()
+        const params: any = setWaiterParams(stackName, timeoutInMins)
+        await cloudFormationClient.waitFor('stackCreateComplete', params).promise()
         console.log(tl.loc('StackCreated', stackName))
     } catch (err) {
         throw new Error(tl.loc('StackCreationFailed', stackName, err.message))
