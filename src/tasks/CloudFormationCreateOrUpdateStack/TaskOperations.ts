@@ -225,7 +225,7 @@ export class TaskOperations {
 
         try {
             await this.cloudFormationClient.updateStack(request).promise()
-            await waitForStackUpdate(this.cloudFormationClient, request.StackName)
+            await waitForStackUpdate(this.cloudFormationClient, request.StackName, this.taskParameters.timeoutInMins)
         } catch (err) {
             const e = <AWSError>err
             if (isNoWorkToDoValidationError(e.code, e.message)) {
@@ -365,7 +365,7 @@ export class TaskOperations {
                 .promise()
 
             if (await testStackHasResources(this.cloudFormationClient, stackName)) {
-                await waitForStackUpdate(this.cloudFormationClient, stackName)
+                await waitForStackUpdate(this.cloudFormationClient, stackName, this.taskParameters.timeoutInMins)
             } else {
                 await waitForStackCreation(this.cloudFormationClient, stackName, this.taskParameters.timeoutInMins)
             }
@@ -533,8 +533,8 @@ export class TaskOperations {
     private async waitForChangeSetCreation(changeSetName: string, stackName: string): Promise<boolean> {
         console.log(tl.loc('WaitingForChangeSetValidation', changeSetName, stackName))
         try {
-            const parms: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
-            await this.cloudFormationClient.waitFor('changeSetCreateComplete', parms).promise()
+            const params: any = setWaiterParams(stackName, this.taskParameters.timeoutInMins, changeSetName)
+            await this.cloudFormationClient.waitFor('changeSetCreateComplete', params).promise()
             console.log(tl.loc('ChangeSetValidated'))
         } catch (err) {
             // Inspect to see if the error was down to the service reporting (as an exception trapped
