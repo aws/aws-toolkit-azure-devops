@@ -20,6 +20,7 @@ export interface TaskParameters {
     outputVariable: string
     captureStackOutputs: string
     captureAsSecuredVars: boolean
+    disableRollback: boolean
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -31,7 +32,8 @@ export function buildTaskParameters(): TaskParameters {
         deleteEmptyChangeSet: getBoolInput('deleteEmptyChangeSet', false),
         outputVariable: getInputOrEmpty('outputVariable'),
         captureStackOutputs: getInputOrEmpty('captureStackOutputs'),
-        captureAsSecuredVars: getBoolInput('captureAsSecuredVars', false)
+        captureAsSecuredVars: getBoolInput('captureAsSecuredVars', false),
+        disableRollback: getBoolInput('disableRollback', false)
     }
 
     return parameters
