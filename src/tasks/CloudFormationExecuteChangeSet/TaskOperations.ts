@@ -4,7 +4,6 @@
  */
 
 import CloudFormation = require('aws-sdk/clients/cloudformation')
-import { bool } from 'aws-sdk/clients/signer'
 import * as tl from 'azure-pipelines-task-lib/task'
 import {
     captureStackOutputs,
