@@ -19,7 +19,8 @@ const defaultTaskParameters: TaskParameters = {
     deleteEmptyChangeSet: false,
     outputVariable: '',
     captureStackOutputs: '',
-    captureAsSecuredVars: false
+    captureAsSecuredVars: false,
+    disableRollback: true
 }
 
 const changeSetNotFound = {

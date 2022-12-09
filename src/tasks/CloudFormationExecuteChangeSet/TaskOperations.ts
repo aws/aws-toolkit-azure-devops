@@ -23,7 +23,8 @@ export class TaskOperations {
     public async execute(): Promise<void> {
         const changeSet = await this.verifyResourcesExist(
             this.taskParameters.changeSetName,
-            this.taskParameters.stackName
+            this.taskParameters.stackName,
+            this.taskParameters.disableRollback
         )
         let waitForUpdate = false
         const stackId = changeSet.StackId || ''
@@ -51,12 +52,13 @@ export class TaskOperations {
                 }
             } else {
                 console.log(
-                    tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName)
+                    tl.loc('ExecutingChangeSet', this.taskParameters.changeSetName, this.taskParameters.stackName, this.taskParameters.disableRollback)
                 )
                 await this.cloudFormationClient
                     .executeChangeSet({
                         ChangeSetName: this.taskParameters.changeSetName,
-                        StackName: this.taskParameters.stackName
+                        StackName: this.taskParameters.stackName,
+                        DisableRollback: this.taskParameters.disableRollback
                     })
                     .promise()
 
@@ -90,7 +92,8 @@ export class TaskOperations {
 
     private async verifyResourcesExist(
         changeSetName: string,
-        stackName: string
+        stackName: string,
+        disableRollback: boolean
     ): Promise<CloudFormation.DescribeChangeSetOutput> {
         try {
             const request: CloudFormation.DescribeChangeSetInput = {
@@ -98,6 +101,9 @@ export class TaskOperations {
             }
             if (stackName) {
                 request.StackName = stackName
+            }
+            if (disableRollback) {
+                request.DisableRollback = disableRollback
             }
 
             return await this.cloudFormationClient.describeChangeSet(request).promise()

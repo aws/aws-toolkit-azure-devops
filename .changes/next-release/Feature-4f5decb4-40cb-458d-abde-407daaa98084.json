@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "Added DisableRollback boolean paramater to cloudFormationExecuteChangeSet so that we can optionally disable rollback when executing a changeset through a pipeline."
+}
