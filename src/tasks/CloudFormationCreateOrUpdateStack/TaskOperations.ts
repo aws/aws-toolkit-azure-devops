@@ -541,7 +541,7 @@ export class TaskOperations {
             // by the waiter) that the set has no changes. If that is the case, return a signal to
             // the caller that no work is needed rather than fail the task. This allows CI pipelines
             // with multiple stacks to be updated when some stacks have no changes.
-            // https://github.com/aws/aws-vsts-tools/issues/28
+            // https://github.com/aws/aws-toolkit-azure-devops/issues/28
             const response = await this.cloudFormationClient
                 .describeChangeSet({ ChangeSetName: changeSetName, StackName: stackName })
                 .promise()

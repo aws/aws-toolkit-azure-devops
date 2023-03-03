@@ -60,7 +60,7 @@ const putParameterSucceeds = {
 jest.mock('aws-sdk')
 
 describe('Systems Manager Set Parameter', () => {
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SystemsManagerSetParameter/task.json')
     })

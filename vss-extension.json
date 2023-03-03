@@ -51,15 +51,15 @@
             "uri": "https://aws.amazon.com/vsts?referer=vsmarketplace"
         },
         "license": {
-            "uri": "https://github.com/aws/aws-vsts-tools/blob/master/LICENSE"
+            "uri": "https://github.com/aws/aws-toolkit-azure-devops/blob/master/LICENSE"
         },
         "support": {
-            "uri": "https://github.com/aws/aws-vsts-tools/issues"
+            "uri": "https://github.com/aws/aws-toolkit-azure-devops/issues"
         }
     },
     "repository": {
         "type": "git",
-        "uri": "https://github.com/aws/aws-vsts-tools"
+        "uri": "https://github.com/aws/aws-toolkit-azure-devops"
     },
     "branding": {
         "color": "rgb(220, 235, 252)",

@@ -45,7 +45,7 @@ const secretsManagerReturnsCreate = {
 }
 
 describe('Secrets Manger Create Or Update Secret', () => {
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SecretsManagerCreateOrUpdateSecret/task.json')
     })

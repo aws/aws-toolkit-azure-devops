@@ -60,7 +60,7 @@ describe('CodeDeploy Deploy Application', () => {
         return codeDeploy
     }
 
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/CodeDeployDeployApplication/task.json')
     })
