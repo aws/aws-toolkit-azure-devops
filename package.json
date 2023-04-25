@@ -62,7 +62,7 @@
         "eslint-plugin-header": "^3.1.0",
         "eslint-plugin-no-null": "^1.0.2",
         "fs-extra": "^8.0.0",
-        "husky": "^4.3.8",
+        "husky": "^8.0.3",
         "jest": "^27.5.1",
         "jest-junit": "^13.0.0",
         "json-query": "^2.2.2",
