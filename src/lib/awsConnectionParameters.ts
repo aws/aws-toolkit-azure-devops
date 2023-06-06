@@ -94,6 +94,25 @@ export function buildConnectionParameters(): AWSConnectionParameters {
     return connectionParameters
 }
 
+function getEndpointAuthInfo(awsparams: AWSConnectionParameters, endpointName: string) {
+    awsparams.awsEndpointAuth = tl.getEndpointAuthorization(endpointName, false)
+    console.log(`...configuring AWS credentials from service endpoint '${endpointName}'`)
+    const accessKey = awsparams.awsEndpointAuth?.parameters?.username
+    const secretKey = awsparams.awsEndpointAuth?.parameters?.password
+    const token = awsparams.awsEndpointAuth?.parameters?.sessionToken
+    const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
+    const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
+    const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
+    return {
+        accessKey: accessKey,
+        secretKey: secretKey,
+        token: token,
+        assumeRoleArn: assumeRoleArn,
+        externalId: externalId,
+        roleSessionName: roleSessionName
+    }
+}
+
 // Unpacks credentials from the specified endpoint configuration, if defined
 function attemptEndpointCredentialConfiguration(
     awsparams: AWSConnectionParameters,
@@ -102,18 +121,45 @@ function attemptEndpointCredentialConfiguration(
     if (!endpointName) {
         return undefined
     }
+    const authInfo = getEndpointAuthInfo(awsparams, endpointName)
+    authInfo.accessKey = authInfo.accessKey ?? ''
+    authInfo.secretKey = authInfo.secretKey ?? ''
+    return createEndpointCredentials(
+        authInfo.accessKey,
+        authInfo.secretKey,
+        authInfo.token,
+        authInfo.assumeRoleArn,
+        authInfo.externalId,
+        authInfo.roleSessionName
+    )
+}
 
-    awsparams.awsEndpointAuth = tl.getEndpointAuthorization(endpointName, false)
-    console.log(`...configuring AWS credentials from service endpoint '${endpointName}'`)
-
-    const accessKey = awsparams.awsEndpointAuth?.parameters?.username ?? ''
-    const secretKey = awsparams.awsEndpointAuth?.parameters?.password ?? ''
-    const token = awsparams.awsEndpointAuth?.parameters?.sessionToken
-    const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
-    const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
-    const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
-
-    return createEndpointCredentials(accessKey, secretKey, token, assumeRoleArn, externalId, roleSessionName)
+// If only the role name to assume is set but no credentials,
+// we try to assume the role directly
+async function assumeRoleFromInstanceProfile(
+    awsparams: AWSConnectionParameters,
+    endpointName: string | undefined
+): Promise<AWS.Credentials | undefined> {
+    if (!endpointName) {
+        return undefined
+    }
+    const authInfo = getEndpointAuthInfo(awsparams, endpointName)
+    authInfo.roleSessionName = authInfo.roleSessionName ?? defaultRoleSessionName
+    if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
+        console.log('Assuming role without credentials (via instance profile)...')
+        const params = {
+            RoleArn: authInfo.assumeRoleArn,
+            RoleSessionName: authInfo.roleSessionName
+        }
+        const sts = new STS()
+        const data = await sts.assumeRole(params).promise()
+        return new AWS.Credentials({
+            accessKeyId: data.Credentials!.AccessKeyId,
+            secretAccessKey: data.Credentials!.SecretAccessKey,
+            sessionToken: data.Credentials!.SessionToken
+        })
+    }
+    return undefined
 }
 
 // credentials can also be set, using their environment variable names,
@@ -196,7 +242,6 @@ function createEndpointCredentials(
     if (externalId) {
         options.ExternalId = externalId
     }
-
     return new AWS.TemporaryCredentials(options, masterCredentials)
 }
 
@@ -208,6 +253,11 @@ function createEndpointCredentials(
 // an EC2 instance, in instance metadata).
 export async function getCredentials(awsParams: AWSConnectionParameters): Promise<AWS.Credentials | undefined> {
     console.log('Configuring credentials for task')
+
+    const role_credentials = await assumeRoleFromInstanceProfile(awsParams, tl.getInput('awsCredentials', false))
+    if (typeof role_credentials !== 'undefined') {
+        return role_credentials
+    }
 
     const credentials =
         attemptEndpointCredentialConfiguration(awsParams, tl.getInput('awsCredentials', false)) ||
