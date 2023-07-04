@@ -99,6 +99,9 @@ function getEndpointAuthInfo(awsparams: AWSConnectionParameters, endpointName: s
     console.log(`...configuring AWS credentials from service endpoint '${endpointName}'`)
     const accessKey = awsparams.awsEndpointAuth?.parameters?.username
     const secretKey = awsparams.awsEndpointAuth?.parameters?.password
+    if ((accessKey && !secretKey) || (!accessKey && secretKey)) {
+        throw new Error('Need to define or omit both "Access Key ID" and "Secret Access Key", not just one.')
+    }
     const token = awsparams.awsEndpointAuth?.parameters?.sessionToken
     const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
     const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
@@ -124,6 +127,7 @@ function attemptEndpointCredentialConfiguration(
     const authInfo = getEndpointAuthInfo(awsparams, endpointName)
     authInfo.accessKey = authInfo.accessKey ?? ''
     authInfo.secretKey = authInfo.secretKey ?? ''
+    
     return createEndpointCredentials(
         authInfo.accessKey,
         authInfo.secretKey,
