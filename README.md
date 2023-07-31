@@ -37,6 +37,7 @@ To enable tasks to call AWS services when run as part of your build or release p
 The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
 -   One or more service endpoints, of type _AWS_, can be created and populated with AWS access and secret keys, and optionally data for _Assumed Role_ credentials.
+-   If only the _Assumed Role_ is defined but neither access key ID nor secret key, the role be assumed regardless. This is useful when using instance profices, and and profile only allows to assume a role.
     -   Tasks reference the configured service endpoint instances by name as part of their configuration and pull the required credentials from the endpoint when run.
 -   Variables defined on the task or build.
     -   If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
