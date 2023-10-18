@@ -70,7 +70,7 @@
         "pretty-quick": "^2.0.1",
         "readline-sync": "^1.4.10",
         "sync-request": "^6.1.0",
-        "tfx-cli": "^0.11.0",
+        "tfx-cli": "^0.16.0",
         "tmp": "^0.2.1",
         "ts-jest": "^27.1.3",
         "ts-loader": "^9.4.2",
@@ -82,7 +82,7 @@
     "dependencies": {
         "@typescript-eslint/typescript-estree": "^4.17.0",
         "adm-zip": "^0.5.3",
-        "aws-sdk": "^2.979.0",
+        "aws-sdk": "^2.1475.0",
         "azure-pipelines-task-lib": "^3.3.1",
         "base-64": "^0.1.0",
         "https-proxy-agent": "^5.0.0",
