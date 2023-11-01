@@ -286,19 +286,25 @@ async function queryRegionFromMetadata(): Promise<string> {
         const metadataService = new AWS.MetadataService()
         metadataService.httpOptions.timeout = 5000
 
-        metadataService.fetchMetadataToken((tokenError, token) => {
-            if (tokenError) {
-              console.log('IMDSv2 token error', tokenError);
-              throw tokenError
+        metadataService.request('http://169.254.169.254/latest/api/token',
+        {
+            "method": "PUT",
+            "headers": {
+                "X-aws-ec2-metadata-token-ttl-seconds": "21600"
             }
-            metadataService.request('/latest/dynamic/instance-identity/document', 
-            {
-                headers: {
-                    'X-aws-ec2-metadata-token': token,
+        },
+        (err0, token) => {
+            try {
+                if (err0) {
+                    throw err0
+                }
+                metadataService.request('/latest/dynamic/instance-identity/document', 
+                {
+                    headers: {
+                        'X-aws-ec2-metadata-token': token,
+                    },
                 },
-            },
-            (err, data) => {
-                try {
+                (err, data) => {
                     if (err) {
                         throw err
                     }
@@ -309,10 +315,10 @@ async function queryRegionFromMetadata(): Promise<string> {
                     } else {
                         throw new Error('...region value not found in instance identity metadata')
                     }
-                } catch (err) {
-                    reject(err)
-                }
-            })
+                })
+            } catch (err) {
+                reject(err)
+            }
         })
     })
 }
