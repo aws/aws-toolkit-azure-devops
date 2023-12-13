@@ -162,7 +162,7 @@ export async function testChangeSetExists(
 // a no-op.
 export function isNoWorkToDoValidationError(errCodeOrStatus?: string, errMessage?: string): boolean {
     const knownNoOpErrorMessages = [
-        /^No updates are to be performed./,
+        /No updates are to be performed./,
         /^The submitted information didn't contain changes./
     ]
 
