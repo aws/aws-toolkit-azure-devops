@@ -118,7 +118,8 @@ function packagePlugin(options: CommandLineOptions) {
                 platform: 'node',
                 target: ['node10'],
                 minify: true,
-                outfile: `${taskPackageFolder}/${taskName}.js`
+                outfile: `${taskPackageFolder}/${taskName}.js`,
+                external: ['shelljs'] // mitigates shelljs bundling issue -- https://github.com/microsoft/azure-pipelines-task-lib/issues/942
             })
             result.warnings.forEach(warning => console.log(warning))
         } catch (err) {
