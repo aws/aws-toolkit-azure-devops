@@ -70,7 +70,7 @@ describe('S3 Download', () => {
         }
     }
 
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/S3Download/task.json')
     })

@@ -24,7 +24,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/aws/aws-vsts-tools"
+        "url": "https://github.com/aws/aws-toolkit-azure-devops"
     },
     "keywords": [
         "aws",
@@ -37,8 +37,8 @@
     ],
     "author": "amazon web services llc",
     "license": "apache",
-    "bugs": "https://github.com/aws/aws-vsts-tools/issues",
-    "homepage": "https://github.com/aws/aws-vsts-tools",
+    "bugs": "https://github.com/aws/aws-toolkit-azure-devops/issues",
+    "homepage": "https://github.com/aws/aws-toolkit-azure-devops",
     "devDependencies": {
         "@types/adm-zip": "^0.4.33",
         "@types/base-64": "^0.1.3",

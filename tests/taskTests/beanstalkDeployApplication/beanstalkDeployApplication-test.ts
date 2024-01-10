@@ -32,7 +32,7 @@ const defaultTaskParameters: TaskParameters = {
 // NOTE: these tests are like cloudformation and too hard to write, we should be able to break it up
 // even more which will make it easier to test
 describe('Beanstalk Deploy Application', () => {
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/BeanstalkDeployApplication/task.json')
     })

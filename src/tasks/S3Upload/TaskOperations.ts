@@ -40,7 +40,7 @@ export class TaskOperations {
     public findMatchingFiles(taskParameters: TaskParameters): string[] {
         console.log(`Searching ${taskParameters.sourceFolder} for files to upload`)
         taskParameters.sourceFolder = path.normalize(taskParameters.sourceFolder)
-        // Follows sym links, but is currently broken: https://github.com/aws/aws-vsts-tools/issues/178
+        // Follows sym links, but is currently broken: https://github.com/aws/aws-toolkit-azure-devops/issues/178
         const allPaths = tl.find(taskParameters.sourceFolder)
         tl.debug(tl.loc('AllPaths', allPaths))
         const matchedPaths = tl.match(allPaths, taskParameters.globExpressions, taskParameters.sourceFolder)

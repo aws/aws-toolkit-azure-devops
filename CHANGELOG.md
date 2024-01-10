@@ -175,7 +175,7 @@
 ### 1.0.17 (2018-01-15)
 
 -   Updated the general-purpose Lambda deployment task for the newly supported 'dotnetcore2.0' and 'go1.x' runtimes.
--   Extended the CodeDeploy task to allow the deployment bundle archive to be specified as a file previously uploaded to Amazon S3, in addition to the existing support for pointing at a file or folder location in the build workspace (https://github.com/aws/aws-vsts-tools/issues/55).
+-   Extended the CodeDeploy task to allow the deployment bundle archive to be specified as a file previously uploaded to Amazon S3, in addition to the existing support for pointing at a file or folder location in the build workspace (https://github.com/aws/aws-toolkit-azure-devops/issues/55).
 
 ### 1.0.16
 
@@ -203,7 +203,7 @@
 
 ### 1.0.13 (2017-11-13)
 
--   Fixed [issue](https://github.com/aws/aws-vsts-tools/issues/37) with the Lambda .NET Core deployment task ignoring any value specified for the Function Handler variable declared on the task.
+-   Fixed [issue](https://github.com/aws/aws-toolkit-azure-devops/issues/37) with the Lambda .NET Core deployment task ignoring any value specified for the Function Handler variable declared on the task.
 
 ### 1.0.12 (2017-10-27)
 
@@ -222,13 +222,13 @@
 ### 1.0.8 (2017-10-23)
 
 -   Fixed issue with missing tasks after installation of the tools into Team Foundation Server 2015.
-    https://github.com/aws/aws-vsts-tools/issues/33 and https://github.com/aws/aws-vsts-tools/issues/23.
+    https://github.com/aws/aws-toolkit-azure-devops/issues/33 and https://github.com/aws/aws-toolkit-azure-devops/issues/23.
 
 -   Fixed bug in CloudFormationCreateOrUpdateStack task. When updating multiple stacks in a pipeline using change sets, if earlier stacks in the pipeline had no changes the task would error out. The fix switches the task to instead emit a warning to the build log for stacks where no changes are detected.
-    https://github.com/aws/aws-vsts-tools/issues/28.
+    https://github.com/aws/aws-toolkit-azure-devops/issues/28.
 
 -   Updated the AWS service endpoint type so the access key field does not default to 'IsConfidential'. This helps verifying credential rotation when updating the endpoint. This change does not affect or modify the secret key field in the endpoint.
-    https://github.com/aws/aws-vsts-tools/pull/30.
+    https://github.com/aws/aws-toolkit-azure-devops/pull/30.
 
 -   Added request/response header and AWS request id logging diagnostics to tasks that invoke AWS service APIs using the AWS SDK for Node.js. The service response's request id value is always emitted to the debug log for a task (viewable when the system.debug variable is set true). Additionally tasks can be configured to emit request and response headers to the debug log using new diagnostic options in the task parameters. This information can be useful when contacting AWS support.
 
@@ -237,7 +237,7 @@
 
 ### 1.0.7 (2017-09-14)
 
--   Fixed issue with CodeDeploy deployment task not setting output variable (https://github.com/aws/aws-vsts-tools/pull/19)
+-   Fixed issue with CodeDeploy deployment task not setting output variable (https://github.com/aws/aws-toolkit-azure-devops/pull/19)
 
 ### 1.0.6 (2017-09-08)
 
@@ -261,7 +261,7 @@
 ### 1.0.2 (2017-08-17)
 
 -   Updated the S3 Upload task to enable content type to be set automatically based on inspection of file extension, or by using a new task parameter to set content type for all files being uploaded.
--   Updated public repository link (https://github.com/aws/aws-vsts-tools/pull/2)
+-   Updated public repository link (https://github.com/aws/aws-toolkit-azure-devops/pull/2)
 -   Updated the AWS CLI task help markdown to clarify that the AWS CLI must have been installed prior to using the task.
 
 ### 1.0.1 (2017-08-15)

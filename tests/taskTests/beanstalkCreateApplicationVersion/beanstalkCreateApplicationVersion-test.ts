@@ -43,7 +43,7 @@ const defaultTaskParameters: TaskParameters = {
 // NOTE: most of the actual functionality for elastic beanstalk is in the ElasticBeanstalkUtils, so
 // most of the tests are there, ideally all of our tasks will be more like this one in the future
 describe('Beanstalk Create Application Version', () => {
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/BeanstalkCreateApplicationVersion/task.json')
     })

@@ -115,8 +115,8 @@ All of the functional tests follow the pattern:
 
 The following modules do not have any functional tests:
 
--   CloudFormation Create Or Update [issue #238](https://github.com/aws/aws-vsts-tools/issues/238)
--   Beanstalk Create Application [issue #239](https://github.com/aws/aws-vsts-tools/issues/239)
+-   CloudFormation Create Or Update [issue #238](https://github.com/aws/aws-toolkit-azure-devops/issues/238)
+-   Beanstalk Create Application [issue #239](https://github.com/aws/aws-toolkit-azure-devops/issues/239)
 
 The following modules do not have functional tests, but it would make no sense to add them:
 
