@@ -127,7 +127,7 @@ function attemptEndpointCredentialConfiguration(
     const authInfo = getEndpointAuthInfo(awsparams, endpointName)
     authInfo.accessKey = authInfo.accessKey ?? ''
     authInfo.secretKey = authInfo.secretKey ?? ''
-    
+
     return createEndpointCredentials(
         authInfo.accessKey,
         authInfo.secretKey,
@@ -282,26 +282,74 @@ export async function getCredentials(awsParams: AWSConnectionParameters): Promis
 async function queryRegionFromMetadata(): Promise<string> {
     // SDK doesn't support discovery of region from EC2 instance metadata, so do it manually. We set
     // a timeout so that if the build host isn't EC2, we don't hang forever
-    return new Promise<string>((resolve, reject) => {
-        const metadataService = new AWS.MetadataService()
-        metadataService.httpOptions.timeout = 5000
-        metadataService.request('/latest/dynamic/instance-identity/document', (err, data) => {
-            try {
-                if (err) {
-                    throw err
-                }
+    const imdsOptions = { httpOptions: { timeout: 5000 }, maxRetries: 2 }
 
-                console.log('...received instance identity document from metadata')
-                const identity = JSON.parse(data)
-                if (identity.region) {
-                    resolve(identity.region)
+    const metadataService = new AWS.MetadataService(imdsOptions)
+
+    let token: string
+
+    try {
+        token = await getImdsV2Token(metadataService)
+    } catch {
+        // set token to empty -- this will use IMDSv1 mechanism to fetch region
+        token = ''
+    }
+
+    return await getRegionFromImds(metadataService, token)
+}
+
+/**
+ * Attempts to get a Instance Metadata Service V2 token
+ */
+async function getImdsV2Token(metadataService: AWS.MetadataService): Promise<string> {
+    console.log('Attempting to retrieve an IMDSv2 token.')
+
+    return new Promise((resolve, reject) => {
+        metadataService.request(
+            '/latest/api/token',
+            {
+                method: 'PUT',
+                headers: { 'x-aws-ec2-metadata-token-ttl-seconds': '21600' }
+            },
+            (err, token) => {
+                if (err) {
+                    reject(err)
+                } else if (!token) {
+                    reject(new Error('IMDS did not return a token.'))
                 } else {
-                    throw new Error('...region value not found in instance identity metadata')
+                    resolve(token)
                 }
-            } catch (err) {
-                reject(err)
             }
-        })
+        )
+    })
+}
+
+/**
+ * Attempts to get the region from the Instance Metadata Service
+ */
+async function getRegionFromImds(metadataService: AWS.MetadataService, token: string): Promise<string> {
+    console.log('Retrieving the AWS region from the Instance Metadata Service (IMDS).')
+
+    const options = token !== '' ? { headers: { 'x-aws-ec2-metadata-token': token } } : {}
+
+    return new Promise((resolve, reject) => {
+        metadataService.request(
+            '/latest/dynamic/instance-identity/document',
+            options,
+            (err, instanceIdentityDocument) => {
+                if (err) {
+                    reject(err)
+                } else if (!instanceIdentityDocument) {
+                    reject(new Error('IMDS did not return an Instance Identity Document.'))
+                } else {
+                    try {
+                        resolve(JSON.parse(instanceIdentityDocument).region)
+                    } catch (e) {
+                        reject(e)
+                    }
+                }
+            }
+        )
     })
 }
 
