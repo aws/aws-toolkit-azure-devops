@@ -286,7 +286,7 @@ async function queryRegionFromMetadata(): Promise<string> {
 
     const metadataService = new AWS.MetadataService(imdsOptions)
 
-    let token
+    let token: string
 
     try {
         token = await getImdsV2Token(metadataService)
@@ -295,13 +295,13 @@ async function queryRegionFromMetadata(): Promise<string> {
         token = ''
     }
 
-    return (await getRegionFromImds(metadataService, token as string)) as string
+    return await getRegionFromImds(metadataService, token)
 }
 
 /**
  * Attempts to get a Instance Metadata Service V2 token
  */
-async function getImdsV2Token(metadataService: AWS.MetadataService) {
+async function getImdsV2Token(metadataService: AWS.MetadataService): Promise<string> {
     console.log('Attempting to retrieve an IMDSv2 token.')
 
     return new Promise((resolve, reject) => {
@@ -327,14 +327,10 @@ async function getImdsV2Token(metadataService: AWS.MetadataService) {
 /**
  * Attempts to get the region from the Instance Metadata Service
  */
-async function getRegionFromImds(metadataService: AWS.MetadataService, token: string) {
+async function getRegionFromImds(metadataService: AWS.MetadataService, token: string): Promise<string> {
     console.log('Retrieving the AWS region from the Instance Metadata Service (IMDS).')
 
-    let options = {}
-
-    if (token) {
-        options = { headers: { 'x-aws-ec2-metadata-token': token } }
-    }
+    const options = token !== '' ? { headers: { 'x-aws-ec2-metadata-token': token } } : {}
 
     return new Promise((resolve, reject) => {
         metadataService.request(
