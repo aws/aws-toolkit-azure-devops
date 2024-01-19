@@ -5,7 +5,7 @@
 
 import { CodeDeploy, S3 } from 'aws-sdk'
 import { SdkUtils } from 'lib/sdkutils'
-import fs = require('fs')
+import fs = require('fs-extra')
 import path = require('path')
 import { TaskOperations } from 'tasks/CodeDeployDeployApplication/TaskOperations'
 import {
@@ -40,11 +40,19 @@ const emptyPromise = {
     promise: () => ({})
 }
 
+const sleepOneSecPromise = {
+    promise: async () => {
+        await new Promise(f => setTimeout(f, 1000))
+    }
+}
+
 const codeDeployDeploymentId = {
     promise: () => ({ deploymentId: 'id' })
 }
 
 describe('CodeDeploy Deploy Application', () => {
+    const tempDir = path.join(__dirname, 'temp')
+
     // Creates a simple mock that always succeeds (at least for these tests)
     function createSuccessfulCodeDeploy(): CodeDeploy {
         const codeDeploy = new CodeDeploy() as any
@@ -63,6 +71,14 @@ describe('CodeDeploy Deploy Application', () => {
     // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/CodeDeployDeployApplication/task.json')
+
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir)
+        } else {
+            fs.emptyDirSync(tempDir)
+        }
+
+        process.env.TEMP = tempDir
     })
 
     test('Creates a TaskOperation', () => {
@@ -117,8 +133,6 @@ describe('CodeDeploy Deploy Application', () => {
         let parameters: TaskParameters
 
         beforeEach(() => {
-            process.env.TEMP = __dirname
-
             parameters = { ...defaultTaskParameters }
             parameters.deploymentRevisionSource = revisionSourceFromWorkspace
             parameters.revisionBundle = path.join(__dirname, '../../resources/codeDeployCode')
@@ -133,10 +147,10 @@ describe('CodeDeploy Deploy Application', () => {
                 expect(args.Bucket).toBe('')
                 expect(args.Key).toContain('test.v')
                 expect(args.ACL).toBeUndefined()
-                const dir = fs.readdirSync(__dirname)
+                const dir = fs.readdirSync(tempDir)
                 for (const file of dir) {
                     if (path.extname(file) === '.zip') {
-                        const f = path.join(__dirname, file)
+                        const f = path.join(tempDir, file)
                         const zip = new AdmZip(f)
                         const entries = zip.getEntries().map(it => it.entryName)
                         expect(entries.length).toBe(3)
@@ -147,7 +161,8 @@ describe('CodeDeploy Deploy Application', () => {
                     }
                 }
 
-                return emptyPromise
+                // Allows sufficient time for readStream to finish reading the file before attempting file deletion
+                return sleepOneSecPromise
             })
 
             const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), s3, parameters)
@@ -162,7 +177,8 @@ describe('CodeDeploy Deploy Application', () => {
             s3.upload = jest.fn(args => {
                 expect(args.ACL).toBe('bucket-owner-full-control')
 
-                return emptyPromise
+                // Allows sufficient time for readStream to finish reading the file before attempting file deletion
+                return sleepOneSecPromise
             })
 
             const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), s3, parameters)
@@ -177,7 +193,8 @@ describe('CodeDeploy Deploy Application', () => {
             s3.upload = jest.fn(args => {
                 expect(args.ACL).toBeUndefined()
 
-                return emptyPromise
+                // Allows sufficient time for readStream to finish reading the file before attempting file deletion
+                return sleepOneSecPromise
             })
 
             const taskOperations = new TaskOperations(createSuccessfulCodeDeploy(), s3, parameters)
