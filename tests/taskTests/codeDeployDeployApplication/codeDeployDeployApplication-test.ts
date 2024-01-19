@@ -161,6 +161,7 @@ describe('CodeDeploy Deploy Application', () => {
                     }
                 }
 
+                // Allows sufficient time for readStream to finish reading the file before attempting file deletion
                 return sleepOneSecPromise
             })
 
@@ -176,6 +177,7 @@ describe('CodeDeploy Deploy Application', () => {
             s3.upload = jest.fn(args => {
                 expect(args.ACL).toBe('bucket-owner-full-control')
 
+                // Allows sufficient time for readStream to finish reading the file before attempting file deletion
                 return sleepOneSecPromise
             })
 
@@ -191,6 +193,7 @@ describe('CodeDeploy Deploy Application', () => {
             s3.upload = jest.fn(args => {
                 expect(args.ACL).toBeUndefined()
 
+                // Allows sufficient time for readStream to finish reading the file before attempting file deletion
                 return sleepOneSecPromise
             })
 
