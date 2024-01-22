@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "Support fetching region from metadata of IMDSv2 instances"
+}
