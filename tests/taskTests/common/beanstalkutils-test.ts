@@ -118,10 +118,10 @@ describe('BeanstalkUtils', () => {
         expect.assertions(1)
         const s3 = new S3() as any
         s3.upload = jest.fn(() => {
-            throw Error('it failed')
+            throw Error('Intentional beanstalkutils-test Error')
         })
-        await BeanstalkUtils.uploadBundle(s3, 'path', 'name', 'object').catch(err => {
-            expect(`${err}`).toContain('it failed')
+        await BeanstalkUtils.uploadBundle(s3, __filename, 'name', 'object').catch(err => {
+            expect(`${err}`).toContain('Intentional beanstalkutils-test Error')
         })
     })
 
@@ -131,11 +131,11 @@ describe('BeanstalkUtils', () => {
         s3.upload = jest.fn(args => {
             expect(args.Bucket).toEqual('name')
             expect(args.Key).toEqual('object')
-            expect(args.Body.path).toEqual(path.join(__dirname, __filename))
+            expect(args.Body.path).toEqual(__filename)
 
             return s3BucketResponse
         })
-        await BeanstalkUtils.uploadBundle(s3, path.join(__dirname, __filename), 'name', 'object')
+        await BeanstalkUtils.uploadBundle(s3, __filename, 'name', 'object')
     })
 
     test('VerifyApplicationExists throws on failure', async () => {
