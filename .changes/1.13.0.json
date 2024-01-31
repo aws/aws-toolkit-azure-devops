@@ -1,0 +1,22 @@
+{
+	"date": "2022-03-28",
+	"version": "1.13.0",
+	"entries": [
+		{
+			"type": "Breaking Change",
+			"description": "Bumped Minimum Azure Pipelines Agent version to 2.144.0 due to Node6 Execution Handler Deprecation: see https://github.com/aws/aws-toolkit-azure-devops/issues/453"
+		},
+		{
+			"type": "Feature",
+			"description": "Added \"filesAcl\" parameter to CodeDeploy task when uploading to S3"
+		},
+		{
+			"type": "Feature",
+			"description": "Skips execution of and then deletes an empty change set"
+		},
+		{
+			"type": "Feature",
+			"description": "Lambda Deploy Function gracefully handles missing lambda:GetFunctionConfiguration with a warning and a 5-second wait"
+		}
+	]
+}

@@ -1,4 +1,0 @@
-{
-	"type": "Feature",
-	"description": "Lambda Deploy Function gracefully handles missing lambda:GetFunctionConfiguration with a warning and a 5-second wait"
-}
