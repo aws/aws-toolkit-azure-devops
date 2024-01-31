@@ -1,0 +1,30 @@
+{
+	"date": "2024-01-31",
+	"version": "1.14.0",
+	"entries": [
+		{
+			"type": "Bug Fix",
+			"description": "S3Download now correctly handles directories"
+		},
+		{
+			"type": "Bug Fix",
+			"description": "Fix for AWS SSM Run Command issue with SNS Notifications"
+		},
+		{
+			"type": "Bug Fix",
+			"description": "fix timeout property for CloudFormation update"
+		},
+		{
+			"type": "Bug Fix",
+			"description": "Support fetching region from metadata of IMDSv2 instances"
+		},
+		{
+			"type": "Feature",
+			"description": "Add an option to remove docker image after an ECR push"
+		},
+		{
+			"type": "Feature",
+			"description": "Support to assume a role without ACCESS KEY ID/SECRET KEY"
+		}
+	]
+}

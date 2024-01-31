@@ -1,4 +1,0 @@
-{
-	"type": "Bug Fix",
-	"description": "Fix for AWS SSM Run Command issue with SNS Notifications"
-}
