@@ -1,3 +1,12 @@
+## 1.14.0 2024-01-31
+
+- **Bug Fix** S3Download now correctly handles directories
+- **Bug Fix** Fix for AWS SSM Run Command issue with SNS Notifications
+- **Bug Fix** fix timeout property for CloudFormation update
+- **Bug Fix** Support fetching region from metadata of IMDSv2 instances
+- **Feature** Add an option to remove docker image after an ECR push
+- **Feature** Support to assume a role without ACCESS KEY ID/SECRET KEY
+
 ## 1.13.0 2022-03-28
 
 - **Breaking Change** Bumped Minimum Azure Pipelines Agent version to 2.144.0 due to Node6 Execution Handler Deprecation: see https://github.com/aws/aws-toolkit-azure-devops/issues/453
