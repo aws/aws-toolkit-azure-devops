@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "fix timeout property for CloudFormation update"
+}

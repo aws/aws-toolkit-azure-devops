@@ -94,6 +94,28 @@ export function buildConnectionParameters(): AWSConnectionParameters {
     return connectionParameters
 }
 
+function getEndpointAuthInfo(awsparams: AWSConnectionParameters, endpointName: string) {
+    awsparams.awsEndpointAuth = tl.getEndpointAuthorization(endpointName, false)
+    console.log(`...configuring AWS credentials from service endpoint '${endpointName}'`)
+    const accessKey = awsparams.awsEndpointAuth?.parameters?.username
+    const secretKey = awsparams.awsEndpointAuth?.parameters?.password
+    if ((accessKey && !secretKey) || (!accessKey && secretKey)) {
+        throw new Error('Need to define or omit both "Access Key ID" and "Secret Access Key", not just one.')
+    }
+    const token = awsparams.awsEndpointAuth?.parameters?.sessionToken
+    const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
+    const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
+    const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
+    return {
+        accessKey: accessKey,
+        secretKey: secretKey,
+        token: token,
+        assumeRoleArn: assumeRoleArn,
+        externalId: externalId,
+        roleSessionName: roleSessionName
+    }
+}
+
 // Unpacks credentials from the specified endpoint configuration, if defined
 function attemptEndpointCredentialConfiguration(
     awsparams: AWSConnectionParameters,
@@ -102,18 +124,46 @@ function attemptEndpointCredentialConfiguration(
     if (!endpointName) {
         return undefined
     }
+    const authInfo = getEndpointAuthInfo(awsparams, endpointName)
+    authInfo.accessKey = authInfo.accessKey ?? ''
+    authInfo.secretKey = authInfo.secretKey ?? ''
 
-    awsparams.awsEndpointAuth = tl.getEndpointAuthorization(endpointName, false)
-    console.log(`...configuring AWS credentials from service endpoint '${endpointName}'`)
+    return createEndpointCredentials(
+        authInfo.accessKey,
+        authInfo.secretKey,
+        authInfo.token,
+        authInfo.assumeRoleArn,
+        authInfo.externalId,
+        authInfo.roleSessionName
+    )
+}
 
-    const accessKey = awsparams.awsEndpointAuth?.parameters?.username ?? ''
-    const secretKey = awsparams.awsEndpointAuth?.parameters?.password ?? ''
-    const token = awsparams.awsEndpointAuth?.parameters?.sessionToken
-    const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
-    const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
-    const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
-
-    return createEndpointCredentials(accessKey, secretKey, token, assumeRoleArn, externalId, roleSessionName)
+// If only the role name to assume is set but no credentials,
+// we try to assume the role directly
+async function assumeRoleFromInstanceProfile(
+    awsparams: AWSConnectionParameters,
+    endpointName: string | undefined
+): Promise<AWS.Credentials | undefined> {
+    if (!endpointName) {
+        return undefined
+    }
+    const authInfo = getEndpointAuthInfo(awsparams, endpointName)
+    authInfo.roleSessionName = authInfo.roleSessionName ?? defaultRoleSessionName
+    if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
+        console.log('Assuming role without credentials (via instance profile)...')
+        const params = {
+            RoleArn: authInfo.assumeRoleArn,
+            RoleSessionName: authInfo.roleSessionName
+        }
+        const sts = new STS()
+        const data = await sts.assumeRole(params).promise()
+        return new AWS.Credentials({
+            accessKeyId: data.Credentials!.AccessKeyId,
+            secretAccessKey: data.Credentials!.SecretAccessKey,
+            sessionToken: data.Credentials!.SessionToken
+        })
+    }
+    return undefined
 }
 
 // credentials can also be set, using their environment variable names,
@@ -196,7 +246,6 @@ function createEndpointCredentials(
     if (externalId) {
         options.ExternalId = externalId
     }
-
     return new AWS.TemporaryCredentials(options, masterCredentials)
 }
 
@@ -208,6 +257,11 @@ function createEndpointCredentials(
 // an EC2 instance, in instance metadata).
 export async function getCredentials(awsParams: AWSConnectionParameters): Promise<AWS.Credentials | undefined> {
     console.log('Configuring credentials for task')
+
+    const role_credentials = await assumeRoleFromInstanceProfile(awsParams, tl.getInput('awsCredentials', false))
+    if (typeof role_credentials !== 'undefined') {
+        return role_credentials
+    }
 
     const credentials =
         attemptEndpointCredentialConfiguration(awsParams, tl.getInput('awsCredentials', false)) ||
@@ -228,26 +282,74 @@ export async function getCredentials(awsParams: AWSConnectionParameters): Promis
 async function queryRegionFromMetadata(): Promise<string> {
     // SDK doesn't support discovery of region from EC2 instance metadata, so do it manually. We set
     // a timeout so that if the build host isn't EC2, we don't hang forever
-    return new Promise<string>((resolve, reject) => {
-        const metadataService = new AWS.MetadataService()
-        metadataService.httpOptions.timeout = 5000
-        metadataService.request('/latest/dynamic/instance-identity/document', (err, data) => {
-            try {
-                if (err) {
-                    throw err
-                }
+    const imdsOptions = { httpOptions: { timeout: 5000 }, maxRetries: 2 }
 
-                console.log('...received instance identity document from metadata')
-                const identity = JSON.parse(data)
-                if (identity.region) {
-                    resolve(identity.region)
+    const metadataService = new AWS.MetadataService(imdsOptions)
+
+    let token: string
+
+    try {
+        token = await getImdsV2Token(metadataService)
+    } catch {
+        // set token to empty -- this will use IMDSv1 mechanism to fetch region
+        token = ''
+    }
+
+    return await getRegionFromImds(metadataService, token)
+}
+
+/**
+ * Attempts to get a Instance Metadata Service V2 token
+ */
+async function getImdsV2Token(metadataService: AWS.MetadataService): Promise<string> {
+    console.log('Attempting to retrieve an IMDSv2 token.')
+
+    return new Promise((resolve, reject) => {
+        metadataService.request(
+            '/latest/api/token',
+            {
+                method: 'PUT',
+                headers: { 'x-aws-ec2-metadata-token-ttl-seconds': '21600' }
+            },
+            (err, token) => {
+                if (err) {
+                    reject(err)
+                } else if (!token) {
+                    reject(new Error('IMDS did not return a token.'))
                 } else {
-                    throw new Error('...region value not found in instance identity metadata')
+                    resolve(token)
                 }
-            } catch (err) {
-                reject(err)
             }
-        })
+        )
+    })
+}
+
+/**
+ * Attempts to get the region from the Instance Metadata Service
+ */
+async function getRegionFromImds(metadataService: AWS.MetadataService, token: string): Promise<string> {
+    console.log('Retrieving the AWS region from the Instance Metadata Service (IMDS).')
+
+    const options = token !== '' ? { headers: { 'x-aws-ec2-metadata-token': token } } : {}
+
+    return new Promise((resolve, reject) => {
+        metadataService.request(
+            '/latest/dynamic/instance-identity/document',
+            options,
+            (err, instanceIdentityDocument) => {
+                if (err) {
+                    reject(err)
+                } else if (!instanceIdentityDocument) {
+                    reject(new Error('IMDS did not return an Instance Identity Document.'))
+                } else {
+                    try {
+                        resolve(JSON.parse(instanceIdentityDocument).region)
+                    } catch (e) {
+                        reject(e)
+                    }
+                }
+            }
+        )
     })
 }
 

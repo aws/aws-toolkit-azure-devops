@@ -67,7 +67,7 @@ const hierarchyParameterResponseMultiple = {
 }
 
 describe('Systems Manager Get Parameter', () => {
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/SystemsManagerGetParameter/task.json')
     })
@@ -79,7 +79,7 @@ describe('Systems Manager Get Parameter', () => {
     test('Read mode unknown throws', async () => {
         expect.assertions(1)
         const taskOperations = new TaskOperations(new SSM(), defaultTaskParameters)
-        await taskOperations.execute().catch(e => expect(`${e}`).toContain('is not a valid'))
+        await taskOperations.execute().catch(e => expect(`${e}`).toContain('is not a valid parameter'))
     })
 
     test('Read mode single reads', async () => {

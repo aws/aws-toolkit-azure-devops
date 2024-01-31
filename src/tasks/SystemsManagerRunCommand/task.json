@@ -180,16 +180,16 @@
             "label": "Notification Events",
             "type": "pickList",
             "required": false,
-            "defaultValue": "all",
+            "defaultValue": "All",
             "groupName": "notifications",
             "helpMarkDown": "The different events for which you can receive notifications. For more information see [Setting Up Events and Notifications](https://docs.aws.amazon.com/systems-manager/latest/userguide/monitor-commands.html).",
             "options": {
-                "all": "All",
-                "inprogress": "InProgress",
-                "success": "Success",
-                "timedout": "TimedOut",
-                "cancelled": "Cancelled",
-                "failed": "Failed"
+                "All": "All",
+                "InProgress": "InProgress",
+                "Success": "Success",
+                "TimedOut": "TimedOut",
+                "Cancelled": "Cancelled",
+                "Failed": "Failed"
             }
         },
         {
@@ -201,8 +201,8 @@
             "groupName": "notifications",
             "helpMarkDown": "_Command_: Receive notification when the status of a command changes.\n\n_Invocation_: For commands sent to multiple instances, receive notification on a per-instance basis when the status of a command changes.",
             "options": {
-                "command": "Command",
-                "invocation": "Invocation"
+                "Command": "Command",
+                "Invocation": "Invocation"
             }
         },
         {

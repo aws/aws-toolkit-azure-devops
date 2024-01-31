@@ -22,6 +22,7 @@ const defaultTaskParameters: TaskParameters = {
     pushTag: '',
     autoCreateRepository: false,
     forceDockerNamingConventions: false,
+    removeDockerImage: false,
     outputVariable: ''
 }
 
@@ -56,7 +57,7 @@ const ecrReturnsToken = {
 }
 
 describe('ECR Push image', () => {
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/ECRPushImage/task.json')
     })
@@ -85,19 +86,21 @@ describe('ECR Push image', () => {
     })
 
     test('Runs docker commands', async () => {
-        expect.assertions(5)
+        expect.assertions(6)
         const ecr = new ECR() as any
         ecr.getAuthorizationToken = jest.fn(() => ecrReturnsToken)
         const dockerHandler = { ...defaultDocker }
-        const runDockerCommand = jest.fn(async (thing1, thing2, thing3) => undefined)
+        const runDockerCommand = jest.fn(async (thing1, thing2, thing3, thing4) => undefined)
         dockerHandler.runDockerCommand = runDockerCommand
-        const taskOperations = new TaskOperations(ecr, dockerHandler, defaultTaskParameters)
+        const taskParameters = { ...defaultTaskParameters, removeDockerImage: true }
+        const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
         await taskOperations.execute()
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
-        expect(runDockerCommand).toBeCalledTimes(3)
+        expect(runDockerCommand).toBeCalledTimes(4)
         expect(runDockerCommand.mock.calls[0][1]).toBe('tag')
         expect(runDockerCommand.mock.calls[1][1]).toBe('login')
         expect(runDockerCommand.mock.calls[2][1]).toBe('push')
+        expect(runDockerCommand.mock.calls[3][1]).toBe('rmi')
     })
 
     test('autocreate creates repository', async () => {

@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "S3Download now correctly handles directories"
+}

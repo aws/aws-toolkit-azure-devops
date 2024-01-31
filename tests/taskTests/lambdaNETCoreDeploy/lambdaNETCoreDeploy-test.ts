@@ -29,7 +29,7 @@ const baseTaskParameters: TaskParameters = {
 const executable = join(__dirname, '../../resources/echo.bat')
 
 describe('Lambda NET Core Deploy', () => {
-    // TODO https://github.com/aws/aws-vsts-tools/issues/167
+    // TODO https://github.com/aws/aws-toolkit-azure-devops/issues/167
     beforeAll(() => {
         process.env.AWS_REGION = 'region'
         SdkUtils.readResourcesFromRelativePath('../../build/src/tasks/LambdaNETCoreDeploy/task.json')

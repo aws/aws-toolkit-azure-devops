@@ -101,6 +101,7 @@ export class TaskOperations {
     private async uploadBundle(): Promise<string> {
         let archiveName: string
         let autoCreatedArchive = false
+
         if (tl.stats(this.taskParameters.revisionBundle).isDirectory()) {
             autoCreatedArchive = true
             archiveName = await this.createDeploymentArchive(
@@ -113,19 +114,28 @@ export class TaskOperations {
 
         let key: string
         const bundleFilename = path.basename(archiveName)
+
         if (this.taskParameters.bundlePrefix) {
             key = `${this.taskParameters.bundlePrefix}/${bundleFilename}`
         } else {
             key = bundleFilename
         }
 
-        console.log(tl.loc('UploadingBundle', archiveName, key, this.taskParameters.bucketName))
-        const fileBuffer = fs.createReadStream(archiveName)
         try {
+            console.log(tl.loc('UploadingBundle', archiveName, key, this.taskParameters.bucketName))
+
+            const readStream = fs.createReadStream(archiveName)
+
+            readStream.on('error', err => {
+                if (err) {
+                    throw err
+                }
+            })
+
             const request: S3.PutObjectRequest = {
                 Bucket: this.taskParameters.bucketName,
                 Key: key,
-                Body: fileBuffer
+                Body: readStream
             }
 
             if (this.taskParameters.filesAcl && this.taskParameters.filesAcl !== 'none') {
@@ -133,18 +143,16 @@ export class TaskOperations {
             }
 
             await this.s3Client.upload(request).promise()
-            console.log(tl.loc('BundleUploadCompleted'))
 
-            // clean up the archive if we created one
-            if (autoCreatedArchive) {
-                console.log(tl.loc('DeletingUploadedBundle', archiveName))
-                fs.unlinkSync(archiveName)
-            }
+            console.log(tl.loc('BundleUploadCompleted'))
 
             return key
         } catch (err) {
             console.error(tl.loc('BundleUploadFailed', (err as Error).message), err)
             throw err
+        } finally {
+            // clean up the archive if we created one
+            this.cleanDeploymentArchive(autoCreatedArchive, archiveName)
         }
     }
 
@@ -170,6 +178,13 @@ export class TaskOperations {
         console.log(tl.loc('CreatedBundleArchive', archive))
 
         return archive
+    }
+
+    private cleanDeploymentArchive(autoCreatedArchive: boolean, archiveName: string): void {
+        if (autoCreatedArchive && fs.existsSync(archiveName)) {
+            console.log(tl.loc('DeletingUploadedBundle', archiveName))
+            fs.unlinkSync(archiveName)
+        }
     }
 
     private async deployRevision(bundleKey: string): Promise<string> {

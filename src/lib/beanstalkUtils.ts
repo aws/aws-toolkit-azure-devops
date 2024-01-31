@@ -126,18 +126,27 @@ export class BeanstalkUtils {
         objectKey: string
     ): Promise<void> {
         console.log(tl.loc('UploadingBundle', applicationBundlePath, objectKey, bucketName))
-        const fileBuffer = fs.createReadStream(applicationBundlePath)
+
+        // todo: remove duplicated S3 Upload logic across tasks
         try {
-            const response: S3.ManagedUpload.SendData = await s3Client
+            const readStream = fs.createReadStream(applicationBundlePath)
+
+            readStream.on('error', err => {
+                if (err) {
+                    throw err
+                }
+            })
+
+            await s3Client
                 .upload({
                     Bucket: bucketName,
                     Key: objectKey,
-                    Body: fileBuffer
+                    Body: readStream
                 })
                 .promise()
             console.log(tl.loc('BundleUploadCompleted'))
         } catch (err) {
-            console.error(tl.loc('BundleUploadFailed', (err as Error).message), err)
+            console.error(tl.loc('BundleUploadFailed', err))
             throw err
         }
     }

@@ -51,15 +51,15 @@
             "uri": "https://aws.amazon.com/vsts?referer=vsmarketplace"
         },
         "license": {
-            "uri": "https://github.com/aws/aws-vsts-tools/blob/master/LICENSE"
+            "uri": "https://github.com/aws/aws-toolkit-azure-devops/blob/master/LICENSE"
         },
         "support": {
-            "uri": "https://github.com/aws/aws-vsts-tools/issues"
+            "uri": "https://github.com/aws/aws-toolkit-azure-devops/issues"
         }
     },
     "repository": {
         "type": "git",
-        "uri": "https://github.com/aws/aws-vsts-tools"
+        "uri": "https://github.com/aws/aws-toolkit-azure-devops"
     },
     "branding": {
         "color": "rgb(220, 235, 252)",
@@ -173,22 +173,22 @@
                             {
                                 "id": "username",
                                 "name": "Access Key ID",
-                                "description": "The AWS access key ID for signing programmatic requests.\nExample: AKIAIOSFODNN7EXAMPLE",
+                                "description": "The AWS access key ID for signing programmatic requests.\nExample: AKIAIOSFODNN7EXAMPLE. Not needed when using instance profiles.",
                                 "inputMode": "textbox",
                                 "isConfidential": false,
                                 "validation": {
-                                    "isRequired": true,
+                                    "isRequired": false,
                                     "dataType": "string"
                                 }
                             },
                             {
                                 "id": "password",
                                 "name": "Secret Access Key",
-                                "description": "The AWS secret access key for signing programmatic requests.\nExample: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+                                "description": "The AWS secret access key for signing programmatic requests.\nExample: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY. Not needed when using instance profiles.",
                                 "inputMode": "passwordbox",
                                 "isConfidential": true,
                                 "validation": {
-                                    "isRequired": true,
+                                    "isRequired": false,
                                     "dataType": "string"
                                 }
                             },

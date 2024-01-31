@@ -82,18 +82,26 @@ export class TaskOperations {
 
     private async downloadFile(s3Params: S3.GetObjectRequest, dest: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const dir: string = path.dirname(dest)
-            if (!fs.existsSync(dir)) {
-                tl.mkdirP(dir)
+            const isDir = dest.endsWith('/')
+            if (isDir) {
+                this.createDirectory(dest)
+            } else {
+                const dir: string = path.dirname(dest)
+                this.createDirectory(dir)
+                const file = fs.createWriteStream(dest)
+                const s3Stream = this.s3Client.getObject(s3Params).createReadStream()
+                s3Stream.on('error', reject)
+                file.on('error', reject)
+                file.on('close', resolve)
+                s3Stream.pipe(file)
             }
-
-            const file = fs.createWriteStream(dest)
-            const s3Stream = this.s3Client.getObject(s3Params).createReadStream()
-            s3Stream.on('error', reject)
-            file.on('error', reject)
-            file.on('close', resolve)
-            s3Stream.pipe(file)
         })
+    }
+
+    private createDirectory(path: string) {
+        if (!fs.existsSync(path)) {
+            tl.mkdirP(path)
+        }
     }
 
     private async fetchAllObjectKeys(): Promise<string[]> {
