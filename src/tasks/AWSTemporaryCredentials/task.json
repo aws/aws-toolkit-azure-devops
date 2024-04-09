@@ -1,0 +1,86 @@
+{
+    "id": "3200336c-96d5-4e09-b70b-abfcba0f9e82",
+    "name": "AWSTemporaryCredentials",
+    "friendlyName": "AWS Temproary Credentials",
+    "description": "Get temporary credentials from STS using an OIDC token",
+    "author": "Amazon Web Services",
+    "helpMarkDown": "Get temporary credentials from STS using an OIDC token",
+    "category": "Deploy",
+    "visibility": ["Build", "Release"],
+    "demands": [],
+    "minimumAgentVersion": "2.144.0",
+    "instanceNameFormat": "AWS CLI: $(awsCommand)",
+    "showEnvironmentVariables": true,
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "connectedServiceNameARM",
+            "aliases": ["azureSubscription"],
+            "type": "connectedService:AzureRM",
+            "label": "Azure Resource Manager connection",
+            "required": true,
+            "helpMarkDown": "Select an Azure Resource Manager service connection for the deployment",
+            "properties": {
+                "EndpointFilterRule": ""
+            }
+        },
+        {
+            "name": "regionName",
+            "label": "AWS Region",
+            "type": "pickList",
+            "required": true,
+            "defaultValue": "",
+            "helpMarkDown": "The AWS region code (us-east-1, us-west-2 etc) of the region containing the AWS resource(s) the task will use or create. For more information see [AWS Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html).\n\nIf a region is not explicitly configured the task will attempt to obtain the region to be used from the following sources:\n\n* From a task variable named _AWS.Region_.\n* From the standard AWS environment variable _AWS_REGION_ in the build agent's environment.\n*  If the build agent is running on an Amazon EC2 instance, from instance metadata associated with the EC2 instance.\n\n__Note:__ The regions listed in the picker are those known at the time this software was released. New regions that are not listed may still be used by entering the _region code_ of the region (for example _us_west_2_).",
+            "options": {},
+            "properties": {
+                "EditableOptions": "True"
+            }
+        },
+        {
+            "name": "assumeRole",
+            "type": "string",
+            "label": "Role Arn to assume",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "ARN of the role to assume."
+        },
+        {
+            "name": "varPrefix",
+            "type": "string",
+            "label": "Variable Prefix",
+            "defaultValue": "AWS.",
+            "required": false,
+            "helpMarkDown": "Prefix to use for the set variables, the default value are automatically used in other AWS task"
+        },
+
+        {
+            "name": "failOnStandardError",
+            "type": "boolean",
+            "label": "Fail on Standard Error",
+            "groupName": "advanced",
+            "required": false,
+            "helpMarkDown": "If this is true, this task will fail if any errors are written to the StandardError stream."
+        }
+    ],
+    "execution": {
+        "Node10": {
+            "target": "AWSTemporaryCredentials.js",
+            "argumentFormat": ""
+        }
+    },
+    "messages": {
+        "AWSCLINotInstalled": "AWS CLI is not installed on this machine.",
+        "AwsReturnCode": "%s exited with return code: %d",
+        "GettingOIDCToken": "Getting OIDC token",
+        "GettingTemporarySTS": "Getting temporary STS credentials",
+        "GotTemporarySTS": "Got temporary STS credentials",
+        "ExportingSTS": "Exporting temporary STS credentials with %s",
+        "TaskCompleted": "Task completed"
+    }
+}

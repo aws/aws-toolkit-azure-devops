@@ -86,6 +86,9 @@
             "path": "Tasks/AWSShellScript"
         },
         {
+            "path": "Tasks/AWSTemporaryCredentials"
+        },
+        {
             "path": "Tasks/BeanstalkCreateApplicationVersion"
         },
         {
@@ -267,6 +270,15 @@
             "targets": ["ms.vss-distributed-task.tasks"],
             "properties": {
                 "name": "Tasks/AWSShellScript"
+            }
+        },
+        {
+            "id": "AWSTemporaryCredentials",
+            "description": "Get STS Credentials from OIDC Federation",
+            "type": "ms.vss-distributed-task.task",
+            "targets": ["ms.vss-distributed-task.tasks"],
+            "properties": {
+                "name": "Tasks/AWSTemporaryCredentials"
             }
         },
         {
