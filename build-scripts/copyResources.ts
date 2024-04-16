@@ -25,6 +25,6 @@ const options = {
 console.time(timeMessage)
 console.log(`Copying files from ${folders.sourceTasks} to ${folders.buildTasks}`)
 fs.copy(folders.sourceTasks, folders.buildTasks, options)
-    .then(() => console.info('Successfully coppied files'))
+    .then(() => console.info('Successfully copied files'))
     .catch(error => console.info(`Copy failed with error: ${error}`))
 console.timeEnd(timeMessage)
