@@ -223,6 +223,7 @@ function addVersionToVssExtension(versionInfo: string): void {
         addVersionToVssExtension(releaseVersion)
     } catch (err) {
         console.error('Error generating resources:', err)
+        throw err
     }
 
     console.timeEnd(timeMessage)
