@@ -66,7 +66,7 @@ function packagePlugin(options: CommandLineOptions) {
     // stage manifest images
     fs.copySync(path.join(folders.repoRoot, 'images'), path.join(folders.packageRoot, 'images'), { overwrite: true })
 
-    // get required npm packages that will be coppied
+    // get required npm packages that will be copied
     installNodePackages(npmFolder)
 
     // clean, dedupe and pack each task as needed
