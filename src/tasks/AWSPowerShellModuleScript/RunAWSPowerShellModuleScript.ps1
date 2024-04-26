@@ -89,8 +89,48 @@ try {
     $awsEndpoint = Get-VstsInput -Name 'awsCredentials'
     if ($awsEndpoint) {
         $awsEndpointAuth = Get-VstsEndpoint -Name $awsEndpoint -Require
-        if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn) {
-            Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentials')
+        if ($awsEndpointAuth.Auth.Scheme -eq "None") {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentialsFromOIDC')
+
+            # Obtain the system token to interact with the VSTS REST API
+            $accessToken = (Get-VstsEndpoint -Name SystemVssConnection -Require).auth.parameters.AccessToken
+            $encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes(":$accessToken"))
+            $basicAuthValue = "Basic $encodedCreds"
+            $Headers = @{
+                Authorization = $basicAuthValue
+            }
+
+            # Request an OIDC token for the service connection from the VSTS REST API
+            # https://learn.microsoft.com/en-us/rest/api/azure/devops/distributedtask/oidctoken/create?view=azure-devops-rest-7.1
+            $url = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$Env:SYSTEM_TEAMPROJECTID/_apis/distributedtask/hubs/build/plans/$Env:SYSTEM_PLANID/jobs/$Env:SYSTEM_JOBID/oidctoken?api-version=7.1-preview.1&serviceConnectionId=$awsEndpoint"
+            $response = Invoke-WebRequest -Uri $url -Method POST -Headers $Headers  -Body '{}' -ContentType "application/json" | ConvertFrom-Json
+            $token = $response.oidcToken
+
+            # Log the OIDC token claims so users know how to configure AWS
+            $oidcClaims = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($token.Split(".")[1])) | ConvertFrom-Json
+            Write-Host "OIDC Token Subject: $($oidcClaims.sub)"
+            Write-Host "OIDC Token Issuer (Provider URL): $($oidcClaims.iss)"
+            Write-Host "OIDC Token Audience: $($oidcClaims.aud)"
+
+            # Assume the role using the OIDC token
+            $webIdentityParameters = @{
+                'WebIdentityToken' = $token
+                'RoleArn'          = $awsEndpointAuth.Auth.Parameters.role
+            }
+            if ($awsEndpointAuth.Auth.Parameters.RoleSessionName) {
+                $webIdentityParameters.Add('RoleSessionName', $awsEndpointAuth.Auth.Parameters.RoleSessionName)
+            }
+            else {
+                $webIdentityParameters.Add('RoleSessionName', 'aws-vsts-tools')
+            }
+
+            $assumeRoleResponse = Use-STSWebIdentityRole @webIdentityParameters -Select '*'
+            $env:AWS_ACCESS_KEY_ID = $assumeRoleResponse.Credentials.AccessKeyId
+            $env:AWS_SECRET_ACCESS_KEY = $assumeRoleResponse.Credentials.SecretAccessKey
+            $env:AWS_SESSION_TOKEN = $assumeRoleResponse.Credentials.SessionToken
+        }
+        elseif ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn) {
+            Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentialsFromAccessKeys')
             $assumeRoleParameters = @{
                 'AccessKey'    = $awsEndpointAuth.Auth.Parameters.UserName
                 'SecretKey'    = $awsEndpointAuth.Auth.Parameters.Password

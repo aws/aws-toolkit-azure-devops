@@ -9,6 +9,8 @@ import { STS } from 'aws-sdk/clients/all'
 import * as AWS from 'aws-sdk/global'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { format, parse, Url } from 'url'
+import { bool } from 'aws-sdk/clients/signer'
+import { getOidcTokenForEndpoint } from './vstsUtils'
 
 // Task variable names that can be used to supply the AWS credentials
 // to a task (in addition to using a service endpoint, or environment
@@ -103,24 +105,33 @@ function getEndpointAuthInfo(awsparams: AWSConnectionParameters, endpointName: s
         throw new Error('Need to define or omit both "Access Key ID" and "Secret Access Key", not just one.')
     }
     const token = awsparams.awsEndpointAuth?.parameters?.sessionToken
-    const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
+    let assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
     const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
     const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
+    const endpointUsesOidcAuthScheme = awsparams.awsEndpointAuth?.scheme === 'None';
+
+    if (endpointUsesOidcAuthScheme) {
+        // The "role" parameter name was chosen for OIDC because that parameter
+        // name is whitelisted from being masked out in build logs.
+        assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.role
+    }
     return {
         accessKey: accessKey,
         secretKey: secretKey,
         token: token,
         assumeRoleArn: assumeRoleArn,
         externalId: externalId,
-        roleSessionName: roleSessionName
+        roleSessionName: roleSessionName,
+        oidcRoleName: awsparams.awsEndpointAuth?.parameters?.oidcRoleName,
+        useOidc: endpointUsesOidcAuthScheme
     }
 }
 
 // Unpacks credentials from the specified endpoint configuration, if defined
-function attemptEndpointCredentialConfiguration(
+async function attemptEndpointCredentialConfiguration(
     awsparams: AWSConnectionParameters,
     endpointName: string | undefined
-): AWS.Credentials | undefined {
+): Promise<AWS.Credentials | undefined> {
     if (!endpointName) {
         return undefined
     }
@@ -134,7 +145,9 @@ function attemptEndpointCredentialConfiguration(
         authInfo.token,
         authInfo.assumeRoleArn,
         authInfo.externalId,
-        authInfo.roleSessionName
+        authInfo.roleSessionName,
+        authInfo.useOidc,
+        endpointName
     )
 }
 
@@ -149,7 +162,7 @@ async function assumeRoleFromInstanceProfile(
     }
     const authInfo = getEndpointAuthInfo(awsparams, endpointName)
     authInfo.roleSessionName = authInfo.roleSessionName ?? defaultRoleSessionName
-    if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
+    if (!authInfo.accessKey && !authInfo.secretKey && !authInfo.useOidc && authInfo.assumeRoleArn) {
         console.log('Assuming role without credentials (via instance profile)...')
         const params = {
             RoleArn: authInfo.assumeRoleArn,
@@ -171,7 +184,7 @@ async function assumeRoleFromInstanceProfile(
 // visible as environment vars for the AWS Node.js sdk to auto-recover
 // so treat as if a service endpoint had been set and return a credentials
 // instance.
-function attemptCredentialConfigurationFromVariables(): AWS.Credentials | undefined {
+async function attemptCredentialConfigurationFromVariables(): Promise<AWS.Credentials | undefined> {
     const accessKey = tl.getVariable(awsAccessKeyIdVariable)
     if (!accessKey) {
         return undefined
@@ -181,7 +194,7 @@ function attemptCredentialConfigurationFromVariables(): AWS.Credentials | undefi
     if (!secretKey) {
         throw new Error(
             'AWS access key ID present in task variables but secret key value is missing; ' +
-                'cannot configure task credentials.'
+            'cannot configure task credentials.'
         )
     }
 
@@ -192,18 +205,20 @@ function attemptCredentialConfigurationFromVariables(): AWS.Credentials | undefi
 
     console.log('...configuring AWS credentials from task variables')
 
-    return createEndpointCredentials(accessKey, secretKey, token, assumeRoleArn, externalId, roleSessionName)
+    return await createEndpointCredentials(accessKey, secretKey, token, assumeRoleArn, externalId, roleSessionName, false, undefined)
 }
 
 // Creates the AWS credentials to be used by the executing task.
-function createEndpointCredentials(
+async function createEndpointCredentials(
     accessKey: string,
     secretKey: string,
     token: string | undefined,
     assumeRoleARN: string | undefined,
     externalId: string | undefined,
-    roleSessionName: string | undefined
-): AWS.Credentials {
+    roleSessionName: string | undefined,
+    useOidc: bool,
+    endpointName: string | undefined
+): Promise<AWS.Credentials> {
     if (!assumeRoleARN) {
         console.log('...endpoint defines standard access/secret key credentials')
 
@@ -214,7 +229,7 @@ function createEndpointCredentials(
         })
     }
 
-    console.log(`...endpoint defines role-based credentials for role ${assumeRoleARN}.`)
+    console.log(`...endpoint uses role-based access for role ${assumeRoleARN}.`)
 
     if (!roleSessionName) {
         roleSessionName = defaultRoleSessionName
@@ -233,20 +248,45 @@ function createEndpointCredentials(
         }
     }
 
-    const masterCredentials = new AWS.Credentials({
-        accessKeyId: accessKey,
-        secretAccessKey: secretKey,
-        sessionToken: token
-    })
-    const options: STS.AssumeRoleRequest = {
-        RoleArn: assumeRoleARN,
-        DurationSeconds: duration,
-        RoleSessionName: roleSessionName
+    if (useOidc) {
+        if (!endpointName) {
+            throw new Error('No endpoint name provided for OIDC token retrieval')
+        }
+        const oidcToken = await getOidcTokenForEndpoint(endpointName);
+        const oidcTokenParts = oidcToken.split('.');
+        if (oidcTokenParts.length !== 3) {
+            throw new Error('Invalid oidc token');
+        }
+        const oidcClaims = JSON.parse(Buffer.from(oidcTokenParts[1], 'base64').toString());
+
+        // Log the OIDC token claims so users know how to configure AWS
+        console.log("OIDC Token Subject: ", oidcClaims.sub);
+        console.log("OIDC Token Issuer (Provider URL): ", oidcClaims.iss);
+        console.log("OIDC Token Audience: ", oidcClaims.aud);
+
+        console.log(`...assuming role ${assumeRoleARN} with OIDC token.`)
+        return new AWS.WebIdentityCredentials({
+            RoleArn: assumeRoleARN,
+            WebIdentityToken: oidcToken,
+            RoleSessionName: roleSessionName,
+        });
+    } else {
+        console.log(`...assuming role ${assumeRoleARN} with access key credentials token.`)
+        const masterCredentials = new AWS.Credentials({
+            accessKeyId: accessKey,
+            secretAccessKey: secretKey,
+            sessionToken: token
+        })
+        const options: STS.AssumeRoleRequest = {
+            RoleArn: assumeRoleARN,
+            DurationSeconds: duration,
+            RoleSessionName: roleSessionName
+        }
+        if (externalId) {
+            options.ExternalId = externalId
+        }
+        return new AWS.TemporaryCredentials(options, masterCredentials)
     }
-    if (externalId) {
-        options.ExternalId = externalId
-    }
-    return new AWS.TemporaryCredentials(options, masterCredentials)
 }
 
 // Probes for credentials to be used by the executing task. Credentials
@@ -264,8 +304,8 @@ export async function getCredentials(awsParams: AWSConnectionParameters): Promis
     }
 
     const credentials =
-        attemptEndpointCredentialConfiguration(awsParams, tl.getInput('awsCredentials', false)) ||
-        attemptCredentialConfigurationFromVariables()
+        await attemptEndpointCredentialConfiguration(awsParams, tl.getInput('awsCredentials', false)) ||
+        await attemptCredentialConfigurationFromVariables()
     if (credentials) {
         return credentials
     }

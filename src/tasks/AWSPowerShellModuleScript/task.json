@@ -6,8 +6,13 @@
     "author": "Amazon Web Services",
     "helpMarkDown": "Run a PowerShell script that uses cmdlets from the [AWS Tools for Windows PowerShell module (AWSPowerShell)](https://www.powershellgallery.com/packages/AWSPowerShell) module. The module will be automatically installed if needed.\n\nMore information on this task can be found in the [task reference](https://docs.aws.amazon.com/vsts/latest/userguide/awspowershell-module-script.html).\n\n####Task Permissions\nPermissions for this task to call AWS service APIs depend on the activities in the supplied script.",
     "category": "Deploy",
-    "visibility": ["Build", "Release"],
-    "demands": ["DotNetFramework"],
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "demands": [
+        "DotNetFramework"
+    ],
     "minimumAgentVersion": "2.144.0",
     "instanceNameFormat": "AWS Tools for Windows PowerShell Script: $(scriptFile)",
     "showEnvironmentVariables": true,
@@ -126,7 +131,9 @@
     "execution": {
         "PowerShell3": {
             "target": "RunAWSPowerShellModuleScript.ps1",
-            "platforms": ["windows"]
+            "platforms": [
+                "windows"
+            ]
         }
     },
     "messages": {
@@ -146,7 +153,8 @@
         "ProxyConfigError": "Failed to configure proxy, error {0}",
         "SkippingProxyConfigDueToAgentVersion": "Agent version {0} does not meet minumum {1} for proxy configuration; skipping auto-detection of proxy settings.",
         "CheckingForProxyConfiguration": "Attempting to detect proxy settings to configure tool",
-        "ConfiguringForRoleCredentials": "Configuring task to use role-scoped credentials from specified endpoint",
+        "ConfiguringForRoleCredentialsFromAccessKeys": "Configuring task to use role-scoped credentials from specified endpoint",
+        "ConfiguringForRoleCredentialsFromOIDC": "Configuring task to use role-scoped credentials from specified endpoint assumed using the Azure DevOps OIDC token",
         "ConfiguringForStandardCredentials": "Configuring task for standard AWS credentials from specified endpoint",
         "ConfiguringForTaskVariableCredentials": "Configuring task for standard AWS credentials from task variables",
         "MissingSecretKeyVariable": "AWS access key ID present in task variables but secret key value is missing; cannot configure task credentials"

@@ -1,9 +1,13 @@
 {
     "manifestVersion": 1,
     "id": "aws-vsts-tools",
-    "version": "1.1.8",
+    "version": "1.2.0",
     "name": "AWS Toolkit for Azure DevOps",
-    "scopes": ["vso.build", "vso.build_execute", "vso.release"],
+    "scopes": [
+        "vso.build",
+        "vso.build_execute",
+        "vso.release"
+    ],
     "description": "Tasks for Amazon S3, AWS Elastic Beanstalk, AWS CodeDeploy, AWS Lambda and AWS CloudFormation and more, and running commands in the AWS Tools for Windows PowerShell module and the AWS CLI.",
     "publisher": "unknown",
     "public": false,
@@ -143,13 +147,17 @@
             "path": "Tasks/SystemsManagerSetParameter"
         }
     ],
-    "categories": ["Azure Pipelines"],
+    "categories": [
+        "Azure Pipelines"
+    ],
     "contributions": [
         {
-            "id": "aws-credentials",
+            "id": "aws-credentials-services",
             "description": "Credentials for tasks invoking AWS services",
             "type": "ms.vss-endpoint.service-endpoint-type",
-            "targets": ["ms.vss-endpoint.endpoint-types"],
+            "targets": [
+                "ms.vss-endpoint.endpoint-types"
+            ],
             "properties": {
                 "name": "AWS",
                 "displayName": "AWS",
@@ -169,11 +177,12 @@
                 "authenticationSchemes": [
                     {
                         "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+                        "displayName": "AWS Access Key",
                         "inputDescriptors": [
                             {
                                 "id": "username",
                                 "name": "Access Key ID",
-                                "description": "The AWS access key ID for signing programmatic requests.\nExample: AKIAIOSFODNN7EXAMPLE. Not needed when using instance profiles.",
+                                "description": "The AWS access key ID for signing programmatic requests.<br>Example: AKIAIOSFODNN7EXAMPLE. Not needed when using instance profiles.",
                                 "inputMode": "textbox",
                                 "isConfidential": false,
                                 "validation": {
@@ -184,7 +193,7 @@
                             {
                                 "id": "password",
                                 "name": "Secret Access Key",
-                                "description": "The AWS secret access key for signing programmatic requests.\nExample: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY. Not needed when using instance profiles.",
+                                "description": "The AWS secret access key for signing programmatic requests.<br>Example: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY. Not needed when using instance profiles.",
                                 "inputMode": "passwordbox",
                                 "isConfidential": true,
                                 "validation": {
@@ -195,7 +204,7 @@
                             {
                                 "id": "sessionToken",
                                 "name": "Session Token",
-                                "description": "The AWS session token for signing programmatic requests.\nNote: Only use this if you have an external rotation mechanism)",
+                                "description": "The AWS session token for signing programmatic requests.<br>Note: Only use this if you have an external rotation mechanism)",
                                 "inputMode": "passwordbox",
                                 "isConfidential": true,
                                 "validation": {
@@ -206,7 +215,7 @@
                             {
                                 "id": "assumeRoleArn",
                                 "name": "Role to Assume",
-                                "description": "The Amazon Resource Name (ARN) of the role to assume.\nIf a role ARN is specified the access and secret keys configured in the endpoint will be used to generate temporary session credentials, scoped to the specified role, and used be used by the task.\nThe generated credentials for each AWS task will be valid for a default duration of 15 minutes. If your tasks need a longer duration (up to a maximum of one hour) set the variable 'aws.rolecredential.maxduration' on your build or release definition to the required duration (in seconds, minimum 900 and maximum 43200). Note that this setting will affect all tasks that use AWS endpoints configured to assume a role.",
+                                "description": "The Amazon Resource Name (ARN) of the role to assume.<br>If a role ARN is specified the access and secret keys configured in the endpoint will be used to generate temporary session credentials, scoped to the specified role, and used be used by the task.<br>The generated credentials for each AWS task will be valid for a default duration of 15 minutes. If your tasks need a longer duration (up to a maximum of one hour) set the variable 'aws.rolecredential.maxduration' on your build or release definition to the required duration (in seconds, minimum 900 and maximum 43200). Note that this setting will affect all tasks that use AWS endpoints configured to assume a role.",
                                 "inputMode": "textbox",
                                 "isConfidential": false,
                                 "validation": {
@@ -217,7 +226,7 @@
                             {
                                 "id": "roleSessionName",
                                 "name": "Role Session Name",
-                                "description": "Optional identifier for the assumed role session. If not specified the tasks will use a default name of 'aws-vsts-tools'.\nUse the role session name to uniquely identify a session when the same role is assumed by different principals or for different reasons. In cross-account scenarios, the role session name is visible to, and can be logged by the account that owns the role. The role session name is also used in the ARN of the assumed role principal. This means that subsequent cross-account API requests using the temporary security credentials will expose the role session name to the external account in their CloudTrail logs.",
+                                "description": "Optional identifier for the assumed role session. If not specified the tasks will use a default name of 'aws-vsts-tools'.<br>Use the role session name to uniquely identify a session when the same role is assumed by different principals or for different reasons. In cross-account scenarios, the role session name is visible to, and can be logged by the account that owns the role. The role session name is also used in the ARN of the assumed role principal. This means that subsequent cross-account API requests using the temporary security credentials will expose the role session name to the external account in their CloudTrail logs.",
                                 "inputMode": "textbox",
                                 "isConfidential": false,
                                 "validation": {
@@ -237,6 +246,64 @@
                                 }
                             }
                         ]
+                    },
+                    {
+                        "type": "ms.vss-endpoint.endpoint-auth-scheme-none",
+                        "displayName": "Azure DevOps OIDC (Services only)",
+                        "inputDescriptors": [
+                            {
+                                "id": "role",
+                                "name": "Role to Assume",
+                                "description": "The Amazon Resource Name (ARN) of the role to assume.<br><br>The Azure DevOps OIDC token for this endpoint will be used to generate temporary session credentials, scoped to the specified role, and used be used by the task.<br>The generated credentials for each AWS task will be valid for a default duration of 15 minutes. If your tasks need a longer duration (up to a maximum of one hour) set the variable 'aws.rolecredential.maxduration' on your build or release definition to the required duration (in seconds, minimum 900 and maximum 43200). Note that this setting will affect all tasks that use AWS endpoints configured to assume a role.<br><br>AWS tasks log the OIDC token claims needed to <a href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html\">configure an OIDC provider</a> & roles in AWS IAM.",
+                                "inputMode": "textbox",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "roleSessionName",
+                                "name": "Role Session Name",
+                                "description": "Optional identifier for the assumed role session. If not specified the tasks will use a default name of 'aws-vsts-tools'.<br>Use the role session name to uniquely identify a session when the same role is assumed by different principals or for different reasons. In cross-account scenarios, the role session name is visible to, and can be logged by the account that owns the role. The role session name is also used in the ARN of the assumed role principal. This means that subsequent cross-account API requests using the temporary security credentials will expose the role session name to the external account in their CloudTrail logs.",
+                                "inputMode": "textbox",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": false,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "serviceprincipalid",
+                                "name": "Service Principal Id",
+                                "inputMode": "textbox",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": false,
+                                    "dataType": "guid"
+                                },
+                                "values": {
+                                    "inputId": "serviceprincipalid",
+                                    "defaultValue": "",
+                                    "isDisabled": true
+                                }
+                            },
+                            {
+                                "id": "tenantid",
+                                "name": "Tenant ID",
+                                "inputMode": "textbox",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": false,
+                                    "dataType": "guid"
+                                },
+                                "values": {
+                                    "inputId": "tenantid",
+                                    "defaultValue": "",
+                                    "isDisabled": true
+                                }
+                            }
+                        ]
                     }
                 ],
                 "helpMarkDown": "<a href=\"https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html?icmpid=docs_iam_console\" target=\"_blank\"><b>Learn More</b></a>"
@@ -246,7 +313,9 @@
             "id": "AWSCLI",
             "description": "Run an AWS CLI command against an AWS connection",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/AWSCLI"
             }
@@ -255,7 +324,9 @@
             "id": "AWSPowerShellModuleScript",
             "description": "Run a PowerShell script that uses cmdlets from the AWS Tools for Windows PowerShell module.",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/AWSPowerShellModuleScript"
             }
@@ -264,7 +335,9 @@
             "id": "AWSShellScript",
             "description": "Run a shell script using Bash with AWS credentials.",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/AWSShellScript"
             }
@@ -273,7 +346,9 @@
             "id": "BeanstalkCreateApplicationVersion",
             "description": "Create a new application version for later deployment to AWS Elastic Beanstalk",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/BeanstalkCreateApplicationVersion"
             }
@@ -282,7 +357,9 @@
             "id": "BeanstalkDeployApplication",
             "description": "Deploy an application to AWS Elastic Beanstalk",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/BeanstalkDeployApplication"
             }
@@ -291,7 +368,9 @@
             "id": "CloudFormationCreateOrUpdateStack",
             "description": "Create or update an AWS CloudFormation stack",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/CloudFormationCreateOrUpdateStack"
             }
@@ -300,7 +379,9 @@
             "id": "CloudFormationDeleteStack",
             "description": "Deletes an AWS CloudFormation stack",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/CloudFormationDeleteStack"
             }
@@ -309,7 +390,9 @@
             "id": "CloudFormationExecuteChangeSet",
             "description": "Executes an AWS CloudFormation change set",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/CloudFormationExecuteChangeSet"
             }
@@ -318,7 +401,9 @@
             "id": "CodeDeployDeployApplication",
             "description": "Deploy an application to Amazon EC2 instances using AWS CodeDeploy",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/CodeDeployDeployApplication"
             }
@@ -327,7 +412,9 @@
             "id": "ECRPullImage",
             "description": "Pull an Elastic Container Registry image",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/ECRPullImage"
             }
@@ -336,7 +423,9 @@
             "id": "ECRPushImage",
             "description": "Push a local Docker image to Elastic Container Registry",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/ECRPushImage"
             }
@@ -345,7 +434,9 @@
             "id": "LambdaDeployFunction",
             "description": "General purpose deployment for AWS Lambda functions",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/LambdaDeployFunction"
             }
@@ -354,7 +445,9 @@
             "id": "LambdaInvokeFunction",
             "description": "Invokes an AWS Lambda function with a JSON payload",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/LambdaInvokeFunction"
             }
@@ -363,7 +456,9 @@
             "id": "LambdaNETCoreDeploy",
             "description": "Build and deploy a .NET Core AWS Lambda function",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/LambdaNETCoreDeploy"
             }
@@ -372,7 +467,9 @@
             "id": "S3Download",
             "description": "Download files from an Amazon Simple Storage Service (S3) Bucket",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/S3Download"
             }
@@ -381,7 +478,9 @@
             "id": "S3Upload",
             "description": "Upload files to an Amazon Simple Storage Service (S3) Bucket",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/S3Upload"
             }
@@ -390,7 +489,9 @@
             "id": "SecretsManagerCreateOrUpdateSecret",
             "description": "Updates a secret, optionally creating a secret if it does not exist",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/SecretsManagerCreateOrUpdateSecret"
             }
@@ -399,7 +500,9 @@
             "id": "SecretsManagerGetSecret",
             "description": "Stores the value of a secret in AWS Secrets Manager into a secret build variable",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/SecretsManagerGetSecret"
             }
@@ -408,7 +511,9 @@
             "id": "SendMessage",
             "description": "Sends a message to an SNS topic or SQS queue",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/SendMessage"
             }
@@ -417,7 +522,9 @@
             "id": "SystemsManagerGetParameter",
             "description": "Read one or more Systems Manager Parameter Store values into build variables",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/SystemsManagerGetParameter"
             }
@@ -426,7 +533,9 @@
             "id": "SystemsManagerRunCommand",
             "description": "Run a command remotely on a fleet of EC2 instances and/or on-premise machines",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/SystemsManagerRunCommand"
             }
@@ -435,7 +544,9 @@
             "id": "SystemsManagerSetParameter",
             "description": "Creates or updates a parameter value in the Systems Manager Parameter Store.",
             "type": "ms.vss-distributed-task.task",
-            "targets": ["ms.vss-distributed-task.tasks"],
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
             "properties": {
                 "name": "Tasks/SystemsManagerSetParameter"
             }

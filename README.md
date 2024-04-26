@@ -37,8 +37,9 @@ To enable tasks to call AWS services when run as part of your build or release p
 The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
 -   One or more service endpoints, of type _AWS_, can be created and populated with AWS access and secret keys, and optionally data for _Assumed Role_ credentials.
--   If only the _Assumed Role_ is defined but neither access key ID nor secret key, the role be assumed regardless. This is useful when using instance profices, and and profile only allows to assume a role.
-    -   Tasks reference the configured service endpoint instances by name as part of their configuration and pull the required credentials from the endpoint when run.
+-   On Azure DevOps Services, per-build OIDC tokens are also supported for authentication to AWS and always generate temporary credentials for the specified role ARN during authentication to AWS. Please refer to [Creating an OpenID Connect identity provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html) for configuring IAM in AWS to support this. The necessary identity provider connection details and role subject name are provided in the build logs for any task using the service connection.
+-   If using AWS Access Keys but only the _Assumed Role_ is defined but neither access key ID nor secret key, the role will be assumed regardless. This is useful when using instance profiles.
+-   Tasks reference the configured service endpoint instances by name as part of their configuration and pull the required credentials from the endpoint when run.
 -   Variables defined on the task or build.
     -   If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
         variables are named _AWS.AccessKeyID_, _AWS.SecretAccessKey_ and optionally _AWS.SessionToken_. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the variable _AWS.Region_. Optionally a role to assume can be specified by using the variable _AWS.AssumeRoleArn_. When assuming roles _AWS.RoleSessionName_ (optional) and _AWS.ExternalId_ (optional) can be provided in order to specify an identifier for the assumed role session and an external id to show in customers' accounts when assuming roles.
@@ -49,17 +50,42 @@ The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
 ### Configuring an AWS Service Endpoint
 
-To use _AWS_ service endpoints add the AWS subscription(s) to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Note that each Azure DevOps project is associated with its own set of credentials. Service endpoints are not shared across projects. You can associate a single service endpoint to be used with all AWS tasks in a build or multiple endpoints if you require.
+To use _AWS_ service endpoints, add the AWS subscription(s) to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. You can associate a single service endpoint to be used with all AWS tasks in a build or multiple endpoints if you require.
 
-Select the _AWS_ endpoint type and provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
+Select the _AWS_ endpoint type and choose if you'll be using AWS Access Keys or Azure DevOps OIDC tokens for authentication.
+
+Azure DevOps OIDC tokens only require a role ARN to be specified. When configuring the AWS Role for use by Azure DevOps Services, ensure that the role trust relationship validates the subject claim provided by the OIDC token. The OIDC Identity provider configuration will validate the issuer and the audience claims. A sample trust relationship for a role:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::123456789123:oidc-provider/vstoken.dev.azure.com/01EEE488-0907-0612-3813-000012291989"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "vstoken.dev.azure.com/01EEE488-0907-0612-1229-123412341234:sub": "sc://my-test-organization-name/my-test-project-name/my-test-service-connection-name"
+                }
+            }
+        }
+    ]
+}
+```
+
+ If using AWS Access Keys provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
 
 -   A name used to refer to the credentials when configuring the AWS tasks
 -   AWS Access Key ID
 -   AWS Secret Access Key
 
+Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified, or a per-task OIDC token rrovided by Azure DevOps Services, will be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and 12 hours (43200 seconds).
+
 **Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
 
-Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and 12 hours (43200 seconds).
 
 ## Supported environments
 
