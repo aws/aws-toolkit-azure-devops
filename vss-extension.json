@@ -272,36 +272,6 @@
                                     "isRequired": false,
                                     "dataType": "string"
                                 }
-                            },
-                            {
-                                "id": "serviceprincipalid",
-                                "name": "Service Principal Id",
-                                "inputMode": "textbox",
-                                "isConfidential": false,
-                                "validation": {
-                                    "isRequired": false,
-                                    "dataType": "guid"
-                                },
-                                "values": {
-                                    "inputId": "serviceprincipalid",
-                                    "defaultValue": "",
-                                    "isDisabled": true
-                                }
-                            },
-                            {
-                                "id": "tenantid",
-                                "name": "Tenant ID",
-                                "inputMode": "textbox",
-                                "isConfidential": false,
-                                "validation": {
-                                    "isRequired": false,
-                                    "dataType": "guid"
-                                },
-                                "values": {
-                                    "inputId": "tenantid",
-                                    "defaultValue": "",
-                                    "isDisabled": true
-                                }
                             }
                         ]
                     }
