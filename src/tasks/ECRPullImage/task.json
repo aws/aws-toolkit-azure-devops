@@ -116,6 +116,10 @@
         "Node10": {
             "target": "ECRPullImage.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "ECRPullImage.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

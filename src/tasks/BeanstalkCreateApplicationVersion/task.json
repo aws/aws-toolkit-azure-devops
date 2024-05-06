@@ -143,6 +143,10 @@
         "Node10": {
             "target": "BeanstalkCreateApplicationVersion.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "BeanstalkCreateApplicationVersion.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

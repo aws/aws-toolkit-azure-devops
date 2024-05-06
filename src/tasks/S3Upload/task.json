@@ -235,6 +235,10 @@
         "Node10": {
             "target": "S3Upload.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "S3Upload.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

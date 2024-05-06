@@ -93,6 +93,10 @@
         "Node10": {
             "target": "SecretsManagerGetSecret.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "SecretsManagerGetSecret.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

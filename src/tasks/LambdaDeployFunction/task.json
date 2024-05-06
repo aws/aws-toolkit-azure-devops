@@ -306,6 +306,10 @@
         "Node10": {
             "target": "LambdaDeployFunction.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "LambdaDeployFunction.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

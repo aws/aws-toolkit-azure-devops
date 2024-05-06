@@ -76,6 +76,10 @@
         "Node10": {
             "target": "AWSCLI.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "AWSCLI.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

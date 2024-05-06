@@ -113,6 +113,10 @@
         "Node10": {
             "target": "LambdaInvokeFunction.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "LambdaInvokeFunction.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

@@ -157,6 +157,10 @@
         "Node10": {
             "target": "ECRPushImage.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "ECRPushImage.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

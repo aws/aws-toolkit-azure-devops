@@ -274,6 +274,10 @@
         "Node10": {
             "target": "SystemsManagerRunCommand.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "SystemsManagerRunCommand.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

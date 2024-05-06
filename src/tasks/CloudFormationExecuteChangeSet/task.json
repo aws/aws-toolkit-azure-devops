@@ -133,6 +133,10 @@
         "Node10": {
             "target": "CloudFormationExecuteChangeSet.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "CloudFormationExecuteChangeSet.js",
+            "argumentFormat": ""
         }
     },
     "messages": {
