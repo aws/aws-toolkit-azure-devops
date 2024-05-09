@@ -4,7 +4,7 @@
  */
 
 import * as tl from 'azure-pipelines-task-lib/task'
-import { getInputOptional, getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
+import { getInputRequired } from 'lib/vstsUtils'
 
 export interface TaskParameters {
     connectedServiceNameARM: string

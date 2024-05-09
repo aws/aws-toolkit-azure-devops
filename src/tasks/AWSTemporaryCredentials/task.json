@@ -81,6 +81,7 @@
         "GettingTemporarySTS": "Getting temporary STS credentials",
         "GotTemporarySTS": "Got temporary STS credentials",
         "ExportingSTS": "Exporting temporary STS credentials with %s",
-        "TaskCompleted": "Task completed"
+        "TaskCompleted": "Task completed",
+        "SessionName": "Using SessionName: %s"
     }
 }

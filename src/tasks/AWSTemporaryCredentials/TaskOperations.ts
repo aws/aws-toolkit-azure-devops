@@ -21,6 +21,7 @@ export class TaskOperations {
 
         console.log(tl.loc('GettingTemporarySTS'))
         const sessionName = this.buildSessionName()
+        console.log(tl.loc('SessionName', sessionName))
 
         const params: sts.AssumeRoleWithWebIdentityCommandInput = {
             RoleArn: this.taskParameters.assumeRole,
@@ -40,7 +41,7 @@ export class TaskOperations {
         const prefix = this.taskParameters.varPrefix
         console.log(tl.loc('ExportingSTS', prefix))
         tl.setVariable(prefix.concat('ACCESS_KEY_ID'), accessKey)
-        tl.setVariable(prefix.concat('SECRET_ACCESS_KEY'), secretAccessKey)
+        tl.setVariable(prefix.concat('SECRET_ACCESS_KEY'), secretAccessKey, true)
         tl.setVariable(prefix.concat('SESSION_TOKEN'), sessionToken)
 
         tl.setSecret(secretAccessKey)
@@ -58,14 +59,15 @@ export class TaskOperations {
             buildId = this.trimMiddleString(buildId)
             pipelineId = this.trimMiddleString(pipelineId)
             projectName = this.trimMiddleString(projectName)
-            sessionName = `${projectName}/${pipelineId}/${buildId}`
+            sessionName = `${projectName}-${pipelineId}-${buildId}`
         }
         return sessionName
     }
 
     private trimMiddleString(text: string, length = 6, padding = '...') {
-        const shortText = text.substring(0, length) + padding + text.substring(-length)
+        const shortText = text.slice(0, length) + padding + text.slice(-length)
 
+        // If we are below length x2 + padding.length, let's reuse the original
         if (shortText.length < text.length) {
             return shortText
         } else {
