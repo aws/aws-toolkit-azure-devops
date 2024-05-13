@@ -6,8 +6,8 @@ phases:
 
     pre_build:
         commands:
-            - npm ci
-
+            - node --version
+            - npm --version
     build:
         commands:
             - npm ci

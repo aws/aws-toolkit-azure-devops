@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "Creation of AWSTemporaryCredentials to help with OIDC Federation via AssumeRoleWithWebIdentity"
+}

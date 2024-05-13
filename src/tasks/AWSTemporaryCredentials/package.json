@@ -1,0 +1,8 @@
+{
+    "name": "awstemporarycredentials",
+    "version": "1.0.0",
+    "description": "Get temporary credentials from STS",
+    "main": "AWSTemporaryCredentials.js",
+    "author": "",
+    "license": "MIT"
+}

@@ -6,12 +6,14 @@ phases:
                 if(-Not($Env:CODE_COV_TOKEN -eq $null)) {
                     choco install -y --no-progress codecov
                 }
+                choco install -y --no-progress nodejs-lts --version 16.20.2
     pre_build:
         commands:
-            - npm install
-
+            - node --version
+            - npm --version
     build:
         commands:
+            - npm ci
             - npm run fullBuild publisher=awscibuild
             - $env:TEST_REPORT_DIR="$env:CODEBUILD_SRC_DIR/.test_reports"; npm run test
             - |

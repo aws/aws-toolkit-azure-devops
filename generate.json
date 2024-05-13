@@ -10,6 +10,9 @@
         "returnType": "number"
     },
     {
+        "taskName": "AWSTemporaryCredentials"
+    },
+    {
         "taskName": "BeanstalkCreateApplicationVersion",
         "taskClients": ["Beanstalk", "S3"]
     },
