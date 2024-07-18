@@ -116,7 +116,7 @@ function packagePlugin(options: CommandLineOptions) {
                 entryPoints: [inputFilename],
                 bundle: true,
                 platform: 'node',
-                target: ['node10'],
+                target: ['node10', 'node16'],
                 minify: true,
                 outfile: `${taskPackageFolder}/${taskName}.js`
             })

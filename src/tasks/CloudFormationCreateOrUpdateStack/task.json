@@ -380,6 +380,10 @@
         "Node10": {
             "target": "CloudFormationCreateOrUpdateStack.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "CloudFormationCreateOrUpdateStack.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

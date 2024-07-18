@@ -115,6 +115,10 @@
         "Node10": {
             "target": "AWSShellScript.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "AWSShellScript.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

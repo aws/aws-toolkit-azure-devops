@@ -108,6 +108,10 @@
         "Node10": {
             "target": "SendMessage.js",
             "argumentFormat": ""
+        },
+        "Node16": {
+            "target": "SendMessage.js",
+            "argumentFormat": ""
         }
     },
     "messages": {
