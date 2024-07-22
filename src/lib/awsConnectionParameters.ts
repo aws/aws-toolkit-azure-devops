@@ -9,6 +9,8 @@ import { STS } from 'aws-sdk/clients/all'
 import * as AWS from 'aws-sdk/global'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { format, parse, Url } from 'url'
+import { getHandlerFromToken, WebApi } from 'azure-devops-node-api'
+import { ITaskApi } from 'azure-devops-node-api/TaskApi'
 
 // Task variable names that can be used to supply the AWS credentials
 // to a task (in addition to using a service endpoint, or environment
@@ -106,13 +108,15 @@ function getEndpointAuthInfo(awsparams: AWSConnectionParameters, endpointName: s
     const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
     const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
     const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
+    const useToken = awsparams.awsEndpointAuth?.parameters?.useToken
     return {
         accessKey: accessKey,
         secretKey: secretKey,
         token: token,
         assumeRoleArn: assumeRoleArn,
         externalId: externalId,
-        roleSessionName: roleSessionName
+        roleSessionName: roleSessionName,
+        useOIDC: useToken
     }
 }
 
@@ -148,6 +152,11 @@ async function assumeRoleFromInstanceProfile(
         return undefined
     }
     const authInfo = getEndpointAuthInfo(awsparams, endpointName)
+
+    if (authInfo.useOIDC == 'true') {
+        console.debug('Skipping Instance profile, we have OIDC enabled')
+        return undefined
+    }
     authInfo.roleSessionName = authInfo.roleSessionName ?? defaultRoleSessionName
     if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
         console.log('Assuming role without credentials (via instance profile)...')
@@ -164,6 +173,54 @@ async function assumeRoleFromInstanceProfile(
         })
     }
     return undefined
+}
+
+async function attemptAssumeRoleFromOIDC(
+    awsParams: AWSConnectionParameters,
+    endpointName: string | undefined
+): Promise<AWS.Credentials | undefined> {
+    if (!endpointName) {
+        return undefined
+    }
+
+    try {
+        const authInfo = getEndpointAuthInfo(awsParams, endpointName)
+        if (!authInfo.useOIDC) {
+            console.debug('Skipping OIDC: not enabled in service connections')
+            return undefined
+        }
+
+        // Getting STS credentials with the OIDC token
+        if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
+            console.log('Getting OIDC Token')
+            const idToken = await getOIDCToken(endpointName)
+
+            authInfo.roleSessionName = authInfo.roleSessionName ? authInfo.roleSessionName : defaultRoleSessionName
+            const duration = getSessionDuration()
+            const params = {
+                RoleArn: authInfo.assumeRoleArn,
+                RoleSessionName: authInfo.roleSessionName,
+                WebIdentityToken: idToken,
+                DurationSeconds: duration
+            }
+
+            // We are most probably outside of AWS, so let's use the region defined by the user
+            const region = await getRegion()
+            const sts = new STS({ region: region, stsRegionalEndpoints: 'regional' })
+            console.log('Assuming role via OIDC Token...')
+            const data = await sts.assumeRoleWithWebIdentity(params).promise()
+            return new AWS.Credentials({
+                accessKeyId: data.Credentials!.AccessKeyId,
+                secretAccessKey: data.Credentials!.SecretAccessKey,
+                sessionToken: data.Credentials!.SessionToken
+            })
+        } else {
+            return undefined
+        }
+    } catch (err) {
+        console.error('Impossible to assume role with OIDC: %s', err)
+        return undefined
+    }
 }
 
 // credentials can also be set, using their environment variable names,
@@ -219,19 +276,7 @@ function createEndpointCredentials(
     if (!roleSessionName) {
         roleSessionName = defaultRoleSessionName
     }
-    let duration: number = minDuration
-
-    const customDurationVariable = tl.getVariable(roleCredentialMaxDurationVariableName)
-    if (customDurationVariable) {
-        const customDuration = parseInt(customDurationVariable, 10)
-        if (isNaN(customDuration) || customDuration < minDuration || customDuration > maxduration) {
-            console.warn(
-                `Invalid credential duration '${customDurationVariable}', minimum is ${minDuration}, max ${maxduration}`
-            )
-        } else {
-            duration = customDuration
-        }
-    }
+    const duration = getSessionDuration()
 
     const masterCredentials = new AWS.Credentials({
         accessKeyId: accessKey,
@@ -249,6 +294,23 @@ function createEndpointCredentials(
     return new AWS.TemporaryCredentials(options, masterCredentials)
 }
 
+function getSessionDuration() {
+    let duration: number = minDuration
+
+    const customDurationVariable = tl.getVariable(roleCredentialMaxDurationVariableName)
+    if (customDurationVariable) {
+        const customDuration = parseInt(customDurationVariable, 10)
+        if (isNaN(customDuration) || customDuration < minDuration || customDuration > maxduration) {
+            console.warn(
+                `Invalid credential duration '${customDurationVariable}', minimum is ${minDuration}, max ${maxduration}`
+            )
+        } else {
+            duration = customDuration
+        }
+    }
+    return duration
+}
+
 // Probes for credentials to be used by the executing task. Credentials
 // can be configured as a service endpoint (of type 'AWS'), or specified
 // using task variables. If we don't discover credentials inside the
@@ -261,6 +323,11 @@ export async function getCredentials(awsParams: AWSConnectionParameters): Promis
     const role_credentials = await assumeRoleFromInstanceProfile(awsParams, tl.getInput('awsCredentials', false))
     if (typeof role_credentials !== 'undefined') {
         return role_credentials
+    }
+
+    const oidc_credentials = await attemptAssumeRoleFromOIDC(awsParams, tl.getInput('awsCredentials', false))
+    if (oidc_credentials) {
+        return oidc_credentials
     }
 
     const credentials =
@@ -393,4 +460,31 @@ export async function getRegion(): Promise<string> {
     console.log('No region specified in the task configuration or environment')
 
     return ''
+}
+
+export async function getOIDCToken(connectedService: string): Promise<string> {
+    const jobId = tl.getVariable('System.JobId') || ''
+    const planId = tl.getVariable('System.PlanId') || ''
+    const projectId = tl.getVariable('System.TeamProjectId') || ''
+    const hub = tl.getVariable('System.HostType') || ''
+    const uri = tl.getVariable('System.CollectionUri') || ''
+    const token = tl.getVariable('System.AccessToken')
+
+    if (token == undefined) {
+        throw new Error('System.AccessToken is undefined')
+    }
+
+    const authHandler = getHandlerFromToken(token)
+    const connection = new WebApi(uri, authHandler)
+    const api: ITaskApi = await connection.getTaskApi()
+    const response = await api.createOidcToken({}, projectId, hub, planId, jobId, connectedService)
+    if (response == undefined || response.oidcToken == undefined) {
+        throw new Error('Impossible to generate OidcToken')
+    }
+
+    const claims = JSON.parse(Buffer.from(response.oidcToken.split('.')[1], 'base64').toString('utf-8'))
+
+    console.debug('OIDC Token generated: issuer: {%s} sub: {%s}, aud: {%s}', claims.iss, claims.sub, claims.aud)
+
+    return response.oidcToken
 }
