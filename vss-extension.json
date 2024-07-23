@@ -237,7 +237,7 @@
                                 }
                             },
                             {
-                                "id": "useToken",
+                                "id": "useOIDC",
                                 "name": "Use OIDC",
                                 "description": "Put to true to attempt getting credentials with OIDC token from Azure Devops",
                                 "inputMode": "checkbox",

@@ -92,9 +92,7 @@ try {
         if ($awsEndpointAuth.Auth.Parameters.AssumeRoleArn) {
             Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentials')
             $assumeRoleParameters = @{
-                'AccessKey'    = $awsEndpointAuth.Auth.Parameters.UserName
-                'SecretKey'    = $awsEndpointAuth.Auth.Parameters.Password
-                'SessionToken' = $awsEndpointAuth.Auth.Parameters.sessionToken
+
                 'RoleArn'      = $awsEndpointAuth.Auth.Parameters.AssumeRoleArn
             }
             if ($awsEndpointAuth.Auth.Parameters.RoleSessionName) {
@@ -106,8 +104,50 @@ try {
             if ($awsEndpointAuth.Auth.Parameters.ExternalId) {
                 $assumeRoleParameters.Add('ExternalId', $awsEndpointAuth.Auth.Parameters.ExternalId)
             }
+            $assumeRoleResponse = ''
+            Write-Host $awsEndpointAuth.Auth.Parameters.useOIDC
+            if ($awsEndpointAuth.Auth.Parameters.useOIDC) {
+                Write-Host (Get-VstsLocString -Key 'ConfiguringForRoleCredentialsFromOIDC')
 
-            $assumeRoleResponse = Use-STSRole @assumeRoleParameters
+                # Obtain the system token to interact with the VSTS REST API
+                $accessToken = (Get-VstsEndpoint -Name SystemVssConnection -Require).auth.parameters.AccessToken
+                $Headers = @{
+                    Authorization = "Bearer $($accessToken)"
+                }
+
+                # Request an OIDC token for the service connection from the VSTS REST API
+                $url = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$Env:SYSTEM_TEAMPROJECTID/_apis/distributedtask/hubs/build/plans/$Env:SYSTEM_PLANID/jobs/$Env:SYSTEM_JOBID/oidctoken?api-version=7.1-preview.1&serviceConnectionId=$awsEndpoint"
+                $response = Invoke-WebRequest -Uri $url -Method POST -Headers $Headers  -Body '{}' -ContentType "application/json" | ConvertFrom-Json
+                $token = $response.oidcToken
+
+                # Log the OIDC token claims so users know how to configure AWS
+                try {
+                    $splitTokenClaims = $token.Split(".")[1]
+                    # append appropriate padding
+                    $ModulusValue = ($splitTokenClaims.length % 4)
+                    Switch ($ModulusValue) {
+                        '0' {$Padded = $splitTokenClaims}
+                        '1' {$Padded = $splitTokenClaims.Substring(0,$splitTokenClaims.Length - 1)}
+                        '2' {$Padded = $splitTokenClaims + ('=' * (4 - $ModulusValue))}
+                        '3' {$Padded = $splitTokenClaims + ('=' * (4 - $ModulusValue))}
+                    }
+                    $oidcClaims = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Padded)) | ConvertFrom-Json
+                    Write-Host "OIDC Token Subject: $($oidcClaims.sub)"
+                    Write-Host "OIDC Token Issuer (Provider URL): $($oidcClaims.iss)"
+                    Write-Host "OIDC Token Audience: $($oidcClaims.aud)"
+                } catch {
+                    Write-Host "Unable to parse OIDC Token for claims"
+                    Write-Host $_
+                }
+
+                $assumeRoleParameters.Add('WebIdentityToken', $token)
+                $assumeRoleResponse = Use-STSWebIdentityRole @assumeRoleParameters -Select '*'
+            } else {
+                $assumeRoleParameters.Add('AccessKey', $awsEndpointAuth.Auth.Parameters.UserName)
+                $assumeRoleParameters.Add('SecretKey', $awsEndpointAuth.Auth.Parameters.Password)
+                $assumeRoleParameters.Add('SessionToken', $awsEndpointAuth.Auth.Parameters.sessionToken)
+                $assumeRoleResponse = Use-STSRole @assumeRoleParameters
+            }
 
             $env:AWS_ACCESS_KEY_ID = $assumeRoleResponse.Credentials.AccessKeyId
             $env:AWS_SECRET_ACCESS_KEY = $assumeRoleResponse.Credentials.SecretAccessKey

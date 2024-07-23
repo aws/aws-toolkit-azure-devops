@@ -108,7 +108,7 @@ function getEndpointAuthInfo(awsparams: AWSConnectionParameters, endpointName: s
     const assumeRoleArn = awsparams.awsEndpointAuth?.parameters?.assumeRoleArn
     const externalId = awsparams.awsEndpointAuth?.parameters?.externalId
     const roleSessionName = awsparams.awsEndpointAuth?.parameters?.roleSessionName
-    const useToken = awsparams.awsEndpointAuth?.parameters?.useToken
+    const useOIDC = awsparams.awsEndpointAuth?.parameters?.useOIDC
     return {
         accessKey: accessKey,
         secretKey: secretKey,
@@ -116,7 +116,7 @@ function getEndpointAuthInfo(awsparams: AWSConnectionParameters, endpointName: s
         assumeRoleArn: assumeRoleArn,
         externalId: externalId,
         roleSessionName: roleSessionName,
-        useOIDC: useToken
+        useOIDC: useOIDC
     }
 }
 
@@ -192,9 +192,19 @@ async function attemptAssumeRoleFromOIDC(
 
         // Getting STS credentials with the OIDC token
         if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
-            console.log('Getting OIDC Token')
+            console.log('Getting OIDC Token...')
             const idToken = await getOIDCToken(endpointName)
 
+            // We are most probably outside of AWS, so let's use the region defined by the user
+            const region = await getRegion()
+            const stsClientConfig: STS.ClientConfiguration = {}
+            if (region != '') {
+                stsClientConfig.region = region
+                stsClientConfig.stsRegionalEndpoints = 'regional'
+            }
+            const sts = new STS(stsClientConfig)
+
+            console.log('Assuming role via OIDC Token...')
             authInfo.roleSessionName = authInfo.roleSessionName ? authInfo.roleSessionName : defaultRoleSessionName
             const duration = getSessionDuration()
             const params = {
@@ -203,12 +213,8 @@ async function attemptAssumeRoleFromOIDC(
                 WebIdentityToken: idToken,
                 DurationSeconds: duration
             }
-
-            // We are most probably outside of AWS, so let's use the region defined by the user
-            const region = await getRegion()
-            const sts = new STS({ region: region, stsRegionalEndpoints: 'regional' })
-            console.log('Assuming role via OIDC Token...')
             const data = await sts.assumeRoleWithWebIdentity(params).promise()
+            console.log('...role assumed via OIDC Token: %s', data.AssumedRoleUser?.Arn)
             return new AWS.Credentials({
                 accessKeyId: data.Credentials!.AccessKeyId,
                 secretAccessKey: data.Credentials!.SecretAccessKey,

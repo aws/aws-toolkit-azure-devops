@@ -148,6 +148,7 @@
         "CheckingForProxyConfiguration": "Attempting to detect proxy settings to configure tool",
         "ConfiguringForRoleCredentials": "Configuring task to use role-scoped credentials from specified endpoint",
         "ConfiguringForStandardCredentials": "Configuring task for standard AWS credentials from specified endpoint",
+        "ConfiguringForRoleCredentialsFromOIDC": "Configuring task to use role-scoped credentials with OIDC token",
         "ConfiguringForTaskVariableCredentials": "Configuring task for standard AWS credentials from task variables",
         "MissingSecretKeyVariable": "AWS access key ID present in task variables but secret key value is missing; cannot configure task credentials"
     }
