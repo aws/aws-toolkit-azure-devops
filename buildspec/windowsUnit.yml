@@ -8,10 +8,12 @@ phases:
                 }
     pre_build:
         commands:
-            - npm install
+            - node --version
+            - npm --version
 
     build:
         commands:
+            - npm ci
             - npm run fullBuild publisher=awscibuild
             - $env:TEST_REPORT_DIR="$env:CODEBUILD_SRC_DIR/.test_reports"; npm run test
             - |
