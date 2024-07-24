@@ -142,7 +142,7 @@ function packagePlugin(options: CommandLineOptions) {
 
     console.log('Packaging with:' + `${tfx} ${args.join(' ')}`)
 
-    ncp.execFileSync(tfx, args, { stdio: 'pipe', shell: true })
+    ncp.execFileSync(tfx, args, { stdio: 'inherit', shell: true })
 
     console.log('Packaging successful')
 }
