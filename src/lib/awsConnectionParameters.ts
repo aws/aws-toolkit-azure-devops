@@ -153,7 +153,7 @@ async function assumeRoleFromInstanceProfile(
     }
     const authInfo = getEndpointAuthInfo(awsparams, endpointName)
 
-    if (authInfo.useOIDC == 'true') {
+    if (authInfo.useOIDC === 'true') {
         console.debug('Skipping Instance profile, we have OIDC enabled')
         return undefined
     }
@@ -198,7 +198,7 @@ async function attemptAssumeRoleFromOIDC(
             // We are most probably outside of AWS, so let's use the region defined by the user
             const region = await getRegion()
             const stsClientConfig: STS.ClientConfiguration = {}
-            if (region != '') {
+            if (region !== '') {
                 stsClientConfig.region = region
                 stsClientConfig.stsRegionalEndpoints = 'regional'
             }
@@ -224,7 +224,7 @@ async function attemptAssumeRoleFromOIDC(
             return undefined
         }
     } catch (err) {
-        console.error('Impossible to assume role with OIDC: %s', err)
+        console.error('Failed to assume role with OIDC: %s', err)
         return undefined
     }
 }
@@ -484,8 +484,8 @@ export async function getOIDCToken(connectedService: string): Promise<string> {
     const connection = new WebApi(uri, authHandler)
     const api: ITaskApi = await connection.getTaskApi()
     const response = await api.createOidcToken({}, projectId, hub, planId, jobId, connectedService)
-    if (response == undefined || response.oidcToken == undefined) {
-        throw new Error('Impossible to generate OidcToken')
+    if (response === undefined || response.oidcToken === undefined) {
+        throw new Error('Failed to generate OidcToken')
     }
 
     const claims = JSON.parse(Buffer.from(response.oidcToken.split('.')[1], 'base64').toString('utf-8'))

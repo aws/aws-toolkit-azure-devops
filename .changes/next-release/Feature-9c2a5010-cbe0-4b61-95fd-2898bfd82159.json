@@ -1,4 +1,4 @@
 {
 	"type": "Feature",
-	"description": "Add option to useOIDC with ServiceConnection"
+	"description": "Add support for OIDC authentication"
 }
