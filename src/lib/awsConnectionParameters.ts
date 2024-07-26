@@ -154,7 +154,7 @@ async function assumeRoleFromInstanceProfile(
     const authInfo = getEndpointAuthInfo(awsparams, endpointName)
 
     if (authInfo.useOIDC === 'true') {
-        console.debug('Skipping Instance profile, we have OIDC enabled')
+        console.log('Skipping Instance profile, we have OIDC enabled')
         return undefined
     }
     authInfo.roleSessionName = authInfo.roleSessionName ?? defaultRoleSessionName
