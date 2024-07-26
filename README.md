@@ -36,9 +36,37 @@ To enable tasks to call AWS services when run as part of your build or release p
 
 The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
--   One or more service endpoints, of type _AWS_, can be created and populated with AWS access and secret keys, and optionally data for _Assumed Role_ credentials.
+One or more service endpoints, of type _AWS_, can be created and populated with either:
+
+-   Static credentials in the form of AWS access and secret keys, and optionally data for _Assumed Role_ credentials.
 -   If only the _Assumed Role_ is defined but neither access key ID nor secret key, the role be assumed regardless. This is useful when using instance profices, and and profile only allows to assume a role.
-    -   Tasks reference the configured service endpoint instances by name as part of their configuration and pull the required credentials from the endpoint when run.
+-   If the useOIDC is checked and you have defined an _Assumed Role_ without access key ID or secret key. This will request an OIDC token from Azure Devops and federate into AWS with than token.
+
+    -   This will require a trust policy on the _Assume Role_ similar to this :
+
+    ```json
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Federated": "arn:aws:iam::123456789012:oidc-provider/vstoken.dev.azure.com/{org-id}"
+                },
+                "Action": "sts:AssumeRoleWithWebIdentity",
+                "Condition": {
+                    "StringEquals": {
+                        "vstoken.dev.azure.com/{org-id}:sub": "sc://{orgName}/{ProjectName}/{ServiceConnections}",
+                        "vstoken.dev.azure.com/{org-id}": "api://AzureADTokenExchange"
+                    }
+                }
+            }
+        ]
+    }
+    ```
+
+    You'll also have to setup the OIDC Provider, you can use the documentation of [Creating and managing an OIDC provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html#manage-oidc-provider-console)
+
 -   Variables defined on the task or build.
     -   If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
         variables are named _AWS.AccessKeyID_, _AWS.SecretAccessKey_ and optionally _AWS.SessionToken_. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the variable _AWS.Region_. Optionally a role to assume can be specified by using the variable _AWS.AssumeRoleArn_. When assuming roles _AWS.RoleSessionName_ (optional) and _AWS.ExternalId_ (optional) can be provided in order to specify an identifier for the assumed role session and an external id to show in customers' accounts when assuming roles.
@@ -51,15 +79,28 @@ The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
 To use _AWS_ service endpoints add the AWS subscription(s) to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Note that each Azure DevOps project is associated with its own set of credentials. Service endpoints are not shared across projects. You can associate a single service endpoint to be used with all AWS tasks in a build or multiple endpoints if you require.
 
-Select the _AWS_ endpoint type and provide the following parameters. Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
+Select the _AWS_ endpoint type and provide the following parameters based on the type of authentification above.
+
+#### OIDC Federation
+
+-   A name used to refer to the credentials when configuring the AWS tasks
+-   The arn of the role to assume
+-   Check the useOIDC options
+
+#### Static credentials
+
+Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
 
 -   A name used to refer to the credentials when configuring the AWS tasks
 -   AWS Access Key ID
 -   AWS Secret Access Key
 
-**Note** We strongly suggest you use access and secret keys generated for an Identity and Access Management (IAM) user account. You can configure an IAM user account with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
+#### Assume Role
 
 Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and 12 hours (43200 seconds).
+
+[!NOTE]
+**Note** We strongly suggest to use the OIDC Federation to avoid having to maintain static credentials. You can configure an IAM role with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
 
 ## Supported environments
 
