@@ -1,6 +1,6 @@
 {
     "name": "aws-vsts-tools",
-    "version": "1.17.29",
+    "version": "1.14.0",
     "description": "AWS Tools for Azure DevOps",
     "private": true,
     "main": "build/tasks",
@@ -80,7 +80,6 @@
         "validator": "^13.7.0"
     },
     "dependencies": {
-        "@aws-sdk/client-sts": "^3.616.0",
         "@typescript-eslint/typescript-estree": "^4.17.0",
         "adm-zip": "^0.5.3",
         "aws-sdk": "^2.979.0",
