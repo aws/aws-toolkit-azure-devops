@@ -28,8 +28,6 @@ requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIB
 
 The [User Guide](https://docs.aws.amazon.com/vsts/latest/userguide/welcome.html) contains additional instructions for getting up and running with the extension.
 
-**NOTE:** The user-guide source content that used to live in this folder has been moved to its own [GitHub repository](https://github.com/awsdocs/aws-tools-ado-vsts-user-guide).
-
 ## Credentials Handling for AWS Services
 
 To enable tasks to call AWS services when run as part of your build or release pipelines AWS credentials need to have been configured for the tasks or be available in the host process for the build agent. Note that the credentials are used specifically by the tasks when run in a build agent process, they are not related to end-user logins to your Azure DevOps instance.
@@ -99,8 +97,8 @@ Please refer to [About Access Keys](https://aws.amazon.com/developers/access-key
 
 Tasks can also use assumed role credentials by adding the Amazon Resource name (ARN) of the role to be assumed and an optional identifier when configuring the endpoint. The access and secret keys specified will then be used to generate temporary credentials for the tasks when they are executed by the build agents. Temporary credentials are valid for up to 15 minutes by default. To enable a longer validity period you can set the 'aws.rolecredential.maxduration' variable on your build or release definition, specifying a validity period in seconds between 15 minutes (900 seconds) and 12 hours (43200 seconds).
 
-[!NOTE]
-**Note** We strongly suggest to use the OIDC Federation to avoid having to maintain static credentials. You can configure an IAM role with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
+> [!NOTE]
+> We strongly suggest to use the OIDC Federation to avoid having to maintain static credentials. You can configure an IAM role with permissions granting access to only the services and resources required to support the tasks you intend to use in your build and release definitions.
 
 ## Supported environments
 
