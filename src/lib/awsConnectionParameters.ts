@@ -186,7 +186,7 @@ async function attemptAssumeRoleFromOIDC(
     try {
         const authInfo = getEndpointAuthInfo(awsParams, endpointName)
         if (!authInfo.useOIDC) {
-            console.debug('Skipping OIDC: not enabled in service connections')
+            console.log('Skipping OIDC: not enabled in service connections')
             return undefined
         }
 
