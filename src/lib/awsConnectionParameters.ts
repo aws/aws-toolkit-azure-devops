@@ -490,7 +490,7 @@ export async function getOIDCToken(connectedService: string): Promise<string> {
 
     const claims = JSON.parse(Buffer.from(response.oidcToken.split('.')[1], 'base64').toString('utf-8'))
 
-    console.debug('OIDC Token generated: issuer: {%s} sub: {%s}, aud: {%s}', claims.iss, claims.sub, claims.aud)
+    console.log('OIDC Token generated: issuer: {%s} sub: {%s}, aud: {%s}', claims.iss, claims.sub, claims.aud)
 
     return response.oidcToken
 }
