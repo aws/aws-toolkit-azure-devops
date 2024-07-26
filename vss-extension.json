@@ -235,6 +235,17 @@
                                     "isRequired": false,
                                     "dataType": "string"
                                 }
+                            },
+                            {
+                                "id": "useOIDC",
+                                "name": "Use OIDC",
+                                "description": "Enable this to attempt getting credentials with OIDC token from Azure Devops",
+                                "inputMode": "checkbox",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": false,
+                                    "dataType": "string"
+                                }
                             }
                         ]
                     }
