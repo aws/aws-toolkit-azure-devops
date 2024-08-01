@@ -1,3 +1,7 @@
+## 1.15.0 2024-08-01
+
+- **Feature** Add support for OIDC authentication
+
 ## 1.14.0 2024-01-31
 
 - **Bug Fix** S3Download now correctly handles directories
