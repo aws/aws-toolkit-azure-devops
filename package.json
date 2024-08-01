@@ -20,7 +20,8 @@
         "package": "ts-node ./build-scripts/packageExtension.ts",
         "fullBuild": "npm run build && npm run lint && npm run copyResources && npm run generateResources && npm run test && npm run package",
         "newChange": "ts-node ./build-scripts/newChange.ts",
-        "createRelease": "ts-node ./build-scripts/createRelease.ts"
+        "createRelease": "ts-node ./build-scripts/createRelease.ts",
+        "postinstall": "patch-package"
     },
     "repository": {
         "type": "git",
@@ -47,7 +48,7 @@
         "@types/js-yaml": "^3.12.1",
         "@types/json-query": "^2.2.0",
         "@types/mime-types": "^2.1.0",
-        "@types/node": "^10.17.28",
+        "@types/node": "^16.11.39",
         "@types/q": "^1.5.4",
         "@types/readline-sync": "^1.4.3",
         "@types/semver": "^7.3.4",
@@ -75,7 +76,7 @@
         "ts-jest": "^27.1.3",
         "ts-loader": "^9.4.2",
         "ts-node": "^8.4.1",
-        "typescript": "^4.2.2",
+        "typescript": "^4.9.5",
         "uuid": "^3.3.3",
         "validator": "^13.7.0"
     },
@@ -84,11 +85,12 @@
         "adm-zip": "^0.5.3",
         "aws-sdk": "^2.979.0",
         "azure-devops-node-api": "^14.0.1",
-        "azure-pipelines-task-lib": "^2.12.2",
+        "azure-pipelines-task-lib": "^4.1.0",
         "base-64": "^0.1.0",
         "https-proxy-agent": "^5.0.0",
         "js-yaml": "^3.13.1",
         "mime-types": "^2.1.30",
+        "patch-package": "^8.0.0",
         "semver": "^7.3.4"
     },
     "jest": {
