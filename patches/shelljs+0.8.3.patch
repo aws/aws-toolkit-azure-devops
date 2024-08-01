@@ -1,0 +1,64 @@
+diff --git a/node_modules/shelljs/shell.js b/node_modules/shelljs/shell.js
+index f9c6f36..ee63197 100644
+--- a/node_modules/shelljs/shell.js
++++ b/node_modules/shelljs/shell.js
+@@ -21,9 +21,40 @@ var common = require('./src/common');
+ //@commands
+ 
+ // Load all default commands
+-require('./commands').forEach(function (command) {
+-  require('./src/' + command);
+-});
++require('./src/cat');
++require('./src/cd');
++require('./src/chmod');
++require('./src/cmd');
++require('./src/common');
++require('./src/cp');
++require('./src/dirs');
++require('./src/echo');
++require('./src/error');
++require('./src/errorCode');
++// require('./src/exec-child'); error when required
++require('./src/exec');
++require('./src/find');
++require('./src/grep');
++require('./src/head');
++require('./src/ln');
++require('./src/ls');
++require('./src/mkdir');
++require('./src/mv');
++require('./src/popd');
++require('./src/pushd');
++require('./src/pwd');
++require('./src/rm');
++require('./src/sed');
++require('./src/set');
++require('./src/sort');
++require('./src/tail');
++require('./src/tempdir');
++require('./src/test');
++require('./src/to');
++require('./src/toEnd');
++require('./src/touch');
++require('./src/uniq');
++require('./src/which');
+ 
+ //@
+ //@ ### exit(code)
+@@ -31,10 +62,13 @@ require('./commands').forEach(function (command) {
+ //@ Exits the current process with the given exit `code`.
+ exports.exit = process.exit;
+ 
+-//@include ./src/error
++//@include ./src/error.js
+ exports.error = require('./src/error');
+ 
+-//@include ./src/common
++//@include ./src/errorCode.js
++exports.errorCode = require('./src/errorCode');
++
++//@include ./src/common.js
+ exports.ShellString = common.ShellString;
+ 
+ //@
