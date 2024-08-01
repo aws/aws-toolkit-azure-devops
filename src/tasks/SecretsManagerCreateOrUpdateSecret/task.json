@@ -168,10 +168,6 @@
         "Node10": {
             "target": "SecretsManagerCreateOrUpdateSecret.js",
             "argumentFormat": ""
-        },
-        "Node16": {
-            "target": "SecretsManagerCreateOrUpdateSecret.js",
-            "argumentFormat": ""
         }
     },
     "messages": {

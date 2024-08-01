@@ -99,10 +99,6 @@
         "Node10": {
             "target": "SystemsManagerSetParameter.js",
             "argumentFormat": ""
-        },
-        "Node16": {
-            "target": "SystemsManagerSetParameter.js",
-            "argumentFormat": ""
         }
     },
     "messages": {

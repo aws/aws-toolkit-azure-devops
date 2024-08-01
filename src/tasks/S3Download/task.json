@@ -153,10 +153,6 @@
         "Node10": {
             "target": "S3Download.js",
             "argumentFormat": ""
-        },
-        "Node16": {
-            "target": "S3Download.js",
-            "argumentFormat": ""
         }
     },
     "messages": {

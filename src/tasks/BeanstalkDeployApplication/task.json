@@ -160,10 +160,6 @@
         "Node10": {
             "target": "BeanstalkDeployApplication.js",
             "argumentFormat": ""
-        },
-        "Node16": {
-            "target": "BeanstalkDeployApplication.js",
-            "argumentFormat": ""
         }
     },
     "messages": {
