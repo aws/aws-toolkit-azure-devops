@@ -155,8 +155,8 @@ describe('CodeDeploy Deploy Application', () => {
                         const entries = zip.getEntries().map(it => it.entryName)
                         expect(entries.length).toBe(3)
                         expect(entries).toContain('test.txt')
-                        expect(entries).toContain('subpath/')
-                        expect(entries).toContain('subpath/abc.txt')
+                        expect(entries).toContain(path.join('subpath/'))
+                        expect(entries).toContain(path.join('subpath', 'abc.txt'))
                         break
                     }
                 }

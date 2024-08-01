@@ -8,6 +8,7 @@
         "incremental": true,
         "strict": true,
         "esModuleInterop": true,
+        "useUnknownInCatchVariables": false,
         "paths": {
             "aws-sdk*": ["node_modules/aws-sdk/*"],
             "lib/*": ["src/lib/*"],

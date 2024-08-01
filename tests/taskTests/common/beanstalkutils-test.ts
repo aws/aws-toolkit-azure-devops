@@ -77,7 +77,7 @@ describe('BeanstalkUtils', () => {
         const entries = beanstalkBundle.getEntries().map(it => it.entryName)
         expect(entries.length).toBe(4)
         expect(entries).toContain('aws-windows-deployment-manifest.json')
-        expect(entries).toContain('app/doc.txt')
+        expect(entries).toContain(path.join('app', 'doc.txt'))
     })
 
     // This is so we don't regress functionality, but the behavior difference is weird
