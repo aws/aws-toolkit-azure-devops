@@ -55,7 +55,7 @@ One or more service endpoints, of type _AWS_, can be created and populated with 
                 "Condition": {
                     "StringEquals": {
                         "vstoken.dev.azure.com/{org-id}:sub": "sc://{orgName}/{ProjectName}/{ServiceConnections}",
-                        "vstoken.dev.azure.com/{org-id}": "api://AzureADTokenExchange"
+                        "vstoken.dev.azure.com/{org-id}:aud": "api://AzureADTokenExchange"
                     }
                 }
             }
