@@ -38,7 +38,7 @@ One or more service endpoints, of type _AWS_, can be created and populated with 
 
 -   Static credentials in the form of AWS access and secret keys, and optionally data for _Assumed Role_ credentials.
 -   If only the _Assumed Role_ is defined but neither access key ID nor secret key, the role be assumed regardless. This is useful when using instance profices, and and profile only allows to assume a role.
--   If the useOIDC is checked and you have defined an _Assumed Role_ without access key ID or secret key. This will request an OIDC token from Azure Devops and federate into AWS with than token.
+-   If the use OIDC is checked and you have defined an _Assumed Role_ without access key ID or secret key. This will request an OIDC token from Azure Devops and federate into AWS with than token.
 
     -   This will require a trust policy on the _Assume Role_ similar to this :
 
@@ -54,7 +54,7 @@ One or more service endpoints, of type _AWS_, can be created and populated with 
                 "Action": "sts:AssumeRoleWithWebIdentity",
                 "Condition": {
                     "StringEquals": {
-                        "vstoken.dev.azure.com/{org-id}:sub": "sc://{orgName}/{ProjectName}/{ServiceConnections}",
+                        "vstoken.dev.azure.com/{org-id}:sub": "sc://{orgName}/{ProjectName}/{ServiceConnectionName}",
                         "vstoken.dev.azure.com/{org-id}:aud": "api://AzureADTokenExchange"
                     }
                 }
