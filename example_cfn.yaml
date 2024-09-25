@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: |
+  "Create IAM OIDC provider and IAM Role for Azure DevOps Service Connection.
+  This template is for illustrative purposes only."
+
+Parameters:
+  AzdoOrgId:
+    Type: String
+    Default: "00000000-0000-0000-0000-000000000000"
+    Description: |
+      "ID of your Azure DevOps Organization. 
+      This can be obtained by downloading a list of projects connected to your Azure DevOps Organization.
+      The exported list of Projects will contain the Organization ID."
+  AzdoOrgName:
+    Type: String
+    Default: "example-devops-org"
+    Description: "Name of your Azure DevOps Organization."
+  AzdoProjectName:
+    Type: String
+    Default: "example-devops-project"
+    Description: "Name of your Azure DevOps Project."
+  AzdoScnName:
+    Type: String
+    Default: "example-aws-service-connection"
+    Description: "Name of your Azure DevOps Service Connection"
+  AzdoServiceConnectionRoleName:
+    Type: String
+    Default: "example-azure-devops-role"
+    Description: |
+      "Name of the IAM Role. 
+      This must match the 'Role to Assume' property of the Service Connection."
+Resources:
+  OidcIdp:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      ClientIdList:
+        - api://AzureADTokenExchange
+      Url: !Sub "https://vstoken.dev.azure.com/${AzdoOrgId}"
+  ScnRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      RoleName: !Ref AzdoServiceConnectionRoleName
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Condition": {
+                "StringEquals": {
+                  "vstoken.dev.azure.com/${AzdoOrgId}:aud": "api://AzureADTokenExchange",
+                  "vstoken.dev.azure.com/${AzdoOrgId}:sub": "sc://${AzdoOrgName}/${AzdoProjectName}/${AzdoScnName}"
+                }
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::${AWS::AccountId}:oidc-provider/vstoken.dev.azure.com/${AzdoOrgId}"
+              }
+            }
+          ]
+        }
+Outputs:
+  ScnRoleArn:
+    Value: !GetAtt ScnRole.Arn
