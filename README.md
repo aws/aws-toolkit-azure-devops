@@ -30,17 +30,18 @@ The [User Guide](https://docs.aws.amazon.com/vsts/latest/userguide/welcome.html)
 
 ## Credentials Handling for AWS Services
 
-To enable tasks to call AWS services when run as part of your build or release pipelines AWS credentials need to have been configured for the tasks or be available in the host process for the build agent. Note that the credentials are used specifically by the tasks when run in a build agent process, they are not related to end-user logins to your Azure DevOps instance.
+To enable tasks to call AWS services when run as part of your build or release pipelines, AWS credentials need to have been configured for the tasks or be available in the host process for the build agent. Note that the credentials are used specifically by the tasks when run in a build agent process, they are not related to end-user logins to your Azure DevOps instance.
 
 The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
 One or more service endpoints, of type _AWS_, can be created and populated with either:
 
 -   Static credentials in the form of AWS access and secret keys, and optionally data for _Assumed Role_ credentials.
--   If only the _Assumed Role_ is defined but neither access key ID nor secret key, the role be assumed regardless. This is useful when using instance profices, and and profile only allows to assume a role.
--   If the useOIDC is checked and you have defined an _Assumed Role_ without access key ID or secret key. This will request an OIDC token from Azure Devops and federate into AWS with than token.
+-   If only the _Assumed Role_ is defined but neither access key ID nor secret key, the role will be assumed regardless. This is useful when using instance profiles, and profile which only allows to assume a role.
+-   If  `Use OIDC` is checked and you have defined an _Assumed Role_ without an access key ID or secret key, an OIDC token will be requested from Azure Devops and used to federate into AWS.
 
-    -   This will require a trust policy on the _Assume Role_ similar to this :
+    - Using OIDC requires the creation of an OIDC Provider. Please refer to the documentation here: [Creating and managing an OIDC provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html#manage-oidc-provider-console)
+    - This will also require a trust policy on the _Assume Role_ similar to this :
 
     ```json
     {
@@ -54,7 +55,7 @@ One or more service endpoints, of type _AWS_, can be created and populated with 
                 "Action": "sts:AssumeRoleWithWebIdentity",
                 "Condition": {
                     "StringEquals": {
-                        "vstoken.dev.azure.com/{org-id}:sub": "sc://{orgName}/{ProjectName}/{ServiceConnections}",
+                        "vstoken.dev.azure.com/{org-id}:sub": "sc://{orgName}/{ProjectName}/{ServiceConnectionName}",
                         "vstoken.dev.azure.com/{org-id}:aud": "api://AzureADTokenExchange"
                     }
                 }
@@ -63,7 +64,7 @@ One or more service endpoints, of type _AWS_, can be created and populated with 
     }
     ```
 
-    You'll also have to setup the OIDC Provider, you can use the documentation of [Creating and managing an OIDC provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html#manage-oidc-provider-console)
+    - A sample CloudFormation template [example_cfn.yml](./example_cfn.yaml) is available to assist with the setup and configuration.
 
 -   Variables defined on the task or build.
     -   If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
