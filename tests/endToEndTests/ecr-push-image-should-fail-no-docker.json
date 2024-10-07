@@ -41,7 +41,7 @@
                             "sourceImageTag": "latest",
                             "sourceImageId": "",
                             "repositoryName": "test-repo",
-                            "pushTag": "latest",
+                            "targetTag": "latest",
                             "autoCreateRepository": "false",
                             "outputVariable": "",
                             "logRequest": "false",
