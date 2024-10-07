@@ -69,27 +69,39 @@ export class TaskOperations {
             this.taskParameters.targetTag
         )
         const targetImageRef = `${endpoint}/${targetImageName}`
-        
+
         // Retag an image without pushing the complete image from docker.
         if (this.taskParameters.imageSource === retagSource) {
-            const images = (await this.ecrClient.batchGetImage({
-                repositoryName: targetRepositoryName,
-                imageIds: [{imageTag: this.taskParameters.targetTag}]
-            }).promise()).images
+            const images = (
+                await this.ecrClient
+                    .batchGetImage({
+                        repositoryName: targetRepositoryName,
+                        imageIds: [{ imageTag: this.taskParameters.targetTag }]
+                    })
+                    .promise()
+            ).images
 
             if (!images || !images[0]) {
-                throw new Error(tl.loc('FailureToFindExistingImage', this.taskParameters.targetTag, this.taskParameters.repositoryName))
+                throw new Error(
+                    tl.loc(
+                        'FailureToFindExistingImage',
+                        this.taskParameters.targetTag,
+                        this.taskParameters.repositoryName
+                    )
+                )
             }
 
             const manifest = images[0].imageManifest
             if (manifest) {
                 try {
-                    await this.ecrClient.putImage({
-                        imageTag: this.taskParameters.newTag,
-                        repositoryName: targetRepositoryName,
-                        imageManifest: manifest
-                    }).promise()
-                } catch (err: any) {
+                    await this.ecrClient
+                        .putImage({
+                            imageTag: this.taskParameters.newTag,
+                            repositoryName: targetRepositoryName,
+                            imageManifest: manifest
+                        })
+                        .promise()
+                } catch (err) {
                     if (err.code !== 'ImageAlreadyExistsException') {
                         // Thrown when manifest and tag already exist in ECR.
                         // Do not block if the tag already exists on the target image.
@@ -104,11 +116,11 @@ export class TaskOperations {
             if (this.taskParameters.autoCreateRepository) {
                 await this.createRepositoryIfNeeded(this.taskParameters.repositoryName)
             }
-    
+
             await this.tagImage(sourceImageRef, targetImageRef)
-    
+
             await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
-    
+
             await this.pushImageToECR(targetImageRef)
 
             if (this.taskParameters.removeDockerImage) {
@@ -133,7 +145,7 @@ export class TaskOperations {
                     repositoryNames: [repository]
                 })
                 .promise()
-        } catch (err: any) {
+        } catch (err) {
             if (err.code === 'RepositoryNotFoundException') {
                 console.log(tl.loc('CreatingRepository'))
                 await this.ecrClient
