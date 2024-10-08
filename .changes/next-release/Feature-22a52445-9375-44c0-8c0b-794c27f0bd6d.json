@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "ECR: Push task now supports image retagging."
+}

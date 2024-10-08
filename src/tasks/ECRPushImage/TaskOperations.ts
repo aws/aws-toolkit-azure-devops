@@ -8,7 +8,7 @@ import tl = require('azure-pipelines-task-lib/task')
 import { DockerHandler } from 'lib/dockerUtils'
 import { constructTaggedImageName, getEcrAuthorizationData, loginToRegistry } from 'lib/ecrUtils'
 import { parse } from 'url'
-import { imageNameSource, TaskParameters } from './TaskParameters'
+import { imageNameSource, retagSource, TaskParameters } from './TaskParameters'
 
 export class TaskOperations {
     private dockerPath = ''
@@ -63,28 +63,74 @@ export class TaskOperations {
             proxyEndpoint = authData.proxyEndpoint
         }
 
-        if (this.taskParameters.autoCreateRepository) {
-            await this.createRepositoryIfNeeded(this.taskParameters.repositoryName)
-        }
-
+        const targetRepositoryName = this.taskParameters.repositoryName
         const targetImageName = constructTaggedImageName(
             this.taskParameters.repositoryName,
-            this.taskParameters.pushTag
+            this.taskParameters.targetTag
         )
         const targetImageRef = `${endpoint}/${targetImageName}`
-        await this.tagImage(sourceImageRef, targetImageRef)
 
-        await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
+        // Retag an image without pushing the complete image from docker.
+        if (this.taskParameters.imageSource === retagSource) {
+            const images = (
+                await this.ecrClient
+                    .batchGetImage({
+                        repositoryName: targetRepositoryName,
+                        imageIds: [{ imageTag: this.taskParameters.targetTag }]
+                    })
+                    .promise()
+            ).images
 
-        await this.pushImageToECR(targetImageRef)
+            if (!images || !images[0]) {
+                throw new Error(
+                    tl.loc(
+                        'FailureToFindExistingImage',
+                        this.taskParameters.targetTag,
+                        this.taskParameters.repositoryName
+                    )
+                )
+            }
+
+            const manifest = images[0].imageManifest
+            if (manifest) {
+                try {
+                    await this.ecrClient
+                        .putImage({
+                            imageTag: this.taskParameters.newTag,
+                            repositoryName: targetRepositoryName,
+                            imageManifest: manifest
+                        })
+                        .promise()
+                } catch (err) {
+                    if (err.code !== 'ImageAlreadyExistsException') {
+                        // Thrown when manifest and tag already exist in ECR.
+                        // Do not block if the tag already exists on the target image.
+                        throw err
+                    }
+                    console.log(err.message)
+                }
+            } else {
+                throw new Error('batchGetImage did not return an image manifest.')
+            }
+        } else {
+            if (this.taskParameters.autoCreateRepository) {
+                await this.createRepositoryIfNeeded(this.taskParameters.repositoryName)
+            }
+
+            await this.tagImage(sourceImageRef, targetImageRef)
+
+            await loginToRegistry(this.dockerHandler, this.dockerPath, authToken, proxyEndpoint)
+
+            await this.pushImageToECR(targetImageRef)
+
+            if (this.taskParameters.removeDockerImage) {
+                await this.removeDockerImage(sourceImageRef)
+            }
+        }
 
         if (this.taskParameters.outputVariable) {
             console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable, targetImageRef))
             tl.setVariable(this.taskParameters.outputVariable, targetImageRef)
-        }
-
-        if (this.taskParameters.removeDockerImage) {
-            await this.removeDockerImage(sourceImageRef)
         }
 
         console.log(tl.loc('TaskCompleted'))
