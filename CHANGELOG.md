@@ -1,3 +1,7 @@
+## 1.16.0 2024-10-08
+
+- **Feature** ECR: Push task now supports image retagging.
+
 ## 1.15.0 2024-08-01
 
 - **Feature** Add support for OIDC authentication
