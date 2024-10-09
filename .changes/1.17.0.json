@@ -1,0 +1,10 @@
+{
+	"date": "2024-10-09",
+	"version": "1.17.0",
+	"entries": [
+		{
+			"type": "Removal",
+			"description": "ECR: Remove image retagging option due to breaking change."
+		}
+	]
+}
