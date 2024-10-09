@@ -49,11 +49,10 @@
             "label": "Image Identity",
             "required": true,
             "defaultValue": "imagename",
-            "helpMarkDown": "How the image to be pushed is identified. You can select from either the image ID or the image name. If image name is selected a tag can also be specified. Alternatively, you can opt to retag an image in ECR by specifying an existing tag in the target repository. [Retagging](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-retag.html) saves bandwidth by not re-pushing the image to ECR.",
+            "helpMarkDown": "How the image to be pushed is identified. You can select from either the image ID or the image name. If image name is selected a tag can also be specified",
             "options": {
                 "imagename": "Image name with optional tag",
-                "imageid": "Image ID",
-                "retag": "Retag pushed image"
+                "imageid": "Image ID"
             },
             "properties": {
                 "EditableOptions": "False"
@@ -95,21 +94,12 @@
             "helpMarkDown": "The name of the repository to which the image will be pushed."
         },
         {
-            "name": "targetTag",
+            "name": "pushTag",
             "label": "Target Repository Tag",
             "type": "string",
             "required": false,
             "defaultValue": "latest",
-            "helpMarkDown": "Optional tag for the image in the remote repository. If not specified, ECR will assume 'latest'."
-        },
-        {
-            "name": "newTag",
-            "label": "New Tag",
-            "type": "string",
-            "required": true,
-            "defaultValue": "",
-            "helpMarkDown": "Tag to add to the target image.",
-            "visibleRule": "imageSource = retag"
+            "helpMarkDown": "Optional tag for the new image in the repository. If not specified, ECR will assume 'latest'."
         },
         {
             "name": "autoCreateRepository",
@@ -117,8 +107,7 @@
             "type": "boolean",
             "defaultValue": false,
             "required": false,
-            "helpMarkDown": "If selected the task will attempt to create the repository if it does not exist.",
-            "visibleRule": "imageSource != retag"
+            "helpMarkDown": "If selected the task will attempt to create the repository if it does not exist."
         },
         {
             "name": "forceDockerNamingConventions",
@@ -126,8 +115,7 @@
             "type": "boolean",
             "defaultValue": false,
             "required": false,
-            "helpMarkDown": "If enabled, the Docker repository name will be modified to follow Docker naming conventions. Converts upper case characters to lower case. Removes all characters except 0-9, -, . and _ .",
-            "visibleRule": "imageSource != retag"
+            "helpMarkDown": "If enabled, the Docker repository name will be modified to follow Docker naming conventions. Converts upper case characters to lower case. Removes all characters except 0-9, -, . and _ ."
         },
         {
             "name": "removeDockerImage",
@@ -135,8 +123,7 @@
             "type": "boolean",
             "defaultValue": false,
             "required": false,
-            "helpMarkDown": "If enabled, this command removes the image and untags any references to it",
-            "visibleRule": "imageSource != retag"
+            "helpMarkDown": "If enabled, this command removes the image and untags any references to it"
         },
         {
             "name": "outputVariable",
@@ -185,7 +172,6 @@
         "SettingOutputVariable": "Setting output variable %s with the pushed image tag %s",
         "TaskCompleted": "Successfully completed sending the message",
         "FailureToObtainAuthToken": "Failed to obtain auth token!",
-        "FailureToFindExistingImage": "Failed to find image with tag '%s' in target repository '%s'",
         "NoValidEndpoint": "Failed to get endpoint of repository %s. Check your credentials and if the endpoint exists!"
     }
 }
