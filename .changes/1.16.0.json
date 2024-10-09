@@ -1,0 +1,10 @@
+{
+	"date": "2024-10-08",
+	"version": "1.16.0",
+	"entries": [
+		{
+			"type": "Feature",
+			"description": "ECR: Push task now supports image retagging."
+		}
+	]
+}
