@@ -9,7 +9,6 @@ import { getInputOrEmpty, getInputRequired } from 'lib/vstsUtils'
 
 export const imageNameSource = 'imagename'
 export const imageIdSource = 'imageid'
-export const retagSource = 'retag'
 
 export interface TaskParameters {
     awsConnectionParameters: AWSConnectionParameters
@@ -18,8 +17,7 @@ export interface TaskParameters {
     sourceImageTag: string
     sourceImageId: string
     repositoryName: string
-    targetTag: string
-    newTag: string
+    pushTag: string
     autoCreateRepository: boolean
     forceDockerNamingConventions: boolean
     removeDockerImage: boolean
@@ -31,37 +29,24 @@ export function buildTaskParameters(): TaskParameters {
         awsConnectionParameters: buildConnectionParameters(),
         imageSource: getInputRequired('imageSource'),
         repositoryName: getInputRequired('repositoryName'),
-        targetTag: getInputOrEmpty('targetTag'),
+        pushTag: getInputOrEmpty('pushTag'),
         autoCreateRepository: tl.getBoolInput('autoCreateRepository', false),
         forceDockerNamingConventions: tl.getBoolInput('forceDockerNamingConventions', false),
         removeDockerImage: tl.getBoolInput('removeDockerImage', false),
         outputVariable: getInputOrEmpty('outputVariable'),
         sourceImageName: '',
         sourceImageId: '',
-        sourceImageTag: '',
-        newTag: ''
+        sourceImageTag: ''
     }
 
-    switch (parameters.imageSource) {
-        case imageNameSource:
-            parameters.sourceImageName = getInputRequired('sourceImageName')
-            parameters.sourceImageTag = getInputOrEmpty('sourceImageTag')
-            if (!parameters.sourceImageTag) {
-                parameters.sourceImageTag = 'latest'
-            }
-            break
-        case imageIdSource:
-            parameters.sourceImageId = getInputRequired('sourceImageId')
-            break
-        case retagSource:
-            parameters.newTag = getInputRequired('newTag')
-            break
-        default:
-            throw new Error(`Unknown imageSource specified: ${parameters.imageSource}`)
-    }
-
-    if (!parameters.targetTag) {
-        parameters.targetTag = 'latest'
+    if (parameters.imageSource === imageNameSource) {
+        parameters.sourceImageName = getInputRequired('sourceImageName')
+        parameters.sourceImageTag = getInputOrEmpty('sourceImageTag')
+        if (!parameters.sourceImageTag) {
+            parameters.sourceImageTag = 'latest'
+        }
+    } else {
+        parameters.sourceImageId = getInputRequired('sourceImageId')
     }
 
     return parameters

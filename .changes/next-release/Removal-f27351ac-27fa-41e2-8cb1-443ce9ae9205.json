@@ -1,0 +1,4 @@
+{
+	"type": "Removal",
+	"description": "ECR: Remove image retagging option due to breaking change."
+}
