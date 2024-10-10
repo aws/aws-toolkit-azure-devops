@@ -1,3 +1,7 @@
+## 1.17.0 2024-10-09
+
+- **Removal** ECR: Remove image retagging option due to breaking change.
+
 ## 1.16.0 2024-10-08
 
 - **Feature** ECR: Push task now supports image retagging.
