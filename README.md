@@ -65,7 +65,13 @@ One or more service connections, of type _AWS_, can be created and populated wit
     ```
 
     - A sample CloudFormation template [example_cfn.yml](./example_cfn.yaml) is available to assist with the setup and configuration.
-
+    - Additionally, a new App Registration will need to be created in the same Microsoft Entra Directory as the subscription where Azure DevOps is enabled.
+      - Create new App Registration from Microsoft Entra
+      - Create a new Federated Credential (values based on example trust policy above)
+        - **Federated credential scenario**: Other issuer
+        - **Issuer**: `https://vstoken.dev.azure.com/{org-id}`
+        - **Subject identifier**: `sc://{orgName}/{ProjectName}/{ServiceConnectionName}`
+        - **Audience**: `api://AzureADTokenExchange`
 -   Variables defined on the task or build.
     -   If tasks are not configured with the name of a service connection they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
         variables are named _AWS.AccessKeyID_, _AWS.SecretAccessKey_ and optionally _AWS.SessionToken_. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the variable _AWS.Region_. Optionally a role to assume can be specified by using the variable _AWS.AssumeRoleArn_. When assuming roles _AWS.RoleSessionName_ (optional) and _AWS.ExternalId_ (optional) can be provided in order to specify an identifier for the assumed role session and an external id to show in customers' accounts when assuming roles.
@@ -82,17 +88,17 @@ Select the _AWS_ endpoint type and provide the following parameters based on the
 
 #### OIDC Federation
 
--   `Service connection name`: A name used to refer to this service connection when later configuring AWS tasks
--   `Role to Assume`: The ARN of the IAM role to assume
--   `Use OIDC`: Checked
+-   **Service connection name**: A name used to refer to this service connection when later configuring AWS tasks
+-   **Role to Assume**: The ARN of the IAM role to assume
+-   **Use OIDC**: Checked
 
 #### Static credentials
 
 Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
 
--   `Service connection name`: A name used to refer to the credentials when configuring the AWS tasks
--   `Access Key ID`: The ID of the access key of the IAM user that will be used by the service connection tasks to authenticate to AWS
--   `Secret Access Key`: The secret access key that will also be used with authentication
+-   **Service connection name**: A name used to refer to the credentials when configuring the AWS tasks
+-   **Access Key ID**: The ID of the access key of the IAM user that will be used by the service connection tasks to authenticate to AWS
+-   **Secret Access Key**: The secret access key that will also be used with authentication
 
 #### Assume Role
 
