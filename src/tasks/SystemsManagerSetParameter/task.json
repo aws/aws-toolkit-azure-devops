@@ -99,6 +99,10 @@
         "Node10": {
             "target": "SystemsManagerSetParameter.js",
             "argumentFormat": ""
+        },
+        "Node20_1": {
+            "target": "SystemsManagerSetParameter.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

@@ -21,6 +21,45 @@ interface CommandLineOptions {
     publisher?: string
 }
 
+/**
+ * Patch shelljs, because it is not compatible with esbuild
+ * More info: https://github.com/aws/aws-toolkit-azure-devops/pull/539
+ */
+class ShelljsPatch {
+    private static readonly shelljsRootPath = path.resolve(process.cwd(), './node_modules/shelljs/')
+    private static readonly shelljsEntryPath = path.join(ShelljsPatch.shelljsRootPath, 'shell.js')
+
+    private originalContent: string | undefined
+
+    patch() {
+        const sourceRequireString =
+            "require('./commands').forEach(function (command) {\n  require('./src/' + command);\n});"
+        const originalContent = fs.readFileSync(ShelljsPatch.shelljsEntryPath, 'utf-8')
+
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const fixedRequireString = require(path.join(ShelljsPatch.shelljsRootPath, 'commands.js'))
+            .map((command: string) => `require('./src/${command}.js');`)
+            .join('\n')
+
+        const patchedContent = originalContent.replace(sourceRequireString, fixedRequireString)
+        if (originalContent === patchedContent) {
+            throw new Error('Could not patch shelljs, was this npm package updated?')
+        }
+
+        fs.writeFileSync(ShelljsPatch.shelljsEntryPath, patchedContent)
+
+        this.originalContent = originalContent
+    }
+
+    unpatch() {
+        if (this.originalContent) {
+            fs.writeFileSync(ShelljsPatch.shelljsEntryPath, this.originalContent)
+            this.originalContent = undefined
+        }
+    }
+}
+const shelljsPatch = new ShelljsPatch()
+
 function findMatchingFiles(directory: string) {
     return fs.readdirSync(directory)
 }
@@ -28,13 +67,8 @@ function findMatchingFiles(directory: string) {
 function installNodePackages(directory: string) {
     fs.mkdirpSync(directory)
     const npmCmd = `npm install --prefix ${directory} azure-pipelines-task-lib --only=production`
-    try {
-        const output = ncp.execSync(npmCmd)
-        console.log(output.toString('utf8'))
-    } catch (err) {
-        console.error(err.output ? err.output.toString() : err?.message)
-        process.exit(1)
-    }
+    const output = ncp.execSync(npmCmd)
+    console.log(output.toString('utf8'))
 }
 
 function generateGitHashFile() {
@@ -68,6 +102,8 @@ function packagePlugin(options: CommandLineOptions) {
 
     // get required npm packages that will be copied
     installNodePackages(npmFolder)
+
+    shelljsPatch.patch()
 
     // clean, dedupe and pack each task as needed
     findMatchingFiles(folders.sourceTasks).forEach(function(taskName) {
@@ -111,21 +147,18 @@ function packagePlugin(options: CommandLineOptions) {
         const inputFilename = path.join(taskBuildFolder, taskName + '.runner.js')
 
         console.log('packing node-based task')
-        try {
-            const result = esbuild.buildSync({
-                entryPoints: [inputFilename],
-                bundle: true,
-                platform: 'node',
-                target: ['node10'],
-                minify: true,
-                outfile: `${taskPackageFolder}/${taskName}.js`
-            })
-            result.warnings.forEach(warning => console.log(warning))
-        } catch (err) {
-            console.error(err.output ? err.output.toString() : err.message)
-            process.exit(1)
-        }
+        const result = esbuild.buildSync({
+            entryPoints: [inputFilename],
+            bundle: true,
+            platform: 'node',
+            target: ['node10'],
+            minify: true,
+            outfile: `${taskPackageFolder}/${taskName}.js`
+        })
+        result.warnings.forEach(warning => console.log(warning))
     })
+
+    shelljsPatch.unpatch()
 
     console.log('Creating deployment vsix')
 
@@ -156,5 +189,12 @@ const parsedOptions: CommandLineOptions = {}
 if (commandLineInput.length > 0 && commandLineInput[0].split('=')[0] === 'publisher') {
     parsedOptions.publisher = commandLineInput[0].split('=')[1]
 }
-packagePlugin(parsedOptions)
+
+try {
+    packagePlugin(parsedOptions)
+} catch (e) {
+    shelljsPatch.unpatch()
+    throw e
+}
+
 console.timeEnd(timeMessage)
