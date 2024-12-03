@@ -176,6 +176,10 @@
         "Node10": {
             "target": "LambdaNETCoreDeploy.js",
             "argumentFormat": ""
+        },
+        "Node20_1": {
+            "target": "LambdaNETCoreDeploy.js",
+            "argumentFormat": ""
         }
     },
     "messages": {
