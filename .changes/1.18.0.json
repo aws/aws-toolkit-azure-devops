@@ -1,0 +1,10 @@
+{
+	"date": "2024-12-03",
+	"version": "1.18.0",
+	"entries": [
+		{
+			"type": "Feature",
+			"description": "Tasks now support Node 20"
+		}
+	]
+}

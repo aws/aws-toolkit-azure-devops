@@ -1,3 +1,7 @@
+## 1.18.0 2024-12-03
+
+- **Feature** Tasks now support Node 20
+
 ## 1.17.0 2024-10-09
 
 - **Removal** ECR: Remove image retagging option due to breaking change.
