@@ -116,7 +116,7 @@ try {
                 }
 
                 # Request an OIDC token for the service connection from the VSTS REST API
-                $url = "$Env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI$Env:SYSTEM_TEAMPROJECTID/_apis/distributedtask/hubs/build/plans/$Env:SYSTEM_PLANID/jobs/$Env:SYSTEM_JOBID/oidctoken?api-version=7.1-preview.1&serviceConnectionId=$awsEndpoint"
+                $url = $Env:SYSTEM_OIDCREQUESTURI + "?api-version=7.1-preview.1&serviceConnectionId=$awsEndpoint"
                 $response = Invoke-WebRequest -Uri $url -Method POST -Headers $Headers  -Body '{}' -ContentType "application/json" | ConvertFrom-Json
                 $token = $response.oidcToken
 
