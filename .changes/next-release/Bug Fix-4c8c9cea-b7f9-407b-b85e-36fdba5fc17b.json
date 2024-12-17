@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "use the correct OIDC request url for the PowerShell task"
+}
