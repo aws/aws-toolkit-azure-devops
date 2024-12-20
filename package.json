@@ -11,7 +11,7 @@
         "build": "npm run generateCode && npm run compileTypescript",
         "generateCode": "ts-node ./build-scripts/generateRunners.ts",
         "compileTypescript": "tsc -p ./",
-        "test": "jest",
+        "test": "ts-node ./build-scripts/validate.ts && jest",
         "clean": "ts-node ./build-scripts/clean.ts",
         "lint": "eslint -c .eslintrc.js --ext .ts .",
         "lintFix": "eslint -c .eslintrc.js --fix --ext .ts .",
