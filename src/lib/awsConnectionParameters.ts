@@ -477,7 +477,9 @@ export async function getOIDCToken(connectedService: string): Promise<string> {
     const token = tl.getVariable('System.AccessToken')
 
     if (token == undefined) {
-        throw new Error('System.AccessToken is undefined')
+        throw new Error(
+            'System.AccessToken is undefined. Ensure that you have enabled OAuth token access for your pipeline/agent job: https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=classic#systemaccesstoken'
+        )
     }
 
     const authHandler = getHandlerFromToken(token)
