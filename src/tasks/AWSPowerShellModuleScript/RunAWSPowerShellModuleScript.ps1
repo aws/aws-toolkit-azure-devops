@@ -198,14 +198,20 @@ try {
         'CONTINUE' { }
         'SILENTLYCONTINUE' { }
         default {
-            Write-Error (Get-VstsLocString -Key 'PS_InvalidErrorActionPreference' -ArgumentList $input_errorActionPreference)
+            Write-VstsTaskError (Get-VstsLocString -Key 'PS_InvalidErrorActionPreference' -ArgumentList $input_errorActionPreference)
         }
     }
 
     $input_failOnStderr = Get-VstsInput -Name 'failOnStderr' -AsBool
     $input_ignoreLASTEXITCODE = Get-VstsInput -Name 'ignoreLASTEXITCODE' -AsBool
     $input_workingDirectory = Get-VstsInput -Name 'workingDirectory' -Require
-    Assert-VstsPath -LiteralPath $input_workingDirectory -PathType 'Container'
+    try {
+        Assert-VstsPath -LiteralPath $input_workingDirectory -PathType 'Container'
+    }
+    catch {
+        Write-VstsTaskError (Get-VstsLocString -Key 'PS_InvalidWorkingDirectory' -ArgumentList $input_workingDirectory)
+        throw $_
+    }
 
     $scriptType = Get-VstsInput -Name 'scriptType' -Require
     $input_arguments = Get-VstsInput -Name 'arguments'
@@ -216,11 +222,11 @@ try {
             Assert-VstsPath -LiteralPath $input_filePath -PathType Leaf
         }
         catch {
-            Write-Error (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
+            Write-VstsTaskError (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
         }
 
         if (!$input_filePath.ToUpperInvariant().EndsWith('.PS1')) {
-            Write-Error (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
+            Write-VstsTaskError (Get-VstsLocString -Key 'PS_InvalidFilePath' -ArgumentList $input_filePath)
         }
     }
     else {
@@ -365,8 +371,12 @@ try {
 }
 finally {
     if ($scriptType -And "$scriptType".ToUpperInvariant() -eq "INLINE") {
-        Write-Host "Cleaning up temporary script file $input_filePath"
-        Remove-Item -Path $input_filePath -Force
+        if ($input_filePath -And (Test-Path -Path $input_filePath)) {
+            Write-Host "Cleaning up temporary script file $input_filePath"
+            Remove-Item -Path $input_filePath -Force
+        } else {
+            Write-Host "Temporary script file does not exist, nothing to clean: $input_filePath"
+        }
     }
 
     Trace-VstsLeavingInvocation $MyInvocation

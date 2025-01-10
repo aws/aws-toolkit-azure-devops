@@ -141,6 +141,7 @@
         "PS_FormattedCommand": "Formatted command: {0}",
         "PS_InvalidErrorActionPreference": "Invalid ErrorActionPreference '{0}'. The value must be one of: 'Stop', 'Continue', or 'SilentlyContinue'.",
         "PS_InvalidFilePath": "Invalid file path '{0}'. A path to a .ps1 file is required.",
+        "PS_InvalidWorkingDirectory": "Invalid working directory path '{0}'.",
         "PS_UnableToDetermineExitCode": "Unexpected exception. Unable to determine the exit code from powershell.",
         "ConfiguringProxy": "Configuring proxy for AWSPowerShell module. Host {0}, port {1}",
         "ProxyConfigError": "Failed to configure proxy, error {0}",
