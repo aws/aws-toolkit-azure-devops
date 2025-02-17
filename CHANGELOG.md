@@ -1,3 +1,9 @@
+## 1.19.0 2025-01-13
+
+- **Bug Fix** use the correct OIDC request url for the PowerShell task
+- **Bug Fix** PowerShell: Invalid working directory produces cryptic error message and exits cleanup early.
+- **Feature** Auth: Add helpful log message if OIDC is used but OAuth is not enabled for the agent.
+
 ## 1.18.0 2024-12-03
 
 - **Feature** Tasks now support Node 20

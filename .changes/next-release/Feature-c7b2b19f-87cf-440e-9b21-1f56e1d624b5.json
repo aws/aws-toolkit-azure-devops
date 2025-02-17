@@ -1,4 +1,0 @@
-{
-	"type": "Feature",
-	"description": "Auth: Add helpful log message if OIDC is used but OAuth is not enabled for the agent."
-}

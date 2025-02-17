@@ -1,4 +1,0 @@
-{
-	"type": "Bug Fix",
-	"description": "PowerShell: Invalid working directory produces cryptic error message and exits cleanup early."
-}

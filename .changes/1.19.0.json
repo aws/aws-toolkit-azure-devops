@@ -1,0 +1,18 @@
+{
+	"date": "2025-01-15",
+	"version": "1.19.0",
+	"entries": [
+		{
+			"type": "Bug Fix",
+			"description": "use the correct OIDC request url for the PowerShell task"
+		},
+		{
+			"type": "Bug Fix",
+			"description": "PowerShell: Invalid working directory produces cryptic error message and exits cleanup early."
+		},
+		{
+			"type": "Feature",
+			"description": "Auth: Add helpful log message if OIDC is used but OAuth is not enabled for the agent."
+		}
+	]
+}
