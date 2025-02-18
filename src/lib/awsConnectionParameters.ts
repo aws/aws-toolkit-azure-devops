@@ -11,6 +11,7 @@ import { HttpsProxyAgent } from 'https-proxy-agent'
 import { format, parse, Url } from 'url'
 import { getHandlerFromToken, WebApi } from 'azure-devops-node-api'
 import { ITaskApi } from 'azure-devops-node-api/TaskApi'
+import { withRetries } from './timeoutUtils'
 
 // Task variable names that can be used to supply the AWS credentials
 // to a task (in addition to using a service endpoint, or environment
@@ -482,17 +483,30 @@ export async function getOIDCToken(connectedService: string): Promise<string> {
         )
     }
 
-    const authHandler = getHandlerFromToken(token)
-    const connection = new WebApi(uri, authHandler)
-    const api: ITaskApi = await connection.getTaskApi()
-    const response = await api.createOidcToken({}, projectId, hub, planId, jobId, connectedService)
-    if (response === undefined || response.oidcToken === undefined) {
-        throw new Error('Failed to generate OidcToken')
+    try {
+        const authHandler = getHandlerFromToken(token)
+        const response = await withRetries(
+            async () => {
+                const connection = new WebApi(uri, authHandler)
+                const api: ITaskApi = await connection.getTaskApi()
+                return await api.createOidcToken({}, projectId, hub, planId, jobId, connectedService)
+            },
+            {
+                maxRetries: 5,
+                delay: 5000,
+                backoff: 3
+            }
+        )
+        if (response === undefined || response.oidcToken === undefined) {
+            throw new Error('Invalid response when requesting OIDC token.')
+        }
+
+        const claims = JSON.parse(Buffer.from(response.oidcToken.split('.')[1], 'base64').toString('utf-8'))
+
+        console.log('OIDC Token generated: issuer: {%s} sub: {%s}, aud: {%s}', claims.iss, claims.sub, claims.aud)
+        return response.oidcToken
+    } catch (err) {
+        console.log('Failed to generate OIDC token. May fall back to other (potentially invalid) credential sources.')
+        throw err
     }
-
-    const claims = JSON.parse(Buffer.from(response.oidcToken.split('.')[1], 'base64').toString('utf-8'))
-
-    console.log('OIDC Token generated: issuer: {%s} sub: {%s}, aud: {%s}', claims.iss, claims.sub, claims.aud)
-
-    return response.oidcToken
 }
