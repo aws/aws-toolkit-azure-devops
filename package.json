@@ -94,7 +94,7 @@
         "https-proxy-agent": "^5.0.0",
         "js-yaml": "^3.13.1",
         "mime-types": "^2.1.30",
-        "semver": "^7.3.4"
+        "semver": "^7.5.2"
     },
     "jest": {
         "coverageDirectory": "./coverage/",
