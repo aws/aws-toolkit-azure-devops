@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "Auth: Retry failures when attempting to fetch OIDC tokens."
+}
