@@ -1,3 +1,7 @@
+## 1.20.0 2025-03-19
+
+- **Feature** Auth: Retry failures when attempting to fetch OIDC tokens.
+
 ## 1.19.0 2025-01-13
 
 - **Bug Fix** use the correct OIDC request url for the PowerShell task
