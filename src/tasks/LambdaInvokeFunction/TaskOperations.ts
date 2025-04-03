@@ -34,8 +34,13 @@ export class TaskOperations {
         try {
             const data: Lambda.InvocationResponse = await this.lambdaClient.invoke(params).promise()
             let outValue = ''
+            let outLogsValue = ''
             if (data.Payload) {
                 outValue = data.Payload.toString()
+            }
+
+            if (data.LogResult) {
+                outLogsValue = data.LogResult
             }
 
             // don't echo the value into the normal logs in case it contains sensitive data
@@ -44,6 +49,11 @@ export class TaskOperations {
             if (this.taskParameters.outputVariable) {
                 console.log(tl.loc('SettingOutputVariable', this.taskParameters.outputVariable))
                 tl.setVariable(this.taskParameters.outputVariable, outValue)
+            }
+
+            if (this.taskParameters.outputLogsVariable) {
+                console.log(tl.loc('SettingOutputLogsVariable', this.taskParameters.outputLogsVariable))
+                tl.setVariable(this.taskParameters.outputLogsVariable, outLogsValue)
             }
 
             console.log(tl.loc('TaskCompleted', this.taskParameters.functionName))
