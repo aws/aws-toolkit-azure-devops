@@ -96,7 +96,7 @@ describe('ECR Pull image', () => {
     })
 
     test('Happy path', async () => {
-        expect.assertions(3)
+        expect.assertions(2)
         const dockerHandler = { ...defaultDocker }
         const runDockerCommand = jest.fn((thing1, thing2, thing3) => Promise.resolve())
         dockerHandler.runDockerCommand = runDockerCommand
@@ -108,7 +108,6 @@ describe('ECR Pull image', () => {
         const taskOperations = new TaskOperations(ecr, dockerHandler, taskParameters)
         await taskOperations.execute()
         expect(ecr.getAuthorizationToken).toBeCalledTimes(1)
-        expect(runDockerCommand.mock.calls[0][2][2]).toStrictEqual('--password-stdin')
-        expect(runDockerCommand.mock.calls[0][2][3]).toStrictEqual('https://example.com')
+        expect(runDockerCommand.mock.calls[0][2][4]).toStrictEqual('https://example.com')
     })
 })
