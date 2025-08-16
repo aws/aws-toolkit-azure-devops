@@ -18,6 +18,15 @@ export async function loginToRegistry(
         .decode(encodedAuthToken)
         .trim()
         .split(':')
+
+    // Mask credentials from logs to prevent accidental exposure
+    if (tokens[0]) {
+        tl.setSecret(tokens[0]) // username
+    }
+    if (tokens[1]) {
+        tl.setSecret(tokens[1]) // password
+    }
+
     await dockerHandler.runDockerCommand(dockerPath, 'login', ['-u', tokens[0], '--password-stdin', endpoint], {
         silent: true,
         input: tokens[1] // Password provided via stdin
