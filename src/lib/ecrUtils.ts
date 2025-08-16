@@ -27,9 +27,8 @@ export async function loginToRegistry(
         tl.setSecret(tokens[1]) // password
     }
 
-    await dockerHandler.runDockerCommand(dockerPath, 'login', ['-u', tokens[0], '--password-stdin', endpoint], {
-        silent: true,
-        input: tokens[1] // Password provided via stdin
+    await dockerHandler.runDockerCommand(dockerPath, 'login', ['-u', tokens[0], '-p', tokens[1], endpoint], {
+        silent: true
     })
 }
 
