@@ -13,6 +13,7 @@ export interface TaskParameters {
     invocationType: string
     logType: string
     outputVariable: string
+    outputLogsVariable: string
 }
 
 export function buildTaskParameters(): TaskParameters {
@@ -22,6 +23,7 @@ export function buildTaskParameters(): TaskParameters {
         payload: getInputOrEmpty('payload'),
         invocationType: getInputOrEmpty('invocationType'),
         logType: getInputOrEmpty('logType'),
-        outputVariable: getInputOrEmpty('outputVariable')
+        outputVariable: getInputOrEmpty('outputVariable'),
+        outputLogsVariable: getInputOrEmpty('outputLogsVariable')
     }
 }
