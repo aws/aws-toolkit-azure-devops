@@ -37,8 +37,8 @@ try {
     Write-Host (Get-VstsLocString -Key 'TestingAWSModuleInstalled')
     if (Get-Module -Name AWS.Tools.Common -ListAvailable) {
         Write-Host (Get-VstsLocString -Key 'ModularAWSModuleFound')
-        if((Get-Module -Name AWS.Tools.SecurityToken -ListAvailable)) {
-            Import-Module AWS.Tools.SecurityToken
+        if(Get-Module -Name AWS.Tools.SecurityToken -ListAvailable) {
+            Import-Module -Name AWS.Tools.SecurityToken
         }
         else {
             Write-Host (Get-VstsLocString -Key 'SecurityTokenModuleNotFound')
