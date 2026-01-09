@@ -34,11 +34,11 @@ To enable tasks to call AWS services when run as part of your build or release p
 
 The AWS tasks support the following mechanisms for obtaining AWS credentials:
 
-One or more service endpoints, of type _AWS_, can be created and populated with either:
+One or more service connections, of type _AWS_, can be created and populated with either:
 
 -   Static credentials in the form of AWS access and secret keys, and optionally data for _Assumed Role_ credentials.
 -   If only the _Assumed Role_ is defined but neither access key ID nor secret key, the role will be assumed regardless. This is useful when using instance profiles, and profile which only allows to assume a role.
--   If  `Use OIDC` is checked and you have defined an _Assumed Role_ without an access key ID or secret key, an OIDC token will be requested from Azure Devops and used to federate into AWS.
+-   If  `Use OIDC` is checked and you have defined an _Assumed Role_ without an `Access Key ID` or `Secret Access Key`, an OIDC token will be requested from Azure DevOps and used to federate into AWS.
 
     - Using OIDC requires the creation of an OIDC Provider. Please refer to the documentation here: [Creating and managing an OIDC provider](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc.html#manage-oidc-provider-console)
     - This will also require a trust policy on the _Assume Role_ similar to this :
@@ -65,34 +65,40 @@ One or more service endpoints, of type _AWS_, can be created and populated with 
     ```
 
     - A sample CloudFormation template [example_cfn.yml](./example_cfn.yaml) is available to assist with the setup and configuration.
-
+    - Additionally, a new App Registration will need to be created in the same Microsoft Entra Directory as the subscription where Azure DevOps is enabled.
+      - Create new App Registration from Microsoft Entra
+      - Create a new Federated Credential (values based on example trust policy above)
+        - **Federated credential scenario**: Other issuer
+        - **Issuer**: `https://vstoken.dev.azure.com/{org-id}`
+        - **Subject identifier**: `sc://{orgName}/{ProjectName}/{ServiceConnectionName}`
+        - **Audience**: `api://AzureADTokenExchange`
 -   Variables defined on the task or build.
-    -   If tasks are not configured with the name of a service endpoint they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
+    -   If tasks are not configured with the name of a service connection they will attempt to obtain credentials, and optionally region, from variables defined in the build environment. The
         variables are named _AWS.AccessKeyID_, _AWS.SecretAccessKey_ and optionally _AWS.SessionToken_. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the variable _AWS.Region_. Optionally a role to assume can be specified by using the variable _AWS.AssumeRoleArn_. When assuming roles _AWS.RoleSessionName_ (optional) and _AWS.ExternalId_ (optional) can be provided in order to specify an identifier for the assumed role session and an external id to show in customers' accounts when assuming roles.
 -   Environment variables in the build agent's environment.
-    -   If tasks are not configured with the name of a service endpoint, and credentials or region are not available from task variables, the tasks will attempt to obtain credentials, and optionally region, from standard environment variables in the build process environment. These variables are _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the environment variable _AWS_REGION_.
+    -   If tasks are not configured with the name of a service connection, and credentials or region are not available from task variables, the tasks will attempt to obtain credentials, and optionally region, from standard environment variables in the build process environment. These variables are _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_ and optionally _AWS_SESSION_TOKEN_. To supply the ID of the region to make the call in, e.g. us-west-2, you can also use the environment variable _AWS_REGION_.
 -   EC2 instance metadata, for build hosts running on EC2 instances.
     -   Both credential and region information can be automatically obtained from the instance metadata in this scenario.
 
-### Configuring an AWS Service Endpoint
+### Configuring an AWS Service Connection in Azure DevOps
 
-To use _AWS_ service endpoints add the AWS subscription(s) to use by opening the Account Administration screen (gear icon on the top-right of the screen) and then click on the Services Tab. Note that each Azure DevOps project is associated with its own set of credentials. Service endpoints are not shared across projects. You can associate a single service endpoint to be used with all AWS tasks in a build or multiple endpoints if you require.
+To use AWS service connections with the AWS Toolkit for Azure DevOps, you must first configure one. From Azure DevOps, open the project for which you would like pipelines to be able to access your AWS account and open `Project Settings` (bottom-left corner of web site). Under the `Pipelines` section, select `Service connections` and then click the `New service connection` button. Note that each Azure DevOps project is associated with its own set of credentials. Service connections are not shared across projects. You can associate a single service connection to be used with all AWS tasks in a build or multiple endpoints if you require.
 
-Select the _AWS_ endpoint type and provide the following parameters based on the type of authentification above.
+Select the _AWS_ endpoint type and provide the following parameters based on the type of authentification above:
 
 #### OIDC Federation
 
--   A name used to refer to the credentials when configuring the AWS tasks
--   The arn of the role to assume
--   Check the useOIDC options
+-   **Service connection name**: A name used to refer to this service connection when later configuring AWS tasks
+-   **Role to Assume**: The ARN of the IAM role to assume
+-   **Use OIDC**: Checked
 
 #### Static credentials
 
 Please refer to [About Access Keys](https://aws.amazon.com/developers/access-keys/):
 
--   A name used to refer to the credentials when configuring the AWS tasks
--   AWS Access Key ID
--   AWS Secret Access Key
+-   **Service connection name**: A name used to refer to the credentials when configuring the AWS tasks
+-   **Access Key ID**: The ID of the access key of the IAM user that will be used by the service connection tasks to authenticate to AWS
+-   **Secret Access Key**: The secret access key that will also be used with authentication
 
 #### Assume Role
 
