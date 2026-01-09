@@ -117,7 +117,7 @@ try {
 
                 # Request an OIDC token for the service connection from the VSTS REST API
                 $url = $Env:SYSTEM_OIDCREQUESTURI + "?api-version=7.1-preview.1&serviceConnectionId=$awsEndpoint"
-                $response = Invoke-WebRequest -Uri $url -Method POST -Headers $Headers  -Body '{}' -ContentType "application/json" | ConvertFrom-Json
+                $response = Invoke-WebRequest -Uri $url -Method POST -Headers $Headers  -Body '{}' -ContentType "application/json" -UseBasicParsing | ConvertFrom-Json
                 $token = $response.oidcToken
 
                 # Log the OIDC token claims so users know how to configure AWS
