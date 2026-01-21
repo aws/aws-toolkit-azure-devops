@@ -17,7 +17,8 @@ const baseTaskParameters: TaskParameters = {
     payload: '',
     invocationType: '',
     logType: '',
-    outputVariable: ''
+    outputVariable: '',
+    outputLogsVariable: ''
 }
 
 const awsResponseThrows = {
@@ -60,6 +61,7 @@ describe('Lambda Invoke', () => {
         expect.assertions(3)
         const taskParameters = { ...baseTaskParameters }
         taskParameters.outputVariable = 'something'
+        taskParameters.outputLogsVariable = 'something'
         await assertPayloadCorrect(
             taskParameters,
             jest.fn(() => {
