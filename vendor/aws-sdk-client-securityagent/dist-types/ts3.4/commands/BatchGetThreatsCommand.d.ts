@@ -1,0 +1,113 @@
+import { MetadataBearer as __MetadataBearer } from "@smithy/types";
+import { BatchGetThreatsInput, BatchGetThreatsOutput } from "../models/models_0";
+export { __MetadataBearer };
+/**
+ * @public
+ *
+ * The input for {@link BatchGetThreatsCommand}.
+ */
+export interface BatchGetThreatsCommandInput extends BatchGetThreatsInput {
+}
+/**
+ * @public
+ *
+ * The output of {@link BatchGetThreatsCommand}.
+ */
+export interface BatchGetThreatsCommandOutput extends BatchGetThreatsOutput, __MetadataBearer {
+}
+declare const BatchGetThreatsCommand_base: {
+    new (input: BatchGetThreatsCommandInput): import("@smithy/core/client").CommandImpl<BatchGetThreatsCommandInput, BatchGetThreatsCommandOutput, import("..").SecurityAgentClientResolvedConfig, import("..").ServiceInputTypes, import("..").ServiceOutputTypes>;
+    new (input: BatchGetThreatsCommandInput): import("@smithy/core/client").CommandImpl<BatchGetThreatsCommandInput, BatchGetThreatsCommandOutput, import("..").SecurityAgentClientResolvedConfig, import("..").ServiceInputTypes, import("..").ServiceOutputTypes>;
+    getEndpointParameterInstructions(): import("@smithy/types").EndpointParameterInstructions;
+};
+/**
+ * <p>Retrieves information about one or more threats.</p>
+ * @example
+ * Use a bare-bones client and the command you need to make an API call.
+ * ```javascript
+ * import { SecurityAgentClient, BatchGetThreatsCommand } from "@aws-sdk/client-securityagent"; // ES Modules import
+ * // const { SecurityAgentClient, BatchGetThreatsCommand } = require("@aws-sdk/client-securityagent"); // CommonJS import
+ * // import type { SecurityAgentClientConfig } from "@aws-sdk/client-securityagent";
+ * const config = {}; // type is SecurityAgentClientConfig
+ * const client = new SecurityAgentClient(config);
+ * const input = { // BatchGetThreatsInput
+ *   threatIds: [ // ThreatIdList // required
+ *     "STRING_VALUE",
+ *   ],
+ *   agentSpaceId: "STRING_VALUE", // required
+ * };
+ * const command = new BatchGetThreatsCommand(input);
+ * const response = await client.send(command);
+ * // { // BatchGetThreatsOutput
+ * //   threats: [ // ThreatList
+ * //     { // Threat
+ * //       threatId: "STRING_VALUE",
+ * //       threatJobId: "STRING_VALUE",
+ * //       title: "STRING_VALUE",
+ * //       statement: "STRING_VALUE",
+ * //       severity: "CRITICAL" || "HIGH" || "MEDIUM" || "LOW" || "INFO",
+ * //       status: "OPEN" || "RESOLVED" || "DISMISSED",
+ * //       comments: "STRING_VALUE",
+ * //       threatSource: "STRING_VALUE",
+ * //       prerequisites: "STRING_VALUE",
+ * //       threatAction: "STRING_VALUE",
+ * //       threatImpact: "STRING_VALUE",
+ * //       impactedGoal: [ // StringList
+ * //         "STRING_VALUE",
+ * //       ],
+ * //       impactedAssets: [
+ * //         "STRING_VALUE",
+ * //       ],
+ * //       anchor: { // ThreatAnchorShape
+ * //         kind: "STRING_VALUE",
+ * //         id: "STRING_VALUE",
+ * //         packageId: "STRING_VALUE",
+ * //       },
+ * //       evidence: [ // ThreatEvidenceList
+ * //         { // ThreatEvidenceShape
+ * //           packageId: "STRING_VALUE",
+ * //           path: "STRING_VALUE",
+ * //         },
+ * //       ],
+ * //       stride: [ // StrideCategoryList
+ * //         "SPOOFING" || "TAMPERING" || "REPUDIATION" || "INFORMATION_DISCLOSURE" || "DENIAL_OF_SERVICE" || "ELEVATION_OF_PRIVILEGE",
+ * //       ],
+ * //       recommendation: "STRING_VALUE",
+ * //       createdBy: "CUSTOMER" || "AGENT",
+ * //       updatedBy: "CUSTOMER" || "AGENT",
+ * //       createdAt: new Date("TIMESTAMP"),
+ * //       updatedAt: new Date("TIMESTAMP"),
+ * //     },
+ * //   ],
+ * //   notFound: [ // ThreatIdList
+ * //     "STRING_VALUE",
+ * //   ],
+ * // };
+ *
+ * ```
+ *
+ * @param BatchGetThreatsCommandInput - {@link BatchGetThreatsCommandInput}
+ * @returns {@link BatchGetThreatsCommandOutput}
+ * @see {@link BatchGetThreatsCommandInput} for command's `input` shape.
+ * @see {@link BatchGetThreatsCommandOutput} for command's `response` shape.
+ * @see {@link SecurityAgentClientResolvedConfig | config} for SecurityAgentClient's `config` shape.
+ *
+ * @throws {@link SecurityAgentServiceException}
+ * <p>Base exception class for all service exceptions from SecurityAgent service.</p>
+ *
+ *
+ * @public
+ */
+export declare class BatchGetThreatsCommand extends BatchGetThreatsCommand_base {
+    /** @internal type navigation helper, not in runtime. */
+    protected static __types: {
+        api: {
+            input: BatchGetThreatsInput;
+            output: BatchGetThreatsOutput;
+        };
+        sdk: {
+            input: BatchGetThreatsCommandInput;
+            output: BatchGetThreatsCommandOutput;
+        };
+    };
+}

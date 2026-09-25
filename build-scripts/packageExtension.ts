@@ -121,11 +121,12 @@ function packagePlugin(options: CommandLineOptions) {
 
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const taskDef = require(path.join(taskBuildFolder, 'task.json'))
-        if (
-            !Object.hasOwnProperty.call(taskDef.execution, 'Node') &&
-            !Object.hasOwnProperty.call(taskDef.execution, 'Node10') &&
-            !Object.hasOwnProperty.call(taskDef.execution, 'Node14')
-        ) {
+        // Any 'Node*' handler (Node, Node10, Node14, Node20_1, ...) is a node-based task and must be
+        // bundled by esbuild below, which is what produces the <taskName>.js that task.json targets.
+        // Matching on the prefix rather than an explicit list means a task declaring only a newer
+        // handler is not silently diverted to the non-node copy path, which emits no entry point.
+        const isNodeTask = Object.keys(taskDef.execution).some(handler => handler.startsWith('Node'))
+        if (!isNodeTask) {
             console.log('Copying non-node task ' + taskName)
             fs.copySync(taskBuildFolder, taskPackageFolder)
 

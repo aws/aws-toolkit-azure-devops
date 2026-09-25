@@ -8,6 +8,7 @@
         "incremental": true,
         "strict": true,
         "esModuleInterop": true,
+        "skipLibCheck": true,
         "paths": {
             "aws-sdk*": ["node_modules/aws-sdk/*"],
             "lib/*": ["src/lib/*"],
@@ -15,5 +16,5 @@
         },
         "rootDirs": ["src"]
     },
-    "exclude": ["node_modules", "build", "package"]
+    "exclude": ["node_modules", "build", "package", "vendor"]
 }

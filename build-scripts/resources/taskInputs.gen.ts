@@ -239,6 +239,21 @@ export const records = {
         's3Prefix',
         'additionalArgs'
     ],
+    RunPentest: [
+        'awsCredentials',
+        'regionName',
+        'agentSpaceId',
+        'pentestId',
+        'repository',
+        'repositoryProvider',
+        'severityThreshold',
+        'timeoutMinutes',
+        'failOnError',
+        'onScopeConflict',
+        'dryRun',
+        'logRequest',
+        'logResponse'
+    ],
     S3Download: [
         'awsCredentials',
         'regionName',
