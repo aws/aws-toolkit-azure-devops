@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "RunPentest: add optional baseCommitSha / headCommitSha inputs to pin the tested commit range, and report which source produced each side of the range. Pinning the head leaves the gate-passed baseline unchanged."
+}
