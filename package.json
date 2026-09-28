@@ -85,6 +85,7 @@
         "validator": "^13.7.0"
     },
     "dependencies": {
+        "@aws-sdk/client-securityagent": "file:./vendor/aws-sdk-client-securityagent",
         "@typescript-eslint/typescript-estree": "^4.17.0",
         "adm-zip": "^0.5.3",
         "aws-sdk": "^2.979.0",
@@ -94,7 +95,8 @@
         "https-proxy-agent": "^5.0.0",
         "js-yaml": "^3.13.1",
         "mime-types": "^2.1.30",
-        "semver": "^7.3.4"
+        "semver": "^7.3.4",
+        "typed-rest-client": "^2.0.2"
     },
     "jest": {
         "coverageDirectory": "./coverage/",

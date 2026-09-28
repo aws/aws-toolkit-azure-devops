@@ -18,6 +18,7 @@ requests or any positive contribution. Please see the the [CONTRIBUTING](CONTRIB
 -   CloudFormation - Create/Delete/Update CloudFormation stacks
 -   ECR - Push an image to an ECR repository
 -   Lambda - Deploy from S3, .net core applications, or any other language that builds on Azure DevOps
+-   Run Pentest - Run an AWS Security Agent (now part of AWS Continuum) penetration test against a deployed endpoint and gate promotion on the findings
 -   S3 - Upload/Download to/from S3 buckets
 -   Secrets Manager - Create and retrieve secrets
 -   SQS - Send SQS messages

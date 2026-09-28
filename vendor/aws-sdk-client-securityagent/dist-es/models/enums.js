@@ -1,0 +1,266 @@
+export const AccessType = {
+    PRIVATE: "PRIVATE",
+    PUBLIC: "PUBLIC",
+};
+export const AuthenticationProviderType = {
+    AWS_IAM_ROLE: "AWS_IAM_ROLE",
+    AWS_INTERNAL: "AWS_INTERNAL",
+    AWS_LAMBDA: "AWS_LAMBDA",
+    SECRETS_MANAGER: "SECRETS_MANAGER",
+};
+export const ArtifactType = {
+    DOC: "DOC",
+    DOCX: "DOCX",
+    JPEG: "JPEG",
+    JSON: "JSON",
+    MD: "MD",
+    PDF: "PDF",
+    PNG: "PNG",
+    TXT: "TXT",
+    YAML: "YAML",
+};
+export const CleanUpStrategy = {
+    BEST_EFFORT_DELETE: "BEST_EFFORT_DELETE",
+    RETAIN_ALL: "RETAIN_ALL",
+};
+export const CodeRemediationStrategy = {
+    AUTOMATIC: "AUTOMATIC",
+    DISABLED: "DISABLED",
+};
+export const SkillType = {
+    FINDING_PERSONALIZATION: "FINDING_PERSONALIZATION",
+    LOGIN_OPTIMIZATION: "LOGIN_OPTIMIZATION",
+};
+export const RiskType = {
+    ARBITRARY_FILE_UPLOAD: "ARBITRARY_FILE_UPLOAD",
+    BUSINESS_LOGIC_VULNERABILITIES: "BUSINESS_LOGIC_VULNERABILITIES",
+    CODE_INJECTION: "CODE_INJECTION",
+    COMMAND_INJECTION: "COMMAND_INJECTION",
+    CROSS_SITE_SCRIPTING: "CROSS_SITE_SCRIPTING",
+    CRYPTOGRAPHIC_VULNERABILITIES: "CRYPTOGRAPHIC_VULNERABILITIES",
+    DATABASE_ACCESS: "DATABASE_ACCESS",
+    DATABASE_MODIFICATION: "DATABASE_MODIFICATION",
+    DEFAULT_CREDENTIALS: "DEFAULT_CREDENTIALS",
+    DENIAL_OF_SERVICE: "DENIAL_OF_SERVICE",
+    FILE_ACCESS: "FILE_ACCESS",
+    FILE_CREATION: "FILE_CREATION",
+    FILE_DELETION: "FILE_DELETION",
+    GRAPHQL_VULNERABILITIES: "GRAPHQL_VULNERABILITIES",
+    INFORMATION_DISCLOSURE: "INFORMATION_DISCLOSURE",
+    INSECURE_DESERIALIZATION: "INSECURE_DESERIALIZATION",
+    INSECURE_DIRECT_OBJECT_REFERENCE: "INSECURE_DIRECT_OBJECT_REFERENCE",
+    JSON_WEB_TOKEN_VULNERABILITIES: "JSON_WEB_TOKEN_VULNERABILITIES",
+    LOCAL_FILE_INCLUSION: "LOCAL_FILE_INCLUSION",
+    OTHER: "OTHER",
+    OUTBOUND_SERVICE_REQUEST: "OUTBOUND_SERVICE_REQUEST",
+    PATH_TRAVERSAL: "PATH_TRAVERSAL",
+    PRIVILEGE_ESCALATION: "PRIVILEGE_ESCALATION",
+    SERVER_SIDE_REQUEST_FORGERY: "SERVER_SIDE_REQUEST_FORGERY",
+    SERVER_SIDE_TEMPLATE_INJECTION: "SERVER_SIDE_TEMPLATE_INJECTION",
+    SQL_INJECTION: "SQL_INJECTION",
+    UNKNOWN: "UNKNOWN",
+    XML_EXTERNAL_ENTITY: "XML_EXTERNAL_ENTITY",
+};
+export const NetworkTrafficRuleEffect = {
+    ALLOW: "ALLOW",
+    DENY: "DENY",
+};
+export const NetworkTrafficRuleType = {
+    URL: "URL",
+};
+export const ErrorCode = {
+    CLIENT_ERROR: "CLIENT_ERROR",
+    INTERNAL_ERROR: "INTERNAL_ERROR",
+    STOPPED_BY_USER: "STOPPED_BY_USER",
+};
+export const ContextType = {
+    CLIENT_ERROR: "CLIENT_ERROR",
+    ERROR: "ERROR",
+    INFO: "INFO",
+    WARNING: "WARNING",
+};
+export const JobStatus = {
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED",
+    IN_PROGRESS: "IN_PROGRESS",
+    STOPPED: "STOPPED",
+    STOPPING: "STOPPING",
+};
+export const StepName = {
+    FINALIZING: "FINALIZING",
+    PENTEST: "PENTEST",
+    PREFLIGHT: "PREFLIGHT",
+    STATIC_ANALYSIS: "STATIC_ANALYSIS",
+    VALIDATION: "VALIDATION",
+};
+export const StepStatus = {
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED",
+    IN_PROGRESS: "IN_PROGRESS",
+    NOT_STARTED: "NOT_STARTED",
+    STOPPED: "STOPPED",
+};
+export const TaskExecutionStatus = {
+    ABORTED: "ABORTED",
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED",
+    INTERNAL_ERROR: "INTERNAL_ERROR",
+    IN_PROGRESS: "IN_PROGRESS",
+};
+export const LogType = {
+    CLOUDWATCH: "CLOUDWATCH",
+};
+export const ValidationMode = {
+    DISABLED: "DISABLED",
+    SIMULATED: "SIMULATED",
+};
+export const CodeRemediationTaskStatus = {
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED",
+    IN_PROGRESS: "IN_PROGRESS",
+};
+export const ConfidenceLevel = {
+    FALSE_POSITIVE: "FALSE_POSITIVE",
+    HIGH: "HIGH",
+    LOW: "LOW",
+    MEDIUM: "MEDIUM",
+    UNCONFIRMED: "UNCONFIRMED",
+};
+export const RiskLevel = {
+    CRITICAL: "CRITICAL",
+    HIGH: "HIGH",
+    INFORMATIONAL: "INFORMATIONAL",
+    LOW: "LOW",
+    MEDIUM: "MEDIUM",
+    UNKNOWN: "UNKNOWN",
+};
+export const FindingStatus = {
+    ACCEPTED: "ACCEPTED",
+    ACTIVE: "ACTIVE",
+    FALSE_POSITIVE: "FALSE_POSITIVE",
+    RESOLVED: "RESOLVED",
+};
+export const ValidationStatus = {
+    CONFIRMED: "CONFIRMED",
+    NOT_REPRODUCED: "NOT_REPRODUCED",
+    NOT_VALIDATED: "NOT_VALIDATED",
+    VALIDATING: "VALIDATING",
+    VALIDATION_FAILED: "VALIDATION_FAILED",
+};
+export const JobType = {
+    CICD: "CICD",
+    FULL: "FULL",
+    REVALIDATION: "REVALIDATION",
+};
+export const ScopeDecision = {
+    IN_SCOPE: "IN_SCOPE",
+    SCOPED_OUT: "SCOPED_OUT",
+    SCOPE_CONFLICT: "SCOPE_CONFLICT",
+};
+export const DNSRecordType = {
+    TXT: "TXT",
+};
+export const DomainVerificationMethod = {
+    DNS_TXT: "DNS_TXT",
+    HTTP_ROUTE: "HTTP_ROUTE",
+    PRIVATE_VPC: "PRIVATE_VPC",
+};
+export const TargetDomainStatus = {
+    FAILED: "FAILED",
+    PENDING: "PENDING",
+    UNREACHABLE: "UNREACHABLE",
+    VERIFIED: "VERIFIED",
+};
+export const ThreatActor = {
+    AGENT: "AGENT",
+    CUSTOMER: "CUSTOMER",
+};
+export const ThreatSeverity = {
+    CRITICAL: "CRITICAL",
+    HIGH: "HIGH",
+    INFO: "INFO",
+    LOW: "LOW",
+    MEDIUM: "MEDIUM",
+};
+export const ThreatStatus = {
+    DISMISSED: "DISMISSED",
+    OPEN: "OPEN",
+    RESOLVED: "RESOLVED",
+};
+export const StrideCategory = {
+    DENIAL_OF_SERVICE: "DENIAL_OF_SERVICE",
+    ELEVATION_OF_PRIVILEGE: "ELEVATION_OF_PRIVILEGE",
+    INFORMATION_DISCLOSURE: "INFORMATION_DISCLOSURE",
+    REPUDIATION: "REPUDIATION",
+    SPOOFING: "SPOOFING",
+    TAMPERING: "TAMPERING",
+};
+export const GitLabTokenType = {
+    GROUP: "GROUP",
+    PERSONAL: "PERSONAL",
+};
+export const Provider = {
+    BITBUCKET: "BITBUCKET",
+    CONFLUENCE: "CONFLUENCE",
+    GITHUB: "GITHUB",
+    GITLAB: "GITLAB",
+};
+export const UserRole = {
+    MEMBER: "MEMBER",
+};
+export const MembershipType = {
+    USER: "USER",
+};
+export const ResourceConfigDnsResolution = {
+    IN_VPC: "IN_VPC",
+    PUBLIC: "PUBLIC",
+};
+export const IpAddressType = {
+    DUAL_STACK: "DUAL_STACK",
+    IPV4: "IPV4",
+    IPV6: "IPV6",
+};
+export const PrivateConnectionStatus = {
+    ACTIVE: "ACTIVE",
+    CREATE_FAILED: "CREATE_FAILED",
+    CREATE_IN_PROGRESS: "CREATE_IN_PROGRESS",
+    DELETE_FAILED: "DELETE_FAILED",
+    DELETE_IN_PROGRESS: "DELETE_IN_PROGRESS",
+};
+export const PrivateConnectionType = {
+    SELF_MANAGED: "SELF_MANAGED",
+    SERVICE_MANAGED: "SERVICE_MANAGED",
+};
+export const SecurityRequirementPackStatus = {
+    DISABLED: "DISABLED",
+    ENABLED: "ENABLED",
+};
+export const ProviderType = {
+    DOCUMENTATION: "DOCUMENTATION",
+    SOURCE_CODE: "SOURCE_CODE",
+};
+export const SecurityRequirementPackImportStatus = {
+    COMPLETED: "COMPLETED",
+    FAILED: "FAILED",
+    IN_PROGRESS: "IN_PROGRESS",
+    PENDING: "PENDING",
+};
+export const ManagementType = {
+    AWS_MANAGED: "AWS_MANAGED",
+    CUSTOMER_MANAGED: "CUSTOMER_MANAGED",
+};
+export const SecurityRequirementArtifactFormat = {
+    DOC: "DOC",
+    DOCX: "DOCX",
+    MD: "MD",
+    PDF: "PDF",
+    TXT: "TXT",
+};
+export const ResourceType = {
+    CODE_REPOSITORY: "CODE_REPOSITORY",
+    DOCUMENT: "DOCUMENT",
+};
+export const MembershipTypeFilter = {
+    ALL: "ALL",
+    USER: "USER",
+};

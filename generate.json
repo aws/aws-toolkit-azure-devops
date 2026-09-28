@@ -68,6 +68,12 @@
         ]
     },
     {
+        "taskName": "RunPentest",
+        "additionalImports": ["import { getCredentials, getRegion } from 'lib/awsConnectionParameters'"],
+        "additionalSetupStatements": ["process.env.AWS_EXECUTION_ENV = 'VSTS-RunPentest'"],
+        "additionalArguments": ["await getCredentials(taskParameters.awsConnectionParameters)", "await getRegion()"]
+    },
+    {
         "taskName": "S3Download",
         "taskClients": ["S3"]
     },

@@ -119,6 +119,9 @@
             "path": "Tasks/LambdaNETCoreDeploy"
         },
         {
+            "path": "Tasks/RunPentest"
+        },
+        {
             "path": "Tasks/S3Download"
         },
         {
@@ -377,6 +380,15 @@
             "targets": ["ms.vss-distributed-task.tasks"],
             "properties": {
                 "name": "Tasks/LambdaNETCoreDeploy"
+            }
+        },
+        {
+            "id": "RunPentest",
+            "description": "Runs a CI/CD-scoped AWS Security Agent (now part of AWS Continuum) pentest and gates the pipeline on the findings",
+            "type": "ms.vss-distributed-task.task",
+            "targets": ["ms.vss-distributed-task.tasks"],
+            "properties": {
+                "name": "Tasks/RunPentest"
             }
         },
         {
