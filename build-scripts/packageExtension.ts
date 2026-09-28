@@ -64,6 +64,32 @@ function findMatchingFiles(directory: string) {
     return fs.readdirSync(directory)
 }
 
+/**
+ * Derives the esbuild target from the node execution handlers a task declares.
+ *
+ * A bundle has to run on every handler the task offers, so the target is the oldest of them.
+ * Tasks keeping a 'Node10' fallback alongside 'Node20_1' therefore still build for node10, while a
+ * task declaring only a newer handler is built for that version. Downleveling a node20-only task to
+ * node10 is not merely wasteful: syntax esbuild cannot transpile (BigInt literals in the AWS SDK's
+ * cbor codepath, for one) fails the build outright.
+ *
+ * Handler names are 'Node', 'Node10', 'Node20_1', ... where '_' separates the minor version. The
+ * legacy unversioned 'Node' handler is treated as node10, matching the floor this script used before
+ * targets were derived per task.
+ */
+function esbuildTargetForHandlers(handlers: string[]) {
+    const majors = handlers
+        .map(handler => /^Node(\d*)(?:_\d+)?$/.exec(handler))
+        .filter((match): match is RegExpExecArray => Boolean(match))
+        .map(match => (match[1] === '' ? 10 : parseInt(match[1], 10)))
+
+    if (majors.length === 0) {
+        throw new Error(`Could not derive an esbuild target from handlers: ${handlers.join(', ')}`)
+    }
+
+    return [`node${Math.min(...majors)}`]
+}
+
 function installNodePackages(directory: string) {
     fs.mkdirpSync(directory)
     const npmCmd = `npm install --prefix ${directory} azure-pipelines-task-lib --only=production`
@@ -125,7 +151,8 @@ function packagePlugin(options: CommandLineOptions) {
         // bundled by esbuild below, which is what produces the <taskName>.js that task.json targets.
         // Matching on the prefix rather than an explicit list means a task declaring only a newer
         // handler is not silently diverted to the non-node copy path, which emits no entry point.
-        const isNodeTask = Object.keys(taskDef.execution).some(handler => handler.startsWith('Node'))
+        const handlers = Object.keys(taskDef.execution)
+        const isNodeTask = handlers.some(handler => handler.startsWith('Node'))
         if (!isNodeTask) {
             console.log('Copying non-node task ' + taskName)
             fs.copySync(taskBuildFolder, taskPackageFolder)
@@ -147,12 +174,13 @@ function packagePlugin(options: CommandLineOptions) {
 
         const inputFilename = path.join(taskBuildFolder, taskName + '.runner.js')
 
-        console.log('packing node-based task')
+        const target = esbuildTargetForHandlers(handlers)
+        console.log(`packing node-based task for ${target.join(', ')}`)
         const result = esbuild.buildSync({
             entryPoints: [inputFilename],
             bundle: true,
             platform: 'node',
-            target: ['node10'],
+            target,
             minify: true,
             outfile: `${taskPackageFolder}/${taskName}.js`
         })
