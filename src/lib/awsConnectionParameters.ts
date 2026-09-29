@@ -176,6 +176,31 @@ async function assumeRoleFromInstanceProfile(
     return undefined
 }
 
+/**
+ * Best-effort `sub` claim of an Azure DevOps OIDC token, for a failure message.
+ *
+ * Never throws: it is called only on the failure path, and a token that cannot be
+ * decoded must not replace the real error with a decoding error. The claim is
+ * already written to the build log when the token is issued, so naming it here
+ * discloses nothing new — and it is the value a role's trust policy is matched
+ * against, so it is what makes a mismatch diagnosable.
+ */
+function oidcTokenSubject(idToken: string | undefined): string | undefined {
+    if (!idToken) {
+        return undefined
+    }
+    try {
+        const payload = idToken.split('.')[1]
+        if (!payload) {
+            return undefined
+        }
+        const claims = JSON.parse(Buffer.from(payload, 'base64').toString('utf-8'))
+        return typeof claims?.sub === 'string' ? claims.sub : undefined
+    } catch {
+        return undefined
+    }
+}
+
 async function attemptAssumeRoleFromOIDC(
     awsParams: AWSConnectionParameters,
     endpointName: string | undefined
@@ -184,6 +209,11 @@ async function attemptAssumeRoleFromOIDC(
         return undefined
     }
 
+    // Hoisted so the catch below can tell the OIDC-only case apart from the others
+    // and name what failed. Set only on the path where OIDC is the sole configured
+    // credential source, so its presence IS that condition.
+    let oidcOnlyRoleArn: string | undefined
+    let idToken: string | undefined
     try {
         const authInfo = getEndpointAuthInfo(awsParams, endpointName)
         if (!authInfo.useOIDC) {
@@ -193,8 +223,9 @@ async function attemptAssumeRoleFromOIDC(
 
         // Getting STS credentials with the OIDC token
         if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
+            oidcOnlyRoleArn = authInfo.assumeRoleArn
             console.log('Getting OIDC Token...')
-            const idToken = await getOIDCToken(endpointName)
+            idToken = await getOIDCToken(endpointName)
 
             // We are most probably outside of AWS, so let's use the region defined by the user
             const region = await getRegion()
@@ -225,6 +256,25 @@ async function attemptAssumeRoleFromOIDC(
             return undefined
         }
     } catch (err) {
+        // With OIDC enabled and no access key configured there is no second
+        // credential source, so returning undefined here does not fall back to
+        // anything: the caller goes on to build credentials from the empty key
+        // fields and the pipeline fails several steps later reporting an invalid
+        // security token. That names neither the role nor the real cause. Fail here
+        // instead, where the cause is still in hand.
+        //
+        // The other paths keep the previous behaviour, because for them another
+        // credential source genuinely does follow.
+        if (oidcOnlyRoleArn) {
+            const subject = oidcTokenSubject(idToken)
+            throw new Error(
+                `Could not assume role ${oidcOnlyRoleArn} with the OIDC token for service connection ` +
+                    `'${endpointName}'${subject ? ` (token subject '${subject}')` : ''}. This service connection ` +
+                    'has OIDC enabled and no access key configured, so there is no other credential source to ' +
+                    "use. Check that the role's trust policy allows sts:AssumeRoleWithWebIdentity for that " +
+                    `subject and audience. Cause: ${err instanceof Error ? err.message : String(err)}`
+            )
+        }
         console.error('Failed to assume role with OIDC: %s', err)
         return undefined
     }
