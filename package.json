@@ -85,7 +85,7 @@
         "validator": "^13.7.0"
     },
     "dependencies": {
-        "@aws-sdk/client-securityagent": "file:./vendor/aws-sdk-client-securityagent",
+        "@aws-sdk/client-securityagent": "^3.1142.0",
         "@typescript-eslint/typescript-estree": "^4.17.0",
         "adm-zip": "^0.5.3",
         "aws-sdk": "^2.979.0",
