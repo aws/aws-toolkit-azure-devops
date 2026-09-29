@@ -1,0 +1,4 @@
+{
+	"type": "Feature",
+	"description": "RunPentest: the parent-of-head fallback now works for a pipeline whose source is GitHub, GitLab or Bitbucket, by reading the parent from the repository the job checked out. Previously that fallback read the Azure DevOps commit graph, which exists only for an Azure Repos source, so a first run on a third-party source with no gate-passed marker and no previous successful build resolved no base at all."
+}
