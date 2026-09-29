@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "RunPentest: a run that assessed no commit range no longer affects the commit range of later runs. A fail-open run (an infrastructure error under failOnError=false) no longer advances the gate-passed baseline, and neither a fail-open nor a dry-run build is used as the base of a later run, so the commits they did not assess are still tested. A dry run now needs build tag permission in order to record this."
+}
