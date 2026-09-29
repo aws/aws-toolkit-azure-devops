@@ -223,6 +223,18 @@ describe('getCredentials — OIDC STS region validation', () => {
         expect(String(err)).not.toContain('evil.com')
     })
 
+    it('names what this path refuses, which is not what an ordinary client refuses', async () => {
+        // The format check is shared with SdkUtils' client construction (one regex, so
+        // the two cannot drift), but the CONSEQUENCE differs: here an unvalidated
+        // region would send the OIDC token itself to another host. The wording has to
+        // survive that sharing.
+        store.endpointAuth = oidcOnlyEndpoint()
+        store.inputs.regionName = '@evil.com/'
+
+        const err = await getCredentials(buildConnectionParameters()).catch((e: Error) => e)
+        expect(String(err)).toContain('Refusing to send the OIDC token to an STS endpoint')
+    })
+
     it.each(['us-east-1', 'us-gov-west-1', 'cn-north-1', 'us-isob-east-1', 'ap-southeast-5'])(
         'accepts %s',
         async region => {

@@ -204,22 +204,30 @@ function oidcTokenSubject(idToken: string | undefined): string | undefined {
 /**
  * An AWS Region name: letters, a geography, an optional partition segment
  * (`us-gov-west-1`, `us-isob-east-1`) and an ordinal. No `.`, `/`, `@`, `#`, `:`
- * or `?`, which could otherwise move the SDK-built STS host to another authority.
+ * or `?`, which could otherwise move an SDK-built host to another authority.
  */
-const STS_REGION_RE = /^[a-z]{2}-[a-z]+(-[a-z]+)?-[0-9]{1,2}$/
+const REGION_NAME_RE = /^[a-z]{2}-[a-z]+(-[a-z]+)?-[0-9]{1,2}$/
 
 /**
  * Fails closed on a region that is not a Region name. The value can come from a
  * task input, the AWS.Region variable, the environment or instance metadata, and
  * error text is rendered in the Azure DevOps UI, so the message never echoes it.
+ *
+ * `refusal` names what is being refused, because the consequence differs by
+ * caller — the OIDC exchange would send a token to another host, an ordinary
+ * client would send a signed request there. The check itself is deliberately one
+ * function with one regex: a second copy is how the two drift apart, and a
+ * narrower one would start rejecting the partitions this pattern admits
+ * (GovCloud, China, ISO, and any new region).
  */
-function validateStsRegion(region: string): void {
-    if (!STS_REGION_RE.test(region)) {
-        throw new Error(
-            'Invalid AWS region: expected a region name like "us-west-2". ' +
-                'Refusing to send the OIDC token to an STS endpoint built from an unvalidated region.'
-        )
+export function validateRegion(region: string, refusal: string): void {
+    if (!REGION_NAME_RE.test(region)) {
+        throw new Error(`Invalid AWS region: expected a region name like "us-west-2". ${refusal}`)
     }
+}
+
+function validateStsRegion(region: string): void {
+    validateRegion(region, 'Refusing to send the OIDC token to an STS endpoint built from an unvalidated region.')
 }
 
 async function attemptAssumeRoleFromOIDC(
