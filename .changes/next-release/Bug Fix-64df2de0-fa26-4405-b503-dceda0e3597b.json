@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "All tasks: when an AWS service connection has OIDC enabled and no access key configured and the role assumption fails, the task now fails with the role, the OIDC token subject and the underlying cause instead of continuing on to report an invalid security token. A connection that also carries access keys is unaffected."
+}

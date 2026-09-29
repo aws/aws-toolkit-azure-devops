@@ -246,6 +246,8 @@ export const records = {
         'pentestId',
         'repository',
         'repositoryProvider',
+        'baseCommitSha',
+        'headCommitSha',
         'severityThreshold',
         'timeoutMinutes',
         'failOnError',

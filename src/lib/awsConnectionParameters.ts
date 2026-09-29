@@ -176,6 +176,52 @@ async function assumeRoleFromInstanceProfile(
     return undefined
 }
 
+/**
+ * Best-effort `sub` claim of an Azure DevOps OIDC token, for a failure message.
+ *
+ * Never throws: it is called only on the failure path, and a token that cannot be
+ * decoded must not replace the real error with a decoding error. The claim is
+ * already written to the build log when the token is issued, so naming it here
+ * discloses nothing new — and it is the value a role's trust policy is matched
+ * against, so it is what makes a mismatch diagnosable.
+ */
+function oidcTokenSubject(idToken: string | undefined): string | undefined {
+    if (!idToken) {
+        return undefined
+    }
+    try {
+        const payload = idToken.split('.')[1]
+        if (!payload) {
+            return undefined
+        }
+        const claims = JSON.parse(Buffer.from(payload, 'base64').toString('utf-8'))
+        return typeof claims?.sub === 'string' ? claims.sub : undefined
+    } catch {
+        return undefined
+    }
+}
+
+/**
+ * An AWS Region name: letters, a geography, an optional partition segment
+ * (`us-gov-west-1`, `us-isob-east-1`) and an ordinal. No `.`, `/`, `@`, `#`, `:`
+ * or `?`, which could otherwise move the SDK-built STS host to another authority.
+ */
+const STS_REGION_RE = /^[a-z]{2}-[a-z]+(-[a-z]+)?-[0-9]{1,2}$/
+
+/**
+ * Fails closed on a region that is not a Region name. The value can come from a
+ * task input, the AWS.Region variable, the environment or instance metadata, and
+ * error text is rendered in the Azure DevOps UI, so the message never echoes it.
+ */
+function validateStsRegion(region: string): void {
+    if (!STS_REGION_RE.test(region)) {
+        throw new Error(
+            'Invalid AWS region: expected a region name like "us-west-2". ' +
+                'Refusing to send the OIDC token to an STS endpoint built from an unvalidated region.'
+        )
+    }
+}
+
 async function attemptAssumeRoleFromOIDC(
     awsParams: AWSConnectionParameters,
     endpointName: string | undefined
@@ -184,6 +230,11 @@ async function attemptAssumeRoleFromOIDC(
         return undefined
     }
 
+    // Hoisted so the catch below can tell the OIDC-only case apart from the others
+    // and name what failed. Set only on the path where OIDC is the sole configured
+    // credential source, so its presence IS that condition.
+    let oidcOnlyRoleArn: string | undefined
+    let idToken: string | undefined
     try {
         const authInfo = getEndpointAuthInfo(awsParams, endpointName)
         if (!authInfo.useOIDC) {
@@ -193,11 +244,19 @@ async function attemptAssumeRoleFromOIDC(
 
         // Getting STS credentials with the OIDC token
         if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
-            console.log('Getting OIDC Token...')
-            const idToken = await getOIDCToken(endpointName)
+            oidcOnlyRoleArn = authInfo.assumeRoleArn
 
-            // We are most probably outside of AWS, so let's use the region defined by the user
+            // We are most probably outside of AWS, so let's use the region defined by the user.
+            // Resolved and validated BEFORE the token is minted: the SDK builds the STS host
+            // from this value, so an unvalidated region would send the token to another host.
             const region = await getRegion()
+            if (region !== '') {
+                validateStsRegion(region)
+            }
+
+            console.log('Getting OIDC Token...')
+            idToken = await getOIDCToken(endpointName)
+
             const stsClientConfig: STS.ClientConfiguration = {}
             if (region !== '') {
                 stsClientConfig.region = region
@@ -225,6 +284,25 @@ async function attemptAssumeRoleFromOIDC(
             return undefined
         }
     } catch (err) {
+        // With OIDC enabled and no access key configured there is no second
+        // credential source, so returning undefined here does not fall back to
+        // anything: the caller goes on to build credentials from the empty key
+        // fields and the pipeline fails several steps later reporting an invalid
+        // security token. That names neither the role nor the real cause. Fail here
+        // instead, where the cause is still in hand.
+        //
+        // The other paths keep the previous behaviour, because for them another
+        // credential source genuinely does follow.
+        if (oidcOnlyRoleArn) {
+            const subject = oidcTokenSubject(idToken)
+            throw new Error(
+                `Could not assume role ${oidcOnlyRoleArn} with the OIDC token for service connection ` +
+                    `'${endpointName}'${subject ? ` (token subject '${subject}')` : ''}. This service connection ` +
+                    'has OIDC enabled and no access key configured, so there is no other credential source to ' +
+                    "use. Check that the role's trust policy allows sts:AssumeRoleWithWebIdentity for that " +
+                    `subject and audience. Cause: ${err instanceof Error ? err.message : String(err)}`
+            )
+        }
         console.error('Failed to assume role with OIDC: %s', err)
         return undefined
     }
