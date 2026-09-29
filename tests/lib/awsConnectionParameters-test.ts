@@ -190,3 +190,50 @@ describe('getCredentials — paths that keep their previous behaviour', () => {
         expect(credentials?.sessionToken).toBe('session-token')
     })
 })
+
+describe('getCredentials — OIDC STS region validation', () => {
+    // A region carrying a URL delimiter moved the SDK-built STS host off AWS, and the
+    // AssumeRoleWithWebIdentity body carries the OIDC token.
+    it.each(['@evil.com/', 'us-east-1.attacker.example#', 'us-east-1/x', 'us-east-1:443', 'us-east-1?a'])(
+        'refuses %s before minting a token or calling STS',
+        async region => {
+            store.endpointAuth = oidcOnlyEndpoint()
+            store.inputs.regionName = region
+
+            await expect(getCredentials(buildConnectionParameters())).rejects.toThrow(/Invalid AWS region/)
+            expect(createOidcToken).not.toHaveBeenCalled()
+            expect(assumeRoleWithWebIdentity).not.toHaveBeenCalled()
+        }
+    )
+
+    it('applies to a region from the AWS.Region variable too', async () => {
+        store.endpointAuth = oidcOnlyEndpoint()
+        delete store.inputs.regionName
+        store.vars['AWS.Region'] = '@evil.com/'
+
+        await expect(getCredentials(buildConnectionParameters())).rejects.toThrow(/Invalid AWS region/)
+        expect(createOidcToken).not.toHaveBeenCalled()
+    })
+
+    it('does not echo the rejected value', async () => {
+        store.endpointAuth = oidcOnlyEndpoint()
+        store.inputs.regionName = '@evil.com/'
+
+        const err = await getCredentials(buildConnectionParameters()).catch((e: Error) => e)
+        expect(String(err)).not.toContain('evil.com')
+    })
+
+    it.each(['us-east-1', 'us-gov-west-1', 'cn-north-1', 'us-isob-east-1', 'ap-southeast-5'])(
+        'accepts %s',
+        async region => {
+            store.endpointAuth = oidcOnlyEndpoint()
+            store.inputs.regionName = region
+            assumeRoleWithWebIdentity.mockResolvedValue({
+                Credentials: { AccessKeyId: 'ASIAEXAMPLE', SecretAccessKey: 's', SessionToken: 't' }
+            })
+
+            await expect(getCredentials(buildConnectionParameters())).resolves.toBeDefined()
+            expect(assumeRoleWithWebIdentity).toHaveBeenCalledTimes(1)
+        }
+    )
+})

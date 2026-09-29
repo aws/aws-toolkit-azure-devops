@@ -201,6 +201,27 @@ function oidcTokenSubject(idToken: string | undefined): string | undefined {
     }
 }
 
+/**
+ * An AWS Region name: letters, a geography, an optional partition segment
+ * (`us-gov-west-1`, `us-isob-east-1`) and an ordinal. No `.`, `/`, `@`, `#`, `:`
+ * or `?`, which could otherwise move the SDK-built STS host to another authority.
+ */
+const STS_REGION_RE = /^[a-z]{2}-[a-z]+(-[a-z]+)?-[0-9]{1,2}$/
+
+/**
+ * Fails closed on a region that is not a Region name. The value can come from a
+ * task input, the AWS.Region variable, the environment or instance metadata, and
+ * error text is rendered in the Azure DevOps UI, so the message never echoes it.
+ */
+function validateStsRegion(region: string): void {
+    if (!STS_REGION_RE.test(region)) {
+        throw new Error(
+            'Invalid AWS region: expected a region name like "us-west-2". ' +
+                'Refusing to send the OIDC token to an STS endpoint built from an unvalidated region.'
+        )
+    }
+}
+
 async function attemptAssumeRoleFromOIDC(
     awsParams: AWSConnectionParameters,
     endpointName: string | undefined
@@ -224,11 +245,18 @@ async function attemptAssumeRoleFromOIDC(
         // Getting STS credentials with the OIDC token
         if (!authInfo.accessKey && !authInfo.secretKey && authInfo.assumeRoleArn) {
             oidcOnlyRoleArn = authInfo.assumeRoleArn
+
+            // We are most probably outside of AWS, so let's use the region defined by the user.
+            // Resolved and validated BEFORE the token is minted: the SDK builds the STS host
+            // from this value, so an unvalidated region would send the token to another host.
+            const region = await getRegion()
+            if (region !== '') {
+                validateStsRegion(region)
+            }
+
             console.log('Getting OIDC Token...')
             idToken = await getOIDCToken(endpointName)
 
-            // We are most probably outside of AWS, so let's use the region defined by the user
-            const region = await getRegion()
             const stsClientConfig: STS.ClientConfiguration = {}
             if (region !== '') {
                 stsClientConfig.region = region
