@@ -1,4 +1,0 @@
-{
-	"type": "Feature",
-	"description": "RunPentest: when the service returns a report link for the pentest job, the task now prints it in the step log and links it from the run summary, matching the GitHub Action, GitLab component and Bitbucket pipe. Previously it was set only as the `reportUrl` output variable, which the task help did not list, so a customer had no visible way to reach the report from the pipeline."
-}

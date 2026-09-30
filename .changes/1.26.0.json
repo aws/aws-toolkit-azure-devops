@@ -1,0 +1,42 @@
+{
+	"date": "2026-09-30",
+	"version": "1.26.0",
+	"entries": [
+		{
+			"type": "Bug Fix",
+			"description": "All tasks: the AWS region is now validated as an AWS Region name before any SDK client is constructed, and the task fails without contacting AWS if it is not. Previously only the OIDC token exchange validated it, so a region containing URL delimiters could direct a signed request from any other task to a host outside AWS."
+		},
+		{
+			"type": "Bug Fix",
+			"description": "All tasks: when an AWS service connection uses OIDC, the region is now validated as an AWS Region name before the OIDC token is requested, and the task fails without contacting STS if it is not. Previously a region containing URL delimiters could direct the AssumeRoleWithWebIdentity request, which carries the OIDC token, to a host outside AWS."
+		},
+		{
+			"type": "Bug Fix",
+			"description": "All tasks: when an AWS service connection has OIDC enabled and no access key configured and the role assumption fails, the task now fails with the role, the OIDC token subject and the underlying cause instead of continuing on to report an invalid security token. A connection that also carries access keys is unaffected."
+		},
+		{
+			"type": "Bug Fix",
+			"description": "RunPentest: a dry-run build is no longer used as the base of a later run, so the commit it did not assess is still tested. A dry run now needs build tag permission in order to record this."
+		},
+		{
+			"type": "Bug Fix",
+			"description": "RunPentest: when no base commit can be resolved, no pentest job is started, instead of sending a request the service rejects and logging a full-scope run that cannot be requested. A CI/CD pentest is always scoped to an explicit commit range, so such a run has nothing to test. The verdict follows the Fail on infrastructure error input, so at its default of false the pipeline still passes, but the run summary now carries a Range row and a warning saying nothing was tested rather than reading as a clean gate."
+		},
+		{
+			"type": "Feature",
+			"description": "RunPentest: the parent-of-head fallback now works for a pipeline whose source is GitHub, GitLab or Bitbucket, by reading the parent from the repository the job checked out. Previously that fallback read the Azure DevOps commit graph, which exists only for an Azure Repos source, so a first run on a third-party source with no gate-passed marker and no previous successful build resolved no base at all."
+		},
+		{
+			"type": "Feature",
+			"description": "RunPentest: add optional baseCommitSha / headCommitSha inputs to pin the tested commit range, and report which source produced each side of the range. headCommitSha must be accompanied by baseCommitSha, because an automatically resolved base cannot be ordered against an arbitrarily pinned head. Pinning the head leaves the gate-passed baseline unchanged."
+		},
+		{
+			"type": "Feature",
+			"description": "RunPentest: when the service returns a report link for the pentest job, the task now prints it in the step log and links it from the run summary, matching the GitHub Action, GitLab component and Bitbucket pipe. Previously it was set only as the `reportUrl` output variable, which the task help did not list, so a customer had no visible way to reach the report from the pipeline."
+		},
+		{
+			"type": "Feature",
+			"description": "RunPentest: new task that runs an AWS Security Agent penetration test against a deployed endpoint and gates pipeline promotion on the findings."
+		}
+	]
+}
