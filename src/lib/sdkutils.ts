@@ -7,7 +7,7 @@ import * as tl from 'azure-pipelines-task-lib/task'
 
 import { IAM, S3 } from 'aws-sdk/clients/all'
 import * as AWS from 'aws-sdk/global'
-import { AWSConnectionParameters, getCredentials, getRegion } from 'lib/awsConnectionParameters'
+import { AWSConnectionParameters, getCredentials, getRegion, validateRegion } from 'lib/awsConnectionParameters'
 import { VSTSTaskManifest } from 'lib/vstsUtils'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -151,6 +151,10 @@ export abstract class SdkUtils {
             if (!awsServiceOpts.region) {
                 awsServiceOpts.region = await getRegion()
             }
+            // Validated whichever source it came from — a caller-supplied option as
+            // readily as getRegion() — because what matters is the value that reaches
+            // the constructor.
+            SdkUtils.validateClientRegion(awsServiceOpts.region)
 
             return new awsService(awsServiceOpts)
         }
@@ -171,10 +175,38 @@ export abstract class SdkUtils {
             tl.setSecret(credentials?.sessionToken)
         }
 
+        const region = await getRegion()
+        SdkUtils.validateClientRegion(region)
+
         return new awsService({
             credentials: credentials ? credentials.getPromise() : undefined,
-            region: await getRegion()
+            region
         })
+    }
+
+    /**
+     * Fail closed on a region that is not a Region name, BEFORE a client is built
+     * from it.
+     *
+     * The SDK builds every endpoint host by interpolating this value, so a region
+     * carrying a URL delimiter moves the host to another authority — and the client
+     * then signs a real request to it. The OIDC exchange already refuses such a
+     * value before minting a token; every other task reached its clients through
+     * here, where the value was unvalidated.
+     *
+     * The same validator as that path, not a second copy: a divergent pattern would
+     * eventually reject a partition the other admits. A region that is not set is
+     * passed through unchanged, as it is there — one falsy check, because both
+     * shapes getRegion() can produce for "nothing configured" mean the same thing
+     * (it answers '' when no source supplies a region, and undefined when the
+     * instance-metadata lookup resolves nothing). Either way the SDK resolves the
+     * region from its own chain, and rejecting that would break every task relying
+     * on it.
+     */
+    private static validateClientRegion(region: string | undefined): void {
+        if (region) {
+            validateRegion(region, 'Refusing to build an AWS service client from an unvalidated region.')
+        }
     }
 
     public static async roleArnFromName(iamClient: IAM, roleName: string): Promise<string> {

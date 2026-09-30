@@ -1,0 +1,4 @@
+{
+	"type": "Bug Fix",
+	"description": "All tasks: the AWS region is now validated as an AWS Region name before any SDK client is constructed, and the task fails without contacting AWS if it is not. Previously only the OIDC token exchange validated it, so a region containing URL delimiters could direct a signed request from any other task to a host outside AWS."
+}
