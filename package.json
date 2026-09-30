@@ -5,7 +5,7 @@
     "private": true,
     "main": "build/tasks",
     "engines": {
-        "node": ">=10"
+        "node": ">=18"
     },
     "scripts": {
         "build": "npm run generateCode && npm run compileTypescript",
