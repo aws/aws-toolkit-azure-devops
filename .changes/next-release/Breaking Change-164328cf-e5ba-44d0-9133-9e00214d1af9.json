@@ -1,0 +1,4 @@
+{
+	"type": "Breaking Change",
+	"description": "Use AWS.Tools.* Powershell Modules for AWSPowershellModuleScript if available"
+}
