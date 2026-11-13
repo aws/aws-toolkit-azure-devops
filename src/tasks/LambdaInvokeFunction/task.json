@@ -117,6 +117,10 @@
         "Node20_1": {
             "target": "LambdaInvokeFunction.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "LambdaInvokeFunction.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

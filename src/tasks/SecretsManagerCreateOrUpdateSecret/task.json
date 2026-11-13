@@ -172,6 +172,10 @@
         "Node20_1": {
             "target": "SecretsManagerCreateOrUpdateSecret.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "SecretsManagerCreateOrUpdateSecret.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

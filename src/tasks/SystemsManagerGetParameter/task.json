@@ -187,6 +187,10 @@
         "Node20_1": {
             "target": "SystemsManagerGetParameter.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "SystemsManagerGetParameter.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

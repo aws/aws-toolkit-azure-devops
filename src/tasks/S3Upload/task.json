@@ -239,6 +239,10 @@
         "Node20_1": {
             "target": "S3Upload.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "S3Upload.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

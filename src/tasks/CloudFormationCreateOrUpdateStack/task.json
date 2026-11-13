@@ -384,6 +384,10 @@
         "Node20_1": {
             "target": "CloudFormationCreateOrUpdateStack.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "CloudFormationCreateOrUpdateStack.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

@@ -119,6 +119,10 @@
         "Node20_1": {
             "target": "AWSShellScript.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "AWSShellScript.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

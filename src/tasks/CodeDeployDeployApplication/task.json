@@ -211,6 +211,10 @@
         "Node20_1": {
             "target": "CodeDeployDeployApplication.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "CodeDeployDeployApplication.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

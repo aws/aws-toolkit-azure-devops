@@ -278,6 +278,10 @@
         "Node20_1": {
             "target": "SystemsManagerRunCommand.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "SystemsManagerRunCommand.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

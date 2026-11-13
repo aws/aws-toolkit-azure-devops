@@ -112,6 +112,10 @@
         "Node20_1": {
             "target": "SendMessage.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "SendMessage.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

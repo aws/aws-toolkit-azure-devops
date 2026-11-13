@@ -161,6 +161,10 @@
         "Node20_1": {
             "target": "ECRPushImage.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "ECRPushImage.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

@@ -74,6 +74,10 @@
         "Node20_1": {
             "target": "CloudFormationDeleteStack.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "CloudFormationDeleteStack.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

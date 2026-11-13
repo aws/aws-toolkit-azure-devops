@@ -164,6 +164,10 @@
         "Node20_1": {
             "target": "BeanstalkDeployApplication.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "BeanstalkDeployApplication.js",
+            "argumentFormat": ""
         }
     },
     "messages": {

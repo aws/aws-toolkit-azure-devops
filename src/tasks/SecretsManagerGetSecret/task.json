@@ -97,6 +97,10 @@
         "Node20_1": {
             "target": "SecretsManagerGetSecret.js",
             "argumentFormat": ""
+        },
+        "Node24": {
+            "target": "SecretsManagerGetSecret.js",
+            "argumentFormat": ""
         }
     },
     "messages": {
