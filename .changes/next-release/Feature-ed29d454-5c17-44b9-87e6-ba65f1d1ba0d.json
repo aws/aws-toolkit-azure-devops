@@ -1,4 +1,0 @@
-{
-	"type": "Feature",
-	"description": "RunPentest: new task that runs an AWS Security Agent penetration test against a deployed endpoint and gates pipeline promotion on the findings."
-}

@@ -1,4 +1,0 @@
-{
-	"type": "Bug Fix",
-	"description": "RunPentest: a dry-run build is no longer used as the base of a later run, so the commit it did not assess is still tested. A dry run now needs build tag permission in order to record this."
-}

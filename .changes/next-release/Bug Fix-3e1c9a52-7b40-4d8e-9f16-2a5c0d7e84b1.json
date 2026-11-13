@@ -1,4 +1,0 @@
-{
-	"type": "Bug Fix",
-	"description": "All tasks: when an AWS service connection uses OIDC, the region is now validated as an AWS Region name before the OIDC token is requested, and the task fails without contacting STS if it is not. Previously a region containing URL delimiters could direct the AssumeRoleWithWebIdentity request, which carries the OIDC token, to a host outside AWS."
-}
