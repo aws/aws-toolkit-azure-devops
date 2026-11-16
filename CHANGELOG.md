@@ -1,3 +1,7 @@
+## 1.27.0 2026-11-16
+
+- **Feature** Tasks now support Node 24
+
 ## 1.20.0 2025-03-19
 
 - **Feature** Auth: Retry failures when attempting to fetch OIDC tokens.
