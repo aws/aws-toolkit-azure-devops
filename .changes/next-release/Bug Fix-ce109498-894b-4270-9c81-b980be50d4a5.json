@@ -1,4 +1,0 @@
-{
-	"type": "Bug Fix",
-	"description": "RunPentest: when no base commit can be resolved, no pentest job is started, instead of sending a request the service rejects and logging a full-scope run that cannot be requested. A CI/CD pentest is always scoped to an explicit commit range, so such a run has nothing to test. The verdict follows the Fail on infrastructure error input, so at its default of false the pipeline still passes, but the run summary now carries a Range row and a warning saying nothing was tested rather than reading as a clean gate."
-}
