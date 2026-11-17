@@ -132,6 +132,8 @@
     "messages": {
         "GeneratingScript": "Generating script.",
         "TestingAWSModuleInstalled": "Checking install status for AWS Tools for Windows PowerShell module.",
+        "ModularAWSModuleFound": "AWS.Tools.Common found. Assuming all needed AWS.Tools modules are already installed.",
+        "SecurityTokenModuleNotFound": "AWS.Tools.SecurityToken module not found. You will not be able to use a service connection specifying a role ARN.",
         "AWSModuleNotFound": "AWS Tools for Windows PowerShell module not found.",
         "InstallingAWSModule": "Installing AWS Tools for Windows PowerShell module to current user scope",
         "ConfiguringRegionFromTaskConfiguration": "Region discovered from task configuration",
